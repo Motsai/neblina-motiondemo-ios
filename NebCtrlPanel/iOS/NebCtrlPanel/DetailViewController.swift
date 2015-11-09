@@ -11,6 +11,13 @@ import CoreBluetooth
 import QuartzCore
 import SceneKit
 
+struct CtrlItem {
+	let	CtrlId : FusionId
+	let Name : String
+}
+
+let CtrlName = [String](arrayLiteral:"Heading", "Test1", "Test2")
+
 class DetailViewController: UIViewController, CBPeripheralDelegate, NeblinaDelegate, SCNSceneRendererDelegate {
 
 	let NebDevice = Neblina()
@@ -21,7 +28,13 @@ class DetailViewController: UIViewController, CBPeripheralDelegate, NeblinaDeleg
 	//var eulerAngles = SCNVector3(x: 0,y:0,z:0)
 	let scene = SCNScene(named: "art.scnassets/ship.scn")!
 	//var ship : SCNNode //= scene.rootNode.childNodeWithName("ship", recursively: true)!
-
+	let max_count = Int16(15)
+	var cnt = Int16(15)
+	var xf = Int16(0)
+	var yf = Int16(0)
+	var zf = Int16(0)
+	var heading = Bool(false)
+	
 	var detailItem: CBPeripheral? {
 		didSet {
 		    // Update the view.
@@ -44,6 +57,8 @@ class DetailViewController: UIViewController, CBPeripheralDelegate, NeblinaDeleg
 	override func viewDidLoad() {
 		super.viewDidLoad()
 		
+		cnt = max_count
+		
 		// create a new scene
 		//scene = SCNScene(named: "art.scnassets/ship.scn")!
 		
@@ -54,6 +69,8 @@ class DetailViewController: UIViewController, CBPeripheralDelegate, NeblinaDeleg
 		
 		// place the camera
 		cameraNode.position = SCNVector3(x: 0, y: 0, z: 15)
+		//cameraNode.position = SCNVector3(x: 0, y: 15, z: 0)
+		//cameraNode.rotation = SCNVector4(0, 0, 1, GLKMathDegreesToRadians(-180))
 		//cameraNode.rotation = SCNVector3(x:
 		// create and add a light to the scene
 		let lightNode = SCNNode()
@@ -71,13 +88,15 @@ class DetailViewController: UIViewController, CBPeripheralDelegate, NeblinaDeleg
 		
 		// retrieve the ship node
 		let ship = scene.rootNode.childNodeWithName("ship", recursively: true)!
+		ship.eulerAngles = SCNVector3Make(GLKMathDegreesToRadians(90), 0, GLKMathDegreesToRadians(180))
+		//ship.rotation = SCNVector4(1, 0, 0, GLKMathDegreesToRadians(90))
 		//print("1 - \(ship)")
 		// animate the 3d object
 		//ship.runAction(SCNAction.repeatActionForever(SCNAction.rotateByX(0, y: 2, z: 0, duration: 1)))
 		//ship.runAction(SCNAction.rotateToX(CGFloat(eulerAngles.x), y: CGFloat(eulerAngles.y), z: CGFloat(eulerAngles.z), duration:1 ))// 10, y: 0.0, z: 0.0, duration: 1))
 		
 		// retrieve the SCNView
-		let scnView = self.view.subviews[2] as! SCNView
+		let scnView = self.view.subviews[1] as! SCNView
 		
 		// set the scene to the view
 		scnView.scene = scene
@@ -169,43 +188,55 @@ class DetailViewController: UIViewController, CBPeripheralDelegate, NeblinaDeleg
 		let idx = cmdView.indexPathForCell(sender.superview?.superview as! UITableViewCell)
 		let row = (idx?.row)! as Int
 		
-		switch (FusionCmdList[row].CmdId)
-		{
-		case 2:
-			NebDevice.MotionStream(sender.on)
-			break;
-		case 3:
-			NebDevice.SixAxisIMU_Stream(sender.on)
-			break;
-		case 4:
-			NebDevice.QuaternionStream(sender.on)
-			break;
-		case 5:
-			NebDevice.EulerAngleStream(sender.on)
-			break;
-		case 6:
-			NebDevice.ExternalForceStream(sender.on)
-			break;
-		case 7:
-			NebDevice.PedometerStream(sender.on)
-			break;
-		case 8:
-			NebDevice.TrajectoryRecord(sender.on)
-			break;
-		case 9:
-			NebDevice.TrajectoryDistanceData(sender.on)
-			break;
-		case 10:
-			NebDevice.MagStream(sender.on)
-			break;
-		case 11:
-			NebDevice.NineAxisMode(sender.on)
-			break;
-		case 10:
-			break;
-		default:
-			break;
+		if (row < FusionCmdList.count) {
+			switch (FusionCmdList[row].CmdId)
+			{
+			case FusionId.MotionState:
+				NebDevice.MotionStream(sender.on)
+				break;
+			case FusionId.SixAxisIMU:
+				NebDevice.SixAxisIMU_Stream(sender.on)
+				break;
+			case FusionId.Quaternion:
+				NebDevice.QuaternionStream(sender.on)
+				break;
+			case FusionId.EulerAngle:
+				NebDevice.EulerAngleStream(sender.on)
+				break;
+			case FusionId.ExtrnForce:
+				NebDevice.ExternalForceStream(sender.on)
+				break;
+			case FusionId.Pedometer:
+				NebDevice.PedometerStream(sender.on)
+				break;
+			case FusionId.TrajectRecStart:
+				NebDevice.TrajectoryRecord(sender.on)
+				break;
+			case FusionId.TrajectDistance:
+				NebDevice.TrajectoryDistanceData(sender.on)
+				break;
+			case FusionId.Mag:
+				NebDevice.MagStream(sender.on)
+				break;
+			case FusionId.RecorderErase:
+				NebDevice.RecorderErase(sender.on)
+				break
+			case FusionId.RecorderStart:
+				NebDevice.Recorder(sender.on)
+				break
+			default:
+				break;
 			
+			}
+		}
+		else {
+			switch (row - FusionCmdList.count) {
+			case 0:
+				heading = sender.on
+				break
+			default:
+				break
+			}
 		}
 	}
 	
@@ -220,43 +251,15 @@ class DetailViewController: UIViewController, CBPeripheralDelegate, NeblinaDeleg
 //		print("\(data)")
 //	}
 	
-	func didReceiveFusionData(type : UInt8, data : Fusion_DataPacket_t) {
+	func didReceiveFusionData(type : FusionId, data : Fusion_DataPacket_t) {
 		let textview = self.view.viewWithTag(3) as! UITextView
-		//textview.text = String("packet \(type), \(data)")
-		//textview.scrollRangeToVisible(NSRange(location:0, length:10))
-		//consoleTextView.reloadInputViews()
-		//print("packet \(type), \(data)")
-		if (type == 0x5) {
+
+		switch (type) {
+		case FusionId.EulerAngle:
 			//
 			// Process Euler Angle
 			//
-//			let d : Int16 = Int16(data.data.0) | Int16(data.data.1) << 8
-//			var eulerAngles = SCNVector3()
-			
-			//d.value.getBytes(&data, range: NSMakeRange(4, 2))
-//			eulerAngles.x = Float(d) / 10.0
-			//let scene = SCNScene(named: "art.scnassets/ship.scn")!
 			let ship = scene.rootNode.childNodeWithName("ship", recursively: true)!
-			//print("2 - \(ship)")
-			//ship.eulerAngles = SCNVector3Make(Float(Int16(data.data.0) | (Int16(data.data.1) << 8)) / 10.0, 0, 0)
-//			eulerAngles.x = Float(Int16(data.data.0) | (Int16(data.data.1) << 8)) / 10.0
-//			let scnView = self.view.subviews[2] as! SCNView
-			//scnView.play(ship)
-			//SCNTransaction.begin()
-			//SCNTransaction.setAnimationDuration(0.5)
-			
-			// on completion - unhighlight
-			//SCNTransaction.setCompletionBlock {
-			
-				//material.emission.contents = UIColor.blackColor()
-				//ship.eulerAngles = SCNVector3Make(Float(Int16(data.data.0) | (Int16(data.data.1) << 8)) / 10.0, 0, 0)
-			//pkt->data[0] + 256*pkt->data[1] - 65536*(pkt->data[1]/128);
-			//let u16 = UnsafePointer<UInt16>(bytes).memory			
-			//let data1 = NSData(bytes: data.data.getBytes(buffer: UnsafeMutablePointer<Void>), length: 2)
-			//var x : UInt16(
-			//data.data.
-			//let xrot1 = UnsafeMutablePointer<UInt16>(data.data).memory
-			//print("\(data.data)")
 			let x = (Int16(data.data.0) & 0xff) | (Int16(data.data.1) << 8)
 			let xrot = Float(x) / 10.0
 			let y = (Int16(data.data.2) & 0xff) | (Int16(data.data.3) << 8)
@@ -264,55 +267,19 @@ class DetailViewController: UIViewController, CBPeripheralDelegate, NeblinaDeleg
 			let z = (Int16(data.data.4) & 0xff) | (Int16(data.data.5) << 8)
 			let zrot = Float(z) / 10.0
 			
-//			print("\(Int16(data.data.0)), \(Int16(data.data.1)), \(x16), \(f16)")
+			if (heading) {
+				ship.eulerAngles = SCNVector3Make(GLKMathDegreesToRadians(90), 0, GLKMathDegreesToRadians(180) - GLKMathDegreesToRadians(xrot))
+			}
+			else {
+				ship.eulerAngles = SCNVector3Make(GLKMathDegreesToRadians(90) - GLKMathDegreesToRadians(yrot), GLKMathDegreesToRadians(zrot), GLKMathDegreesToRadians(180) - GLKMathDegreesToRadians(xrot))
+			}
 			
-			//print("\(xrot)")
-			//let yrot = Float((Int16(data.data.2) & 0xff) | (Int16(data.data.3) << 8) / 10)
-			//let zrot = Float((Int16(data.data.4) & 0xff) | (Int16(data.data.5) << 8) / 10)
-			//let action1 = SCNAction.rotateToX(0, y: CGFloat(GLKMathDegreesToRadians(xrot)), z: 0, duration: 0.5)// rotateToX(CGFloat(Float(Int16(data.data.0) | (Int16(data.data.1) << 8))) / 10.0, y:10, z:0, duration: 1)
-			//let action12 = SCNAction.rotateToX(CGFloat(GLKMathDegreesToRadians(yrot)), y: CGFloat(GLKMathDegreesToRadians(xrot)), z: 0, duration: 0.5)// rotateToX(CGFloat(Float(Int16(data.data.0) | (Int16(data.data.1) << 8))) / 10.0, y:10, z:0, duration: 1)
-			//let action2 = SCNAction.rotateToX(CGFloat(GLKMathDegreesToRadians(yrot)), y: 0, z: 0, duration: 0.5)// rotateToX(CGFloat(Float(Int16(data.data.0) | (Int16(data.data.1) << 8))) / 10.0, y:10, z:0, duration: 1)
-			//let action3 = SCNAction.rotateToX(0, y: 0, z: CGFloat(GLKMathDegreesToRadians(zrot)), duration: 0.5)// rotateToX(CGFloat(Float(Int16(data.data.0) | (Int16(data.data.1) << 8))) / 10.0, y:10, z:0, duration: 1)
-			//let action4 = SCNAction.rotateToX(CGFloat(GLKMathDegreesToRadians(yrot)), y: CGFloat(GLKMathDegreesToRadians(xrot)), z: CGFloat(GLKMathDegreesToRadians(zrot)), duration: 0.1)
-			//let rep = SCNAction.repeatActionForever(action)
-			//let seq = SCNAction.sequence([action1, action12, action4])
-			/*SCNTransaction.begin()
-			SCNTransaction.setAnimationDuration(0.5)
-			ship.runAction(action1)
-			SCNTransaction.commit()
-			SCNTransaction.begin()
-			SCNTransaction.setAnimationDuration(0.5)
-			ship.runAction(action12)
-			SCNTransaction.commit()*/
-			//SCNTransaction.begin()
-			//SCNTransaction.setAnimationDuration(0.1)
-			//ship.runAction(action4)
-			//SCNTransaction.commit()
-			//ship.runAction(action4)
-			//ship.runAction(SCNAction.sequence([action1, action12, action4]))
-			//ship.eulerAngles = SCNVector3Make(GLKMathDegreesToRadians(zrot), GLKMathDegreesToRadians(yrot), GLKMathDegreesToRadians(xrot))
-			//SCNTransaction.begin()
-			//SCNTransaction.setAnimationDuration(0.1)
-			ship.eulerAngles.x = GLKMathDegreesToRadians(yrot)
-			ship.eulerAngles.y = GLKMathDegreesToRadians(xrot)
-			ship.eulerAngles.z = GLKMathDegreesToRadians(zrot)
-			//SCNTransaction.commit()
-				
 			textview.text = String("Euler - Yaw:\(xrot), Pitch:\(yrot), Roll:\(zrot)")
-			//}
-			//print("\(data)")
 			
-			//material.emission.contents = UIColor.redColor()
-			
-			//SCNTransaction.commit()
-
-			//viewDidLoad()
-			//ship.runAction(SCNAction.repeatActionForever(SCNAction.rotateToX(CGFloat(eulerAngles.x), y: 0.0, z: 0.0, duration: 1)))  //  rotateToX(eulerAngles( (x:(eulerAngles.x, y: 0, z: 0, duration: 1)))
-			//ship.runAction(SCNAction.repeatActionForever(SCNAction.rotateByX(0, y: 2, z: 0, duration: 1)))
-			
-		}
-		if (type == 0x4)
-		{
+		
+			break
+		case FusionId.Quaternion:
+		
 			//
 			// Process Quaternion
 			//
@@ -325,15 +292,86 @@ class DetailViewController: UIViewController, CBPeripheralDelegate, NeblinaDeleg
 			let zq = Float(z) / 32768.0
 			let w = (Int16(data.data.6) & 0xff) | (Int16(data.data.7) << 8)
 			let wq = Float(w) / 32768.0
-			//let qq = GLKQuaternionMakeWithAngleAndAxis(GLKMathDegreesToRadians(-90), 1, 0, 0)
-			//let q = GLKQuaternionMake(xq, yq, zq, (wq))
-			//let qm = GLKQuaternionMultiply(qq, q)
-			//let n = GLKQuaternionNormalize(qm)
-			//let cmq = SCNQuaternion(yq, xq, zq, wq)
 			ship.orientation = SCNQuaternion(yq, xq, zq, wq)
 			textview.text = String("Quat - x:\(xq), y:\(yq), z:\(zq), w:\(wq)")
 			
+			
+			break
+		case FusionId.ExtrnForce:
+			//
+			// Process External Force
+			//
+			let ship = scene.rootNode.childNodeWithName("ship", recursively: true)!
+			let x = (Int16(data.data.0) & 0xff) | (Int16(data.data.1) << 8)
+			let xq = x / 1600
+			let y = (Int16(data.data.2) & 0xff) | (Int16(data.data.3) << 8)
+			let yq = y / 1600
+			let z = (Int16(data.data.4) & 0xff) | (Int16(data.data.5) << 8)
+			let zq = z / 1600
+
+			cnt -= 1
+			if (cnt <= 0) {
+				cnt = max_count
+				//if (xf != xq || yf != yq || zf != zq) {
+				let pos = SCNVector3(CGFloat(xf/cnt), CGFloat(yf/cnt), CGFloat(zf/cnt))
+				//let pos = SCNVector3(CGFloat(yf), CGFloat(xf), CGFloat(zf))
+				SCNTransaction.flush()
+				SCNTransaction.begin()
+				SCNTransaction.setAnimationDuration(0.1)
+				//let action = SCNAction.moveTo(pos, duration: 0.1)
+					ship.position = pos
+				SCNTransaction.commit()
+				//ship.runAction(action)
+				
+				xf = xq
+				yf = yq
+				zf = zq
+				//}
+			}
+			else {
+				//if (abs(xf) <= abs(xq)) {
+					xf += xq
+				//}
+				//if (abs(yf) <= abs(yq)) {
+					yf += yq
+				//}
+				//if (abs(xf) <= abs(xq)) {
+					zf += zq
+				//}
+			/*	if (xq == 0 && yq == 0 && zq == 0) {
+					//cnt = 1
+					xf = 0
+					yf = 0
+					zf = 0
+					//if (cnt <= 1) {
+						//ship.removeAllActions()
+					//	ship.position = SCNVector3(CGFloat(yf), CGFloat(xf), CGFloat(zf))
+					//}
+					
+				}*/
+			}
+			
+			textview.text = String("Extrn Force - x:\(xq), y:\(yq), z:\(zq)")
+			//print("Extrn Force - x:\(xq), y:\(yq), z:\(zq)")
+			break
+		case FusionId.Mag:
+			//
+			// Mag data
+			//
+			let ship = scene.rootNode.childNodeWithName("ship", recursively: true)!
+			let x = (Int16(data.data.0) & 0xff) | (Int16(data.data.1) << 8)
+			let xq = x / 10
+			let y = (Int16(data.data.2) & 0xff) | (Int16(data.data.3) << 8)
+			let yq = y / 10
+			let z = (Int16(data.data.4) & 0xff) | (Int16(data.data.5) << 8)
+			let zq = z / 10
+			textview.text = String("Mag - x:\(xq), y:\(yq), z:\(zq)")
+			ship.rotation = SCNVector4(Float(xq), Float(yq), 0, GLKMathDegreesToRadians(90))
+			break
+		
+		default: break
 		}
+		
 		
 	}
 	
@@ -341,7 +379,7 @@ class DetailViewController: UIViewController, CBPeripheralDelegate, NeblinaDeleg
 	
 	func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
 		
-		return FusionCmdList.count
+		return FusionCmdList.count + CtrlName.count
 		//return 1//detailItem
 	}
 	
@@ -351,7 +389,11 @@ class DetailViewController: UIViewController, CBPeripheralDelegate, NeblinaDeleg
 		let labelView = cellView.viewWithTag(1) as! UILabel
 		//let switchCtrl = cellView.viewWithTag(2) as! UISwitch
 		//switchCtrl.addTarget(self, action: "switchAction:", forControlEvents: UIControlEvents.ValueChanged)
-		labelView.text = FusionCmdList[indexPath!.row].Name //NebApiName[indexPath!.row] as String//"Row \(row)"//"self.objects.objectAtIndex(row) as! String
+		if (indexPath!.row < FusionCmdList.count) {
+			labelView.text = FusionCmdList[indexPath!.row].Name //NebApiName[indexPath!.row] as String//"Row \(row)"//"self.objects.objectAtIndex(row) as! String
+		} else {
+			labelView.text = CtrlName[indexPath!.row - FusionCmdList.count] //NebApiName[indexPath!.row] as String//"Row \(row)"//"self.objects.objectAtIndex(row) as! String
+		}
 		//cellView.textLabel!.text = NebApiName[indexPath!.row] as String//"Row \(row)"//"self.objects.objectAtIndex(row) as! String
 			
 		return cellView;
