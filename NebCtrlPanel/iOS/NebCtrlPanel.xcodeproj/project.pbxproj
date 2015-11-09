@@ -1,0 +1,539 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		C90AF97E1BEBABD20040D4CA /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = C90AF97D1BEBABD20040D4CA /* AppDelegate.swift */; };
+		C90AF9801BEBABD20040D4CA /* MasterViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C90AF97F1BEBABD20040D4CA /* MasterViewController.swift */; };
+		C90AF9821BEBABD20040D4CA /* DetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C90AF9811BEBABD20040D4CA /* DetailViewController.swift */; };
+		C90AF9851BEBABD20040D4CA /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = C90AF9831BEBABD20040D4CA /* Main.storyboard */; };
+		C90AF9871BEBABD20040D4CA /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C90AF9861BEBABD20040D4CA /* Assets.xcassets */; };
+		C90AF98A1BEBABD20040D4CA /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = C90AF9881BEBABD20040D4CA /* LaunchScreen.storyboard */; };
+		C90AF9951BEBABD20040D4CA /* NebCtrlPanelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C90AF9941BEBABD20040D4CA /* NebCtrlPanelTests.swift */; };
+		C90AF9A01BEBABD20040D4CA /* NebCtrlPanelUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C90AF99F1BEBABD20040D4CA /* NebCtrlPanelUITests.swift */; };
+		C90AF9B41BEBAD370040D4CA /* Neblina.swift in Sources */ = {isa = PBXBuildFile; fileRef = C90AF9B31BEBAD370040D4CA /* Neblina.swift */; };
+		C90AF9B71BEBB1090040D4CA /* CoreBluetooth.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C90AF9B61BEBB1090040D4CA /* CoreBluetooth.framework */; };
+		C90AF9B91BEBB1E80040D4CA /* art.scnassets in Resources */ = {isa = PBXBuildFile; fileRef = C90AF9B81BEBB1E80040D4CA /* art.scnassets */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		C90AF9911BEBABD20040D4CA /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = C90AF9721BEBABD20040D4CA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = C90AF9791BEBABD20040D4CA;
+			remoteInfo = NebCtrlPanel;
+		};
+		C90AF99C1BEBABD20040D4CA /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = C90AF9721BEBABD20040D4CA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = C90AF9791BEBABD20040D4CA;
+			remoteInfo = NebCtrlPanel;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		C90AF97A1BEBABD20040D4CA /* NebCtrlPanel.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = NebCtrlPanel.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		C90AF97D1BEBABD20040D4CA /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		C90AF97F1BEBABD20040D4CA /* MasterViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MasterViewController.swift; sourceTree = "<group>"; };
+		C90AF9811BEBABD20040D4CA /* DetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailViewController.swift; sourceTree = "<group>"; };
+		C90AF9841BEBABD20040D4CA /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
+		C90AF9861BEBABD20040D4CA /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		C90AF9891BEBABD20040D4CA /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
+		C90AF98B1BEBABD20040D4CA /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		C90AF9901BEBABD20040D4CA /* NebCtrlPanelTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = NebCtrlPanelTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		C90AF9941BEBABD20040D4CA /* NebCtrlPanelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NebCtrlPanelTests.swift; sourceTree = "<group>"; };
+		C90AF9961BEBABD20040D4CA /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		C90AF99B1BEBABD20040D4CA /* NebCtrlPanelUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = NebCtrlPanelUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		C90AF99F1BEBABD20040D4CA /* NebCtrlPanelUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NebCtrlPanelUITests.swift; sourceTree = "<group>"; };
+		C90AF9A11BEBABD20040D4CA /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		C90AF9B01BEBAD290040D4CA /* FusionEngineDataTypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FusionEngineDataTypes.h; path = ../../../../../include/FusionEngineDataTypes.h; sourceTree = "<group>"; };
+		C90AF9B11BEBAD290040D4CA /* neblina.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = neblina.h; path = ../../../../../include/neblina.h; sourceTree = "<group>"; };
+		C90AF9B21BEBAD370040D4CA /* Neblina-Bridging-Header.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "Neblina-Bridging-Header.h"; path = "../../../src/Neblina-Bridging-Header.h"; sourceTree = "<group>"; };
+		C90AF9B31BEBAD370040D4CA /* Neblina.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Neblina.swift; path = ../../../src/Neblina.swift; sourceTree = "<group>"; };
+		C90AF9B61BEBB1090040D4CA /* CoreBluetooth.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreBluetooth.framework; path = System/Library/Frameworks/CoreBluetooth.framework; sourceTree = SDKROOT; };
+		C90AF9B81BEBB1E80040D4CA /* art.scnassets */ = {isa = PBXFileReference; lastKnownFileType = wrapper.scnassets; path = art.scnassets; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		C90AF9771BEBABD20040D4CA /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C90AF9B71BEBB1090040D4CA /* CoreBluetooth.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		C90AF98D1BEBABD20040D4CA /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		C90AF9981BEBABD20040D4CA /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		C90AF9711BEBABD20040D4CA = {
+			isa = PBXGroup;
+			children = (
+				C90AF9B61BEBB1090040D4CA /* CoreBluetooth.framework */,
+				C90AF97C1BEBABD20040D4CA /* NebCtrlPanel */,
+				C90AF9931BEBABD20040D4CA /* NebCtrlPanelTests */,
+				C90AF99E1BEBABD20040D4CA /* NebCtrlPanelUITests */,
+				C90AF97B1BEBABD20040D4CA /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		C90AF97B1BEBABD20040D4CA /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				C90AF97A1BEBABD20040D4CA /* NebCtrlPanel.app */,
+				C90AF9901BEBABD20040D4CA /* NebCtrlPanelTests.xctest */,
+				C90AF99B1BEBABD20040D4CA /* NebCtrlPanelUITests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		C90AF97C1BEBABD20040D4CA /* NebCtrlPanel */ = {
+			isa = PBXGroup;
+			children = (
+				C90AF9B81BEBB1E80040D4CA /* art.scnassets */,
+				C90AF9B21BEBAD370040D4CA /* Neblina-Bridging-Header.h */,
+				C90AF9B31BEBAD370040D4CA /* Neblina.swift */,
+				C90AF9B01BEBAD290040D4CA /* FusionEngineDataTypes.h */,
+				C90AF9B11BEBAD290040D4CA /* neblina.h */,
+				C90AF97D1BEBABD20040D4CA /* AppDelegate.swift */,
+				C90AF97F1BEBABD20040D4CA /* MasterViewController.swift */,
+				C90AF9811BEBABD20040D4CA /* DetailViewController.swift */,
+				C90AF9831BEBABD20040D4CA /* Main.storyboard */,
+				C90AF9861BEBABD20040D4CA /* Assets.xcassets */,
+				C90AF9881BEBABD20040D4CA /* LaunchScreen.storyboard */,
+				C90AF98B1BEBABD20040D4CA /* Info.plist */,
+			);
+			path = NebCtrlPanel;
+			sourceTree = "<group>";
+		};
+		C90AF9931BEBABD20040D4CA /* NebCtrlPanelTests */ = {
+			isa = PBXGroup;
+			children = (
+				C90AF9941BEBABD20040D4CA /* NebCtrlPanelTests.swift */,
+				C90AF9961BEBABD20040D4CA /* Info.plist */,
+			);
+			path = NebCtrlPanelTests;
+			sourceTree = "<group>";
+		};
+		C90AF99E1BEBABD20040D4CA /* NebCtrlPanelUITests */ = {
+			isa = PBXGroup;
+			children = (
+				C90AF99F1BEBABD20040D4CA /* NebCtrlPanelUITests.swift */,
+				C90AF9A11BEBABD20040D4CA /* Info.plist */,
+			);
+			path = NebCtrlPanelUITests;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		C90AF9791BEBABD20040D4CA /* NebCtrlPanel */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = C90AF9A41BEBABD20040D4CA /* Build configuration list for PBXNativeTarget "NebCtrlPanel" */;
+			buildPhases = (
+				C90AF9761BEBABD20040D4CA /* Sources */,
+				C90AF9771BEBABD20040D4CA /* Frameworks */,
+				C90AF9781BEBABD20040D4CA /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = NebCtrlPanel;
+			productName = NebCtrlPanel;
+			productReference = C90AF97A1BEBABD20040D4CA /* NebCtrlPanel.app */;
+			productType = "com.apple.product-type.application";
+		};
+		C90AF98F1BEBABD20040D4CA /* NebCtrlPanelTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = C90AF9A71BEBABD20040D4CA /* Build configuration list for PBXNativeTarget "NebCtrlPanelTests" */;
+			buildPhases = (
+				C90AF98C1BEBABD20040D4CA /* Sources */,
+				C90AF98D1BEBABD20040D4CA /* Frameworks */,
+				C90AF98E1BEBABD20040D4CA /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				C90AF9921BEBABD20040D4CA /* PBXTargetDependency */,
+			);
+			name = NebCtrlPanelTests;
+			productName = NebCtrlPanelTests;
+			productReference = C90AF9901BEBABD20040D4CA /* NebCtrlPanelTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		C90AF99A1BEBABD20040D4CA /* NebCtrlPanelUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = C90AF9AA1BEBABD20040D4CA /* Build configuration list for PBXNativeTarget "NebCtrlPanelUITests" */;
+			buildPhases = (
+				C90AF9971BEBABD20040D4CA /* Sources */,
+				C90AF9981BEBABD20040D4CA /* Frameworks */,
+				C90AF9991BEBABD20040D4CA /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				C90AF99D1BEBABD20040D4CA /* PBXTargetDependency */,
+			);
+			name = NebCtrlPanelUITests;
+			productName = NebCtrlPanelUITests;
+			productReference = C90AF99B1BEBABD20040D4CA /* NebCtrlPanelUITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		C90AF9721BEBABD20040D4CA /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastSwiftUpdateCheck = 0710;
+				LastUpgradeCheck = 0710;
+				ORGANIZATIONNAME = "Hoan Hoang";
+				TargetAttributes = {
+					C90AF9791BEBABD20040D4CA = {
+						CreatedOnToolsVersion = 7.1;
+					};
+					C90AF98F1BEBABD20040D4CA = {
+						CreatedOnToolsVersion = 7.1;
+						TestTargetID = C90AF9791BEBABD20040D4CA;
+					};
+					C90AF99A1BEBABD20040D4CA = {
+						CreatedOnToolsVersion = 7.1;
+						TestTargetID = C90AF9791BEBABD20040D4CA;
+					};
+				};
+			};
+			buildConfigurationList = C90AF9751BEBABD20040D4CA /* Build configuration list for PBXProject "NebCtrlPanel" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = C90AF9711BEBABD20040D4CA;
+			productRefGroup = C90AF97B1BEBABD20040D4CA /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				C90AF9791BEBABD20040D4CA /* NebCtrlPanel */,
+				C90AF98F1BEBABD20040D4CA /* NebCtrlPanelTests */,
+				C90AF99A1BEBABD20040D4CA /* NebCtrlPanelUITests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		C90AF9781BEBABD20040D4CA /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C90AF98A1BEBABD20040D4CA /* LaunchScreen.storyboard in Resources */,
+				C90AF9B91BEBB1E80040D4CA /* art.scnassets in Resources */,
+				C90AF9871BEBABD20040D4CA /* Assets.xcassets in Resources */,
+				C90AF9851BEBABD20040D4CA /* Main.storyboard in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		C90AF98E1BEBABD20040D4CA /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		C90AF9991BEBABD20040D4CA /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		C90AF9761BEBABD20040D4CA /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C90AF9821BEBABD20040D4CA /* DetailViewController.swift in Sources */,
+				C90AF9B41BEBAD370040D4CA /* Neblina.swift in Sources */,
+				C90AF9801BEBABD20040D4CA /* MasterViewController.swift in Sources */,
+				C90AF97E1BEBABD20040D4CA /* AppDelegate.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		C90AF98C1BEBABD20040D4CA /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C90AF9951BEBABD20040D4CA /* NebCtrlPanelTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		C90AF9971BEBABD20040D4CA /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C90AF9A01BEBABD20040D4CA /* NebCtrlPanelUITests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		C90AF9921BEBABD20040D4CA /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = C90AF9791BEBABD20040D4CA /* NebCtrlPanel */;
+			targetProxy = C90AF9911BEBABD20040D4CA /* PBXContainerItemProxy */;
+		};
+		C90AF99D1BEBABD20040D4CA /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = C90AF9791BEBABD20040D4CA /* NebCtrlPanel */;
+			targetProxy = C90AF99C1BEBABD20040D4CA /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin PBXVariantGroup section */
+		C90AF9831BEBABD20040D4CA /* Main.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				C90AF9841BEBABD20040D4CA /* Base */,
+			);
+			name = Main.storyboard;
+			sourceTree = "<group>";
+		};
+		C90AF9881BEBABD20040D4CA /* LaunchScreen.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				C90AF9891BEBABD20040D4CA /* Base */,
+			);
+			name = LaunchScreen.storyboard;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		C90AF9A21BEBABD20040D4CA /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.1;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		C90AF9A31BEBABD20040D4CA /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.1;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		C90AF9A51BEBABD20040D4CA /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
+				INFOPLIST_FILE = NebCtrlPanel/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.2;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = com.motsai.NebCtrlPanel;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "../../src/Neblina-Bridging-Header.h";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		C90AF9A61BEBABD20040D4CA /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
+				INFOPLIST_FILE = NebCtrlPanel/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.2;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = com.motsai.NebCtrlPanel;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "../../src/Neblina-Bridging-Header.h";
+			};
+			name = Release;
+		};
+		C90AF9A81BEBABD20040D4CA /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				INFOPLIST_FILE = NebCtrlPanelTests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = com.motsai.NebCtrlPanelTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/NebCtrlPanel.app/NebCtrlPanel";
+			};
+			name = Debug;
+		};
+		C90AF9A91BEBABD20040D4CA /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				INFOPLIST_FILE = NebCtrlPanelTests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = com.motsai.NebCtrlPanelTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/NebCtrlPanel.app/NebCtrlPanel";
+			};
+			name = Release;
+		};
+		C90AF9AB1BEBABD20040D4CA /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				INFOPLIST_FILE = NebCtrlPanelUITests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = com.motsai.NebCtrlPanelUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TEST_TARGET_NAME = NebCtrlPanel;
+				USES_XCTRUNNER = YES;
+			};
+			name = Debug;
+		};
+		C90AF9AC1BEBABD20040D4CA /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				INFOPLIST_FILE = NebCtrlPanelUITests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = com.motsai.NebCtrlPanelUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TEST_TARGET_NAME = NebCtrlPanel;
+				USES_XCTRUNNER = YES;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		C90AF9751BEBABD20040D4CA /* Build configuration list for PBXProject "NebCtrlPanel" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				C90AF9A21BEBABD20040D4CA /* Debug */,
+				C90AF9A31BEBABD20040D4CA /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		C90AF9A41BEBABD20040D4CA /* Build configuration list for PBXNativeTarget "NebCtrlPanel" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				C90AF9A51BEBABD20040D4CA /* Debug */,
+				C90AF9A61BEBABD20040D4CA /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		C90AF9A71BEBABD20040D4CA /* Build configuration list for PBXNativeTarget "NebCtrlPanelTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				C90AF9A81BEBABD20040D4CA /* Debug */,
+				C90AF9A91BEBABD20040D4CA /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		C90AF9AA1BEBABD20040D4CA /* Build configuration list for PBXNativeTarget "NebCtrlPanelUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				C90AF9AB1BEBABD20040D4CA /* Debug */,
+				C90AF9AC1BEBABD20040D4CA /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = C90AF9721BEBABD20040D4CA /* Project object */;
+}
