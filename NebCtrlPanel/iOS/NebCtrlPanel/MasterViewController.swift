@@ -9,10 +9,15 @@
 import UIKit
 import CoreBluetooth
 
+struct NebDevice {
+	let id : UInt64
+	let peripheral : CBPeripheral
+}
+
 class MasterViewController: UITableViewController, CBCentralManagerDelegate {
 
 	var detailViewController: DetailViewController? = nil
-	var objects = [AnyObject]()
+	var objects = [NebDevice]()
 	var bleCentralManager : CBCentralManager!
 	//var NebPeripheral : CBPeripheral!
 
@@ -43,7 +48,7 @@ class MasterViewController: UITableViewController, CBCentralManagerDelegate {
 	}
 
 	func insertNewObject(sender: AnyObject) {
-		objects.insert(NSDate(), atIndex: 0)
+//		objects.insert(NSDate(), atIndex: 0)
 		let indexPath = NSIndexPath(forRow: 0, inSection: 0)
 		self.tableView.insertRowsAtIndexPaths([indexPath], withRowAnimation: .Automatic)
 	}
@@ -53,8 +58,8 @@ class MasterViewController: UITableViewController, CBCentralManagerDelegate {
 	override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
 		if segue.identifier == "showDetail" {
 		    if let indexPath = self.tableView.indexPathForSelectedRow {
-		        let object = objects[indexPath.row] as! CBPeripheral
-				bleCentralManager.connectPeripheral(object, options: nil)
+		        let object = objects[indexPath.row]
+				bleCentralManager.connectPeripheral(object.peripheral, options: nil)
 		        let controller = (segue.destinationViewController as! UINavigationController).topViewController as! DetailViewController
 				//controller.NebDevice.setPeripheral(object)
 		        controller.navigationItem.leftBarButtonItem = self.splitViewController?.displayModeButtonItem()
@@ -62,7 +67,7 @@ class MasterViewController: UITableViewController, CBCentralManagerDelegate {
 				if (controller.detailItem != nil) {
 					bleCentralManager.cancelPeripheralConnection(controller.detailItem!)
 				}
-				controller.detailItem = object
+				controller.detailItem = object.peripheral
 		    }
 		}
 	}
@@ -80,14 +85,17 @@ class MasterViewController: UITableViewController, CBCentralManagerDelegate {
 	override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
 		let cell = tableView.dequeueReusableCellWithIdentifier("Cell", forIndexPath: indexPath)
 
-		let object = objects[indexPath.row] as! CBPeripheral
-		cell.textLabel!.text = object.name
+		let object = objects[indexPath.row]
+		cell.textLabel!.text = object.peripheral.name
+		print("\(cell.textLabel!.text)")
+		cell.textLabel!.text = object.peripheral.name! + String(format: "_%lX", object.id)
+		print("Cell Name : \(cell.textLabel!.text)")
 		return cell
 	}
 
 	override func tableView(tableView: UITableView, canEditRowAtIndexPath indexPath: NSIndexPath) -> Bool {
 		// Return false if you do not want the specified item to be editable.
-		return true
+		return false
 	}
 
 	override func tableView(tableView: UITableView, commitEditingStyle editingStyle: UITableViewCellEditingStyle, forRowAtIndexPath indexPath: NSIndexPath) {
@@ -125,18 +133,29 @@ class MasterViewController: UITableViewController, CBCentralManagerDelegate {
 			print("IDENTIFIER: \(peripheral.identifier)\n")
 			
 			//sensorData.text = sensorData.text + "FOUND PERIPHERALS: \(peripheral) AdvertisementData: \(advertisementData) RSSI: \(RSSI)\n"
+			var id : UInt64 = 0
+			advertisementData[CBAdvertisementDataManufacturerDataKey]?.getBytes(&id, range: NSMakeRange(2, 8))
+			if (id == 0) {
+				return
+			}
 			
-/*			for dev in devices as! [CBPeripheral]
+			let device = NebDevice(id: id, peripheral: peripheral)
+
+			for dev in objects
 			{
-				if (dev == peripheral)
+				if (dev.id == id)
 				{
 					return;
 				}
-			}*/
+			}
+			
 			//print("Peri : \(peripheral)\n");
 			//devices.addObject(peripheral)
-			//print("DEVICES: \(devices)\n")
-			objects.insert(peripheral, atIndex: 0)
+			print("DEVICES: \(device)\n")
+	//		peripheral.name = String("\(peripheral.name)_")
+			
+			objects.insert(device, atIndex: 0)
+			
 			tableView.reloadData();
 			// stop scanning, saves the battery
 			//central.stopScan()

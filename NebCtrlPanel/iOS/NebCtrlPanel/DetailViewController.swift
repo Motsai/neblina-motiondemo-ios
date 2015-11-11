@@ -182,47 +182,47 @@ class DetailViewController: UIViewController, CBPeripheralDelegate, NeblinaDeleg
 		// Dispose of any resources that can be recreated.
 	}
 	
-	@IBAction func switchAction(sender:UISwitch)
+	@IBAction func switchAction(sender:UISegmentedControl)
 	{
 		//let tableView = sender.superview?.superview?.superview?.superview as! UITableView
-		let idx = cmdView.indexPathForCell(sender.superview?.superview as! UITableViewCell)
+		let idx = cmdView.indexPathForCell(sender.superview!.superview as! UITableViewCell)
 		let row = (idx?.row)! as Int
 		
 		if (row < FusionCmdList.count) {
 			switch (FusionCmdList[row].CmdId)
 			{
 			case FusionId.MotionState:
-				NebDevice.MotionStream(sender.on)
+				NebDevice.MotionStream(sender.selectedSegmentIndex == 1)
 				break;
 			case FusionId.SixAxisIMU:
-				NebDevice.SixAxisIMU_Stream(sender.on)
+				NebDevice.SixAxisIMU_Stream(sender.selectedSegmentIndex == 1)
 				break;
 			case FusionId.Quaternion:
-				NebDevice.QuaternionStream(sender.on)
+				NebDevice.QuaternionStream(sender.selectedSegmentIndex == 1)
 				break;
 			case FusionId.EulerAngle:
-				NebDevice.EulerAngleStream(sender.on)
+				NebDevice.EulerAngleStream(sender.selectedSegmentIndex == 1)
 				break;
 			case FusionId.ExtrnForce:
-				NebDevice.ExternalForceStream(sender.on)
+				NebDevice.ExternalForceStream(sender.selectedSegmentIndex == 1)
 				break;
 			case FusionId.Pedometer:
-				NebDevice.PedometerStream(sender.on)
+				NebDevice.PedometerStream(sender.selectedSegmentIndex == 1)
 				break;
 			case FusionId.TrajectRecStart:
-				NebDevice.TrajectoryRecord(sender.on)
+				NebDevice.TrajectoryRecord(sender.selectedSegmentIndex == 1)
 				break;
 			case FusionId.TrajectDistance:
-				NebDevice.TrajectoryDistanceData(sender.on)
+				NebDevice.TrajectoryDistanceData(sender.selectedSegmentIndex == 1)
 				break;
 			case FusionId.Mag:
-				NebDevice.MagStream(sender.on)
+				NebDevice.MagStream(sender.selectedSegmentIndex == 1)
 				break;
 			case FusionId.RecorderErase:
-				NebDevice.RecorderErase(sender.on)
+				NebDevice.RecorderErase(sender.selectedSegmentIndex == 1)
 				break
 			case FusionId.RecorderStart:
-				NebDevice.Recorder(sender.on)
+				NebDevice.Recorder(sender.selectedSegmentIndex == 1)
 				break
 			default:
 				break;
@@ -232,7 +232,7 @@ class DetailViewController: UIViewController, CBPeripheralDelegate, NeblinaDeleg
 		else {
 			switch (row - FusionCmdList.count) {
 			case 0:
-				heading = sender.on
+				heading = sender.selectedSegmentIndex == 1
 				break
 			default:
 				break
@@ -255,6 +255,11 @@ class DetailViewController: UIViewController, CBPeripheralDelegate, NeblinaDeleg
 		let textview = self.view.viewWithTag(3) as! UITextView
 
 		switch (type) {
+			
+		case FusionId.MotionState:
+			break
+		case FusionId.SixAxisIMU:
+			break
 		case FusionId.EulerAngle:
 			//
 			// Process Euler Angle
@@ -316,12 +321,12 @@ class DetailViewController: UIViewController, CBPeripheralDelegate, NeblinaDeleg
 				//if (xf != xq || yf != yq || zf != zq) {
 				let pos = SCNVector3(CGFloat(xf/cnt), CGFloat(yf/cnt), CGFloat(zf/cnt))
 				//let pos = SCNVector3(CGFloat(yf), CGFloat(xf), CGFloat(zf))
-				SCNTransaction.flush()
-				SCNTransaction.begin()
-				SCNTransaction.setAnimationDuration(0.1)
+				//SCNTransaction.flush()
+				//SCNTransaction.begin()
+				//SCNTransaction.setAnimationDuration(0.1)
 				//let action = SCNAction.moveTo(pos, duration: 0.1)
 					ship.position = pos
-				SCNTransaction.commit()
+				//SCNTransaction.commit()
 				//ship.runAction(action)
 				
 				xf = xq
@@ -367,7 +372,7 @@ class DetailViewController: UIViewController, CBPeripheralDelegate, NeblinaDeleg
 			let z = (Int16(data.data.4) & 0xff) | (Int16(data.data.5) << 8)
 			let zq = z / 10
 			textview.text = String("Mag - x:\(xq), y:\(yq), z:\(zq)")
-			ship.rotation = SCNVector4(Float(xq), Float(yq), 0, GLKMathDegreesToRadians(90))
+			//ship.rotation = SCNVector4(Float(xq), Float(yq), 0, GLKMathDegreesToRadians(90))
 			break
 		
 		default: break
