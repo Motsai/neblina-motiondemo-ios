@@ -112,6 +112,7 @@ class Neblina : NSObject, CBPeripheralDelegate {
 			if (characteristic.UUID .isEqual(NEB_CTRLCHAR_UUID))
 			{
 				ctrlChar = characteristic;
+				delegate.didConnectNeblina()
 			}
 		}
 	}
@@ -161,7 +162,7 @@ class Neblina : NSObject, CBPeripheralDelegate {
 	{
 		var pkbuf = [UInt8](count:20, repeatedValue:0)
 		
-		pkbuf[0] = 1
+		pkbuf[0] = 0x41
 		pkbuf[1] = UInt8(sizeof(Fusion_DataPacket_t))
 		pkbuf[2] = 0
 		pkbuf[3] = FusionId.MotionState.rawValue	// Cmd
@@ -181,7 +182,7 @@ class Neblina : NSObject, CBPeripheralDelegate {
 	{
 		var pkbuf = [UInt8](count:20, repeatedValue:0)
 		
-		pkbuf[0] = 1
+		pkbuf[0] = 0x41
 		pkbuf[1] = UInt8(sizeof(Fusion_DataPacket_t))
 		pkbuf[2] = 0
 		pkbuf[3] = FusionId.SixAxisIMU.rawValue	// Cmd
@@ -201,7 +202,7 @@ class Neblina : NSObject, CBPeripheralDelegate {
 	{
 		var pkbuf = [UInt8](count:20, repeatedValue:0)
 		
-		pkbuf[0] = 1
+		pkbuf[0] = 0x41
 		pkbuf[1] = UInt8(sizeof(Fusion_DataPacket_t))
 		pkbuf[2] = 0
 		pkbuf[3] = FusionId.Quaternion.rawValue	// Cmd
@@ -221,7 +222,7 @@ class Neblina : NSObject, CBPeripheralDelegate {
 	{
 		var pkbuf = [UInt8](count:20, repeatedValue:0)
 		
-		pkbuf[0] = 1
+		pkbuf[0] = 0x41
 		pkbuf[1] = UInt8(sizeof(Fusion_DataPacket_t))
 		pkbuf[2] = 0
 		pkbuf[3] = FusionId.EulerAngle.rawValue	// Cmd
@@ -241,7 +242,7 @@ class Neblina : NSObject, CBPeripheralDelegate {
 	{
 		var pkbuf = [UInt8](count:20, repeatedValue:0)
 		
-		pkbuf[0] = 1
+		pkbuf[0] = 0x41
 		pkbuf[1] = UInt8(sizeof(Fusion_DataPacket_t))
 		pkbuf[2] = 0
 		pkbuf[3] = FusionId.ExtrnForce.rawValue	// Cmd
@@ -261,7 +262,7 @@ class Neblina : NSObject, CBPeripheralDelegate {
 	{
 		var pkbuf = [UInt8](count:20, repeatedValue:0)
 		
-		pkbuf[0] = 1
+		pkbuf[0] = 0x41
 		pkbuf[1] = UInt8(sizeof(Fusion_DataPacket_t))
 		pkbuf[2] = 0
 		pkbuf[3] = FusionId.Pedometer.rawValue	// Cmd
@@ -281,7 +282,7 @@ class Neblina : NSObject, CBPeripheralDelegate {
 	{
 		var pkbuf = [UInt8](count:20, repeatedValue:0)
 		
-		pkbuf[0] = 1
+		pkbuf[0] = 0x41
 		pkbuf[1] = UInt8(sizeof(Fusion_DataPacket_t))
 		pkbuf[2] = 0
 		pkbuf[3] = FusionId.TrajectRecStart.rawValue	// Cmd
@@ -301,7 +302,7 @@ class Neblina : NSObject, CBPeripheralDelegate {
 	{
 		var pkbuf = [UInt8](count:20, repeatedValue:0)
 		
-		pkbuf[0] = 1
+		pkbuf[0] = 0x41
 		pkbuf[1] = UInt8(sizeof(Fusion_DataPacket_t))
 		pkbuf[2] = 0
 		pkbuf[3] = FusionId.TrajectDistance.rawValue	// Cmd
@@ -321,7 +322,7 @@ class Neblina : NSObject, CBPeripheralDelegate {
 	{
 		var pkbuf = [UInt8](count:20, repeatedValue:0)
 		
-		pkbuf[0] = 1
+		pkbuf[0] = 0x41
 		pkbuf[1] = UInt8(sizeof(Fusion_DataPacket_t))
 		pkbuf[2] = 0
 		pkbuf[3] = FusionId.Mag.rawValue	// Cmd
@@ -340,7 +341,7 @@ class Neblina : NSObject, CBPeripheralDelegate {
 	func SittingStanding(Enable:Bool) {
 		var pkbuf = [UInt8](count:20, repeatedValue:0)
 		
-		pkbuf[0] = 1
+		pkbuf[0] = 0x41
 		pkbuf[1] = UInt8(sizeof(Fusion_DataPacket_t))
 		pkbuf[2] = 0
 		pkbuf[3] = FusionId.SittingStanding.rawValue	// Cmd
@@ -359,7 +360,7 @@ class Neblina : NSObject, CBPeripheralDelegate {
 	func FlashErase(Enable:Bool) {
 		var pkbuf = [UInt8](count:20, repeatedValue:0)
 		
-		pkbuf[0] = 1
+		pkbuf[0] = 0x41
 		pkbuf[1] = UInt8(sizeof(Fusion_DataPacket_t))
 		pkbuf[2] = 0
 		pkbuf[3] = FusionId.FlashEraseAll.rawValue // RecorderErase.rawValue	// Cmd
@@ -379,7 +380,7 @@ class Neblina : NSObject, CBPeripheralDelegate {
 	func FlashRecord(Enable:Bool) {
 		var pkbuf = [UInt8](count:20, repeatedValue:0)
 		
-		pkbuf[0] = 1
+		pkbuf[0] = 0x41
 		pkbuf[1] = UInt8(sizeof(Fusion_DataPacket_t))
 		pkbuf[2] = 0
 		pkbuf[3] = FusionId.FlashRecordStartStop.rawValue	// Cmd
@@ -401,4 +402,5 @@ protocol NeblinaDelegate {
 	
 	func didReceiveFusionData(type : FusionId, data : Fusion_DataPacket_t)
 	//func didReceiveFusionData(type : UInt8, data : FusionPacket)
+	func didConnectNeblina()
 }

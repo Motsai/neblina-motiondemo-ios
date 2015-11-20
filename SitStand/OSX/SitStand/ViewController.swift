@@ -226,6 +226,11 @@ class ViewController: NSViewController, NSTableViewDataSource, NSTableViewDelega
 	}
 
 	// MARK : Neblina
+	
+	func didConnectNeblina() {
+		device.SittingStanding(true)
+	}
+
 	func didReceiveFusionData(type : FusionId, data : Fusion_DataPacket_t) {
 	//	let textview = self.view.viewWithTag(3) as! UITextView
 		
