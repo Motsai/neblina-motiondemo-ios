@@ -135,19 +135,19 @@ class MasterViewController: UITableViewController, CBCentralManagerDelegate {
 			//sensorData.text = sensorData.text + "FOUND PERIPHERALS: \(peripheral) AdvertisementData: \(advertisementData) RSSI: \(RSSI)\n"
 			var id : UInt64 = 0
 			advertisementData[CBAdvertisementDataManufacturerDataKey]?.getBytes(&id, range: NSMakeRange(2, 8))
-			if (id == 0) {
-				return
-			}
+//			if (id == 0) {
+//				return
+//			}
 			
 			let device = NebDevice(id: id, peripheral: peripheral)
 
-			for dev in objects
+			/*for dev in objects
 			{
 				if (dev.id == id)
 				{
 					return;
 				}
-			}
+			}*/
 			
 			//print("Peri : \(peripheral)\n");
 			//devices.addObject(peripheral)

@@ -16,7 +16,7 @@ struct CtrlItem {
 	let Name : String
 }
 
-let CtrlName = [String](arrayLiteral:"Heading", "Test1", "Test2")
+let CtrlName = [String](arrayLiteral:"Heading")//, "Test1", "Test2")
 
 class DetailViewController: UIViewController, CBPeripheralDelegate, NeblinaDelegate, SCNSceneRendererDelegate {
 
@@ -198,6 +198,8 @@ class DetailViewController: UIViewController, CBPeripheralDelegate, NeblinaDeleg
 				NebDevice.SixAxisIMU_Stream(sender.selectedSegmentIndex == 1)
 				break;
 			case FusionId.Quaternion:
+				NebDevice.EulerAngleStream(false)
+				heading = false
 				NebDevice.QuaternionStream(sender.selectedSegmentIndex == 1)
 				break;
 			case FusionId.EulerAngle:
@@ -232,6 +234,8 @@ class DetailViewController: UIViewController, CBPeripheralDelegate, NeblinaDeleg
 		else {
 			switch (row - FusionCmdList.count) {
 			case 0:
+				NebDevice.QuaternionStream(false)
+				NebDevice.EulerAngleStream(true)
 				heading = sender.selectedSegmentIndex == 1
 				break
 			default:

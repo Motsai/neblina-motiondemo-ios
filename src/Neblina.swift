@@ -33,9 +33,10 @@ enum FusionId : UInt8 {
 	TrajectDistance = 10,	// calculating the distance from a pre-recorded orientation trajectory
 	Pedometer = 11,			// streaming pedometer data
 	Mag = 12,				// streaming magnetometer data
-	RecorderErase = 13,
-	RecorderStart = 14,
-	RecorderStop = 15
+	SittingStanding = 13,	// Stting & Standing data
+	FlashEraseAll = 0x0E,
+	FlashRecordStartStop = 0x0F,
+	FlashPlaybackStartStop = 0x10
 }
 
 struct FusionCmdItem {
@@ -336,13 +337,32 @@ class Neblina : NSObject, CBPeripheralDelegate {
 		device.writeValue(NSData(bytes: UnsafeMutablePointer<Void>(pkbuf), length: 20), forCharacteristic: ctrlChar, type: CBCharacteristicWriteType.WithoutResponse)
 	}
 	
-	func RecorderErase(Enable:Bool) {
+	func SittingStanding(Enable:Bool) {
 		var pkbuf = [UInt8](count:20, repeatedValue:0)
 		
 		pkbuf[0] = 1
 		pkbuf[1] = UInt8(sizeof(Fusion_DataPacket_t))
 		pkbuf[2] = 0
-		pkbuf[3] = FusionId.RecorderErase.rawValue	// Cmd
+		pkbuf[3] = FusionId.SittingStanding.rawValue	// Cmd
+		
+		if Enable == true
+		{
+			pkbuf[8] = 1
+		}
+		else
+		{
+			pkbuf[8] = 0
+		}
+		device.writeValue(NSData(bytes: UnsafeMutablePointer<Void>(pkbuf), length: 20), forCharacteristic: ctrlChar, type: CBCharacteristicWriteType.WithoutResponse)
+	}
+	
+	func FlashErase(Enable:Bool) {
+		var pkbuf = [UInt8](count:20, repeatedValue:0)
+		
+		pkbuf[0] = 1
+		pkbuf[1] = UInt8(sizeof(Fusion_DataPacket_t))
+		pkbuf[2] = 0
+		pkbuf[3] = FusionId.FlashEraseAll.rawValue // RecorderErase.rawValue	// Cmd
 		
 		if Enable == true
 		{
@@ -356,13 +376,13 @@ class Neblina : NSObject, CBPeripheralDelegate {
 		
 	}
 	
-	func Recorder(Enable:Bool) {
+	func FlashRecord(Enable:Bool) {
 		var pkbuf = [UInt8](count:20, repeatedValue:0)
 		
 		pkbuf[0] = 1
 		pkbuf[1] = UInt8(sizeof(Fusion_DataPacket_t))
 		pkbuf[2] = 0
-		pkbuf[3] = FusionId.RecorderStart.rawValue	// Cmd
+		pkbuf[3] = FusionId.FlashRecordStartStop.rawValue	// Cmd
 		
 		if Enable == true
 		{
@@ -375,9 +395,6 @@ class Neblina : NSObject, CBPeripheralDelegate {
 		device.writeValue(NSData(bytes: UnsafeMutablePointer<Void>(pkbuf), length: 20), forCharacteristic: ctrlChar, type: CBCharacteristicWriteType.WithoutResponse)
 	}
 	
-	func UpdateMotionFeatures() {
-		
-	}
 }
 
 protocol NeblinaDelegate {
