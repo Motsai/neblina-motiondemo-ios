@@ -203,6 +203,7 @@ class DetailViewController: UIViewController, CBPeripheralDelegate, NeblinaDeleg
 				NebDevice.QuaternionStream(sender.selectedSegmentIndex == 1)
 				break;
 			case FusionId.EulerAngle:
+				NebDevice.QuaternionStream(false)
 				NebDevice.EulerAngleStream(sender.selectedSegmentIndex == 1)
 				break;
 			case FusionId.ExtrnForce:
@@ -220,11 +221,11 @@ class DetailViewController: UIViewController, CBPeripheralDelegate, NeblinaDeleg
 			case FusionId.Mag:
 				NebDevice.MagStream(sender.selectedSegmentIndex == 1)
 				break;
-			case FusionId.RecorderErase:
-				NebDevice.RecorderErase(sender.selectedSegmentIndex == 1)
+			case FusionId.FlashEraseAll:
+				NebDevice.FlashErase(sender.selectedSegmentIndex == 1)
 				break
-			case FusionId.RecorderStart:
-				NebDevice.Recorder(sender.selectedSegmentIndex == 1)
+			case FusionId.FlashRecordStartStop:
+				NebDevice.FlashRecord(sender.selectedSegmentIndex == 1)
 				break
 			default:
 				break;
@@ -254,6 +255,10 @@ class DetailViewController: UIViewController, CBPeripheralDelegate, NeblinaDeleg
 //	func didReceiveFusionData(type : UInt8, data : FusionPacket) {
 //		print("\(data)")
 //	}
+	// MARK : Neblina
+	func didConnectNeblina() {
+		
+	}
 	
 	func didReceiveFusionData(type : FusionId, data : Fusion_DataPacket_t) {
 		let textview = self.view.viewWithTag(3) as! UITextView
