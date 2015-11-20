@@ -48,8 +48,9 @@ typedef struct {
 #define NEB_SUBSYS_POWER_MGMT			2		// Power management
 
 //Status Check MASK for SUBSYS
-#define NEB_SUBSYS_STATUS_MASK			0x80
-#define NEB_SUBSYS_VALUE_MASK			0x7F
+#define NEB_SUBSYS_STATUS_MASK				0x80
+#define NEB_SUBSYS_COMMAND_RESPONSE_MASK	0x40
+#define NEB_SUBSYS_VALUE_MASK				0x3F
 
 // Power management command code
 #define POWERMGMT_GET_BAT_LEVEL			0

@@ -44,16 +44,16 @@ struct FusionCmdItem {
 }
 
 let FusionCmdList = [FusionCmdItem](arrayLiteral:
-	FusionCmdItem(CmdId: FusionId.SixAxisIMU, Name:"6 Axis IMU Stream"),
+//	FusionCmdItem(CmdId: FusionId.SixAxisIMU, Name:"6 Axis IMU Stream"),
 	FusionCmdItem(CmdId: FusionId.Quaternion, Name: "Quaternion Stream"),
-	FusionCmdItem(CmdId: FusionId.EulerAngle, Name: "Euler Angle Stream"),
-	FusionCmdItem(CmdId: FusionId.ExtrnForce, Name: "External Force Stream"),
-	FusionCmdItem(CmdId: FusionId.Pedometer, Name:"Pedometer Stream"),
-	FusionCmdItem(CmdId: FusionId.TrajectRecStart, Name: "Trajectory Record"),
-	FusionCmdItem(CmdId: FusionId.TrajectDistance, Name: "Trajectory Distance Stream"),
-	FusionCmdItem(CmdId: FusionId.Mag, Name: "MAG Stream"),
-	FusionCmdItem(CmdId: FusionId.MotionState, Name: "Motion Data"),
-	FusionCmdItem(CmdId: FusionId.RecorderStart, Name: "Record")
+//	FusionCmdItem(CmdId: FusionId.EulerAngle, Name: "Euler Angle Stream"),
+//	FusionCmdItem(CmdId: FusionId.ExtrnForce, Name: "External Force Stream"),
+//	FusionCmdItem(CmdId: FusionId.Pedometer, Name:"Pedometer Stream"),
+//	FusionCmdItem(CmdId: FusionId.TrajectRecStart, Name: "Trajectory Record"),
+//	FusionCmdItem(CmdId: FusionId.TrajectDistance, Name: "Trajectory Distance Stream"),
+	FusionCmdItem(CmdId: FusionId.Mag, Name: "MAG Stream")
+//	FusionCmdItem(CmdId: FusionId.MotionState, Name: "Motion Data"),
+//	FusionCmdItem(CmdId: FusionId.RecorderStart, Name: "Record")
 )
 
 // BLE custom UUID
