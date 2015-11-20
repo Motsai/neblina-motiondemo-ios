@@ -1,0 +1,522 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		C9EDE8FB1BFE242F0039E9F1 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9EDE8FA1BFE242F0039E9F1 /* AppDelegate.swift */; };
+		C9EDE8FD1BFE242F0039E9F1 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9EDE8FC1BFE242F0039E9F1 /* ViewController.swift */; };
+		C9EDE8FF1BFE242F0039E9F1 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C9EDE8FE1BFE242F0039E9F1 /* Assets.xcassets */; };
+		C9EDE9021BFE24300039E9F1 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = C9EDE9001BFE24300039E9F1 /* Main.storyboard */; };
+		C9EDE90D1BFE24300039E9F1 /* SitStandTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9EDE90C1BFE24300039E9F1 /* SitStandTests.swift */; };
+		C9EDE9181BFE24300039E9F1 /* SitStandUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9EDE9171BFE24300039E9F1 /* SitStandUITests.swift */; };
+		C9EDE92E1BFE40F50039E9F1 /* CoreBluetooth.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C9EDE92D1BFE40F50039E9F1 /* CoreBluetooth.framework */; };
+		C9EDE9361BFF9F650039E9F1 /* Neblina.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9EDE9351BFF9F650039E9F1 /* Neblina.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		C9EDE9091BFE24300039E9F1 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = C9EDE8EF1BFE242F0039E9F1 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = C9EDE8F61BFE242F0039E9F1;
+			remoteInfo = SitStand;
+		};
+		C9EDE9141BFE24300039E9F1 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = C9EDE8EF1BFE242F0039E9F1 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = C9EDE8F61BFE242F0039E9F1;
+			remoteInfo = SitStand;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		C9EDE8F71BFE242F0039E9F1 /* SitStand.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SitStand.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		C9EDE8FA1BFE242F0039E9F1 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		C9EDE8FC1BFE242F0039E9F1 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
+		C9EDE8FE1BFE242F0039E9F1 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		C9EDE9011BFE24300039E9F1 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
+		C9EDE9031BFE24300039E9F1 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		C9EDE9081BFE24300039E9F1 /* SitStandTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SitStandTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		C9EDE90C1BFE24300039E9F1 /* SitStandTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SitStandTests.swift; sourceTree = "<group>"; };
+		C9EDE90E1BFE24300039E9F1 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		C9EDE9131BFE24300039E9F1 /* SitStandUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SitStandUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		C9EDE9171BFE24300039E9F1 /* SitStandUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SitStandUITests.swift; sourceTree = "<group>"; };
+		C9EDE9191BFE24300039E9F1 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		C9EDE92D1BFE40F50039E9F1 /* CoreBluetooth.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreBluetooth.framework; path = System/Library/Frameworks/CoreBluetooth.framework; sourceTree = SDKROOT; };
+		C9EDE9321BFF7F1C0039E9F1 /* FusionEngineDataTypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FusionEngineDataTypes.h; path = ../../../src/FusionEngineDataTypes.h; sourceTree = "<group>"; };
+		C9EDE9331BFF7F1C0039E9F1 /* Neblina-Bridging-Header.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "Neblina-Bridging-Header.h"; path = "../../../src/Neblina-Bridging-Header.h"; sourceTree = "<group>"; };
+		C9EDE9341BFF7F1C0039E9F1 /* neblina.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = neblina.h; path = ../../../src/neblina.h; sourceTree = "<group>"; };
+		C9EDE9351BFF9F650039E9F1 /* Neblina.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Neblina.swift; path = ../../../src/Neblina.swift; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		C9EDE8F41BFE242F0039E9F1 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C9EDE92E1BFE40F50039E9F1 /* CoreBluetooth.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		C9EDE9051BFE24300039E9F1 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		C9EDE9101BFE24300039E9F1 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		C9EDE8EE1BFE242F0039E9F1 = {
+			isa = PBXGroup;
+			children = (
+				C9EDE92D1BFE40F50039E9F1 /* CoreBluetooth.framework */,
+				C9EDE8F91BFE242F0039E9F1 /* SitStand */,
+				C9EDE90B1BFE24300039E9F1 /* SitStandTests */,
+				C9EDE9161BFE24300039E9F1 /* SitStandUITests */,
+				C9EDE8F81BFE242F0039E9F1 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		C9EDE8F81BFE242F0039E9F1 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				C9EDE8F71BFE242F0039E9F1 /* SitStand.app */,
+				C9EDE9081BFE24300039E9F1 /* SitStandTests.xctest */,
+				C9EDE9131BFE24300039E9F1 /* SitStandUITests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		C9EDE8F91BFE242F0039E9F1 /* SitStand */ = {
+			isa = PBXGroup;
+			children = (
+				C9EDE9351BFF9F650039E9F1 /* Neblina.swift */,
+				C9EDE9321BFF7F1C0039E9F1 /* FusionEngineDataTypes.h */,
+				C9EDE9331BFF7F1C0039E9F1 /* Neblina-Bridging-Header.h */,
+				C9EDE9341BFF7F1C0039E9F1 /* neblina.h */,
+				C9EDE8FA1BFE242F0039E9F1 /* AppDelegate.swift */,
+				C9EDE8FC1BFE242F0039E9F1 /* ViewController.swift */,
+				C9EDE8FE1BFE242F0039E9F1 /* Assets.xcassets */,
+				C9EDE9001BFE24300039E9F1 /* Main.storyboard */,
+				C9EDE9031BFE24300039E9F1 /* Info.plist */,
+			);
+			path = SitStand;
+			sourceTree = "<group>";
+		};
+		C9EDE90B1BFE24300039E9F1 /* SitStandTests */ = {
+			isa = PBXGroup;
+			children = (
+				C9EDE90C1BFE24300039E9F1 /* SitStandTests.swift */,
+				C9EDE90E1BFE24300039E9F1 /* Info.plist */,
+			);
+			path = SitStandTests;
+			sourceTree = "<group>";
+		};
+		C9EDE9161BFE24300039E9F1 /* SitStandUITests */ = {
+			isa = PBXGroup;
+			children = (
+				C9EDE9171BFE24300039E9F1 /* SitStandUITests.swift */,
+				C9EDE9191BFE24300039E9F1 /* Info.plist */,
+			);
+			path = SitStandUITests;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		C9EDE8F61BFE242F0039E9F1 /* SitStand */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = C9EDE91C1BFE24300039E9F1 /* Build configuration list for PBXNativeTarget "SitStand" */;
+			buildPhases = (
+				C9EDE8F31BFE242F0039E9F1 /* Sources */,
+				C9EDE8F41BFE242F0039E9F1 /* Frameworks */,
+				C9EDE8F51BFE242F0039E9F1 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = SitStand;
+			productName = SitStand;
+			productReference = C9EDE8F71BFE242F0039E9F1 /* SitStand.app */;
+			productType = "com.apple.product-type.application";
+		};
+		C9EDE9071BFE24300039E9F1 /* SitStandTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = C9EDE91F1BFE24300039E9F1 /* Build configuration list for PBXNativeTarget "SitStandTests" */;
+			buildPhases = (
+				C9EDE9041BFE24300039E9F1 /* Sources */,
+				C9EDE9051BFE24300039E9F1 /* Frameworks */,
+				C9EDE9061BFE24300039E9F1 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				C9EDE90A1BFE24300039E9F1 /* PBXTargetDependency */,
+			);
+			name = SitStandTests;
+			productName = SitStandTests;
+			productReference = C9EDE9081BFE24300039E9F1 /* SitStandTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		C9EDE9121BFE24300039E9F1 /* SitStandUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = C9EDE9221BFE24300039E9F1 /* Build configuration list for PBXNativeTarget "SitStandUITests" */;
+			buildPhases = (
+				C9EDE90F1BFE24300039E9F1 /* Sources */,
+				C9EDE9101BFE24300039E9F1 /* Frameworks */,
+				C9EDE9111BFE24300039E9F1 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				C9EDE9151BFE24300039E9F1 /* PBXTargetDependency */,
+			);
+			name = SitStandUITests;
+			productName = SitStandUITests;
+			productReference = C9EDE9131BFE24300039E9F1 /* SitStandUITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		C9EDE8EF1BFE242F0039E9F1 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastSwiftUpdateCheck = 0710;
+				LastUpgradeCheck = 0710;
+				ORGANIZATIONNAME = "Hoan Hoang";
+				TargetAttributes = {
+					C9EDE8F61BFE242F0039E9F1 = {
+						CreatedOnToolsVersion = 7.1.1;
+					};
+					C9EDE9071BFE24300039E9F1 = {
+						CreatedOnToolsVersion = 7.1.1;
+						TestTargetID = C9EDE8F61BFE242F0039E9F1;
+					};
+					C9EDE9121BFE24300039E9F1 = {
+						CreatedOnToolsVersion = 7.1.1;
+						TestTargetID = C9EDE8F61BFE242F0039E9F1;
+					};
+				};
+			};
+			buildConfigurationList = C9EDE8F21BFE242F0039E9F1 /* Build configuration list for PBXProject "SitStand" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = C9EDE8EE1BFE242F0039E9F1;
+			productRefGroup = C9EDE8F81BFE242F0039E9F1 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				C9EDE8F61BFE242F0039E9F1 /* SitStand */,
+				C9EDE9071BFE24300039E9F1 /* SitStandTests */,
+				C9EDE9121BFE24300039E9F1 /* SitStandUITests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		C9EDE8F51BFE242F0039E9F1 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C9EDE8FF1BFE242F0039E9F1 /* Assets.xcassets in Resources */,
+				C9EDE9021BFE24300039E9F1 /* Main.storyboard in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		C9EDE9061BFE24300039E9F1 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		C9EDE9111BFE24300039E9F1 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		C9EDE8F31BFE242F0039E9F1 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C9EDE8FD1BFE242F0039E9F1 /* ViewController.swift in Sources */,
+				C9EDE8FB1BFE242F0039E9F1 /* AppDelegate.swift in Sources */,
+				C9EDE9361BFF9F650039E9F1 /* Neblina.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		C9EDE9041BFE24300039E9F1 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C9EDE90D1BFE24300039E9F1 /* SitStandTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		C9EDE90F1BFE24300039E9F1 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C9EDE9181BFE24300039E9F1 /* SitStandUITests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		C9EDE90A1BFE24300039E9F1 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = C9EDE8F61BFE242F0039E9F1 /* SitStand */;
+			targetProxy = C9EDE9091BFE24300039E9F1 /* PBXContainerItemProxy */;
+		};
+		C9EDE9151BFE24300039E9F1 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = C9EDE8F61BFE242F0039E9F1 /* SitStand */;
+			targetProxy = C9EDE9141BFE24300039E9F1 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin PBXVariantGroup section */
+		C9EDE9001BFE24300039E9F1 /* Main.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				C9EDE9011BFE24300039E9F1 /* Base */,
+			);
+			name = Main.storyboard;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		C9EDE91A1BFE24300039E9F1 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "-";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.11;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = macosx;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		C9EDE91B1BFE24300039E9F1 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "-";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.11;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				SDKROOT = macosx;
+			};
+			name = Release;
+		};
+		C9EDE91D1BFE24300039E9F1 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
+				COMBINE_HIDPI_IMAGES = YES;
+				INFOPLIST_FILE = SitStand/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
+				MACOSX_DEPLOYMENT_TARGET = 10.9;
+				PRODUCT_BUNDLE_IDENTIFIER = com.motsai.SitStand;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "../../src/Neblina-Bridging-Header.h";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		C9EDE91E1BFE24300039E9F1 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
+				COMBINE_HIDPI_IMAGES = YES;
+				INFOPLIST_FILE = SitStand/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
+				MACOSX_DEPLOYMENT_TARGET = 10.9;
+				PRODUCT_BUNDLE_IDENTIFIER = com.motsai.SitStand;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "../../src/Neblina-Bridging-Header.h";
+			};
+			name = Release;
+		};
+		C9EDE9201BFE24300039E9F1 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				COMBINE_HIDPI_IMAGES = YES;
+				INFOPLIST_FILE = SitStandTests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = com.motsai.SitStandTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/SitStand.app/Contents/MacOS/SitStand";
+			};
+			name = Debug;
+		};
+		C9EDE9211BFE24300039E9F1 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				COMBINE_HIDPI_IMAGES = YES;
+				INFOPLIST_FILE = SitStandTests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = com.motsai.SitStandTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/SitStand.app/Contents/MacOS/SitStand";
+			};
+			name = Release;
+		};
+		C9EDE9231BFE24300039E9F1 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				INFOPLIST_FILE = SitStandUITests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = com.motsai.SitStandUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TEST_TARGET_NAME = SitStand;
+				USES_XCTRUNNER = YES;
+			};
+			name = Debug;
+		};
+		C9EDE9241BFE24300039E9F1 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				INFOPLIST_FILE = SitStandUITests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = com.motsai.SitStandUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TEST_TARGET_NAME = SitStand;
+				USES_XCTRUNNER = YES;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		C9EDE8F21BFE242F0039E9F1 /* Build configuration list for PBXProject "SitStand" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				C9EDE91A1BFE24300039E9F1 /* Debug */,
+				C9EDE91B1BFE24300039E9F1 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		C9EDE91C1BFE24300039E9F1 /* Build configuration list for PBXNativeTarget "SitStand" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				C9EDE91D1BFE24300039E9F1 /* Debug */,
+				C9EDE91E1BFE24300039E9F1 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		C9EDE91F1BFE24300039E9F1 /* Build configuration list for PBXNativeTarget "SitStandTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				C9EDE9201BFE24300039E9F1 /* Debug */,
+				C9EDE9211BFE24300039E9F1 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		C9EDE9221BFE24300039E9F1 /* Build configuration list for PBXNativeTarget "SitStandUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				C9EDE9231BFE24300039E9F1 /* Debug */,
+				C9EDE9241BFE24300039E9F1 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = C9EDE8EF1BFE242F0039E9F1 /* Project object */;
+}
