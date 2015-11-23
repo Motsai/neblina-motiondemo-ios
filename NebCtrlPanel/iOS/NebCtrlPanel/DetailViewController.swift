@@ -200,6 +200,7 @@ class DetailViewController: UIViewController, CBPeripheralDelegate, NeblinaDeleg
 			case FusionId.Quaternion:
 				NebDevice.EulerAngleStream(false)
 				heading = false
+				
 				NebDevice.QuaternionStream(sender.selectedSegmentIndex == 1)
 				break;
 			case FusionId.EulerAngle:
