@@ -157,9 +157,24 @@ class Neblina : NSObject, CBPeripheralDelegate {
 			//print("FusionPacket : \(fp)")
 		}
 	}
+	func isDeviceReady()-> Bool {
+		if (device == nil) {
+			return false
+		}
+		
+		if (device.state != CBPeripheralState.Connected) {
+			return false
+		}
+		
+		return true
+	}
 	
 	func MotionStream(Enable:Bool)
 	{
+		if (isDeviceReady() == false) {
+			return
+		}
+		
 		var pkbuf = [UInt8](count:20, repeatedValue:0)
 		
 		pkbuf[0] = 0x41
@@ -180,6 +195,10 @@ class Neblina : NSObject, CBPeripheralDelegate {
 
 	func SixAxisIMU_Stream(Enable:Bool)
 	{
+		if (isDeviceReady() == false) {
+			return
+		}
+		
 		var pkbuf = [UInt8](count:20, repeatedValue:0)
 		
 		pkbuf[0] = 0x41
@@ -200,6 +219,10 @@ class Neblina : NSObject, CBPeripheralDelegate {
 	
 	func QuaternionStream(Enable:Bool)
 	{
+		if (isDeviceReady() == false) {
+			return
+		}
+		
 		var pkbuf = [UInt8](count:20, repeatedValue:0)
 		
 		pkbuf[0] = 0x41
@@ -220,6 +243,10 @@ class Neblina : NSObject, CBPeripheralDelegate {
 	
 	func EulerAngleStream(Enable:Bool)
 	{
+		if (isDeviceReady() == false) {
+			return
+		}
+		
 		var pkbuf = [UInt8](count:20, repeatedValue:0)
 		
 		pkbuf[0] = 0x41
@@ -240,6 +267,10 @@ class Neblina : NSObject, CBPeripheralDelegate {
 	
 	func ExternalForceStream(Enable:Bool)
 	{
+		if (isDeviceReady() == false) {
+			return
+		}
+		
 		var pkbuf = [UInt8](count:20, repeatedValue:0)
 		
 		pkbuf[0] = 0x41
@@ -260,6 +291,10 @@ class Neblina : NSObject, CBPeripheralDelegate {
 	
 	func PedometerStream(Enable:Bool)
 	{
+		if (isDeviceReady() == false) {
+			return
+		}
+		
 		var pkbuf = [UInt8](count:20, repeatedValue:0)
 		
 		pkbuf[0] = 0x41
@@ -280,6 +315,10 @@ class Neblina : NSObject, CBPeripheralDelegate {
 	
 	func TrajectoryRecord(Enable:Bool)
 	{
+		if (isDeviceReady() == false) {
+			return
+		}
+		
 		var pkbuf = [UInt8](count:20, repeatedValue:0)
 		
 		pkbuf[0] = 0x41
@@ -300,6 +339,10 @@ class Neblina : NSObject, CBPeripheralDelegate {
 	
 	func TrajectoryDistanceData(Enable:Bool)
 	{
+		if (isDeviceReady() == false) {
+			return
+		}
+		
 		var pkbuf = [UInt8](count:20, repeatedValue:0)
 		
 		pkbuf[0] = 0x41
@@ -320,6 +363,10 @@ class Neblina : NSObject, CBPeripheralDelegate {
 	
 	func MagStream(Enable:Bool)
 	{
+		if (isDeviceReady() == false) {
+			return
+		}
+		
 		var pkbuf = [UInt8](count:20, repeatedValue:0)
 		
 		pkbuf[0] = 0x41
@@ -339,6 +386,10 @@ class Neblina : NSObject, CBPeripheralDelegate {
 	}
 	
 	func SittingStanding(Enable:Bool) {
+		if (isDeviceReady() == false) {
+			return
+		}
+		
 		var pkbuf = [UInt8](count:20, repeatedValue:0)
 		
 		pkbuf[0] = 0x41
@@ -358,6 +409,10 @@ class Neblina : NSObject, CBPeripheralDelegate {
 	}
 	
 	func FlashErase(Enable:Bool) {
+		if (isDeviceReady() == false) {
+			return
+		}
+		
 		var pkbuf = [UInt8](count:20, repeatedValue:0)
 		
 		pkbuf[0] = 0x41
@@ -378,6 +433,10 @@ class Neblina : NSObject, CBPeripheralDelegate {
 	}
 	
 	func FlashRecord(Enable:Bool) {
+		if (isDeviceReady() == false) {
+			return
+		}
+		
 		var pkbuf = [UInt8](count:20, repeatedValue:0)
 		
 		pkbuf[0] = 0x41
