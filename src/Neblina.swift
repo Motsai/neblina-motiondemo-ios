@@ -30,7 +30,7 @@ enum FusionId : UInt8 {
 	SetFusionType = 7,		// setting the Fusion type to either 6-axis or 9-axis
 	TrajectRecStart = 8,	// start recording orientation trajectory
 	TrajectRecStop = 9,		// stop recording orientation trajectory
-	TrajectDistance = 10,	// calculating the distance from a pre-recorded orientation trajectory
+	TrajectInfo = 10,		// calculating the distance from a pre-recorded orientation trajectory
 	Pedometer = 11,			// streaming pedometer data
 	Mag = 12,				// streaming magnetometer data
 	SittingStanding = 13,	// Stting & Standing data
@@ -337,7 +337,7 @@ class Neblina : NSObject, CBPeripheralDelegate {
 		device.writeValue(NSData(bytes: UnsafeMutablePointer<Void>(pkbuf), length: 20), forCharacteristic: ctrlChar, type: CBCharacteristicWriteType.WithoutResponse)
 	}
 	
-	func TrajectoryDistanceData(Enable:Bool)
+	func TrajectoryInfo(Enable:Bool)
 	{
 		if (isDeviceReady() == false) {
 			return
@@ -348,7 +348,7 @@ class Neblina : NSObject, CBPeripheralDelegate {
 		pkbuf[0] = 0x41
 		pkbuf[1] = UInt8(sizeof(Fusion_DataPacket_t))
 		pkbuf[2] = 0
-		pkbuf[3] = FusionId.TrajectDistance.rawValue	// Cmd
+		pkbuf[3] = FusionId.TrajectInfo.rawValue	// Cmd
 		
 		if Enable == true
 		{

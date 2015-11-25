@@ -29,7 +29,7 @@ class MasterViewController: UITableViewController, CBCentralManagerDelegate {
 		
 		bleCentralManager = CBCentralManager(delegate: self, queue: dispatch_get_main_queue())
 
-		let addButton = UIBarButtonItem(barButtonSystemItem: .Add, target: self, action: "insertNewObject:")
+		let addButton = UIBarButtonItem(barButtonSystemItem: .Refresh, target: self, action: "insertRefreshScan:")
 		self.navigationItem.rightBarButtonItem = addButton
 		if let split = self.splitViewController {
 		    let controllers = split.viewControllers
@@ -47,10 +47,13 @@ class MasterViewController: UITableViewController, CBCentralManagerDelegate {
 		// Dispose of any resources that can be recreated.
 	}
 
-	func insertNewObject(sender: AnyObject) {
+	func insertRefreshScan(sender: AnyObject) {
+		bleCentralManager.stopScan()
+		objects.removeAll()
+		bleCentralManager.scanForPeripheralsWithServices([NEB_SERVICE_UUID], options: nil)
 //		objects.insert(NSDate(), atIndex: 0)
-		let indexPath = NSIndexPath(forRow: 0, inSection: 0)
-		self.tableView.insertRowsAtIndexPaths([indexPath], withRowAnimation: .Automatic)
+		//let indexPath = NSIndexPath(forRow: 0, inSection: 0)
+		//self.tableView.insertRowsAtIndexPaths([indexPath], withRowAnimation: .Automatic)
 	}
 
 	// MARK: - Segues
@@ -135,19 +138,19 @@ class MasterViewController: UITableViewController, CBCentralManagerDelegate {
 			//sensorData.text = sensorData.text + "FOUND PERIPHERALS: \(peripheral) AdvertisementData: \(advertisementData) RSSI: \(RSSI)\n"
 			var id : UInt64 = 0
 			advertisementData[CBAdvertisementDataManufacturerDataKey]?.getBytes(&id, range: NSMakeRange(2, 8))
-//			if (id == 0) {
-//				return
-//			}
+			//if (id == 0) {
+			//	return
+			//}
 			
 			let device = NebDevice(id: id, peripheral: peripheral)
 
-			/*for dev in objects
+			for dev in objects
 			{
 				if (dev.id == id)
 				{
 					return;
 				}
-			}*/
+			}
 			
 			//print("Peri : \(peripheral)\n");
 			//devices.addObject(peripheral)

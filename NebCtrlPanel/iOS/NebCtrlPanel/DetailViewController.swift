@@ -21,13 +21,18 @@ let CtrlName = [String](arrayLiteral:"Heading")//, "Test1", "Test2")
 class DetailViewController: UIViewController, CBPeripheralDelegate, NeblinaDelegate, SCNSceneRendererDelegate {
 
 	let NebDevice = Neblina()
+	//var textview = UITextView()
+
 	
 	//@IBOutlet weak var detailDescriptionLabel: UILabel!
 
 	@IBOutlet weak var cmdView: UITableView!
+	//@IBOutlet weak var textview: UITextView!
+	@IBOutlet weak var label: UILabel!
+	
 	//var eulerAngles = SCNVector3(x: 0,y:0,z:0)
 	let scene = SCNScene(named: "art.scnassets/ship.scn")!
-	//var ship : SCNNode //= scene.rootNode.childNodeWithName("ship", recursively: true)!
+	var ship = SCNNode() //= scene.rootNode.childNodeWithName("ship", recursively: true)!
 	let max_count = Int16(15)
 	var cnt = Int16(15)
 	var xf = Int16(0)
@@ -58,6 +63,7 @@ class DetailViewController: UIViewController, CBPeripheralDelegate, NeblinaDeleg
 		super.viewDidLoad()
 		
 		cnt = max_count
+		//textview = self.view.viewWithTag(3) as! UITextView
 		
 		// create a new scene
 		//scene = SCNScene(named: "art.scnassets/ship.scn")!
@@ -87,7 +93,7 @@ class DetailViewController: UIViewController, CBPeripheralDelegate, NeblinaDeleg
 		scene.rootNode.addChildNode(ambientLightNode)
 		
 		// retrieve the ship node
-		let ship = scene.rootNode.childNodeWithName("ship", recursively: true)!
+		ship = scene.rootNode.childNodeWithName("ship", recursively: true)!
 		ship.eulerAngles = SCNVector3Make(GLKMathDegreesToRadians(90), 0, GLKMathDegreesToRadians(180))
 		//ship.rotation = SCNVector4(1, 0, 0, GLKMathDegreesToRadians(90))
 		//print("1 - \(ship)")
@@ -96,7 +102,7 @@ class DetailViewController: UIViewController, CBPeripheralDelegate, NeblinaDeleg
 		//ship.runAction(SCNAction.rotateToX(CGFloat(eulerAngles.x), y: CGFloat(eulerAngles.y), z: CGFloat(eulerAngles.z), duration:1 ))// 10, y: 0.0, z: 0.0, duration: 1))
 		
 		// retrieve the SCNView
-		let scnView = self.view.subviews[1] as! SCNView
+		let scnView = self.view.subviews[0] as! SCNView
 		
 		// set the scene to the view
 		scnView.scene = scene
@@ -188,6 +194,10 @@ class DetailViewController: UIViewController, CBPeripheralDelegate, NeblinaDeleg
 		let idx = cmdView.indexPathForCell(sender.superview!.superview as! UITableViewCell)
 		let row = (idx?.row)! as Int
 		
+		if (detailItem == nil) {
+			return
+		}
+		
 		if (row < FusionCmdList.count) {
 			switch (FusionCmdList[row].CmdId)
 			{
@@ -216,8 +226,8 @@ class DetailViewController: UIViewController, CBPeripheralDelegate, NeblinaDeleg
 			case FusionId.TrajectRecStart:
 				NebDevice.TrajectoryRecord(sender.selectedSegmentIndex == 1)
 				break;
-			case FusionId.TrajectDistance:
-				NebDevice.TrajectoryDistanceData(sender.selectedSegmentIndex == 1)
+			case FusionId.TrajectInfo:
+				NebDevice.TrajectoryInfo(sender.selectedSegmentIndex == 1)
 				break;
 			case FusionId.Mag:
 				NebDevice.MagStream(sender.selectedSegmentIndex == 1)
@@ -262,7 +272,6 @@ class DetailViewController: UIViewController, CBPeripheralDelegate, NeblinaDeleg
 	}
 	
 	func didReceiveFusionData(type : FusionId, data : Fusion_DataPacket_t) {
-		let textview = self.view.viewWithTag(3) as! UITextView
 
 		switch (type) {
 			
@@ -274,7 +283,7 @@ class DetailViewController: UIViewController, CBPeripheralDelegate, NeblinaDeleg
 			//
 			// Process Euler Angle
 			//
-			let ship = scene.rootNode.childNodeWithName("ship", recursively: true)!
+			//let ship = scene.rootNode.childNodeWithName("ship", recursively: true)!
 			let x = (Int16(data.data.0) & 0xff) | (Int16(data.data.1) << 8)
 			let xrot = Float(x) / 10.0
 			let y = (Int16(data.data.2) & 0xff) | (Int16(data.data.3) << 8)
@@ -287,10 +296,11 @@ class DetailViewController: UIViewController, CBPeripheralDelegate, NeblinaDeleg
 			}
 			else {
 //				ship.eulerAngles = SCNVector3Make(GLKMathDegreesToRadians(90) - GLKMathDegreesToRadians(yrot), GLKMathDegreesToRadians(zrot), GLKMathDegreesToRadians(180) - GLKMathDegreesToRadians(xrot))
+				
 				ship.eulerAngles = SCNVector3Make(GLKMathDegreesToRadians(180) - GLKMathDegreesToRadians(yrot), GLKMathDegreesToRadians(xrot), GLKMathDegreesToRadians(180) - GLKMathDegreesToRadians(zrot))
 			}
 			
-			textview.text = String("Euler - Yaw:\(xrot), Pitch:\(yrot), Roll:\(zrot)")
+			label.text = String("Euler - Yaw:\(xrot), Pitch:\(yrot), Roll:\(zrot)")
 			
 		
 			break
@@ -299,7 +309,7 @@ class DetailViewController: UIViewController, CBPeripheralDelegate, NeblinaDeleg
 			//
 			// Process Quaternion
 			//
-			let ship = scene.rootNode.childNodeWithName("ship", recursively: true)!
+			//let ship = scene.rootNode.childNodeWithName("ship", recursively: true)!
 			let x = (Int16(data.data.0) & 0xff) | (Int16(data.data.1) << 8)
 			let xq = Float(x) / 32768.0
 			let y = (Int16(data.data.2) & 0xff) | (Int16(data.data.3) << 8)
@@ -309,7 +319,7 @@ class DetailViewController: UIViewController, CBPeripheralDelegate, NeblinaDeleg
 			let w = (Int16(data.data.6) & 0xff) | (Int16(data.data.7) << 8)
 			let wq = Float(w) / 32768.0
 			ship.orientation = SCNQuaternion(yq, xq, zq, wq)
-			textview.text = String("Quat - x:\(xq), y:\(yq), z:\(zq), w:\(wq)")
+			label.text = String("Quat - x:\(xq), y:\(yq), z:\(zq), w:\(wq)")
 			
 			
 			break
@@ -317,7 +327,7 @@ class DetailViewController: UIViewController, CBPeripheralDelegate, NeblinaDeleg
 			//
 			// Process External Force
 			//
-			let ship = scene.rootNode.childNodeWithName("ship", recursively: true)!
+			//let ship = scene.rootNode.childNodeWithName("ship", recursively: true)!
 			let x = (Int16(data.data.0) & 0xff) | (Int16(data.data.1) << 8)
 			let xq = x / 1600
 			let y = (Int16(data.data.2) & 0xff) | (Int16(data.data.3) << 8)
@@ -367,21 +377,21 @@ class DetailViewController: UIViewController, CBPeripheralDelegate, NeblinaDeleg
 				}*/
 			}
 			
-			textview.text = String("Extrn Force - x:\(xq), y:\(yq), z:\(zq)")
+			label.text = String("Extrn Force - x:\(xq), y:\(yq), z:\(zq)")
 			//print("Extrn Force - x:\(xq), y:\(yq), z:\(zq)")
 			break
 		case FusionId.Mag:
 			//
 			// Mag data
 			//
-			let ship = scene.rootNode.childNodeWithName("ship", recursively: true)!
+			//let ship = scene.rootNode.childNodeWithName("ship", recursively: true)!
 			let x = (Int16(data.data.0) & 0xff) | (Int16(data.data.1) << 8)
 			let xq = x / 10
 			let y = (Int16(data.data.2) & 0xff) | (Int16(data.data.3) << 8)
 			let yq = y / 10
 			let z = (Int16(data.data.4) & 0xff) | (Int16(data.data.5) << 8)
 			let zq = z / 10
-			textview.text = String("Mag - x:\(xq), y:\(yq), z:\(zq)")
+			label.text = String("Mag - x:\(xq), y:\(yq), z:\(zq)")
 			//ship.rotation = SCNVector4(Float(xq), Float(yq), 0, GLKMathDegreesToRadians(90))
 			break
 		
