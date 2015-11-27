@@ -13,6 +13,9 @@
 		C91C6F441C03786200FC1681 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = C91C6F421C03786200FC1681 /* Main.storyboard */; };
 		C91C6F4F1C03786200FC1681 /* ExerciseMotionTrackerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C91C6F4E1C03786200FC1681 /* ExerciseMotionTrackerTests.swift */; };
 		C91C6F5A1C03786200FC1681 /* ExerciseMotionTrackerUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C91C6F591C03786200FC1681 /* ExerciseMotionTrackerUITests.swift */; };
+		C91C6F681C037B5E00FC1681 /* CoreBluetooth.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C91C6F671C037B5E00FC1681 /* CoreBluetooth.framework */; };
+		C91C6F721C038A8B00FC1681 /* Neblina.swift in Sources */ = {isa = PBXBuildFile; fileRef = C91C6F711C038A8B00FC1681 /* Neblina.swift */; };
+		C9DF6B331C08AEE2007DB407 /* art.scnassets in Resources */ = {isa = PBXBuildFile; fileRef = C9DF6B321C08AEE2007DB407 /* art.scnassets */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -45,6 +48,12 @@
 		C91C6F551C03786200FC1681 /* ExerciseMotionTrackerUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ExerciseMotionTrackerUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		C91C6F591C03786200FC1681 /* ExerciseMotionTrackerUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExerciseMotionTrackerUITests.swift; sourceTree = "<group>"; };
 		C91C6F5B1C03786200FC1681 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		C91C6F671C037B5E00FC1681 /* CoreBluetooth.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreBluetooth.framework; path = System/Library/Frameworks/CoreBluetooth.framework; sourceTree = SDKROOT; };
+		C91C6F6E1C038A8B00FC1681 /* FusionEngineDataTypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FusionEngineDataTypes.h; path = ../../../src/FusionEngineDataTypes.h; sourceTree = "<group>"; };
+		C91C6F6F1C038A8B00FC1681 /* Neblina-Bridging-Header.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "Neblina-Bridging-Header.h"; path = "../../../src/Neblina-Bridging-Header.h"; sourceTree = "<group>"; };
+		C91C6F701C038A8B00FC1681 /* neblina.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = neblina.h; path = ../../../src/neblina.h; sourceTree = "<group>"; };
+		C91C6F711C038A8B00FC1681 /* Neblina.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Neblina.swift; path = ../../../src/Neblina.swift; sourceTree = "<group>"; };
+		C9DF6B321C08AEE2007DB407 /* art.scnassets */ = {isa = PBXFileReference; lastKnownFileType = wrapper.scnassets; name = art.scnassets; path = ../../../art.scnassets; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -52,6 +61,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C91C6F681C037B5E00FC1681 /* CoreBluetooth.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -75,6 +85,7 @@
 		C91C6F301C03786200FC1681 = {
 			isa = PBXGroup;
 			children = (
+				C91C6F671C037B5E00FC1681 /* CoreBluetooth.framework */,
 				C91C6F3B1C03786200FC1681 /* ExerciseMotionTracker */,
 				C91C6F4D1C03786200FC1681 /* ExerciseMotionTrackerTests */,
 				C91C6F581C03786200FC1681 /* ExerciseMotionTrackerUITests */,
@@ -95,6 +106,11 @@
 		C91C6F3B1C03786200FC1681 /* ExerciseMotionTracker */ = {
 			isa = PBXGroup;
 			children = (
+				C9DF6B321C08AEE2007DB407 /* art.scnassets */,
+				C91C6F6E1C038A8B00FC1681 /* FusionEngineDataTypes.h */,
+				C91C6F6F1C038A8B00FC1681 /* Neblina-Bridging-Header.h */,
+				C91C6F701C038A8B00FC1681 /* neblina.h */,
+				C91C6F711C038A8B00FC1681 /* Neblina.swift */,
 				C91C6F3C1C03786200FC1681 /* AppDelegate.swift */,
 				C91C6F3E1C03786200FC1681 /* ViewController.swift */,
 				C91C6F401C03786200FC1681 /* Assets.xcassets */,
@@ -227,6 +243,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				C91C6F411C03786200FC1681 /* Assets.xcassets in Resources */,
+				C9DF6B331C08AEE2007DB407 /* art.scnassets in Resources */,
 				C91C6F441C03786200FC1681 /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -253,6 +270,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				C91C6F3F1C03786200FC1681 /* ViewController.swift in Sources */,
+				C91C6F721C038A8B00FC1681 /* Neblina.swift in Sources */,
 				C91C6F3D1C03786200FC1681 /* AppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -384,11 +402,15 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
 				COMBINE_HIDPI_IMAGES = YES;
 				INFOPLIST_FILE = ExerciseMotionTracker/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
+				MACOSX_DEPLOYMENT_TARGET = 10.10;
 				PRODUCT_BUNDLE_IDENTIFIER = com.motsai.ExerciseMotionTracker;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "../../src/Neblina-Bridging-Header.h";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 			};
 			name = Debug;
 		};
@@ -396,11 +418,14 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
 				COMBINE_HIDPI_IMAGES = YES;
 				INFOPLIST_FILE = ExerciseMotionTracker/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
+				MACOSX_DEPLOYMENT_TARGET = 10.10;
 				PRODUCT_BUNDLE_IDENTIFIER = com.motsai.ExerciseMotionTracker;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "../../src/Neblina-Bridging-Header.h";
 			};
 			name = Release;
 		};
@@ -475,6 +500,7 @@
 				C91C6F601C03786200FC1681 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		C91C6F611C03786200FC1681 /* Build configuration list for PBXNativeTarget "ExerciseMotionTrackerTests" */ = {
 			isa = XCConfigurationList;
@@ -483,6 +509,7 @@
 				C91C6F631C03786200FC1681 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		C91C6F641C03786200FC1681 /* Build configuration list for PBXNativeTarget "ExerciseMotionTrackerUITests" */ = {
 			isa = XCConfigurationList;
@@ -491,6 +518,7 @@
 				C91C6F661C03786200FC1681 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
