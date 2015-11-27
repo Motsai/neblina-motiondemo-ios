@@ -52,9 +52,11 @@ let FusionCmdList = [FusionCmdItem](arrayLiteral:
 //	FusionCmdItem(CmdId: FusionId.Pedometer, Name:"Pedometer Stream"),
 //	FusionCmdItem(CmdId: FusionId.TrajectRecStart, Name: "Trajectory Record"),
 //	FusionCmdItem(CmdId: FusionId.TrajectDistance, Name: "Trajectory Distance Stream"),
-	FusionCmdItem(CmdId: FusionId.Mag, Name: "MAG Stream")
+	FusionCmdItem(CmdId: FusionId.Mag, Name: "MAG Stream"),
 //	FusionCmdItem(CmdId: FusionId.MotionState, Name: "Motion Data"),
-//	FusionCmdItem(CmdId: FusionId.RecorderStart, Name: "Record")
+	FusionCmdItem(CmdId: FusionId.FlashEraseAll, Name: "Flash Erase All"),
+	FusionCmdItem(CmdId: FusionId.FlashRecordStartStop, Name: "Flash Record"),
+	FusionCmdItem(CmdId: FusionId.FlashPlaybackStartStop, Name: "Flash Playback")
 )
 
 // BLE custom UUID
@@ -69,6 +71,16 @@ class Neblina : NSObject, CBPeripheralDelegate {
 	var NebPkt = NEB_PKT()//(SubSys: 0, Len: 0, Crc: 0, Data: [UInt8](count:17, repeatedValue:0)
 	var fp = Fusion_DataPacket_t()
 	var delegate : NeblinaDelegate!
+	
+	func getCmdIdx(id : FusionId) -> Int {
+		for (idx, item) in FusionCmdList.enumerate() {
+			if (item.CmdId == id) {
+				return idx
+			}
+		}
+		
+		return -1
+	}
 	
 	func setPeripheral(peripheral : CBPeripheral) {
 		device = peripheral;
@@ -455,6 +467,30 @@ class Neblina : NSObject, CBPeripheralDelegate {
 		device.writeValue(NSData(bytes: UnsafeMutablePointer<Void>(pkbuf), length: 20), forCharacteristic: ctrlChar, type: CBCharacteristicWriteType.WithoutResponse)
 	}
 	
+	func FlashPlayback(Enable:Bool) {
+		if (isDeviceReady() == false) {
+			return
+		}
+		
+		var pkbuf = [UInt8](count:20, repeatedValue:0)
+		
+		pkbuf[0] = 0x41
+		pkbuf[1] = UInt8(sizeof(Fusion_DataPacket_t))
+		pkbuf[2] = 0
+		pkbuf[3] = FusionId.FlashPlaybackStartStop.rawValue	// Cmd
+		
+		if Enable == true
+		{
+			pkbuf[8] = 1
+		}
+		else
+		{
+			pkbuf[8] = 0
+		}
+		pkbuf[9] = 0xff
+		pkbuf[10] = 0xff
+		device.writeValue(NSData(bytes: UnsafeMutablePointer<Void>(pkbuf), length: 20), forCharacteristic: ctrlChar, type: CBCharacteristicWriteType.WithoutResponse)
+	}
 }
 
 protocol NeblinaDelegate {

@@ -29,6 +29,7 @@ class DetailViewController: UIViewController, CBPeripheralDelegate, NeblinaDeleg
 	@IBOutlet weak var cmdView: UITableView!
 	//@IBOutlet weak var textview: UITextView!
 	@IBOutlet weak var label: UILabel!
+	@IBOutlet weak var flashrec: UILabel!
 	
 	//var eulerAngles = SCNVector3(x: 0,y:0,z:0)
 	let scene = SCNScene(named: "art.scnassets/ship.scn")!
@@ -39,6 +40,7 @@ class DetailViewController: UIViewController, CBPeripheralDelegate, NeblinaDeleg
 	var yf = Int16(0)
 	var zf = Int16(0)
 	var heading = Bool(false)
+	var flashEraseProgress = Bool(false)
 	
 	var detailItem: CBPeripheral? {
 		didSet {
@@ -133,7 +135,7 @@ class DetailViewController: UIViewController, CBPeripheralDelegate, NeblinaDeleg
 	
 	func handleTap(gestureRecognize: UIGestureRecognizer) {
 		// retrieve the SCNView
-		let scnView = self.view as! SCNView
+		let scnView = self.view.subviews[0] as! SCNView
 		
 		// check what nodes are tapped
 		let p = gestureRecognize.locationInView(scnView)
@@ -164,6 +166,7 @@ class DetailViewController: UIViewController, CBPeripheralDelegate, NeblinaDeleg
 			
 			SCNTransaction.commit()
 		}
+		
 	}
 	
 
@@ -212,6 +215,11 @@ class DetailViewController: UIViewController, CBPeripheralDelegate, NeblinaDeleg
 				heading = false
 				
 				NebDevice.QuaternionStream(sender.selectedSegmentIndex == 1)
+				//var i = NebDevice.getCmdIdx(FusionId.FlashPlaybackStartStop)
+				let cell = cmdView.cellForRowAtIndexPath( NSIndexPath(forRow: FusionCmdList.count, inSection: 0))
+				let sw = cell!.viewWithTag(2) as! UISegmentedControl
+				sw.selectedSegmentIndex = 0
+				
 				break;
 			case FusionId.EulerAngle:
 				NebDevice.QuaternionStream(false)
@@ -233,11 +241,17 @@ class DetailViewController: UIViewController, CBPeripheralDelegate, NeblinaDeleg
 				NebDevice.MagStream(sender.selectedSegmentIndex == 1)
 				break;
 			case FusionId.FlashEraseAll:
+				if (sender.selectedSegmentIndex == 1) {
+					flashEraseProgress = true;
+				}
 				NebDevice.FlashErase(sender.selectedSegmentIndex == 1)
 				break
 			case FusionId.FlashRecordStartStop:
 				NebDevice.FlashRecord(sender.selectedSegmentIndex == 1)
 				break
+			case FusionId.FlashPlaybackStartStop:
+				NebDevice.FlashPlayback(sender.selectedSegmentIndex == 1)
+				break;
 			default:
 				break;
 			
@@ -249,6 +263,10 @@ class DetailViewController: UIViewController, CBPeripheralDelegate, NeblinaDeleg
 				NebDevice.QuaternionStream(false)
 				NebDevice.EulerAngleStream(true)
 				heading = sender.selectedSegmentIndex == 1
+				var i = NebDevice.getCmdIdx(FusionId.Quaternion)
+				let cell = cmdView.cellForRowAtIndexPath( NSIndexPath(forRow: i, inSection: 0))
+				let sw = cell!.viewWithTag(2) as! UISegmentedControl
+				sw.selectedSegmentIndex = 0
 				break
 			default:
 				break
@@ -394,7 +412,47 @@ class DetailViewController: UIViewController, CBPeripheralDelegate, NeblinaDeleg
 			label.text = String("Mag - x:\(xq), y:\(yq), z:\(zq)")
 			//ship.rotation = SCNVector4(Float(xq), Float(yq), 0, GLKMathDegreesToRadians(90))
 			break
-		
+		case FusionId.FlashEraseAll:
+			//let session = (Int16(data.data.0) & 0xff) | (Int16(data.data.1) << 8)
+			flashrec.text = String("Flash Erased")
+			flashEraseProgress = false
+			let i = NebDevice.getCmdIdx(FusionId.FlashEraseAll)
+			let cell = cmdView.cellForRowAtIndexPath( NSIndexPath(forRow: i, inSection: 0))
+			let sw = cell!.viewWithTag(2) as! UISegmentedControl
+			sw.selectedSegmentIndex = 0
+			break;
+		case FusionId.FlashRecordStartStop:
+			let onoff = Int8(data.data.0)
+			let session = (Int16(data.data.1) & 0xff) | (Int16(data.data.2) << 8)
+			if (onoff == 0) {
+				flashrec.text = String("Flash Recording Finished \(session)")
+				let i = NebDevice.getCmdIdx(FusionId.FlashRecordStartStop)
+				let cell = cmdView.cellForRowAtIndexPath( NSIndexPath(forRow: i, inSection: 0))
+				let sw = cell!.viewWithTag(2) as! UISegmentedControl
+				sw.selectedSegmentIndex = 0
+			}
+			else {
+				flashrec.text = String("Flash Recording Session \(session)")
+				
+			}
+			
+			break;
+		case FusionId.FlashPlaybackStartStop:
+			let onoff = Int8(data.data.0)
+			let session = (Int16(data.data.1) & 0xff) | (Int16(data.data.2) << 8)
+			if (onoff == 0) {
+				flashrec.text = String("Flash Playback Finished")
+				let i = NebDevice.getCmdIdx(FusionId.FlashPlaybackStartStop)
+				let cell = cmdView.cellForRowAtIndexPath( NSIndexPath(forRow: i, inSection: 0))
+				let sw = cell!.viewWithTag(2) as! UISegmentedControl
+				sw.selectedSegmentIndex = 0
+			}
+			else {
+				flashrec.text = String("Flash Playback Session \(session)")
+				
+			}
+			break
+			
 		default: break
 		}
 		
