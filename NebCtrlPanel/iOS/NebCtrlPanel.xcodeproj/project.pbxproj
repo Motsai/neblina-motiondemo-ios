@@ -17,7 +17,7 @@
 		C90AF9A01BEBABD20040D4CA /* NebCtrlPanelUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C90AF99F1BEBABD20040D4CA /* NebCtrlPanelUITests.swift */; };
 		C90AF9B41BEBAD370040D4CA /* Neblina.swift in Sources */ = {isa = PBXBuildFile; fileRef = C90AF9B31BEBAD370040D4CA /* Neblina.swift */; };
 		C90AF9B71BEBB1090040D4CA /* CoreBluetooth.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C90AF9B61BEBB1090040D4CA /* CoreBluetooth.framework */; };
-		C90AF9B91BEBB1E80040D4CA /* art.scnassets in Resources */ = {isa = PBXBuildFile; fileRef = C90AF9B81BEBB1E80040D4CA /* art.scnassets */; };
+		C9DF6B311C08AD73007DB407 /* art.scnassets in Resources */ = {isa = PBXBuildFile; fileRef = C9DF6B301C08AD73007DB407 /* art.scnassets */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -55,9 +55,9 @@
 		C90AF9B21BEBAD370040D4CA /* Neblina-Bridging-Header.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "Neblina-Bridging-Header.h"; path = "../../../src/Neblina-Bridging-Header.h"; sourceTree = "<group>"; };
 		C90AF9B31BEBAD370040D4CA /* Neblina.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Neblina.swift; path = ../../../src/Neblina.swift; sourceTree = "<group>"; };
 		C90AF9B61BEBB1090040D4CA /* CoreBluetooth.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreBluetooth.framework; path = System/Library/Frameworks/CoreBluetooth.framework; sourceTree = SDKROOT; };
-		C90AF9B81BEBB1E80040D4CA /* art.scnassets */ = {isa = PBXFileReference; lastKnownFileType = wrapper.scnassets; path = art.scnassets; sourceTree = "<group>"; };
 		C98A75B61BF147AD002D7601 /* FusionEngineDataTypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FusionEngineDataTypes.h; path = ../../../src/FusionEngineDataTypes.h; sourceTree = "<group>"; };
 		C98A75B71BF147AD002D7601 /* neblina.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = neblina.h; path = ../../../src/neblina.h; sourceTree = "<group>"; };
+		C9DF6B301C08AD73007DB407 /* art.scnassets */ = {isa = PBXFileReference; lastKnownFileType = wrapper.scnassets; name = art.scnassets; path = ../../../art.scnassets; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -110,9 +110,9 @@
 		C90AF97C1BEBABD20040D4CA /* NebCtrlPanel */ = {
 			isa = PBXGroup;
 			children = (
+				C9DF6B301C08AD73007DB407 /* art.scnassets */,
 				C98A75B61BF147AD002D7601 /* FusionEngineDataTypes.h */,
 				C98A75B71BF147AD002D7601 /* neblina.h */,
-				C90AF9B81BEBB1E80040D4CA /* art.scnassets */,
 				C90AF9B21BEBAD370040D4CA /* Neblina-Bridging-Header.h */,
 				C90AF9B31BEBAD370040D4CA /* Neblina.swift */,
 				C90AF97D1BEBABD20040D4CA /* AppDelegate.swift */,
@@ -249,7 +249,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				C90AF98A1BEBABD20040D4CA /* LaunchScreen.storyboard in Resources */,
-				C90AF9B91BEBB1E80040D4CA /* art.scnassets in Resources */,
+				C9DF6B311C08AD73007DB407 /* art.scnassets in Resources */,
 				C90AF9871BEBABD20040D4CA /* Assets.xcassets in Resources */,
 				C90AF9851BEBABD20040D4CA /* Main.storyboard in Resources */,
 			);
