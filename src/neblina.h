@@ -39,13 +39,31 @@ typedef struct {
 	NEB_DATA_TYPE	Type;		// Data type
 	uint16_t		DataLen;	// Length of following data
 } NEB_DATA_HRD;
+/*
+typedef enum {
+	BLE = (uint8_t)0x00, //default value
+	Serial = (uint8_t)0x01,
+}Intrfc_Protocol;
+*/
+
+/*
+ * Neblina communication interface definitions
+ */
+#define NEB_COMM_INTRF_BLE				0		// Neblina comm over BLE
+#define NEB_COMM_INTRF_UART				1		// Neblina comm over UART
 
 /*
  * Neblina subsystem definitions
  */
 #define NEB_SUBSYS_DEBUG				0		// Status & logging
 #define NEB_SUBSYS_MOTION_ENG			1		// Motion Engine
-#define NEB_SUBSYS_POWER_MGMT			2		// Power management
+#define NEB_SUBSYS_POWERMGMT			2		// Power management
+#define NEB_SUBSYS_GPIO					3		// GPIO control
+#define NEB_SUBSYS_LED					4		// LED control
+#define NEB_SUBSYS_ADC					5		// ADC control
+#define NEB_SUBSYS_DAC					6		// DAC control
+#define NEB_SUBSYS_I2C					7		// I2C control
+#define NEB_SUBSYS_SPI					8		// SPI control
 
 //Status Check MASK for SUBSYS
 #define NEB_SUBSYS_STATUS_MASK				0x80
@@ -53,17 +71,21 @@ typedef struct {
 #define NEB_SUBSYS_VALUE_MASK				0x3F
 
 // Power management command code
-#define POWERMGMT_GET_BAT_LEVEL			0
+#define POWERMGMT_CMD_GET_BAT_LEVEL			0	// Get battery level
 
+// Debug command code
+#define DEBUG_CMD_SET_INTERFACE					1	//sets the protocol interface
 
-
+/*
 typedef enum subsystem_t//:uint8_t
 {
-	MotionEngine = 0x01,
-	PMIC = 0x02,
-	CPU_ADC = 0x03,
-	CPU_GPIO = 0x04
+	DebugLog = NEB_SUBSYS_DEBUG,
+	MotionEngine = NEB_SUBSYS_MOTION_ENG,
+	PMIC = NEB_SUBSYS_POWER_MGMT,
+	Gpio = NEB_SUBSYS_GPIO,
+	Led = NEB_SUBSYS_LED
 } subsystem_t;
+*/
 
 typedef struct Fusion_DataPacket_t
 {

@@ -59,6 +59,23 @@ let FusionCmdList = [FusionCmdItem](arrayLiteral:
 	FusionCmdItem(CmdId: FusionId.FlashPlaybackStartStop, Name: "Flash Playback")
 )
 
+struct NebCmdItem {
+	let SubSysId : Int32
+	let	CmdId : Int32
+	let Name : String
+}
+
+
+let NebCmdList = [NebCmdItem] (arrayLiteral:
+	NebCmdItem(SubSysId: NEB_SUBSYS_DEBUG, CmdId: DEBUG_CMD_SET_INTERFACE, Name: "Set Interface (BLE/UART)"),
+	NebCmdItem(SubSysId: NEB_SUBSYS_MOTION_ENG, CmdId: Quaternion, Name: "Quaternion Stream"),
+	NebCmdItem(SubSysId: NEB_SUBSYS_MOTION_ENG, CmdId: MAG_Data, Name: "Mag Stream"),
+	NebCmdItem(SubSysId: NEB_SUBSYS_MOTION_ENG, CmdId: FlashEraseAll, Name: "Flash Erase All"),
+	NebCmdItem(SubSysId: NEB_SUBSYS_MOTION_ENG, CmdId: FlashRecordStartStop, Name: "Flash Record"),
+	NebCmdItem(SubSysId: NEB_SUBSYS_MOTION_ENG, CmdId: FlashPlaybackStartStop, Name: "Flash Playback"),
+	NebCmdItem(SubSysId: NEB_SUBSYS_MOTION_ENG, CmdId: LockHeadingRef, Name: "Lock Heading Ref.")
+)
+
 // BLE custom UUID
 let NEB_SERVICE_UUID = CBUUID (string:"0df9f021-1532-11e5-8960-0002a5d5c51b")
 let NEB_DATACHAR_UUID = CBUUID (string:"0df9f022-1532-11e5-8960-0002a5d5c51b")
@@ -72,9 +89,9 @@ class Neblina : NSObject, CBPeripheralDelegate {
 	var fp = Fusion_DataPacket_t()
 	var delegate : NeblinaDelegate!
 	
-	func getCmdIdx(id : FusionId) -> Int {
-		for (idx, item) in FusionCmdList.enumerate() {
-			if (item.CmdId == id) {
+	func getCmdIdx(subsysId : Int32, cmdId : Int32) -> Int {
+		for (idx, item) in NebCmdList.enumerate() {
+			if (item.SubSysId == subsysId && item.CmdId == cmdId) {
 				return idx
 			}
 		}
@@ -143,9 +160,15 @@ class Neblina : NSObject, CBPeripheralDelegate {
 		{
 			characteristic.value?.getBytes(&hdr, length: sizeof(NEB_PKTHDR))
 			characteristic.value?.getBytes(&NebPkt, length: sizeof(NEB_PKTHDR) + 1)
-			switch (hdr.SubSys)
+			var errflag = Bool(false)
+			if ((hdr.SubSys & 0x80) == 0x80)
 			{
-				case 1:	// Motion Engine
+				errflag = true;
+				hdr.SubSys &= 0x7F;
+			}
+			switch (Int32(hdr.SubSys))
+			{
+				case NEB_SUBSYS_MOTION_ENG:	// Motion Engine
 					//print("\(characteristic.value)")
 					characteristic.value?.getBytes(&fp, range: NSMakeRange(sizeof(NEB_PKTHDR), sizeof(Fusion_DataPacket_t)))
 					//print("\(characteristic.value)")
@@ -156,7 +179,7 @@ class Neblina : NSObject, CBPeripheralDelegate {
 					
 					//print("\(fdata)")
 					let id = FusionId(rawValue: hdr.Cmd)
-					delegate.didReceiveFusionData(id!, data: fp)
+					delegate.didReceiveFusionData(id!, data: fp, errFlag: errflag)
 					//delegate.didReceiveFusionData(hdr.Cmd, data: fdata)
 //					characteristic.value?.getBytes(&ppk, range: NSMakeRange(sizeof(NEB_PKTHDR), 16))
 					break;
@@ -242,7 +265,7 @@ class Neblina : NSObject, CBPeripheralDelegate {
 		pkbuf[2] = 0
 		pkbuf[3] = FusionId.Quaternion.rawValue	// Cmd
 		
-		if Enable == true
+		if (Enable == true)
 		{
 			pkbuf[8] = 1
 		}
@@ -266,7 +289,7 @@ class Neblina : NSObject, CBPeripheralDelegate {
 		pkbuf[2] = 0
 		pkbuf[3] = FusionId.EulerAngle.rawValue	// Cmd
 		
-		if Enable == true
+		if (Enable == true)
 		{
 			pkbuf[8] = 1
 		}
@@ -290,7 +313,7 @@ class Neblina : NSObject, CBPeripheralDelegate {
 		pkbuf[2] = 0
 		pkbuf[3] = FusionId.ExtrnForce.rawValue	// Cmd
 		
-		if Enable == true
+		if (Enable == true)
 		{
 			pkbuf[8] = 1
 		}
@@ -491,11 +514,51 @@ class Neblina : NSObject, CBPeripheralDelegate {
 		pkbuf[10] = 0xff
 		device.writeValue(NSData(bytes: UnsafeMutablePointer<Void>(pkbuf), length: 20), forCharacteristic: ctrlChar, type: CBCharacteristicWriteType.WithoutResponse)
 	}
+	
+	func LockHeading(Enable:Bool) {
+		if (isDeviceReady() == false) {
+			return
+		}
+		
+		var pkbuf = [UInt8](count:20, repeatedValue:0)
+	
+		pkbuf[0] = 0x41
+		pkbuf[1] = 0 //UInt8(sizeof(Fusion_DataPacket_t))
+		pkbuf[2] = 0
+		pkbuf[3] = UInt8(LockHeadingRef)	// Cmd
+		
+		device.writeValue(NSData(bytes: UnsafeMutablePointer<Void>(pkbuf), length: 20), forCharacteristic: ctrlChar, type: CBCharacteristicWriteType.WithoutResponse)
+	}
+	
+	func ControlInterface(Interf : Int) {
+		if (isDeviceReady() == false) {
+			return
+		}
+		
+		var pkbuf = [UInt8](count:20, repeatedValue:0)
+		
+		pkbuf[0] = 0x40
+		pkbuf[1] = 1//UInt8(sizeof(Fusion_DataPacket_t))
+		pkbuf[2] = 0
+		pkbuf[3] = 1//FusionId.FlashPlaybackStartStop.rawValue	// Cmd
+		
+		// Interf = 0 : BLE
+		// Interf = 1 : UART
+		pkbuf[4] = UInt8(Interf)
+		//pkbuf[9] = 0xff
+		//pkbuf[10] = 0xff
+		device.writeValue(NSData(bytes: UnsafeMutablePointer<Void>(pkbuf), length: 20), forCharacteristic: ctrlChar, type: CBCharacteristicWriteType.WithoutResponse)
+	}
+
 }
 
 protocol NeblinaDelegate {
 	
-	func didReceiveFusionData(type : FusionId, data : Fusion_DataPacket_t)
-	//func didReceiveFusionData(type : UInt8, data : FusionPacket)
+	func didReceiveFusionData(type : FusionId, data : Fusion_DataPacket_t, errFlag : Bool)
+	
 	func didConnectNeblina()
+	
+	//TODO: add processing functions callback for each packet type
+	
+	// Process Fusion data
 }

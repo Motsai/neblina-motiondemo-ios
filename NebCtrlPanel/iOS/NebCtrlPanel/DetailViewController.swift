@@ -201,69 +201,88 @@ class DetailViewController: UIViewController, CBPeripheralDelegate, NeblinaDeleg
 			return
 		}
 		
-		if (row < FusionCmdList.count) {
-			switch (FusionCmdList[row].CmdId)
+		if (row < NebCmdList.count) {
+			switch (NebCmdList[row].SubSysId)
 			{
-			case FusionId.MotionState:
-				NebDevice.MotionStream(sender.selectedSegmentIndex == 1)
-				break;
-			case FusionId.SixAxisIMU:
-				NebDevice.SixAxisIMU_Stream(sender.selectedSegmentIndex == 1)
-				break;
-			case FusionId.Quaternion:
-				NebDevice.EulerAngleStream(false)
-				heading = false
+				case NEB_SUBSYS_DEBUG:
+					if (NebCmdList[row].CmdId == DEBUG_CMD_SET_INTERFACE) {
+						NebDevice.ControlInterface(sender.selectedSegmentIndex)
+					}
+					break
 				
-				NebDevice.QuaternionStream(sender.selectedSegmentIndex == 1)
-				//var i = NebDevice.getCmdIdx(FusionId.FlashPlaybackStartStop)
-				let cell = cmdView.cellForRowAtIndexPath( NSIndexPath(forRow: FusionCmdList.count, inSection: 0))
-				let sw = cell!.viewWithTag(2) as! UISegmentedControl
-				sw.selectedSegmentIndex = 0
-				
-				break;
-			case FusionId.EulerAngle:
-				NebDevice.QuaternionStream(false)
-				NebDevice.EulerAngleStream(sender.selectedSegmentIndex == 1)
-				break;
-			case FusionId.ExtrnForce:
-				NebDevice.ExternalForceStream(sender.selectedSegmentIndex == 1)
-				break;
-			case FusionId.Pedometer:
-				NebDevice.PedometerStream(sender.selectedSegmentIndex == 1)
-				break;
-			case FusionId.TrajectRecStart:
-				NebDevice.TrajectoryRecord(sender.selectedSegmentIndex == 1)
-				break;
-			case FusionId.TrajectInfo:
-				NebDevice.TrajectoryInfo(sender.selectedSegmentIndex == 1)
-				break;
-			case FusionId.Mag:
-				NebDevice.MagStream(sender.selectedSegmentIndex == 1)
-				break;
-			case FusionId.FlashEraseAll:
-				if (sender.selectedSegmentIndex == 1) {
-					flashEraseProgress = true;
-				}
-				NebDevice.FlashErase(sender.selectedSegmentIndex == 1)
-				break
-			case FusionId.FlashRecordStartStop:
-				NebDevice.FlashRecord(sender.selectedSegmentIndex == 1)
-				break
-			case FusionId.FlashPlaybackStartStop:
-				NebDevice.FlashPlayback(sender.selectedSegmentIndex == 1)
-				break;
-			default:
-				break;
-			
+				case NEB_SUBSYS_MOTION_ENG:
+					switch (NebCmdList[row].CmdId)
+					{
+						case MotionState:
+							NebDevice.MotionStream(sender.selectedSegmentIndex == 1)
+							break
+						case IMU_Data:
+							NebDevice.SixAxisIMU_Stream(sender.selectedSegmentIndex == 1)
+							break
+						case Quaternion:
+							NebDevice.EulerAngleStream(false)
+							heading = false
+							
+							NebDevice.QuaternionStream(sender.selectedSegmentIndex == 1)
+							//var i = NebDevice.getCmdIdx(FusionId.FlashPlaybackStartStop)
+							let cell = cmdView.cellForRowAtIndexPath( NSIndexPath(forRow: NebCmdList.count, inSection: 0))
+							let sw = cell!.viewWithTag(2) as! UISegmentedControl
+							sw.selectedSegmentIndex = 0
+							break
+						case EulerAngle:
+							NebDevice.QuaternionStream(false)
+							NebDevice.EulerAngleStream(sender.selectedSegmentIndex == 1)
+							break
+						case ExtForce:
+							NebDevice.ExternalForceStream(sender.selectedSegmentIndex == 1)
+							break
+						case Pedometer:
+							NebDevice.PedometerStream(sender.selectedSegmentIndex == 1)
+							break;
+						case TrajectoryRecStart:
+							NebDevice.TrajectoryRecord(sender.selectedSegmentIndex == 1)
+							break;
+						case TrajectoryDistance:
+							NebDevice.TrajectoryInfo(sender.selectedSegmentIndex == 1)
+							break;
+						case MAG_Data:
+							NebDevice.MagStream(sender.selectedSegmentIndex == 1)
+							break;
+						case FlashEraseAll:
+							if (sender.selectedSegmentIndex == 1) {
+								flashEraseProgress = true;
+							}
+							NebDevice.FlashErase(sender.selectedSegmentIndex == 1)
+							break
+						case FlashRecordStartStop:
+							NebDevice.FlashRecord(sender.selectedSegmentIndex == 1)
+							break
+						case FlashPlaybackStartStop:
+							NebDevice.FlashPlayback(sender.selectedSegmentIndex == 1)
+							break
+						case LockHeadingRef:
+							NebDevice.LockHeading(sender.selectedSegmentIndex == 1)
+							let cell = cmdView.cellForRowAtIndexPath( NSIndexPath(forRow: row, inSection: 0))
+							let sw = cell!.viewWithTag(2) as! UISegmentedControl
+							sw.selectedSegmentIndex = 0
+							break
+						default:
+							break
+					}
+				case NEB_SUBSYS_LED:
+					break
+				default:
+					break
 			}
+
 		}
 		else {
-			switch (row - FusionCmdList.count) {
+			switch (row - NebCmdList.count) {
 			case 0:
 				NebDevice.QuaternionStream(false)
 				NebDevice.EulerAngleStream(true)
 				heading = sender.selectedSegmentIndex == 1
-				var i = NebDevice.getCmdIdx(FusionId.Quaternion)
+				var i = NebDevice.getCmdIdx(NEB_SUBSYS_MOTION_ENG,  cmdId: Quaternion)
 				let cell = cmdView.cellForRowAtIndexPath( NSIndexPath(forRow: i, inSection: 0))
 				let sw = cell!.viewWithTag(2) as! UISegmentedControl
 				sw.selectedSegmentIndex = 0
@@ -289,8 +308,12 @@ class DetailViewController: UIViewController, CBPeripheralDelegate, NeblinaDeleg
 		
 	}
 	
-	func didReceiveFusionData(type : FusionId, data : Fusion_DataPacket_t) {
+	func didReceiveFusionData(type : FusionId, data : Fusion_DataPacket_t, errFlag : Bool) {
 
+		//let errflag = Bool(type.rawValue & 0x80 == 0x80)
+
+		//let id = FusionId(rawValue: type.rawValue & 0x7F)! as FusionId
+		
 		switch (type) {
 			
 		case FusionId.MotionState:
@@ -416,40 +439,56 @@ class DetailViewController: UIViewController, CBPeripheralDelegate, NeblinaDeleg
 			//let session = (Int16(data.data.0) & 0xff) | (Int16(data.data.1) << 8)
 			flashrec.text = String("Flash Erased")
 			flashEraseProgress = false
-			let i = NebDevice.getCmdIdx(FusionId.FlashEraseAll)
+			let i = NebDevice.getCmdIdx(NEB_SUBSYS_MOTION_ENG, cmdId : FlashEraseAll)
 			let cell = cmdView.cellForRowAtIndexPath( NSIndexPath(forRow: i, inSection: 0))
 			let sw = cell!.viewWithTag(2) as! UISegmentedControl
 			sw.selectedSegmentIndex = 0
 			break;
 		case FusionId.FlashRecordStartStop:
-			let onoff = Int8(data.data.0)
-			let session = (Int16(data.data.1) & 0xff) | (Int16(data.data.2) << 8)
-			if (onoff == 0) {
-				flashrec.text = String("Flash Recording Finished \(session)")
-				let i = NebDevice.getCmdIdx(FusionId.FlashRecordStartStop)
+			if (errFlag) {
+				flashrec.text = String("Unable to start recording")
+				let i = NebDevice.getCmdIdx(NEB_SUBSYS_MOTION_ENG, cmdId : FlashRecordStartStop)
 				let cell = cmdView.cellForRowAtIndexPath( NSIndexPath(forRow: i, inSection: 0))
 				let sw = cell!.viewWithTag(2) as! UISegmentedControl
 				sw.selectedSegmentIndex = 0
 			}
 			else {
-				flashrec.text = String("Flash Recording Session \(session)")
+				let onoff = Int8(data.data.0)
+				let session = (Int16(data.data.1) & 0xff) | (Int16(data.data.2) << 8)
+				if (onoff == 0) {
+					flashrec.text = String("Flash Recording Finished \(session)")
+					let i = NebDevice.getCmdIdx(NEB_SUBSYS_MOTION_ENG, cmdId : FlashRecordStartStop)
+					let cell = cmdView.cellForRowAtIndexPath( NSIndexPath(forRow: i, inSection: 0))
+					let sw = cell!.viewWithTag(2) as! UISegmentedControl
+					sw.selectedSegmentIndex = 0
+				}
+				else {
+					flashrec.text = String("Flash Recording Session \(session)")
 				
+				}
 			}
-			
 			break;
 		case FusionId.FlashPlaybackStartStop:
-			let onoff = Int8(data.data.0)
-			let session = (Int16(data.data.1) & 0xff) | (Int16(data.data.2) << 8)
-			if (onoff == 0) {
-				flashrec.text = String("Flash Playback Finished")
-				let i = NebDevice.getCmdIdx(FusionId.FlashPlaybackStartStop)
+			if (errFlag) {
+				flashrec.text = String("Flash record session not found")
+				let i = NebDevice.getCmdIdx(NEB_SUBSYS_MOTION_ENG, cmdId : FlashPlaybackStartStop)
 				let cell = cmdView.cellForRowAtIndexPath( NSIndexPath(forRow: i, inSection: 0))
 				let sw = cell!.viewWithTag(2) as! UISegmentedControl
 				sw.selectedSegmentIndex = 0
 			}
 			else {
-				flashrec.text = String("Flash Playback Session \(session)")
-				
+				let onoff = Int8(data.data.0)
+				let session = (Int16(data.data.1) & 0xff) | (Int16(data.data.2) << 8)
+				if (onoff == 0) {
+					flashrec.text = String("Flash Playback Finished")
+					let i = NebDevice.getCmdIdx(NEB_SUBSYS_MOTION_ENG, cmdId : FlashPlaybackStartStop)
+					let cell = cmdView.cellForRowAtIndexPath( NSIndexPath(forRow: i, inSection: 0))
+					let sw = cell!.viewWithTag(2) as! UISegmentedControl
+					sw.selectedSegmentIndex = 0
+				}
+				else {
+					flashrec.text = String("Flash Playback Session \(session)")
+				}
 			}
 			break
 			
@@ -463,7 +502,7 @@ class DetailViewController: UIViewController, CBPeripheralDelegate, NeblinaDeleg
 	
 	func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
 		
-		return FusionCmdList.count + CtrlName.count
+		return /*FusionCmdList.count + */NebCmdList.count + CtrlName.count
 		//return 1//detailItem
 	}
 	
@@ -473,10 +512,12 @@ class DetailViewController: UIViewController, CBPeripheralDelegate, NeblinaDeleg
 		let labelView = cellView.viewWithTag(1) as! UILabel
 		//let switchCtrl = cellView.viewWithTag(2) as! UISwitch
 		//switchCtrl.addTarget(self, action: "switchAction:", forControlEvents: UIControlEvents.ValueChanged)
-		if (indexPath!.row < FusionCmdList.count) {
+/*		if (indexPath!.row < FusionCmdList.count) {
 			labelView.text = FusionCmdList[indexPath!.row].Name //NebApiName[indexPath!.row] as String//"Row \(row)"//"self.objects.objectAtIndex(row) as! String
+		} else */if (indexPath!.row < /*FusionCmdList.count + */NebCmdList.count) {
+			labelView.text = NebCmdList[indexPath!.row].Name// - FusionCmdList.count].Name
 		} else {
-			labelView.text = CtrlName[indexPath!.row - FusionCmdList.count] //NebApiName[indexPath!.row] as String//"Row \(row)"//"self.objects.objectAtIndex(row) as! String
+			labelView.text = CtrlName[indexPath!.row /*- FusionCmdList.count*/ - NebCmdList.count] //NebApiName[indexPath!.row] as String//"Row \(row)"//"self.objects.objectAtIndex(row) as! String
 		}
 		//cellView.textLabel!.text = NebApiName[indexPath!.row] as String//"Row \(row)"//"self.objects.objectAtIndex(row) as! String
 			

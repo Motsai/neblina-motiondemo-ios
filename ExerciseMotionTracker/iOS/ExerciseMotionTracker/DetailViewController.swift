@@ -113,7 +113,8 @@ class DetailViewController: UIViewController, CBPeripheralDelegate, NeblinaDeleg
 		NebDevice.TrajectoryInfo(true)
 	}
 	
-	func didReceiveFusionData(type : FusionId, data : Fusion_DataPacket_t) {
+	func didReceiveFusionData(type : FusionId, data : Fusion_DataPacket_t, errFlag : Bool) {
+//	func didReceiveFusionData(type : FusionId, data : Fusion_DataPacket_t) {
 		//let textview = self.view.viewWithTag(3) as! UITextView
 		
 		switch (type) {
@@ -244,7 +245,7 @@ class DetailViewController: UIViewController, CBPeripheralDelegate, NeblinaDeleg
 			let count = (Int16(data.data.6) & 0xff) | (Int16(data.data.7) << 8)
 			let prval = Int(data.data.8)
 			label1.text = String("Error \(x),  \(y),  \(z)")
-			label2.text = String("Count \(count), Val \(prval)")
+			label2.text = String("Count \(count), Val \(prval) %")
 			level.progress = Float(prval)/100.0
 			break
 			

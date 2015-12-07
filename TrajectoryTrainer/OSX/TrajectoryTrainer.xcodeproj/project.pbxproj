@@ -1,0 +1,529 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		C93B94E61BF25B3400CF7775 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = C93B94E51BF25B3400CF7775 /* AppDelegate.swift */; };
+		C93B94E81BF25B3400CF7775 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C93B94E71BF25B3400CF7775 /* ViewController.swift */; };
+		C93B94EB1BF25B3400CF7775 /* TrajectoryTrainer.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = C93B94E91BF25B3400CF7775 /* TrajectoryTrainer.xcdatamodeld */; };
+		C93B94ED1BF25B3400CF7775 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C93B94EC1BF25B3400CF7775 /* Assets.xcassets */; };
+		C93B94F01BF25B3400CF7775 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = C93B94EE1BF25B3400CF7775 /* Main.storyboard */; };
+		C93B94FB1BF25B3400CF7775 /* TrajectoryTrainerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C93B94FA1BF25B3400CF7775 /* TrajectoryTrainerTests.swift */; };
+		C93B95061BF25B3400CF7775 /* TrajectoryTrainerUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C93B95051BF25B3400CF7775 /* TrajectoryTrainerUITests.swift */; };
+		C93B95171BF25BE600CF7775 /* src in Resources */ = {isa = PBXBuildFile; fileRef = C93B95161BF25BE600CF7775 /* src */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		C93B94F71BF25B3400CF7775 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = C93B94DA1BF25B3400CF7775 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = C93B94E11BF25B3400CF7775;
+			remoteInfo = TrajectoryTrainer;
+		};
+		C93B95021BF25B3400CF7775 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = C93B94DA1BF25B3400CF7775 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = C93B94E11BF25B3400CF7775;
+			remoteInfo = TrajectoryTrainer;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		C93B94E21BF25B3400CF7775 /* TrajectoryTrainer.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TrajectoryTrainer.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		C93B94E51BF25B3400CF7775 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		C93B94E71BF25B3400CF7775 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
+		C93B94EA1BF25B3400CF7775 /* TrajectoryTrainer.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = TrajectoryTrainer.xcdatamodel; sourceTree = "<group>"; };
+		C93B94EC1BF25B3400CF7775 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		C93B94EF1BF25B3400CF7775 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
+		C93B94F11BF25B3400CF7775 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		C93B94F61BF25B3400CF7775 /* TrajectoryTrainerTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = TrajectoryTrainerTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		C93B94FA1BF25B3400CF7775 /* TrajectoryTrainerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrajectoryTrainerTests.swift; sourceTree = "<group>"; };
+		C93B94FC1BF25B3400CF7775 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		C93B95011BF25B3400CF7775 /* TrajectoryTrainerUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = TrajectoryTrainerUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		C93B95051BF25B3400CF7775 /* TrajectoryTrainerUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrajectoryTrainerUITests.swift; sourceTree = "<group>"; };
+		C93B95071BF25B3400CF7775 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		C93B95161BF25BE600CF7775 /* src */ = {isa = PBXFileReference; lastKnownFileType = folder; name = src; path = ../../../src; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		C93B94DF1BF25B3400CF7775 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		C93B94F31BF25B3400CF7775 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		C93B94FE1BF25B3400CF7775 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		C93B94D91BF25B3400CF7775 = {
+			isa = PBXGroup;
+			children = (
+				C93B94E41BF25B3400CF7775 /* TrajectoryTrainer */,
+				C93B94F91BF25B3400CF7775 /* TrajectoryTrainerTests */,
+				C93B95041BF25B3400CF7775 /* TrajectoryTrainerUITests */,
+				C93B94E31BF25B3400CF7775 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		C93B94E31BF25B3400CF7775 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				C93B94E21BF25B3400CF7775 /* TrajectoryTrainer.app */,
+				C93B94F61BF25B3400CF7775 /* TrajectoryTrainerTests.xctest */,
+				C93B95011BF25B3400CF7775 /* TrajectoryTrainerUITests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		C93B94E41BF25B3400CF7775 /* TrajectoryTrainer */ = {
+			isa = PBXGroup;
+			children = (
+				C93B95161BF25BE600CF7775 /* src */,
+				C93B94E51BF25B3400CF7775 /* AppDelegate.swift */,
+				C93B94E71BF25B3400CF7775 /* ViewController.swift */,
+				C93B94EC1BF25B3400CF7775 /* Assets.xcassets */,
+				C93B94EE1BF25B3400CF7775 /* Main.storyboard */,
+				C93B94F11BF25B3400CF7775 /* Info.plist */,
+				C93B94E91BF25B3400CF7775 /* TrajectoryTrainer.xcdatamodeld */,
+			);
+			path = TrajectoryTrainer;
+			sourceTree = "<group>";
+		};
+		C93B94F91BF25B3400CF7775 /* TrajectoryTrainerTests */ = {
+			isa = PBXGroup;
+			children = (
+				C93B94FA1BF25B3400CF7775 /* TrajectoryTrainerTests.swift */,
+				C93B94FC1BF25B3400CF7775 /* Info.plist */,
+			);
+			path = TrajectoryTrainerTests;
+			sourceTree = "<group>";
+		};
+		C93B95041BF25B3400CF7775 /* TrajectoryTrainerUITests */ = {
+			isa = PBXGroup;
+			children = (
+				C93B95051BF25B3400CF7775 /* TrajectoryTrainerUITests.swift */,
+				C93B95071BF25B3400CF7775 /* Info.plist */,
+			);
+			path = TrajectoryTrainerUITests;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		C93B94E11BF25B3400CF7775 /* TrajectoryTrainer */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = C93B950A1BF25B3400CF7775 /* Build configuration list for PBXNativeTarget "TrajectoryTrainer" */;
+			buildPhases = (
+				C93B94DE1BF25B3400CF7775 /* Sources */,
+				C93B94DF1BF25B3400CF7775 /* Frameworks */,
+				C93B94E01BF25B3400CF7775 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = TrajectoryTrainer;
+			productName = TrajectoryTrainer;
+			productReference = C93B94E21BF25B3400CF7775 /* TrajectoryTrainer.app */;
+			productType = "com.apple.product-type.application";
+		};
+		C93B94F51BF25B3400CF7775 /* TrajectoryTrainerTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = C93B950D1BF25B3400CF7775 /* Build configuration list for PBXNativeTarget "TrajectoryTrainerTests" */;
+			buildPhases = (
+				C93B94F21BF25B3400CF7775 /* Sources */,
+				C93B94F31BF25B3400CF7775 /* Frameworks */,
+				C93B94F41BF25B3400CF7775 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				C93B94F81BF25B3400CF7775 /* PBXTargetDependency */,
+			);
+			name = TrajectoryTrainerTests;
+			productName = TrajectoryTrainerTests;
+			productReference = C93B94F61BF25B3400CF7775 /* TrajectoryTrainerTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		C93B95001BF25B3400CF7775 /* TrajectoryTrainerUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = C93B95101BF25B3400CF7775 /* Build configuration list for PBXNativeTarget "TrajectoryTrainerUITests" */;
+			buildPhases = (
+				C93B94FD1BF25B3400CF7775 /* Sources */,
+				C93B94FE1BF25B3400CF7775 /* Frameworks */,
+				C93B94FF1BF25B3400CF7775 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				C93B95031BF25B3400CF7775 /* PBXTargetDependency */,
+			);
+			name = TrajectoryTrainerUITests;
+			productName = TrajectoryTrainerUITests;
+			productReference = C93B95011BF25B3400CF7775 /* TrajectoryTrainerUITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		C93B94DA1BF25B3400CF7775 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastSwiftUpdateCheck = 0710;
+				LastUpgradeCheck = 0710;
+				ORGANIZATIONNAME = "Hoan Hoang";
+				TargetAttributes = {
+					C93B94E11BF25B3400CF7775 = {
+						CreatedOnToolsVersion = 7.1;
+					};
+					C93B94F51BF25B3400CF7775 = {
+						CreatedOnToolsVersion = 7.1;
+						TestTargetID = C93B94E11BF25B3400CF7775;
+					};
+					C93B95001BF25B3400CF7775 = {
+						CreatedOnToolsVersion = 7.1;
+						TestTargetID = C93B94E11BF25B3400CF7775;
+					};
+				};
+			};
+			buildConfigurationList = C93B94DD1BF25B3400CF7775 /* Build configuration list for PBXProject "TrajectoryTrainer" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = C93B94D91BF25B3400CF7775;
+			productRefGroup = C93B94E31BF25B3400CF7775 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				C93B94E11BF25B3400CF7775 /* TrajectoryTrainer */,
+				C93B94F51BF25B3400CF7775 /* TrajectoryTrainerTests */,
+				C93B95001BF25B3400CF7775 /* TrajectoryTrainerUITests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		C93B94E01BF25B3400CF7775 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C93B95171BF25BE600CF7775 /* src in Resources */,
+				C93B94ED1BF25B3400CF7775 /* Assets.xcassets in Resources */,
+				C93B94F01BF25B3400CF7775 /* Main.storyboard in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		C93B94F41BF25B3400CF7775 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		C93B94FF1BF25B3400CF7775 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		C93B94DE1BF25B3400CF7775 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C93B94E81BF25B3400CF7775 /* ViewController.swift in Sources */,
+				C93B94EB1BF25B3400CF7775 /* TrajectoryTrainer.xcdatamodeld in Sources */,
+				C93B94E61BF25B3400CF7775 /* AppDelegate.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		C93B94F21BF25B3400CF7775 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C93B94FB1BF25B3400CF7775 /* TrajectoryTrainerTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		C93B94FD1BF25B3400CF7775 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C93B95061BF25B3400CF7775 /* TrajectoryTrainerUITests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		C93B94F81BF25B3400CF7775 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = C93B94E11BF25B3400CF7775 /* TrajectoryTrainer */;
+			targetProxy = C93B94F71BF25B3400CF7775 /* PBXContainerItemProxy */;
+		};
+		C93B95031BF25B3400CF7775 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = C93B94E11BF25B3400CF7775 /* TrajectoryTrainer */;
+			targetProxy = C93B95021BF25B3400CF7775 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin PBXVariantGroup section */
+		C93B94EE1BF25B3400CF7775 /* Main.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				C93B94EF1BF25B3400CF7775 /* Base */,
+			);
+			name = Main.storyboard;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		C93B95081BF25B3400CF7775 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "-";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.11;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = macosx;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		C93B95091BF25B3400CF7775 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "-";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.11;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				SDKROOT = macosx;
+			};
+			name = Release;
+		};
+		C93B950B1BF25B3400CF7775 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
+				COMBINE_HIDPI_IMAGES = YES;
+				INFOPLIST_FILE = TrajectoryTrainer/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
+				MACOSX_DEPLOYMENT_TARGET = 10.10;
+				PRODUCT_BUNDLE_IDENTIFIER = com.motsai.TrajectoryTrainer;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "../../src/Neblina-Bridging-Header.h";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		C93B950C1BF25B3400CF7775 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
+				COMBINE_HIDPI_IMAGES = YES;
+				INFOPLIST_FILE = TrajectoryTrainer/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
+				MACOSX_DEPLOYMENT_TARGET = 10.10;
+				PRODUCT_BUNDLE_IDENTIFIER = com.motsai.TrajectoryTrainer;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "../../src/Neblina-Bridging-Header.h";
+			};
+			name = Release;
+		};
+		C93B950E1BF25B3400CF7775 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				COMBINE_HIDPI_IMAGES = YES;
+				INFOPLIST_FILE = TrajectoryTrainerTests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = com.motsai.TrajectoryTrainerTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/TrajectoryTrainer.app/Contents/MacOS/TrajectoryTrainer";
+			};
+			name = Debug;
+		};
+		C93B950F1BF25B3400CF7775 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				COMBINE_HIDPI_IMAGES = YES;
+				INFOPLIST_FILE = TrajectoryTrainerTests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = com.motsai.TrajectoryTrainerTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/TrajectoryTrainer.app/Contents/MacOS/TrajectoryTrainer";
+			};
+			name = Release;
+		};
+		C93B95111BF25B3400CF7775 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				INFOPLIST_FILE = TrajectoryTrainerUITests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = com.motsai.TrajectoryTrainerUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TEST_TARGET_NAME = TrajectoryTrainer;
+				USES_XCTRUNNER = YES;
+			};
+			name = Debug;
+		};
+		C93B95121BF25B3400CF7775 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				INFOPLIST_FILE = TrajectoryTrainerUITests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = com.motsai.TrajectoryTrainerUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TEST_TARGET_NAME = TrajectoryTrainer;
+				USES_XCTRUNNER = YES;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		C93B94DD1BF25B3400CF7775 /* Build configuration list for PBXProject "TrajectoryTrainer" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				C93B95081BF25B3400CF7775 /* Debug */,
+				C93B95091BF25B3400CF7775 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		C93B950A1BF25B3400CF7775 /* Build configuration list for PBXNativeTarget "TrajectoryTrainer" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				C93B950B1BF25B3400CF7775 /* Debug */,
+				C93B950C1BF25B3400CF7775 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		C93B950D1BF25B3400CF7775 /* Build configuration list for PBXNativeTarget "TrajectoryTrainerTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				C93B950E1BF25B3400CF7775 /* Debug */,
+				C93B950F1BF25B3400CF7775 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		C93B95101BF25B3400CF7775 /* Build configuration list for PBXNativeTarget "TrajectoryTrainerUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				C93B95111BF25B3400CF7775 /* Debug */,
+				C93B95121BF25B3400CF7775 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+
+/* Begin XCVersionGroup section */
+		C93B94E91BF25B3400CF7775 /* TrajectoryTrainer.xcdatamodeld */ = {
+			isa = XCVersionGroup;
+			children = (
+				C93B94EA1BF25B3400CF7775 /* TrajectoryTrainer.xcdatamodel */,
+			);
+			currentVersion = C93B94EA1BF25B3400CF7775 /* TrajectoryTrainer.xcdatamodel */;
+			path = TrajectoryTrainer.xcdatamodeld;
+			sourceTree = "<group>";
+			versionGroupType = wrapper.xcdatamodel;
+		};
+/* End XCVersionGroup section */
+	};
+	rootObject = C93B94DA1BF25B3400CF7775 /* Project object */;
+}

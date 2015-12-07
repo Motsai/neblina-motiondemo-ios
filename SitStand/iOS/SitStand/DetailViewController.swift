@@ -19,6 +19,9 @@ class DetailViewController: UIViewController, CBPeripheralDelegate, SCNSceneRend
 	var cnt = Int16(15)
 	@IBOutlet weak var sitLabel : UILabel!
 	@IBOutlet weak var standLabel : UILabel!
+	var displayCnt = Int(0)
+	var prevSitTime = UInt32(0)
+	var prevStandTime = UInt32(0)
 	
 	var detailItem: CBPeripheral? {
 		didSet {
@@ -107,10 +110,13 @@ class DetailViewController: UIViewController, CBPeripheralDelegate, SCNSceneRend
 	// MARK : Neblina
 	
 	func didConnectNeblina() {
+		device.EulerAngleStream(false)
+		device.QuaternionStream(false)
+		device.SittingStanding(false)
 		device.SittingStanding(true)
 	}
 
-	func didReceiveFusionData(type : FusionId, data : Fusion_DataPacket_t) {
+	func didReceiveFusionData(type : FusionId, data : Fusion_DataPacket_t, errFlag : Bool) {
 		//	let textview = self.view.viewWithTag(3) as! UITextView
 		
 		switch (type) {
@@ -235,24 +241,53 @@ class DetailViewController: UIViewController, CBPeripheralDelegate, SCNSceneRend
 			break
 		case FusionId.SittingStanding:
 			let state = data.data.0
-			let sitTime = (Int32(data.data.1) & 0xff) | (Int32(data.data.2) << 8)  | (Int32(data.data.3) << 16) | (Int32(data.data.4) << 24)
-			let standTime = (Int32(data.data.5) & 0xff) | (Int32(data.data.6) << 8)  | (Int32(data.data.7) << 16) | (Int32(data.data.8) << 24)
+			let sitTime = (UInt32(data.data.1) & 0xff) | (UInt32(data.data.2) << 8)  | (UInt32(data.data.3) << 16) | (UInt32(data.data.4) << 24)
+			let standTime = (UInt32(data.data.5) & 0xff) | (UInt32(data.data.6) << 8)  | (UInt32(data.data.7) << 16) | (UInt32(data.data.8) << 24)
 			
-			sitLabel.text = "Siting time : \(sitTime)"
-			standLabel.text = "Standing time : \(standTime)"
-			
-			if (state == 0)
+			if (sitTime != prevSitTime)
 			{
-				// Stitting
 				sitLabel.backgroundColor = UIColor.greenColor()
 				standLabel.backgroundColor = UIColor.grayColor()
 			}
-			else
-			{
-				// Standing
+			if (standTime != prevStandTime) {
 				sitLabel.backgroundColor = UIColor.grayColor()
 				standLabel.backgroundColor = UIColor.greenColor()
 			}
+			prevSitTime = sitTime
+			prevStandTime = standTime
+			
+			//if (displayCnt == 0)
+			//{
+			
+			sitLabel.text = "Sitting time : \(sitTime) sec"
+			standLabel.text = "Standing time : \(standTime) sec"
+
+			/*
+			switch(state)
+			{
+			case 0:
+				{
+				// Stitting
+				sitLabel.backgroundColor = UIColor.greenColor()
+				standLabel.backgroundColor = UIColor.grayColor()
+				}
+				break;
+			case 1:
+				{
+				// Standing
+				sitLabel.backgroundColor = UIColor.grayColor()
+				standLabel.backgroundColor = UIColor.greenColor()
+				}
+				break;
+			default:
+				break
+			}*/
+			//}
+			displayCnt++
+			if (displayCnt > 50) {
+				displayCnt = 0
+			}
+			
 			break;
 		default: break
 		}
