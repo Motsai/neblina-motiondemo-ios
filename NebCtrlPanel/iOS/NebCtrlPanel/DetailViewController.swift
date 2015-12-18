@@ -21,6 +21,9 @@ let CtrlName = [String](arrayLiteral:"Heading")//, "Test1", "Test2")
 class DetailViewController: UIViewController, CBPeripheralDelegate, NeblinaDelegate, SCNSceneRendererDelegate {
 
 	let NebDevice = Neblina()
+	//let scene = SCNScene(named: "art.scnassets/Millennium_Falcon/Millennium_Falcon.dae") as SCNScene!
+	//let scene = SCNScene(named: "art.scnassets/Arc-170_ship/Obj_Shaded/Arc170.dae")!
+	let scene = SCNScene(named: "art.scnassets/ship.scn")!
 	//var textview = UITextView()
 
 	
@@ -32,8 +35,7 @@ class DetailViewController: UIViewController, CBPeripheralDelegate, NeblinaDeleg
 	@IBOutlet weak var flashrec: UILabel!
 	
 	//var eulerAngles = SCNVector3(x: 0,y:0,z:0)
-	let scene = SCNScene(named: "art.scnassets/ship.scn")!
-	var ship = SCNNode() //= scene.rootNode.childNodeWithName("ship", recursively: true)!
+	var ship : SCNNode! //= scene.rootNode.childNodeWithName("ship", recursively: true)!
 	let max_count = Int16(15)
 	var cnt = Int16(15)
 	var xf = Int16(0)
@@ -70,6 +72,8 @@ class DetailViewController: UIViewController, CBPeripheralDelegate, NeblinaDeleg
 		// create a new scene
 		//scene = SCNScene(named: "art.scnassets/ship.scn")!
 		
+		//scene = SCNScene(named: "art.scnassets/Arc-170_ship/Obj_Shaded/Arc170.obj")
+		
 		// create and add a camera to the scene
 		let cameraNode = SCNNode()
 		cameraNode.camera = SCNCamera()
@@ -84,7 +88,7 @@ class DetailViewController: UIViewController, CBPeripheralDelegate, NeblinaDeleg
 		let lightNode = SCNNode()
 		lightNode.light = SCNLight()
 		lightNode.light!.type = SCNLightTypeOmni
-		lightNode.position = SCNVector3(x: 0, y: 10, z: 10)
+		lightNode.position = SCNVector3(x: 0, y: 10, z: 50)
 		scene.rootNode.addChildNode(lightNode)
 		
 		// create and add an ambient light to the scene
@@ -94,7 +98,11 @@ class DetailViewController: UIViewController, CBPeripheralDelegate, NeblinaDeleg
 		ambientLightNode.light!.color = UIColor.darkGrayColor()
 		scene.rootNode.addChildNode(ambientLightNode)
 		
+		
 		// retrieve the ship node
+		
+//		ship = scene.rootNode.childNodeWithName("MillenniumFalconTop", recursively: true)!
+//		ship = scene.rootNode.childNodeWithName("ARC_170_LEE_RAY_polySurface1394376_2_2", recursively: true)!
 		ship = scene.rootNode.childNodeWithName("ship", recursively: true)!
 		ship.eulerAngles = SCNVector3Make(GLKMathDegreesToRadians(90), 0, GLKMathDegreesToRadians(180))
 		//ship.rotation = SCNVector4(1, 0, 0, GLKMathDegreesToRadians(90))
@@ -204,13 +212,13 @@ class DetailViewController: UIViewController, CBPeripheralDelegate, NeblinaDeleg
 		if (row < NebCmdList.count) {
 			switch (NebCmdList[row].SubSysId)
 			{
-				case NEB_SUBSYS_DEBUG:
+				case NEB_CTRL_SUBSYS_DEBUG:
 					if (NebCmdList[row].CmdId == DEBUG_CMD_SET_INTERFACE) {
 						NebDevice.ControlInterface(sender.selectedSegmentIndex)
 					}
 					break
 				
-				case NEB_SUBSYS_MOTION_ENG:
+				case NEB_CTRL_SUBSYS_MOTION_ENG:
 					switch (NebCmdList[row].CmdId)
 					{
 						case MotionState:
@@ -239,7 +247,7 @@ class DetailViewController: UIViewController, CBPeripheralDelegate, NeblinaDeleg
 						case Pedometer:
 							NebDevice.PedometerStream(sender.selectedSegmentIndex == 1)
 							break;
-						case TrajectoryRecStart:
+						case TrajectoryRecStartStop:
 							NebDevice.TrajectoryRecord(sender.selectedSegmentIndex == 1)
 							break;
 						case TrajectoryDistance:
@@ -248,7 +256,7 @@ class DetailViewController: UIViewController, CBPeripheralDelegate, NeblinaDeleg
 						case MAG_Data:
 							NebDevice.MagStream(sender.selectedSegmentIndex == 1)
 							break;
-						case FlashEraseAll:
+/*						case FlashEraseAll:
 							if (sender.selectedSegmentIndex == 1) {
 								flashEraseProgress = true;
 							}
@@ -259,7 +267,7 @@ class DetailViewController: UIViewController, CBPeripheralDelegate, NeblinaDeleg
 							break
 						case FlashPlaybackStartStop:
 							NebDevice.FlashPlayback(sender.selectedSegmentIndex == 1)
-							break
+							break*/
 						case LockHeadingRef:
 							NebDevice.LockHeading(sender.selectedSegmentIndex == 1)
 							let cell = cmdView.cellForRowAtIndexPath( NSIndexPath(forRow: row, inSection: 0))
@@ -269,7 +277,7 @@ class DetailViewController: UIViewController, CBPeripheralDelegate, NeblinaDeleg
 						default:
 							break
 					}
-				case NEB_SUBSYS_LED:
+				case NEB_CTRL_SUBSYS_LED:
 					break
 				default:
 					break
@@ -282,7 +290,7 @@ class DetailViewController: UIViewController, CBPeripheralDelegate, NeblinaDeleg
 				NebDevice.QuaternionStream(false)
 				NebDevice.EulerAngleStream(true)
 				heading = sender.selectedSegmentIndex == 1
-				var i = NebDevice.getCmdIdx(NEB_SUBSYS_MOTION_ENG,  cmdId: Quaternion)
+				var i = NebDevice.getCmdIdx(NEB_CTRL_SUBSYS_MOTION_ENG,  cmdId: Quaternion)
 				let cell = cmdView.cellForRowAtIndexPath( NSIndexPath(forRow: i, inSection: 0))
 				let sw = cell!.viewWithTag(2) as! UISegmentedControl
 				sw.selectedSegmentIndex = 0
@@ -435,11 +443,11 @@ class DetailViewController: UIViewController, CBPeripheralDelegate, NeblinaDeleg
 			label.text = String("Mag - x:\(xq), y:\(yq), z:\(zq)")
 			//ship.rotation = SCNVector4(Float(xq), Float(yq), 0, GLKMathDegreesToRadians(90))
 			break
-		case FusionId.FlashEraseAll:
+/*		case FusionId.FlashEraseAll:
 			//let session = (Int16(data.data.0) & 0xff) | (Int16(data.data.1) << 8)
 			flashrec.text = String("Flash Erased")
 			flashEraseProgress = false
-			let i = NebDevice.getCmdIdx(NEB_SUBSYS_MOTION_ENG, cmdId : FlashEraseAll)
+			let i = NebDevice.getCmdIdx(NEB_CTRL_SUBSYS_MOTION_ENG, cmdId : FlashEraseAll)
 			let cell = cmdView.cellForRowAtIndexPath( NSIndexPath(forRow: i, inSection: 0))
 			let sw = cell!.viewWithTag(2) as! UISegmentedControl
 			sw.selectedSegmentIndex = 0
@@ -447,7 +455,7 @@ class DetailViewController: UIViewController, CBPeripheralDelegate, NeblinaDeleg
 		case FusionId.FlashRecordStartStop:
 			if (errFlag) {
 				flashrec.text = String("Unable to start recording")
-				let i = NebDevice.getCmdIdx(NEB_SUBSYS_MOTION_ENG, cmdId : FlashRecordStartStop)
+				let i = NebDevice.getCmdIdx(NEB_CTRL_SUBSYS_MOTION_ENG, cmdId : FlashRecordStartStop)
 				let cell = cmdView.cellForRowAtIndexPath( NSIndexPath(forRow: i, inSection: 0))
 				let sw = cell!.viewWithTag(2) as! UISegmentedControl
 				sw.selectedSegmentIndex = 0
@@ -457,7 +465,7 @@ class DetailViewController: UIViewController, CBPeripheralDelegate, NeblinaDeleg
 				let session = (Int16(data.data.1) & 0xff) | (Int16(data.data.2) << 8)
 				if (onoff == 0) {
 					flashrec.text = String("Flash Recording Finished \(session)")
-					let i = NebDevice.getCmdIdx(NEB_SUBSYS_MOTION_ENG, cmdId : FlashRecordStartStop)
+					let i = NebDevice.getCmdIdx(NEB_CTRL_SUBSYS_MOTION_ENG, cmdId : FlashRecordStartStop)
 					let cell = cmdView.cellForRowAtIndexPath( NSIndexPath(forRow: i, inSection: 0))
 					let sw = cell!.viewWithTag(2) as! UISegmentedControl
 					sw.selectedSegmentIndex = 0
@@ -471,7 +479,7 @@ class DetailViewController: UIViewController, CBPeripheralDelegate, NeblinaDeleg
 		case FusionId.FlashPlaybackStartStop:
 			if (errFlag) {
 				flashrec.text = String("Flash record session not found")
-				let i = NebDevice.getCmdIdx(NEB_SUBSYS_MOTION_ENG, cmdId : FlashPlaybackStartStop)
+				let i = NebDevice.getCmdIdx(NEB_CTRL_SUBSYS_MOTION_ENG, cmdId : FlashPlaybackStartStop)
 				let cell = cmdView.cellForRowAtIndexPath( NSIndexPath(forRow: i, inSection: 0))
 				let sw = cell!.viewWithTag(2) as! UISegmentedControl
 				sw.selectedSegmentIndex = 0
@@ -481,7 +489,7 @@ class DetailViewController: UIViewController, CBPeripheralDelegate, NeblinaDeleg
 				let session = (Int16(data.data.1) & 0xff) | (Int16(data.data.2) << 8)
 				if (onoff == 0) {
 					flashrec.text = String("Flash Playback Finished")
-					let i = NebDevice.getCmdIdx(NEB_SUBSYS_MOTION_ENG, cmdId : FlashPlaybackStartStop)
+					let i = NebDevice.getCmdIdx(NEB_CTRL_SUBSYS_MOTION_ENG, cmdId : FlashPlaybackStartStop)
 					let cell = cmdView.cellForRowAtIndexPath( NSIndexPath(forRow: i, inSection: 0))
 					let sw = cell!.viewWithTag(2) as! UISegmentedControl
 					sw.selectedSegmentIndex = 0
@@ -490,7 +498,7 @@ class DetailViewController: UIViewController, CBPeripheralDelegate, NeblinaDeleg
 					flashrec.text = String("Flash Playback Session \(session)")
 				}
 			}
-			break
+			break*/
 			
 		default: break
 		}
