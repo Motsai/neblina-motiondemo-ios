@@ -53,51 +53,57 @@ typedef enum {
 #define NEB_COMM_INTRF_UART				1		// Neblina comm over UART
 
 /*
- * Neblina subsystem definitions
+ * Neblina Control Byte definitions
+ *
+ * 0-4 : Subsystem
+ * 5-7 : Packet Type
+ *
  */
-#define NEB_SUBSYS_DEBUG				0		// Status & logging
-#define NEB_SUBSYS_MOTION_ENG			1		// Motion Engine
-#define NEB_SUBSYS_POWERMGMT			2		// Power management
-#define NEB_SUBSYS_GPIO					3		// GPIO control
-#define NEB_SUBSYS_LED					4		// LED control
-#define NEB_SUBSYS_ADC					5		// ADC control
-#define NEB_SUBSYS_DAC					6		// DAC control
-#define NEB_SUBSYS_I2C					7		// I2C control
-#define NEB_SUBSYS_SPI					8		// SPI control
+#define NEB_CTRL_PKTYPE_MASK			0xE0		// Packet type mask
+#define NEB_CTRL_SUBSYS_MASK			0x1F		// Subsystem mask
+
+// Packet types
+#define NEB_CTRL_PKTYPE_DATA				0		// Data/Response
+#define NEB_CTRL_PKTYPE_ACK					1		// Ack
+#define NEB_CTRL_PKTYPE_CMD					2		// Command
+#define NEB_CTRL_PKTYPE_RESERVE1			3
+#define NEB_CTRL_PKTYPE_ERR					4		// Error response
+#define NEB_CTRL_PKTYPE_RESERVE2			5		//
+#define NEB_CTRL_PKTYPE_RQSTLOG				6		// Request status/error log
+#define NEB_CTRL_PKTYPE_RESERVE3			7
+
+// Subsystem values
+#define NEB_CTRL_SUBSYS_DEBUG				0		// Status & logging
+#define NEB_CTRL_SUBSYS_MOTION_ENG			1		// Motion Engine
+#define NEB_CTRL_SUBSYS_POWERMGMT			2		// Power management
+#define NEB_CTRL_SUBSYS_GPIO				3		// GPIO control
+#define NEB_CTRL_SUBSYS_LED					4		// LED control
+#define NEB_CTRL_SUBSYS_ADC					5		// ADC control
+#define NEB_CTRL_SUBSYS_DAC					6		// DAC control
+#define NEB_CTRL_SUBSYS_I2C					7		// I2C control
+#define NEB_CTRL_SUBSYS_SPI					8		// SPI control
+
 
 //Status Check MASK for SUBSYS
-#define NEB_SUBSYS_STATUS_MASK				0x80
-#define NEB_SUBSYS_COMMAND_RESPONSE_MASK	0x40
-#define NEB_SUBSYS_VALUE_MASK				0x3F
+//#define NEB_SUBSYS_STATUS_MASK				0x80
+//#define NEB_SUBSYS_COMMAND_RESPONSE_MASK	0x40
+//#define NEB_SUBSYS_ACKNOWLEDGE_MASK			0x20
 
 // Power management command code
 #define POWERMGMT_CMD_GET_BAT_LEVEL			0	// Get battery level
 
 // Debug command code
-#define DEBUG_CMD_SET_INTERFACE					1	//sets the protocol interface
-
-/*
-typedef enum subsystem_t//:uint8_t
-{
-	DebugLog = NEB_SUBSYS_DEBUG,
-	MotionEngine = NEB_SUBSYS_MOTION_ENG,
-	PMIC = NEB_SUBSYS_POWER_MGMT,
-	Gpio = NEB_SUBSYS_GPIO,
-	Led = NEB_SUBSYS_LED
-} subsystem_t;
-*/
+#define DEBUG_CMD_SET_INTERFACE				1	//sets the protocol interface
 
 typedef struct Fusion_DataPacket_t
 {
-//	subsystem_t subsys;
-//	uint8_t cmd;
 	uint32_t TimeStamp;
-	//uint8_t length;
 	uint8_t data[MAX_NB_BYTES];
 }Fusion_DataPacket_t;
 
 typedef struct {
-	uint8_t SubSys;		// Subsystem type
+	uint8_t SubSys:5; 	// subsystem code
+	uint8_t PkType:3; 	// packet type: command, response, error packet, acknowledge
 	uint8_t Len;		// Data len = size in byte of following data
 	uint8_t Crc;		// Crc on data
 	uint8_t Cmd;

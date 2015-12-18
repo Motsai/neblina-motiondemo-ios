@@ -28,36 +28,25 @@ enum FusionId : UInt8 {
 	EulerAngle = 5,			// streaming the Euler angles
 	ExtrnForce = 6,			// streaming the external force
 	SetFusionType = 7,		// setting the Fusion type to either 6-axis or 9-axis
-	TrajectRecStart = 8,	// start recording orientation trajectory
-	TrajectRecStop = 9,		// stop recording orientation trajectory
-	TrajectInfo = 10,		// calculating the distance from a pre-recorded orientation trajectory
-	Pedometer = 11,			// streaming pedometer data
-	Mag = 12,				// streaming magnetometer data
-	SittingStanding = 13,	// Stting & Standing data
-	FlashEraseAll = 0x0E,
-	FlashRecordStartStop = 0x0F,
-	FlashPlaybackStartStop = 0x10
+	TrajectoryRecStartStop = 8,	// start recording orientation trajectory
+//	TrajectRecStop = 9,		// stop recording orientation trajectory
+	TrajectInfo = 9,		// calculating the distance from a pre-recorded orientation trajectory
+	Pedometer = 10,			// streaming pedometer data
+	Mag = 11,				// streaming magnetometer data
+	SittingStanding = 12,	// Stting & Standing data
+	LockHeadingRef = 13,
+	SetAccRange = 14,
+	DisableAllStreaming = 15,
+	ResetTimeStamp = 16
+//	FlashEraseAll = 0x0E,
+//	FlashRecordStartStop = 0x0F,
+//	FlashPlaybackStartStop = 0x10
 }
 
 struct FusionCmdItem {
 	let	CmdId : FusionId
 	let Name : String
 }
-
-let FusionCmdList = [FusionCmdItem](arrayLiteral:
-//	FusionCmdItem(CmdId: FusionId.SixAxisIMU, Name:"6 Axis IMU Stream"),
-	FusionCmdItem(CmdId: FusionId.Quaternion, Name: "Quaternion Stream"),
-//	FusionCmdItem(CmdId: FusionId.EulerAngle, Name: "Euler Angle Stream"),
-//	FusionCmdItem(CmdId: FusionId.ExtrnForce, Name: "External Force Stream"),
-//	FusionCmdItem(CmdId: FusionId.Pedometer, Name:"Pedometer Stream"),
-//	FusionCmdItem(CmdId: FusionId.TrajectRecStart, Name: "Trajectory Record"),
-//	FusionCmdItem(CmdId: FusionId.TrajectDistance, Name: "Trajectory Distance Stream"),
-	FusionCmdItem(CmdId: FusionId.Mag, Name: "MAG Stream"),
-//	FusionCmdItem(CmdId: FusionId.MotionState, Name: "Motion Data"),
-	FusionCmdItem(CmdId: FusionId.FlashEraseAll, Name: "Flash Erase All"),
-	FusionCmdItem(CmdId: FusionId.FlashRecordStartStop, Name: "Flash Record"),
-	FusionCmdItem(CmdId: FusionId.FlashPlaybackStartStop, Name: "Flash Playback")
-)
 
 struct NebCmdItem {
 	let SubSysId : Int32
@@ -67,13 +56,13 @@ struct NebCmdItem {
 
 
 let NebCmdList = [NebCmdItem] (arrayLiteral:
-	NebCmdItem(SubSysId: NEB_SUBSYS_DEBUG, CmdId: DEBUG_CMD_SET_INTERFACE, Name: "Set Interface (BLE/UART)"),
-	NebCmdItem(SubSysId: NEB_SUBSYS_MOTION_ENG, CmdId: Quaternion, Name: "Quaternion Stream"),
-	NebCmdItem(SubSysId: NEB_SUBSYS_MOTION_ENG, CmdId: MAG_Data, Name: "Mag Stream"),
-	NebCmdItem(SubSysId: NEB_SUBSYS_MOTION_ENG, CmdId: FlashEraseAll, Name: "Flash Erase All"),
-	NebCmdItem(SubSysId: NEB_SUBSYS_MOTION_ENG, CmdId: FlashRecordStartStop, Name: "Flash Record"),
-	NebCmdItem(SubSysId: NEB_SUBSYS_MOTION_ENG, CmdId: FlashPlaybackStartStop, Name: "Flash Playback"),
-	NebCmdItem(SubSysId: NEB_SUBSYS_MOTION_ENG, CmdId: LockHeadingRef, Name: "Lock Heading Ref.")
+	NebCmdItem(SubSysId: NEB_CTRL_SUBSYS_DEBUG, CmdId: DEBUG_CMD_SET_INTERFACE, Name: "Set Interface (BLE/UART)"),
+	NebCmdItem(SubSysId: NEB_CTRL_SUBSYS_MOTION_ENG, CmdId: Quaternion, Name: "Quaternion Stream"),
+	NebCmdItem(SubSysId: NEB_CTRL_SUBSYS_MOTION_ENG, CmdId: MAG_Data, Name: "Mag Stream"),
+	NebCmdItem(SubSysId: NEB_CTRL_SUBSYS_MOTION_ENG, CmdId: LockHeadingRef, Name: "Lock Heading Ref."),
+	NebCmdItem(SubSysId: NEB_CTRL_SUBSYS_STORAGE, CmdId: FlashEraseAll, Name: "Flash Erase All"),
+	NebCmdItem(SubSysId: NEB_CTRL_SUBSYS_STORAGE, CmdId: FlashRecordStartStop, Name: "Flash Record"),
+	NebCmdItem(SubSysId: NEB_CTRL_SUBSYS_STORAGE, CmdId: FlashPlaybackStartStop, Name: "Flash Playback")
 )
 
 // BLE custom UUID
@@ -155,20 +144,21 @@ class Neblina : NSObject, CBPeripheralDelegate {
 		//let NebPktt = unsafeBitCast(characteristic.value, UnsafePointer<NEB_PKT>.self) //
 		//let pkk = UnsafePointer<NEB_PKTX>(characteristic.value)
 		///var ppk = NebPacket(SubSys: 0, Len: 0, Crc: 0, Cmd:0, TimeStamp: 0)
-		var hdr = NEB_PKTHDR(SubSys: 0, Len: 0, Crc: 0, Cmd: 0)
+		var hdr = NEB_PKTHDR()
+		//var hdr = NEB_PKTHDR(Ctrl : (SubSys:0, PkType : 0), Len: 0, Crc: 0, Cmd: 0)
 		if (characteristic.UUID .isEqual(NEB_DATACHAR_UUID))
 		{
 			characteristic.value?.getBytes(&hdr, length: sizeof(NEB_PKTHDR))
 			characteristic.value?.getBytes(&NebPkt, length: sizeof(NEB_PKTHDR) + 1)
 			var errflag = Bool(false)
-			if ((hdr.SubSys & 0x80) == 0x80)
+			if ((hdr.SubSys  & 0x80) == 0x80)
 			{
 				errflag = true;
 				hdr.SubSys &= 0x7F;
 			}
 			switch (Int32(hdr.SubSys))
 			{
-				case NEB_SUBSYS_MOTION_ENG:	// Motion Engine
+				case NEB_CTRL_SUBSYS_MOTION_ENG:	// Motion Engine
 					//print("\(characteristic.value)")
 					characteristic.value?.getBytes(&fp, range: NSMakeRange(sizeof(NEB_PKTHDR), sizeof(Fusion_DataPacket_t)))
 					//print("\(characteristic.value)")
@@ -212,10 +202,10 @@ class Neblina : NSObject, CBPeripheralDelegate {
 		
 		var pkbuf = [UInt8](count:20, repeatedValue:0)
 		
-		pkbuf[0] = 0x41
+		pkbuf[0] = UInt8((NEB_CTRL_PKTYPE_CMD << 5) | NEB_CTRL_SUBSYS_MOTION_ENG) //0x41
 		pkbuf[1] = UInt8(sizeof(Fusion_DataPacket_t))
 		pkbuf[2] = 0
-		pkbuf[3] = FusionId.MotionState.rawValue	// Cmd
+		pkbuf[3] = UInt8(MotionState)	// Cmd
 		
 		if Enable == true
 		{
@@ -236,10 +226,10 @@ class Neblina : NSObject, CBPeripheralDelegate {
 		
 		var pkbuf = [UInt8](count:20, repeatedValue:0)
 		
-		pkbuf[0] = 0x41
+		pkbuf[0] = UInt8((NEB_CTRL_PKTYPE_CMD << 5) | NEB_CTRL_SUBSYS_MOTION_ENG) //0x41
 		pkbuf[1] = UInt8(sizeof(Fusion_DataPacket_t))
 		pkbuf[2] = 0
-		pkbuf[3] = FusionId.SixAxisIMU.rawValue	// Cmd
+		pkbuf[3] = UInt8(IMU_Data)	// Cmd
 		
 		if Enable == true
 		{
@@ -260,10 +250,10 @@ class Neblina : NSObject, CBPeripheralDelegate {
 		
 		var pkbuf = [UInt8](count:20, repeatedValue:0)
 		
-		pkbuf[0] = 0x41
+		pkbuf[0] = UInt8((NEB_CTRL_PKTYPE_CMD << 5) | NEB_CTRL_SUBSYS_MOTION_ENG) //0x41
 		pkbuf[1] = UInt8(sizeof(Fusion_DataPacket_t))
 		pkbuf[2] = 0
-		pkbuf[3] = FusionId.Quaternion.rawValue	// Cmd
+		pkbuf[3] = UInt8(Quaternion)	// Cmd
 		
 		if (Enable == true)
 		{
@@ -284,7 +274,7 @@ class Neblina : NSObject, CBPeripheralDelegate {
 		
 		var pkbuf = [UInt8](count:20, repeatedValue:0)
 		
-		pkbuf[0] = 0x41
+		pkbuf[0] = UInt8((NEB_CTRL_PKTYPE_CMD << 5) | NEB_CTRL_SUBSYS_MOTION_ENG) //0x41
 		pkbuf[1] = UInt8(sizeof(Fusion_DataPacket_t))
 		pkbuf[2] = 0
 		pkbuf[3] = FusionId.EulerAngle.rawValue	// Cmd
@@ -308,10 +298,10 @@ class Neblina : NSObject, CBPeripheralDelegate {
 		
 		var pkbuf = [UInt8](count:20, repeatedValue:0)
 		
-		pkbuf[0] = 0x41
+		pkbuf[0] = UInt8((NEB_CTRL_PKTYPE_CMD << 5) | NEB_CTRL_SUBSYS_MOTION_ENG) //0x41
 		pkbuf[1] = UInt8(sizeof(Fusion_DataPacket_t))
 		pkbuf[2] = 0
-		pkbuf[3] = FusionId.ExtrnForce.rawValue	// Cmd
+		pkbuf[3] = UInt8(ExtForce)	// Cmd
 		
 		if (Enable == true)
 		{
@@ -332,10 +322,10 @@ class Neblina : NSObject, CBPeripheralDelegate {
 		
 		var pkbuf = [UInt8](count:20, repeatedValue:0)
 		
-		pkbuf[0] = 0x41
+		pkbuf[0] = UInt8((NEB_CTRL_PKTYPE_CMD << 5) | NEB_CTRL_SUBSYS_MOTION_ENG) //0x41
 		pkbuf[1] = UInt8(sizeof(Fusion_DataPacket_t))
 		pkbuf[2] = 0
-		pkbuf[3] = FusionId.Pedometer.rawValue	// Cmd
+		pkbuf[3] = UInt8(Pedometer)// Cmd
 		
 		if Enable == true
 		{
@@ -356,10 +346,10 @@ class Neblina : NSObject, CBPeripheralDelegate {
 		
 		var pkbuf = [UInt8](count:20, repeatedValue:0)
 		
-		pkbuf[0] = 0x41
+		pkbuf[0] = UInt8((NEB_CTRL_PKTYPE_CMD << 5) | NEB_CTRL_SUBSYS_MOTION_ENG) //0x41
 		pkbuf[1] = UInt8(sizeof(Fusion_DataPacket_t))
 		pkbuf[2] = 0
-		pkbuf[3] = FusionId.TrajectRecStart.rawValue	// Cmd
+		pkbuf[3] = UInt8(TrajectoryRecStartStop)	// Cmd
 		
 		if Enable == true
 		{
@@ -372,7 +362,7 @@ class Neblina : NSObject, CBPeripheralDelegate {
 		device.writeValue(NSData(bytes: UnsafeMutablePointer<Void>(pkbuf), length: 20), forCharacteristic: ctrlChar, type: CBCharacteristicWriteType.WithoutResponse)
 	}
 	
-	func TrajectoryInfo(Enable:Bool)
+	func TrajectoryInfoCmd(Enable:Bool)
 	{
 		if (isDeviceReady() == false) {
 			return
@@ -380,10 +370,10 @@ class Neblina : NSObject, CBPeripheralDelegate {
 		
 		var pkbuf = [UInt8](count:20, repeatedValue:0)
 		
-		pkbuf[0] = 0x41
+		pkbuf[0] = UInt8((NEB_CTRL_PKTYPE_CMD << 5) | NEB_CTRL_SUBSYS_MOTION_ENG) //0x41
 		pkbuf[1] = UInt8(sizeof(Fusion_DataPacket_t))
 		pkbuf[2] = 0
-		pkbuf[3] = FusionId.TrajectInfo.rawValue	// Cmd
+		pkbuf[3] = UInt8(TrajectoryInfo)	// Cmd
 		
 		if Enable == true
 		{
@@ -404,10 +394,10 @@ class Neblina : NSObject, CBPeripheralDelegate {
 		
 		var pkbuf = [UInt8](count:20, repeatedValue:0)
 		
-		pkbuf[0] = 0x41
+		pkbuf[0] = UInt8((NEB_CTRL_PKTYPE_CMD << 5) | NEB_CTRL_SUBSYS_MOTION_ENG) //0x41
 		pkbuf[1] = UInt8(sizeof(Fusion_DataPacket_t))
 		pkbuf[2] = 0
-		pkbuf[3] = FusionId.Mag.rawValue	// Cmd
+		pkbuf[3] = UInt8(MAG_Data)	// Cmd
 		
 		if Enable == true
 		{
@@ -420,17 +410,17 @@ class Neblina : NSObject, CBPeripheralDelegate {
 		device.writeValue(NSData(bytes: UnsafeMutablePointer<Void>(pkbuf), length: 20), forCharacteristic: ctrlChar, type: CBCharacteristicWriteType.WithoutResponse)
 	}
 	
-	func SittingStanding(Enable:Bool) {
+	func SittingStandingCmd(Enable:Bool) {
 		if (isDeviceReady() == false) {
 			return
 		}
 		
 		var pkbuf = [UInt8](count:20, repeatedValue:0)
 		
-		pkbuf[0] = 0x41
+		pkbuf[0] = UInt8((NEB_CTRL_PKTYPE_CMD << 5) | NEB_CTRL_SUBSYS_MOTION_ENG) //0x41
 		pkbuf[1] = UInt8(sizeof(Fusion_DataPacket_t))
 		pkbuf[2] = 0
-		pkbuf[3] = FusionId.SittingStanding.rawValue	// Cmd
+		pkbuf[3] = UInt8(SittingStanding)	// Cmd
 		
 		if Enable == true
 		{
@@ -450,10 +440,10 @@ class Neblina : NSObject, CBPeripheralDelegate {
 		
 		var pkbuf = [UInt8](count:20, repeatedValue:0)
 		
-		pkbuf[0] = 0x41
+		pkbuf[0] = UInt8((NEB_CTRL_PKTYPE_CMD << 5) | NEB_CTRL_SUBSYS_MOTION_ENG) //0x41
 		pkbuf[1] = UInt8(sizeof(Fusion_DataPacket_t))
 		pkbuf[2] = 0
-		pkbuf[3] = FusionId.FlashEraseAll.rawValue // RecorderErase.rawValue	// Cmd
+		pkbuf[3] = UInt8(FlashEraseAll) // FusionId.FlashEraseAll.rawValue // RecorderErase.rawValue	// Cmd
 		
 		if Enable == true
 		{
@@ -474,10 +464,10 @@ class Neblina : NSObject, CBPeripheralDelegate {
 		
 		var pkbuf = [UInt8](count:20, repeatedValue:0)
 		
-		pkbuf[0] = 0x41
+		pkbuf[0] = UInt8((NEB_CTRL_PKTYPE_CMD << 5) | NEB_CTRL_SUBSYS_MOTION_ENG) //0x41
 		pkbuf[1] = UInt8(sizeof(Fusion_DataPacket_t))
 		pkbuf[2] = 0
-		pkbuf[3] = FusionId.FlashRecordStartStop.rawValue	// Cmd
+		pkbuf[3] = UInt8(FlashRecordStartStop)//FusionId.FlashRecordStartStop.rawValue	// Cmd
 		
 		if Enable == true
 		{
@@ -497,10 +487,10 @@ class Neblina : NSObject, CBPeripheralDelegate {
 		
 		var pkbuf = [UInt8](count:20, repeatedValue:0)
 		
-		pkbuf[0] = 0x41
+		pkbuf[0] = UInt8((NEB_CTRL_PKTYPE_CMD << 5) | NEB_CTRL_SUBSYS_MOTION_ENG) //0x41
 		pkbuf[1] = UInt8(sizeof(Fusion_DataPacket_t))
 		pkbuf[2] = 0
-		pkbuf[3] = FusionId.FlashPlaybackStartStop.rawValue	// Cmd
+		pkbuf[3] = UInt8(FlashPlaybackStartStop) //FusionId.FlashPlaybackStartStop.rawValue	// Cmd
 		
 		if Enable == true
 		{
@@ -522,7 +512,7 @@ class Neblina : NSObject, CBPeripheralDelegate {
 		
 		var pkbuf = [UInt8](count:20, repeatedValue:0)
 	
-		pkbuf[0] = 0x41
+		pkbuf[0] = UInt8((NEB_CTRL_PKTYPE_CMD << 5) | NEB_CTRL_SUBSYS_MOTION_ENG) //0x41
 		pkbuf[1] = 0 //UInt8(sizeof(Fusion_DataPacket_t))
 		pkbuf[2] = 0
 		pkbuf[3] = UInt8(LockHeadingRef)	// Cmd

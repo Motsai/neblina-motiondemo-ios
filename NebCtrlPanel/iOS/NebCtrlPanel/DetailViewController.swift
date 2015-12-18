@@ -251,23 +251,11 @@ class DetailViewController: UIViewController, CBPeripheralDelegate, NeblinaDeleg
 							NebDevice.TrajectoryRecord(sender.selectedSegmentIndex == 1)
 							break;
 						case TrajectoryDistance:
-							NebDevice.TrajectoryInfo(sender.selectedSegmentIndex == 1)
+							NebDevice.TrajectoryInfoCmd(sender.selectedSegmentIndex == 1)
 							break;
 						case MAG_Data:
 							NebDevice.MagStream(sender.selectedSegmentIndex == 1)
 							break;
-/*						case FlashEraseAll:
-							if (sender.selectedSegmentIndex == 1) {
-								flashEraseProgress = true;
-							}
-							NebDevice.FlashErase(sender.selectedSegmentIndex == 1)
-							break
-						case FlashRecordStartStop:
-							NebDevice.FlashRecord(sender.selectedSegmentIndex == 1)
-							break
-						case FlashPlaybackStartStop:
-							NebDevice.FlashPlayback(sender.selectedSegmentIndex == 1)
-							break*/
 						case LockHeadingRef:
 							NebDevice.LockHeading(sender.selectedSegmentIndex == 1)
 							let cell = cmdView.cellForRowAtIndexPath( NSIndexPath(forRow: row, inSection: 0))
@@ -278,6 +266,26 @@ class DetailViewController: UIViewController, CBPeripheralDelegate, NeblinaDeleg
 							break
 					}
 				case NEB_CTRL_SUBSYS_LED:
+					break
+				case NEB_CTRL_SUBSYS_STORAGE:
+					switch (NebCmdList[row].CmdId)
+					{
+						
+						case FlashEraseAll:
+							if (sender.selectedSegmentIndex == 1) {
+								flashEraseProgress = true;
+							}
+							NebDevice.FlashErase(sender.selectedSegmentIndex == 1)
+							break
+						case FlashRecordStartStop:
+							NebDevice.FlashRecord(sender.selectedSegmentIndex == 1)
+							break
+						case FlashPlaybackStartStop:
+							NebDevice.FlashPlayback(sender.selectedSegmentIndex == 1)
+							break
+						default:
+							break
+					}
 					break
 				default:
 					break
