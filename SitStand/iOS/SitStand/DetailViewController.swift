@@ -112,8 +112,8 @@ class DetailViewController: UIViewController, CBPeripheralDelegate, SCNSceneRend
 	func didConnectNeblina() {
 		device.EulerAngleStream(false)
 		device.QuaternionStream(false)
-		device.SittingStanding(false)
-		device.SittingStanding(true)
+		device.SittingStandingCmd(false)
+		device.SittingStandingCmd(true)
 	}
 
 	func didReceiveFusionData(type : FusionId, data : Fusion_DataPacket_t, errFlag : Bool) {

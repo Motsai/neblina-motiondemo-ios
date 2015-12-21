@@ -14,6 +14,7 @@ class DetailViewController: UIViewController, CBPeripheralDelegate, NeblinaDeleg
 
 	let NebDevice = Neblina()
 	let scene = SCNScene(named: "art.scnassets/C-3PO.dae")!
+	//let scene = SCNScene(named: "art.scnassets/Millenium_Falcon/Millenium_Falcon.dae")!
 	var ship = SCNNode() //= scene.rootNode.childNodeWithName("ship", recursively: true)!
 
 	@IBOutlet weak var label1: UILabel!
@@ -110,7 +111,7 @@ class DetailViewController: UIViewController, CBPeripheralDelegate, NeblinaDeleg
 	func didConnectNeblina() {
 		NebDevice.EulerAngleStream(false)
 		NebDevice.QuaternionStream(true)
-		NebDevice.TrajectoryInfo(true)
+		NebDevice.TrajectoryInfoCmd(true)
 	}
 	
 	func didReceiveFusionData(type : FusionId, data : Fusion_DataPacket_t, errFlag : Bool) {
