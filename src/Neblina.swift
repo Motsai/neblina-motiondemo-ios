@@ -18,7 +18,7 @@ import CoreBluetooth
 		Data = [0,0,0,0,0,0]
 	}
 }*/
-
+/*
 enum FusionId : UInt8 {
 	case
 	Downsample = 1,			// Downsampling factor definition
@@ -47,6 +47,7 @@ struct FusionCmdItem {
 	let	CmdId : FusionId
 	let Name : String
 }
+*/
 
 struct NebCmdItem {
 	let SubSysId : Int32
@@ -168,8 +169,8 @@ class Neblina : NSObject, CBPeripheralDelegate {
 					//characteristic.value?.getBytes(&fdata.Data[0], range: NSMakeRange(sizeof(NEB_PKTHDR) + 4, 12))
 					
 					//print("\(fdata)")
-					let id = FusionId(rawValue: hdr.Cmd)
-					delegate.didReceiveFusionData(id!, data: fp, errFlag: errflag)
+					let id = Int32(hdr.Cmd) //FusionId(rawValue: hdr.Cmd)
+					delegate.didReceiveFusionData(id, data: fp, errFlag: errflag)
 					//delegate.didReceiveFusionData(hdr.Cmd, data: fdata)
 //					characteristic.value?.getBytes(&ppk, range: NSMakeRange(sizeof(NEB_PKTHDR), 16))
 					break;
@@ -194,7 +195,7 @@ class Neblina : NSObject, CBPeripheralDelegate {
 		return true
 	}
 	
-	func MotionStream(Enable:Bool)
+	func SendCmdMotionStream(Enable:Bool)
 	{
 		if (isDeviceReady() == false) {
 			return
@@ -218,7 +219,7 @@ class Neblina : NSObject, CBPeripheralDelegate {
 		device.writeValue(NSData(bytes: UnsafeMutablePointer<Void>(pkbuf), length: 20), forCharacteristic: ctrlChar, type: CBCharacteristicWriteType.WithoutResponse)
 	}
 
-	func SixAxisIMU_Stream(Enable:Bool)
+	func SendCmdSixAxisIMUStream(Enable:Bool)
 	{
 		if (isDeviceReady() == false) {
 			return
@@ -242,7 +243,7 @@ class Neblina : NSObject, CBPeripheralDelegate {
 		device.writeValue(NSData(bytes: UnsafeMutablePointer<Void>(pkbuf), length: 20), forCharacteristic: ctrlChar, type: CBCharacteristicWriteType.WithoutResponse)
 	}
 	
-	func QuaternionStream(Enable:Bool)
+	func SendCmdQuaternionStream(Enable:Bool)
 	{
 		if (isDeviceReady() == false) {
 			return
@@ -266,7 +267,7 @@ class Neblina : NSObject, CBPeripheralDelegate {
 		device.writeValue(NSData(bytes: UnsafeMutablePointer<Void>(pkbuf), length: 20), forCharacteristic: ctrlChar, type: CBCharacteristicWriteType.WithoutResponse)
 	}
 	
-	func EulerAngleStream(Enable:Bool)
+	func SendCmdEulerAngleStream(Enable:Bool)
 	{
 		if (isDeviceReady() == false) {
 			return
@@ -277,7 +278,7 @@ class Neblina : NSObject, CBPeripheralDelegate {
 		pkbuf[0] = UInt8((NEB_CTRL_PKTYPE_CMD << 5) | NEB_CTRL_SUBSYS_MOTION_ENG) //0x41
 		pkbuf[1] = UInt8(sizeof(Fusion_DataPacket_t))
 		pkbuf[2] = 0
-		pkbuf[3] = FusionId.EulerAngle.rawValue	// Cmd
+		pkbuf[3] = UInt8(EulerAngle)//FusionId.EulerAngle.rawValue	// Cmd
 		
 		if (Enable == true)
 		{
@@ -290,7 +291,7 @@ class Neblina : NSObject, CBPeripheralDelegate {
 		device.writeValue(NSData(bytes: UnsafeMutablePointer<Void>(pkbuf), length: 20), forCharacteristic: ctrlChar, type: CBCharacteristicWriteType.WithoutResponse)
 	}
 	
-	func ExternalForceStream(Enable:Bool)
+	func SendCmdExternalForceStream(Enable:Bool)
 	{
 		if (isDeviceReady() == false) {
 			return
@@ -314,7 +315,7 @@ class Neblina : NSObject, CBPeripheralDelegate {
 		device.writeValue(NSData(bytes: UnsafeMutablePointer<Void>(pkbuf), length: 20), forCharacteristic: ctrlChar, type: CBCharacteristicWriteType.WithoutResponse)
 	}
 	
-	func PedometerStream(Enable:Bool)
+	func SendCmdPedometerStream(Enable:Bool)
 	{
 		if (isDeviceReady() == false) {
 			return
@@ -338,7 +339,7 @@ class Neblina : NSObject, CBPeripheralDelegate {
 		device.writeValue(NSData(bytes: UnsafeMutablePointer<Void>(pkbuf), length: 20), forCharacteristic: ctrlChar, type: CBCharacteristicWriteType.WithoutResponse)
 	}
 	
-	func TrajectoryRecord(Enable:Bool)
+	func SendCmdTrajectoryRecord(Enable:Bool)
 	{
 		if (isDeviceReady() == false) {
 			return
@@ -362,7 +363,7 @@ class Neblina : NSObject, CBPeripheralDelegate {
 		device.writeValue(NSData(bytes: UnsafeMutablePointer<Void>(pkbuf), length: 20), forCharacteristic: ctrlChar, type: CBCharacteristicWriteType.WithoutResponse)
 	}
 	
-	func TrajectoryInfoCmd(Enable:Bool)
+	func SendCmdTrajectoryInfo(Enable:Bool)
 	{
 		if (isDeviceReady() == false) {
 			return
@@ -386,7 +387,7 @@ class Neblina : NSObject, CBPeripheralDelegate {
 		device.writeValue(NSData(bytes: UnsafeMutablePointer<Void>(pkbuf), length: 20), forCharacteristic: ctrlChar, type: CBCharacteristicWriteType.WithoutResponse)
 	}
 	
-	func MagStream(Enable:Bool)
+	func SendCmdMagStream(Enable:Bool)
 	{
 		if (isDeviceReady() == false) {
 			return
@@ -410,7 +411,7 @@ class Neblina : NSObject, CBPeripheralDelegate {
 		device.writeValue(NSData(bytes: UnsafeMutablePointer<Void>(pkbuf), length: 20), forCharacteristic: ctrlChar, type: CBCharacteristicWriteType.WithoutResponse)
 	}
 	
-	func SittingStandingCmd(Enable:Bool) {
+	func SendCmdSittingStanding(Enable:Bool) {
 		if (isDeviceReady() == false) {
 			return
 		}
@@ -433,7 +434,7 @@ class Neblina : NSObject, CBPeripheralDelegate {
 		device.writeValue(NSData(bytes: UnsafeMutablePointer<Void>(pkbuf), length: 20), forCharacteristic: ctrlChar, type: CBCharacteristicWriteType.WithoutResponse)
 	}
 	
-	func FlashErase(Enable:Bool) {
+	func SendCmdFlashErase(Enable:Bool) {
 		if (isDeviceReady() == false) {
 			return
 		}
@@ -457,7 +458,7 @@ class Neblina : NSObject, CBPeripheralDelegate {
 		
 	}
 	
-	func FlashRecord(Enable:Bool) {
+	func SendCmdFlashRecord(Enable:Bool) {
 		if (isDeviceReady() == false) {
 			return
 		}
@@ -480,7 +481,7 @@ class Neblina : NSObject, CBPeripheralDelegate {
 		device.writeValue(NSData(bytes: UnsafeMutablePointer<Void>(pkbuf), length: 20), forCharacteristic: ctrlChar, type: CBCharacteristicWriteType.WithoutResponse)
 	}
 	
-	func FlashPlayback(Enable:Bool) {
+	func SendCmdFlashPlayback(Enable:Bool) {
 		if (isDeviceReady() == false) {
 			return
 		}
@@ -505,7 +506,7 @@ class Neblina : NSObject, CBPeripheralDelegate {
 		device.writeValue(NSData(bytes: UnsafeMutablePointer<Void>(pkbuf), length: 20), forCharacteristic: ctrlChar, type: CBCharacteristicWriteType.WithoutResponse)
 	}
 	
-	func LockHeading(Enable:Bool) {
+	func SendCmdLockHeading(Enable:Bool) {
 		if (isDeviceReady() == false) {
 			return
 		}
@@ -520,7 +521,7 @@ class Neblina : NSObject, CBPeripheralDelegate {
 		device.writeValue(NSData(bytes: UnsafeMutablePointer<Void>(pkbuf), length: 20), forCharacteristic: ctrlChar, type: CBCharacteristicWriteType.WithoutResponse)
 	}
 	
-	func ControlInterface(Interf : Int) {
+	func SendCmdControlInterface(Interf : Int) {
 		if (isDeviceReady() == false) {
 			return
 		}
@@ -544,7 +545,7 @@ class Neblina : NSObject, CBPeripheralDelegate {
 
 protocol NeblinaDelegate {
 	
-	func didReceiveFusionData(type : FusionId, data : Fusion_DataPacket_t, errFlag : Bool)
+	func didReceiveFusionData(type : Int32, data : Fusion_DataPacket_t, errFlag : Bool)
 	
 	func didConnectNeblina()
 	

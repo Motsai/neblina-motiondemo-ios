@@ -10,11 +10,12 @@ import UIKit
 import CoreBluetooth
 import QuartzCore
 import SceneKit
-
+/*
 struct CtrlItem {
 	let	CtrlId : FusionId
 	let Name : String
 }
+*/
 
 let CtrlName = [String](arrayLiteral:"Heading")//, "Test1", "Test2")
 
@@ -24,6 +25,7 @@ class DetailViewController: UIViewController, CBPeripheralDelegate, NeblinaDeleg
 	//let scene = SCNScene(named: "art.scnassets/Millennium_Falcon/Millennium_Falcon.dae") as SCNScene!
 	//let scene = SCNScene(named: "art.scnassets/Arc-170_ship/Obj_Shaded/Arc170.dae")!
 	let scene = SCNScene(named: "art.scnassets/ship.scn")!
+	//let scene = SCNScene(named: "art.scnassets/E-TIE-I/E-TIE-I.3ds.obj")!
 	//var textview = UITextView()
 
 	
@@ -104,6 +106,7 @@ class DetailViewController: UIViewController, CBPeripheralDelegate, NeblinaDeleg
 //		ship = scene.rootNode.childNodeWithName("MillenniumFalconTop", recursively: true)!
 //		ship = scene.rootNode.childNodeWithName("ARC_170_LEE_RAY_polySurface1394376_2_2", recursively: true)!
 		ship = scene.rootNode.childNodeWithName("ship", recursively: true)!
+//		ship = scene.rootNode.childNodeWithName("MDL Obj", recursively: true)!
 		ship.eulerAngles = SCNVector3Make(GLKMathDegreesToRadians(90), 0, GLKMathDegreesToRadians(180))
 		//ship.rotation = SCNVector4(1, 0, 0, GLKMathDegreesToRadians(90))
 		//print("1 - \(ship)")
@@ -214,7 +217,7 @@ class DetailViewController: UIViewController, CBPeripheralDelegate, NeblinaDeleg
 			{
 				case NEB_CTRL_SUBSYS_DEBUG:
 					if (NebCmdList[row].CmdId == DEBUG_CMD_SET_INTERFACE) {
-						NebDevice.ControlInterface(sender.selectedSegmentIndex)
+						NebDevice.SendCmdControlInterface(sender.selectedSegmentIndex)
 					}
 					break
 				
@@ -222,42 +225,42 @@ class DetailViewController: UIViewController, CBPeripheralDelegate, NeblinaDeleg
 					switch (NebCmdList[row].CmdId)
 					{
 						case MotionState:
-							NebDevice.MotionStream(sender.selectedSegmentIndex == 1)
+							NebDevice.SendCmdMotionStream(sender.selectedSegmentIndex == 1)
 							break
 						case IMU_Data:
-							NebDevice.SixAxisIMU_Stream(sender.selectedSegmentIndex == 1)
+							NebDevice.SendCmdSixAxisIMUStream(sender.selectedSegmentIndex == 1)
 							break
 						case Quaternion:
-							NebDevice.EulerAngleStream(false)
+							NebDevice.SendCmdEulerAngleStream(false)
 							heading = false
 							
-							NebDevice.QuaternionStream(sender.selectedSegmentIndex == 1)
+							NebDevice.SendCmdQuaternionStream(sender.selectedSegmentIndex == 1)
 							//var i = NebDevice.getCmdIdx(FusionId.FlashPlaybackStartStop)
 							let cell = cmdView.cellForRowAtIndexPath( NSIndexPath(forRow: NebCmdList.count, inSection: 0))
 							let sw = cell!.viewWithTag(2) as! UISegmentedControl
 							sw.selectedSegmentIndex = 0
 							break
 						case EulerAngle:
-							NebDevice.QuaternionStream(false)
-							NebDevice.EulerAngleStream(sender.selectedSegmentIndex == 1)
+							NebDevice.SendCmdQuaternionStream(false)
+							NebDevice.SendCmdEulerAngleStream(sender.selectedSegmentIndex == 1)
 							break
 						case ExtForce:
-							NebDevice.ExternalForceStream(sender.selectedSegmentIndex == 1)
+							NebDevice.SendCmdExternalForceStream(sender.selectedSegmentIndex == 1)
 							break
 						case Pedometer:
-							NebDevice.PedometerStream(sender.selectedSegmentIndex == 1)
+							NebDevice.SendCmdPedometerStream(sender.selectedSegmentIndex == 1)
 							break;
 						case TrajectoryRecStartStop:
-							NebDevice.TrajectoryRecord(sender.selectedSegmentIndex == 1)
+							NebDevice.SendCmdTrajectoryRecord(sender.selectedSegmentIndex == 1)
 							break;
 						case TrajectoryDistance:
-							NebDevice.TrajectoryInfoCmd(sender.selectedSegmentIndex == 1)
+							NebDevice.SendCmdTrajectoryInfo(sender.selectedSegmentIndex == 1)
 							break;
 						case MAG_Data:
-							NebDevice.MagStream(sender.selectedSegmentIndex == 1)
+							NebDevice.SendCmdMagStream(sender.selectedSegmentIndex == 1)
 							break;
 						case LockHeadingRef:
-							NebDevice.LockHeading(sender.selectedSegmentIndex == 1)
+							NebDevice.SendCmdLockHeading(sender.selectedSegmentIndex == 1)
 							let cell = cmdView.cellForRowAtIndexPath( NSIndexPath(forRow: row, inSection: 0))
 							let sw = cell!.viewWithTag(2) as! UISegmentedControl
 							sw.selectedSegmentIndex = 0
@@ -275,13 +278,13 @@ class DetailViewController: UIViewController, CBPeripheralDelegate, NeblinaDeleg
 							if (sender.selectedSegmentIndex == 1) {
 								flashEraseProgress = true;
 							}
-							NebDevice.FlashErase(sender.selectedSegmentIndex == 1)
+							NebDevice.SendCmdFlashErase(sender.selectedSegmentIndex == 1)
 							break
 						case FlashRecordStartStop:
-							NebDevice.FlashRecord(sender.selectedSegmentIndex == 1)
+							NebDevice.SendCmdFlashRecord(sender.selectedSegmentIndex == 1)
 							break
 						case FlashPlaybackStartStop:
-							NebDevice.FlashPlayback(sender.selectedSegmentIndex == 1)
+							NebDevice.SendCmdFlashPlayback(sender.selectedSegmentIndex == 1)
 							break
 						default:
 							break
@@ -295,8 +298,8 @@ class DetailViewController: UIViewController, CBPeripheralDelegate, NeblinaDeleg
 		else {
 			switch (row - NebCmdList.count) {
 			case 0:
-				NebDevice.QuaternionStream(false)
-				NebDevice.EulerAngleStream(true)
+				NebDevice.SendCmdQuaternionStream(false)
+				NebDevice.SendCmdEulerAngleStream(true)
 				heading = sender.selectedSegmentIndex == 1
 				var i = NebDevice.getCmdIdx(NEB_CTRL_SUBSYS_MOTION_ENG,  cmdId: Quaternion)
 				let cell = cmdView.cellForRowAtIndexPath( NSIndexPath(forRow: i, inSection: 0))
@@ -324,7 +327,7 @@ class DetailViewController: UIViewController, CBPeripheralDelegate, NeblinaDeleg
 		
 	}
 	
-	func didReceiveFusionData(type : FusionId, data : Fusion_DataPacket_t, errFlag : Bool) {
+	func didReceiveFusionData(type : Int32, data : Fusion_DataPacket_t, errFlag : Bool) {
 
 		//let errflag = Bool(type.rawValue & 0x80 == 0x80)
 
@@ -332,11 +335,11 @@ class DetailViewController: UIViewController, CBPeripheralDelegate, NeblinaDeleg
 		
 		switch (type) {
 			
-		case FusionId.MotionState:
+		case MotionState:
 			break
-		case FusionId.SixAxisIMU:
+		case IMU_Data:
 			break
-		case FusionId.EulerAngle:
+		case EulerAngle:
 			//
 			// Process Euler Angle
 			//
@@ -361,7 +364,7 @@ class DetailViewController: UIViewController, CBPeripheralDelegate, NeblinaDeleg
 			
 		
 			break
-		case FusionId.Quaternion:
+		case Quaternion:
 		
 			//
 			// Process Quaternion
@@ -380,7 +383,7 @@ class DetailViewController: UIViewController, CBPeripheralDelegate, NeblinaDeleg
 			
 			
 			break
-		case FusionId.ExtrnForce:
+		case ExtForce:
 			//
 			// Process External Force
 			//
@@ -437,7 +440,7 @@ class DetailViewController: UIViewController, CBPeripheralDelegate, NeblinaDeleg
 			label.text = String("Extrn Force - x:\(xq), y:\(yq), z:\(zq)")
 			//print("Extrn Force - x:\(xq), y:\(yq), z:\(zq)")
 			break
-		case FusionId.Mag:
+		case MAG_Data:
 			//
 			// Mag data
 			//

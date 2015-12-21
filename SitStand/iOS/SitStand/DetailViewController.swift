@@ -116,16 +116,16 @@ class DetailViewController: UIViewController, CBPeripheralDelegate, SCNSceneRend
 		device.SittingStandingCmd(true)
 	}
 
-	func didReceiveFusionData(type : FusionId, data : Fusion_DataPacket_t, errFlag : Bool) {
+	func didReceiveFusionData(type : Int32, data : Fusion_DataPacket_t, errFlag : Bool) {
 		//	let textview = self.view.viewWithTag(3) as! UITextView
 		
 		switch (type) {
 			
-		case FusionId.MotionState:
+		case MotionState:
 			break
-		case FusionId.SixAxisIMU:
+		case IMU_Data:
 			break
-		case FusionId.EulerAngle:
+		case EulerAngle:
 			//
 			// Process Euler Angle
 			//
@@ -149,7 +149,7 @@ class DetailViewController: UIViewController, CBPeripheralDelegate, SCNSceneRend
 			*/
 			
 			break
-		case FusionId.Quaternion:
+		case Quaternion:
 			
 			//
 			// Process Quaternion
@@ -168,7 +168,7 @@ class DetailViewController: UIViewController, CBPeripheralDelegate, SCNSceneRend
 			
 			*/
 			break
-		case FusionId.ExtrnForce:
+		case ExtForce:
 			//
 			// Process External Force
 			//
@@ -225,7 +225,7 @@ class DetailViewController: UIViewController, CBPeripheralDelegate, SCNSceneRend
 			textview.text = String("Extrn Force - x:\(xq), y:\(yq), z:\(zq)")
 			//print("Extrn Force - x:\(xq), y:\(yq), z:\(zq)")*/
 			break
-		case FusionId.Mag:
+		case MAG_Data:
 			//
 			// Mag data
 			//
@@ -239,7 +239,7 @@ class DetailViewController: UIViewController, CBPeripheralDelegate, SCNSceneRend
 			textview.text = String("Mag - x:\(xq), y:\(yq), z:\(zq)")
 			//ship.rotation = SCNVector4(Float(xq), Float(yq), 0, GLKMathDegreesToRadians(90))*/
 			break
-		case FusionId.SittingStanding:
+		case SittingStanding:
 			let state = data.data.0
 			let sitTime = (UInt32(data.data.1) & 0xff) | (UInt32(data.data.2) << 8)  | (UInt32(data.data.3) << 16) | (UInt32(data.data.4) << 24)
 			let standTime = (UInt32(data.data.5) & 0xff) | (UInt32(data.data.6) << 8)  | (UInt32(data.data.7) << 16) | (UInt32(data.data.8) << 24)

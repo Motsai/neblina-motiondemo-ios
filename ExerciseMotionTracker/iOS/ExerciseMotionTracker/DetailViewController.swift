@@ -104,27 +104,27 @@ class DetailViewController: UIViewController, CBPeripheralDelegate, NeblinaDeleg
 
 	@IBAction func buttonTrajectRecord(button: UIButton)
 	{
-		NebDevice.TrajectoryRecord(true)
+		NebDevice.SendCmdTrajectoryRecord(true)
 	}
 	
 	// MARK : Neblina
 	func didConnectNeblina() {
-		NebDevice.EulerAngleStream(false)
-		NebDevice.QuaternionStream(true)
-		NebDevice.TrajectoryInfoCmd(true)
+		NebDevice.SendCmdEulerAngleStream(false)
+		NebDevice.SendCmdQuaternionStream(true)
+		NebDevice.SendCmdTrajectoryInfo(true)
 	}
 	
-	func didReceiveFusionData(type : FusionId, data : Fusion_DataPacket_t, errFlag : Bool) {
+	func didReceiveFusionData(type : Int32, data : Fusion_DataPacket_t, errFlag : Bool) {
 //	func didReceiveFusionData(type : FusionId, data : Fusion_DataPacket_t) {
 		//let textview = self.view.viewWithTag(3) as! UITextView
 		
 		switch (type) {
 			
-		case FusionId.MotionState:
+		case MotionState:
 			break
-		case FusionId.SixAxisIMU:
+		case IMU_Data:
 			break
-		case FusionId.EulerAngle:
+		case EulerAngle:
 			//
 			// Process Euler Angle
 			//
@@ -149,7 +149,7 @@ class DetailViewController: UIViewController, CBPeripheralDelegate, NeblinaDeleg
 			
 			
 			break
-		case FusionId.Quaternion:
+		case Quaternion:
 			
 			//
 			// Process Quaternion
@@ -168,7 +168,7 @@ class DetailViewController: UIViewController, CBPeripheralDelegate, NeblinaDeleg
 			
 			
 			break
-		case FusionId.ExtrnForce:
+		case ExtForce:
 			//
 			// Process External Force
 			//
@@ -225,7 +225,7 @@ class DetailViewController: UIViewController, CBPeripheralDelegate, NeblinaDeleg
 			//textview.text = String("Extrn Force - x:\(xq), y:\(yq), z:\(zq)")
 			//print("Extrn Force - x:\(xq), y:\(yq), z:\(zq)")
 			break
-		case FusionId.Mag:
+		case MAG_Data:
 			//
 			// Mag data
 			//
@@ -239,7 +239,7 @@ class DetailViewController: UIViewController, CBPeripheralDelegate, NeblinaDeleg
 			//textview.text = String("Mag - x:\(xq), y:\(yq), z:\(zq)")
 			//ship.rotation = SCNVector4(Float(xq), Float(yq), 0, GLKMathDegreesToRadians(90))
 			break
-		case FusionId.TrajectInfo:
+		case TrajectoryInfo:
 			let x = (Int16(data.data.0) & 0xff) | (Int16(data.data.1) << 8)
 			let y = (Int16(data.data.2) & 0xff) | (Int16(data.data.3) << 8)
 			let z = (Int16(data.data.4) & 0xff) | (Int16(data.data.5) << 8)
