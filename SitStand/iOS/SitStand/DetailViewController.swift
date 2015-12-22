@@ -267,7 +267,7 @@ class DetailViewController: UIViewController, CBPeripheralDelegate, SCNSceneRend
 				else if (cadence < 120)
 				{
 					sitLabel.backgroundColor = UIColor.grayColor()
-					standLabel.backgroundColor = UIColor.blueColor()
+					standLabel.backgroundColor = UIColor.cyanColor()
 				}
 				else
 				{
@@ -305,10 +305,10 @@ class DetailViewController: UIViewController, CBPeripheralDelegate, SCNSceneRend
 				break
 			}*/
 			//}
-			displayCnt++
-			if (displayCnt > 50) {
-				displayCnt = 0
-			}
+			//displayCnt++
+			//if (displayCnt > 50) {
+			//	displayCnt = 0
+			//}
 			
 			break;
 		default: break

@@ -232,7 +232,10 @@ class ViewController: NSViewController, NSTableViewDataSource, NSTableViewDelega
 	// MARK : Neblina
 	
 	func didConnectNeblina() {
-		device.SendCmdSittingStanding(false)	// Reset
+		device.SendCmdEulerAngleStream(false)
+		device.SendCmdQuaternionStream(false)
+		device.SendCmdSittingStanding(false)	// Reset counts
+		device.SendCmdPedometerStream(false)
 		device.SendCmdSittingStanding(true)
 		device.SendCmdPedometerStream(true)
 	}
@@ -386,10 +389,15 @@ class ViewController: NSViewController, NSTableViewDataSource, NSTableViewDelega
 					sitLabel.backgroundColor = NSColor.grayColor()
 					standLabel.backgroundColor = NSColor.greenColor()
 				}
+				else if (cadence < 120)
+				{
+					sitLabel.backgroundColor = NSColor.grayColor()
+					standLabel.backgroundColor = NSColor.cyanColor()// blueColor()
+				}
 				else
 				{
 					sitLabel.backgroundColor = NSColor.grayColor()
-					standLabel.backgroundColor = NSColor.blueColor()					
+					standLabel.backgroundColor = NSColor.redColor()
 				}
 			}
 			prevSitTime = sitTime
