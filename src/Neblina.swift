@@ -151,6 +151,7 @@ class Neblina : NSObject, CBPeripheralDelegate {
 		{
 			characteristic.value?.getBytes(&hdr, length: sizeof(NEB_PKTHDR))
 			characteristic.value?.getBytes(&NebPkt, length: sizeof(NEB_PKTHDR) + 1)
+			//print("\(characteristic)")
 			var errflag = Bool(false)
 			if ((hdr.SubSys  & 0x80) == 0x80)
 			{
@@ -330,7 +331,7 @@ class Neblina : NSObject, CBPeripheralDelegate {
 		
 		if Enable == true
 		{
-			pkbuf[8] = 11
+			pkbuf[8] = 1
 		}
 		else
 		{
