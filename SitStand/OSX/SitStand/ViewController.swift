@@ -24,6 +24,10 @@ class ViewController: NSViewController, NSTableViewDataSource, NSTableViewDelega
 	@IBOutlet weak var standLabel : NSTextField!
 	@IBOutlet weak var tableView : NSTableView!
 
+	var prevSitTime = UInt32(0)
+	var prevStandTime = UInt32(0)
+	var cadence = UInt8(0)
+	var stepcnt = UInt16(0)
 	
 	override func viewDidLoad() {
 		if #available(OSX 10.10, *) {
@@ -228,19 +232,21 @@ class ViewController: NSViewController, NSTableViewDataSource, NSTableViewDelega
 	// MARK : Neblina
 	
 	func didConnectNeblina() {
-		device.SittingStanding(true)
+		device.SendCmdSittingStanding(false)	// Reset
+		device.SendCmdSittingStanding(true)
+		device.SendCmdPedometerStream(true)
 	}
 
-	func didReceiveFusionData(type : FusionId, data : Fusion_DataPacket_t) {
+	func didReceiveFusionData(type : Int32, data : Fusion_DataPacket_t, errFlag : Bool) {
 	//	let textview = self.view.viewWithTag(3) as! UITextView
 		
 		switch (type) {
 			
-		case FusionId.MotionState:
+		case MotionState:
 			break
-		case FusionId.SixAxisIMU:
+		case IMU_Data:
 			break
-		case FusionId.EulerAngle:
+		case EulerAngle:
 			//
 			// Process Euler Angle
 			//
@@ -264,7 +270,7 @@ class ViewController: NSViewController, NSTableViewDataSource, NSTableViewDelega
 			*/
 			
 			break
-		case FusionId.Quaternion:
+		case Quaternion:
 			
 			//
 			// Process Quaternion
@@ -283,7 +289,7 @@ class ViewController: NSViewController, NSTableViewDataSource, NSTableViewDelega
 			
 			*/
 			break
-		case FusionId.ExtrnForce:
+		case ExtForce:
 			//
 			// Process External Force
 			//
@@ -340,7 +346,7 @@ class ViewController: NSViewController, NSTableViewDataSource, NSTableViewDelega
 			textview.text = String("Extrn Force - x:\(xq), y:\(yq), z:\(zq)")
 			//print("Extrn Force - x:\(xq), y:\(yq), z:\(zq)")*/
 			break
-		case FusionId.Mag:
+		case MAG_Data:
 			//
 			// Mag data
 			//
@@ -354,26 +360,41 @@ class ViewController: NSViewController, NSTableViewDataSource, NSTableViewDelega
 			textview.text = String("Mag - x:\(xq), y:\(yq), z:\(zq)")
 			//ship.rotation = SCNVector4(Float(xq), Float(yq), 0, GLKMathDegreesToRadians(90))*/
 			break
-		case FusionId.SittingStanding:
+		case Pedometer:
+			stepcnt = (UInt16(data.data.0) & 0xff) | (UInt16(data.data.1) << 8)
+			cadence = data.data.2
+			break
+		case SittingStanding:
 			let state = data.data.0
-			let sitTime = (Int32(data.data.1) & 0xff) | (Int32(data.data.2) << 8)  | (Int32(data.data.3) << 16) | (Int32(data.data.4) << 24)
-			let standTime = (Int32(data.data.5) & 0xff) | (Int32(data.data.6) << 8)  | (Int32(data.data.7) << 16) | (Int32(data.data.8) << 24)
+			let sitTime = (UInt32(data.data.1) & 0xff) | (UInt32(data.data.2) << 8)  | (UInt32(data.data.3) << 16) | (UInt32(data.data.4) << 24)
+			let standTime = (UInt32(data.data.5) & 0xff) | (UInt32(data.data.6) << 8)  | (UInt32(data.data.7) << 16) | (UInt32(data.data.8) << 24)
 
 			sitLabel.stringValue = "Siting time : \(sitTime)"
-			standLabel.stringValue = "Standing time : \(standTime)"
+			standLabel.stringValue = "Standing time : \(standTime), \nCadence : \(cadence), Step : \(stepcnt)"
 			
-			if (state == 0)
+			if (sitTime != prevSitTime)
 			{
 				// Stitting
 				sitLabel.backgroundColor = NSColor.greenColor()
 				standLabel.backgroundColor = NSColor.grayColor()
 			}
-			else
+			if (standTime != prevStandTime)
 			{
 				// Standing
-				sitLabel.backgroundColor = NSColor.grayColor()
-				standLabel.backgroundColor = NSColor.greenColor()
+				if (cadence == 0)
+				{
+					sitLabel.backgroundColor = NSColor.grayColor()
+					standLabel.backgroundColor = NSColor.greenColor()
+				}
+				else
+				{
+					sitLabel.backgroundColor = NSColor.grayColor()
+					standLabel.backgroundColor = NSColor.blueColor()					
+				}
 			}
+			prevSitTime = sitTime
+			prevStandTime = standTime
+			
 			break;
 		default: break
 		}

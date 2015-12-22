@@ -110,10 +110,10 @@ class DetailViewController: UIViewController, CBPeripheralDelegate, SCNSceneRend
 	// MARK : Neblina
 	
 	func didConnectNeblina() {
-		device.EulerAngleStream(false)
-		device.QuaternionStream(false)
-		device.SittingStandingCmd(false)
-		device.SittingStandingCmd(true)
+		device.SendCmdEulerAngleStream(false)
+		device.SendCmdQuaternionStream(false)
+		device.SendCmdSittingStanding(false)	// Reset counts
+		device.SendCmdSittingStanding(true)
 	}
 
 	func didReceiveFusionData(type : Int32, data : Fusion_DataPacket_t, errFlag : Bool) {
