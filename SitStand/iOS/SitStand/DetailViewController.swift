@@ -22,7 +22,9 @@ class DetailViewController: UIViewController, CBPeripheralDelegate, SCNSceneRend
 	var displayCnt = Int(0)
 	var prevSitTime = UInt32(0)
 	var prevStandTime = UInt32(0)
-	
+	var cadence = UInt8(0)
+	var stepcnt = UInt16(0)
+
 	var detailItem: CBPeripheral? {
 		didSet {
 			// Update the view.
@@ -113,7 +115,10 @@ class DetailViewController: UIViewController, CBPeripheralDelegate, SCNSceneRend
 		device.SendCmdEulerAngleStream(false)
 		device.SendCmdQuaternionStream(false)
 		device.SendCmdSittingStanding(false)	// Reset counts
+		device.SendCmdPedometerStream(false)
 		device.SendCmdSittingStanding(true)
+		device.SendCmdPedometerStream(true)
+
 	}
 
 	func didReceiveFusionData(type : Int32, data : Fusion_DataPacket_t, errFlag : Bool) {
@@ -239,6 +244,10 @@ class DetailViewController: UIViewController, CBPeripheralDelegate, SCNSceneRend
 			textview.text = String("Mag - x:\(xq), y:\(yq), z:\(zq)")
 			//ship.rotation = SCNVector4(Float(xq), Float(yq), 0, GLKMathDegreesToRadians(90))*/
 			break
+		case Pedometer:
+			stepcnt = (UInt16(data.data.0) & 0xff) | (UInt16(data.data.1) << 8)
+			cadence = data.data.2
+			break
 		case SittingStanding:
 			let state = data.data.0
 			let sitTime = (UInt32(data.data.1) & 0xff) | (UInt32(data.data.2) << 8)  | (UInt32(data.data.3) << 16) | (UInt32(data.data.4) << 24)
@@ -250,8 +259,21 @@ class DetailViewController: UIViewController, CBPeripheralDelegate, SCNSceneRend
 				standLabel.backgroundColor = UIColor.grayColor()
 			}
 			if (standTime != prevStandTime) {
-				sitLabel.backgroundColor = UIColor.grayColor()
-				standLabel.backgroundColor = UIColor.greenColor()
+				if (cadence == 0)
+				{
+					sitLabel.backgroundColor = UIColor.grayColor()
+					standLabel.backgroundColor = UIColor.greenColor()
+				}
+				else if (cadence < 120)
+				{
+					sitLabel.backgroundColor = UIColor.grayColor()
+					standLabel.backgroundColor = UIColor.blueColor()
+				}
+				else
+				{
+					sitLabel.backgroundColor = UIColor.grayColor()
+					standLabel.backgroundColor = UIColor.redColor()
+				}
 			}
 			prevSitTime = sitTime
 			prevStandTime = standTime
@@ -260,7 +282,7 @@ class DetailViewController: UIViewController, CBPeripheralDelegate, SCNSceneRend
 			//{
 			
 			sitLabel.text = "Sitting time : \(sitTime) sec"
-			standLabel.text = "Standing time : \(standTime) sec"
+			standLabel.text = "Standing time : \(standTime) sec\nCadence : \(cadence), Step : \(stepcnt)"
 
 			/*
 			switch(state)
