@@ -118,7 +118,7 @@ class ViewController: NSViewController, NSTableViewDataSource, NSTableViewDelega
 	
 	@IBAction func buttonTrajectRecord(button: NSButton)
 	{
-		device.TrajectoryRecord(true)
+		device.SendCmdTrajectoryRecord(true)
 	}
 	
 	// MARK: - Table View
@@ -288,20 +288,20 @@ class ViewController: NSViewController, NSTableViewDataSource, NSTableViewDelega
 	
 	func didConnectNeblina() {
 		//device.SittingStanding(true)
-		device.QuaternionStream(true)
-		device.TrajectoryInfo(true)
+		device.SendCmdQuaternionStream(true)
+		device.SendCmdTrajectoryInfo(true)
 	}
 	
-	func didReceiveFusionData(type : FusionId, data : Fusion_DataPacket_t) {
+	func didReceiveFusionData(type : Int32, data : Fusion_DataPacket_t, errFlag : Bool) {
 		//	let textview = self.view.viewWithTag(3) as! UITextView
 		
 		switch (type) {
 			
-		case FusionId.MotionState:
+		case MotionState:
 			break
-		case FusionId.SixAxisIMU:
+		case IMU_Data:
 			break
-		case FusionId.EulerAngle:
+		case EulerAngle:
 			//
 			// Process Euler Angle
 			//
@@ -325,7 +325,7 @@ class ViewController: NSViewController, NSTableViewDataSource, NSTableViewDelega
 			*/
 			
 			break
-		case FusionId.Quaternion:
+		case Quaternion:
 			
 			//
 			// Process Quaternion
@@ -348,7 +348,7 @@ class ViewController: NSViewController, NSTableViewDataSource, NSTableViewDelega
 			print("Quat - x:\(xq), y:\(yq), z:\(zq), w:\(wq)")
 			
 			break
-		case FusionId.ExtrnForce:
+		case ExtForce:
 			//
 			// Process External Force
 			//
@@ -405,7 +405,7 @@ class ViewController: NSViewController, NSTableViewDataSource, NSTableViewDelega
 			textview.text = String("Extrn Force - x:\(xq), y:\(yq), z:\(zq)")
 			//print("Extrn Force - x:\(xq), y:\(yq), z:\(zq)")*/
 			break
-		case FusionId.Mag:
+		case MAG_Data:
 			//
 			// Mag data
 			//
@@ -419,7 +419,7 @@ class ViewController: NSViewController, NSTableViewDataSource, NSTableViewDelega
 			textview.text = String("Mag - x:\(xq), y:\(yq), z:\(zq)")
 			//ship.rotation = SCNVector4(Float(xq), Float(yq), 0, GLKMathDegreesToRadians(90))*/
 			break
-		case FusionId.TrajectInfo:
+		case TrajectoryInfo:
 			let x = (Int16(data.data.0) & 0xff) | (Int16(data.data.1) << 8)
 			let y = (Int16(data.data.2) & 0xff) | (Int16(data.data.3) << 8)
 			let z = (Int16(data.data.4) & 0xff) | (Int16(data.data.5) << 8)
@@ -429,7 +429,7 @@ class ViewController: NSViewController, NSTableViewDataSource, NSTableViewDelega
 			label2.stringValue = String("Count \(count), Val \(prval)")
 			level.integerValue =  prval
 			break
-		case FusionId.SittingStanding:
+		case SittingStanding:
 /*			let state = data.data.0
 			let sitTime = (Int32(data.data.1) & 0xff) | (Int32(data.data.2) << 8)  | (Int32(data.data.3) << 16) | (Int32(data.data.4) << 24)
 			let standTime = (Int32(data.data.5) & 0xff) | (Int32(data.data.6) << 8)  | (Int32(data.data.7) << 16) | (Int32(data.data.8) << 24)
