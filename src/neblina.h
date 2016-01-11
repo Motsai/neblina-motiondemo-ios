@@ -93,7 +93,10 @@ typedef enum {
 #define POWERMGMT_CMD_GET_BAT_LEVEL			0	// Get battery level
 
 // Debug command code
-#define DEBUG_CMD_SET_INTERFACE				1	//sets the protocol interface
+#define DEBUG_CMD_SET_INTERFACE						1	//sets the protocol interface
+#define DEBUG_CMD_MOTENGINE_RECORDER_STATUS			2	//asks for the streaming status of the motion engine, as well as the flash recorder state
+#define DEBUG_CMD_MOTION_ENG_UNIT_TEST_START_STOP	3	//starts/stops the motion engine unit-test mode
+#define DEBUG_CMD_MOTION_ENG_UNIT_TEST_DATA			4	//data being transferred between the host and Neblina for motion engine's unit testing
 
 typedef struct Fusion_DataPacket_t
 {

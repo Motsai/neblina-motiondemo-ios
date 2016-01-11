@@ -151,6 +151,8 @@ class Neblina : NSObject, CBPeripheralDelegate {
 		{
 			characteristic.value?.getBytes(&hdr, length: sizeof(NEB_PKTHDR))
 			characteristic.value?.getBytes(&NebPkt, length: sizeof(NEB_PKTHDR) + 1)
+
+			let id = Int32(hdr.Cmd) //FusionId(rawValue: hdr.Cmd)
 			//print("\(characteristic)")
 			var errflag = Bool(false)
 			if ((hdr.SubSys  & 0x80) == 0x80)
@@ -170,13 +172,18 @@ class Neblina : NSObject, CBPeripheralDelegate {
 					//characteristic.value?.getBytes(&fdata.Data[0], range: NSMakeRange(sizeof(NEB_PKTHDR) + 4, 12))
 					
 					//print("\(fdata)")
-					let id = Int32(hdr.Cmd) //FusionId(rawValue: hdr.Cmd)
+			//		let id = Int32(hdr.Cmd) //FusionId(rawValue: hdr.Cmd)
 					delegate.didReceiveFusionData(id, data: fp, errFlag: errflag)
 					//delegate.didReceiveFusionData(hdr.Cmd, data: fdata)
 //					characteristic.value?.getBytes(&ppk, range: NSMakeRange(sizeof(NEB_PKTHDR), 16))
-					break;
+					break
+				case NEB_CTRL_SUBSYS_DEBUG:
+					var dd = [UInt8](count:16, repeatedValue:0)
+					characteristic.value?.getBytes(&dd, range: NSMakeRange(sizeof(NEB_PKTHDR), Int(hdr.Len)))
+					delegate.didReceiveDebugData(id, data: dd, errFlag: errflag)
+					break
 				default:
-					break;
+					break
 			}
 			
 		//	NebPkt!.Data = data;
@@ -442,7 +449,7 @@ class Neblina : NSObject, CBPeripheralDelegate {
 		
 		var pkbuf = [UInt8](count:20, repeatedValue:0)
 		
-		pkbuf[0] = UInt8((NEB_CTRL_PKTYPE_CMD << 5) | NEB_CTRL_SUBSYS_MOTION_ENG) //0x41
+		pkbuf[0] = UInt8((NEB_CTRL_PKTYPE_CMD << 5) | NEB_CTRL_SUBSYS_STORAGE) //0x41
 		pkbuf[1] = UInt8(sizeof(Fusion_DataPacket_t))
 		pkbuf[2] = 0
 		pkbuf[3] = UInt8(FlashEraseAll) // FusionId.FlashEraseAll.rawValue // RecorderErase.rawValue	// Cmd
@@ -466,7 +473,7 @@ class Neblina : NSObject, CBPeripheralDelegate {
 		
 		var pkbuf = [UInt8](count:20, repeatedValue:0)
 		
-		pkbuf[0] = UInt8((NEB_CTRL_PKTYPE_CMD << 5) | NEB_CTRL_SUBSYS_MOTION_ENG) //0x41
+		pkbuf[0] = UInt8((NEB_CTRL_PKTYPE_CMD << 5) | NEB_CTRL_SUBSYS_STORAGE) //0x41
 		pkbuf[1] = UInt8(sizeof(Fusion_DataPacket_t))
 		pkbuf[2] = 0
 		pkbuf[3] = UInt8(FlashRecordStartStop)//FusionId.FlashRecordStartStop.rawValue	// Cmd
@@ -489,7 +496,7 @@ class Neblina : NSObject, CBPeripheralDelegate {
 		
 		var pkbuf = [UInt8](count:20, repeatedValue:0)
 		
-		pkbuf[0] = UInt8((NEB_CTRL_PKTYPE_CMD << 5) | NEB_CTRL_SUBSYS_MOTION_ENG) //0x41
+		pkbuf[0] = UInt8((NEB_CTRL_PKTYPE_CMD << 5) | NEB_CTRL_SUBSYS_STORAGE) //0x41
 		pkbuf[1] = UInt8(sizeof(Fusion_DataPacket_t))
 		pkbuf[2] = 0
 		pkbuf[3] = UInt8(FlashPlaybackStartStop) //FusionId.FlashPlaybackStartStop.rawValue	// Cmd
@@ -530,7 +537,7 @@ class Neblina : NSObject, CBPeripheralDelegate {
 		var pkbuf = [UInt8](count:20, repeatedValue:0)
 		
 		pkbuf[0] = 0x40
-		pkbuf[1] = 1//UInt8(sizeof(Fusion_DataPacket_t))
+		pkbuf[1] = 16//UInt8(sizeof(Fusion_DataPacket_t))
 		pkbuf[2] = 0
 		pkbuf[3] = 1//FusionId.FlashPlaybackStartStop.rawValue	// Cmd
 		
@@ -541,13 +548,33 @@ class Neblina : NSObject, CBPeripheralDelegate {
 		//pkbuf[10] = 0xff
 		device.writeValue(NSData(bytes: UnsafeMutablePointer<Void>(pkbuf), length: 20), forCharacteristic: ctrlChar, type: CBCharacteristicWriteType.WithoutResponse)
 	}
+	
+	func SendCmdEngineStatus() {
+		if (isDeviceReady() == false) {
+			return
+		}
+		
+		var pkbuf = [UInt8](count:20, repeatedValue:0)
+		
+		pkbuf[0] = UInt8((NEB_CTRL_PKTYPE_CMD << 5) | NEB_CTRL_SUBSYS_DEBUG)
+		pkbuf[1] = 16//UInt8(sizeof(Fusion_DataPacket_t))
+		pkbuf[2] = 0
+		pkbuf[3] = UInt8(DEBUG_CMD_MOTENGINE_RECORDER_STATUS)	// Cmd
+		
+		// Interf = 0 : BLE
+		// Interf = 1 : UART
+		//pkbuf[4] = UInt8(Interf)
+		//pkbuf[9] = 0xff
+		//pkbuf[10] = 0xff
+		device.writeValue(NSData(bytes: UnsafeMutablePointer<Void>(pkbuf), length: 20), forCharacteristic: ctrlChar, type: CBCharacteristicWriteType.WithoutResponse)
+	}
 
 }
 
 protocol NeblinaDelegate {
 	
 	func didReceiveFusionData(type : Int32, data : Fusion_DataPacket_t, errFlag : Bool)
-	
+	func didReceiveDebugData(type : Int32, data : [UInt8], errFlag : Bool)
 	func didConnectNeblina()
 	
 	//TODO: add processing functions callback for each packet type
