@@ -216,8 +216,13 @@ class DetailViewController: UIViewController, CBPeripheralDelegate, NeblinaDeleg
 			switch (NebCmdList[row].SubSysId)
 			{
 				case NEB_CTRL_SUBSYS_DEBUG:
-					if (NebCmdList[row].CmdId == DEBUG_CMD_SET_INTERFACE) {
-						NebDevice.SendCmdControlInterface(sender.selectedSegmentIndex)
+					switch (NebCmdList[row].CmdId)
+					{
+						case DEBUG_CMD_SET_INTERFACE:
+							NebDevice.SendCmdControlInterface(sender.selectedSegmentIndex)
+							break
+						default:
+							break
 					}
 					break
 				
@@ -324,7 +329,9 @@ class DetailViewController: UIViewController, CBPeripheralDelegate, NeblinaDeleg
 //	}
 	// MARK : Neblina
 	func didConnectNeblina() {
-		
+		// Switch to BLE interface
+		NebDevice.SendCmdControlInterface(0)
+		NebDevice.SendCmdEngineStatus()
 	}
 	
 	func didReceiveFusionData(type : Int32, data : Fusion_DataPacket_t, errFlag : Bool) {
@@ -454,7 +461,7 @@ class DetailViewController: UIViewController, CBPeripheralDelegate, NeblinaDeleg
 			label.text = String("Mag - x:\(xq), y:\(yq), z:\(zq)")
 			//ship.rotation = SCNVector4(Float(xq), Float(yq), 0, GLKMathDegreesToRadians(90))
 			break
-/*		case FusionId.FlashEraseAll:
+/*		case FlashEraseAll:
 			//let session = (Int16(data.data.0) & 0xff) | (Int16(data.data.1) << 8)
 			flashrec.text = String("Flash Erased")
 			flashEraseProgress = false
@@ -463,7 +470,7 @@ class DetailViewController: UIViewController, CBPeripheralDelegate, NeblinaDeleg
 			let sw = cell!.viewWithTag(2) as! UISegmentedControl
 			sw.selectedSegmentIndex = 0
 			break;
-		case FusionId.FlashRecordStartStop:
+		case FlashRecordStartStop:
 			if (errFlag) {
 				flashrec.text = String("Unable to start recording")
 				let i = NebDevice.getCmdIdx(NEB_CTRL_SUBSYS_MOTION_ENG, cmdId : FlashRecordStartStop)
@@ -487,7 +494,7 @@ class DetailViewController: UIViewController, CBPeripheralDelegate, NeblinaDeleg
 				}
 			}
 			break;
-		case FusionId.FlashPlaybackStartStop:
+		case FlashPlaybackStartStop:
 			if (errFlag) {
 				flashrec.text = String("Flash record session not found")
 				let i = NebDevice.getCmdIdx(NEB_CTRL_SUBSYS_MOTION_ENG, cmdId : FlashPlaybackStartStop)
@@ -515,6 +522,65 @@ class DetailViewController: UIViewController, CBPeripheralDelegate, NeblinaDeleg
 		}
 		
 		
+	}
+	
+	func didReceiveDebugData(type : Int32, data : [UInt8], errFlag : Bool)
+	{
+		switch (type) {
+			case DEBUG_CMD_MOTENGINE_RECORDER_STATUS:
+				switch (data[8]) {
+					case 1:	// Playback
+						var i = NebDevice.getCmdIdx(NEB_CTRL_SUBSYS_STORAGE,  cmdId: FlashRecordStartStop)
+						var cell = cmdView.cellForRowAtIndexPath( NSIndexPath(forRow: i, inSection: 0))
+						var sw = cell!.viewWithTag(2) as! UISegmentedControl
+						sw.selectedSegmentIndex = 0
+						i = NebDevice.getCmdIdx(NEB_CTRL_SUBSYS_STORAGE,  cmdId: FlashPlaybackStartStop)
+						cell = cmdView.cellForRowAtIndexPath( NSIndexPath(forRow: i, inSection: 0))
+						sw = cell!.viewWithTag(2) as! UISegmentedControl
+						sw.selectedSegmentIndex = 1
+
+						break
+					case 2:	// Recording
+						var i = NebDevice.getCmdIdx(NEB_CTRL_SUBSYS_STORAGE,  cmdId: FlashPlaybackStartStop)
+						var cell = cmdView.cellForRowAtIndexPath( NSIndexPath(forRow: i, inSection: 0))
+						var sw = cell!.viewWithTag(2) as! UISegmentedControl
+						sw.selectedSegmentIndex = 0
+						i = NebDevice.getCmdIdx(NEB_CTRL_SUBSYS_STORAGE,  cmdId: FlashRecordStartStop)
+						cell = cmdView.cellForRowAtIndexPath( NSIndexPath(forRow: i, inSection: 0))
+						sw = cell!.viewWithTag(2) as! UISegmentedControl
+						sw.selectedSegmentIndex = 1
+						break
+					default:
+						var i = NebDevice.getCmdIdx(NEB_CTRL_SUBSYS_STORAGE,  cmdId: FlashPlaybackStartStop)
+						var cell = cmdView.cellForRowAtIndexPath( NSIndexPath(forRow: i, inSection: 0))
+						var sw = cell!.viewWithTag(2) as! UISegmentedControl
+						sw.selectedSegmentIndex = 0
+						i = NebDevice.getCmdIdx(NEB_CTRL_SUBSYS_STORAGE,  cmdId: FlashRecordStartStop)
+						cell = cmdView.cellForRowAtIndexPath( NSIndexPath(forRow: i, inSection: 0))
+						sw = cell!.viewWithTag(2) as! UISegmentedControl
+						sw.selectedSegmentIndex = 0
+						break
+				}
+				var i = NebDevice.getCmdIdx(NEB_CTRL_SUBSYS_MOTION_ENG,  cmdId: Quaternion)
+				var cell = cmdView.cellForRowAtIndexPath( NSIndexPath(forRow: i, inSection: 0))
+				var sw = cell!.viewWithTag(2) as! UISegmentedControl
+				sw.selectedSegmentIndex = Int(data[4] & 8) >> 3
+				
+				i = NebDevice.getCmdIdx(NEB_CTRL_SUBSYS_MOTION_ENG,  cmdId: MAG_Data)
+				cell = cmdView.cellForRowAtIndexPath( NSIndexPath(forRow: i, inSection: 0))
+				sw = cell!.viewWithTag(2) as! UISegmentedControl
+				sw.selectedSegmentIndex = Int(data[4] & 0x80) >> 7
+
+//				i = NebDevice.getCmdIdx(NEB_CTRL_SUBSYS_MOTION_ENG,  cmdId: EulerAngle)
+/*				cell = cmdView.cellForRowAtIndexPath( NSIndexPath(forRow: NebCmdList.count, inSection: 0))
+				sw = cell!.viewWithTag(2) as! UISegmentedControl
+				sw.selectedSegmentIndex = Int(data[4] & 0x4) >> 2*/
+				//print("\(d)")
+				
+				break
+			default:
+				break
+		}
 	}
 	
 	// MARK : UITableView
