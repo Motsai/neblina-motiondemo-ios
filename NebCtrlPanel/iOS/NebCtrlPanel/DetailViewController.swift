@@ -274,6 +274,8 @@ class DetailViewController: UIViewController, CBPeripheralDelegate, NeblinaDeleg
 							break
 					}
 				case NEB_CTRL_SUBSYS_LED:
+					var i = NebDevice.getCmdIdx(NEB_CTRL_SUBSYS_LED,  cmdId: LED_CMD_SET_VALUE)
+					NebDevice.SendCmdLedSetValue(UInt8(row - i), Value: UInt8(sender.selectedSegmentIndex))
 					break
 				case NEB_CTRL_SUBSYS_STORAGE:
 					switch (NebCmdList[row].CmdId)

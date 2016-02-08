@@ -8,6 +8,7 @@
  */
 #include <stdint.h>
 
+
 #ifndef __NEBLINA_H__
 #define __NEBLINA_H__
 
@@ -45,6 +46,37 @@ typedef enum {
 	Serial = (uint8_t)0x01,
 }Intrfc_Protocol;
 */
+
+typedef struct {
+	uint8_t major;
+	uint8_t minor;
+	uint8_t build;
+}FWVersion_t;
+
+typedef struct {
+	uint8_t API_Release;
+	FWVersion_t KL26;
+	FWVersion_t Nordic;
+	uint64_t devid;
+}Neblina_FWVersions_t;
+
+
+//Firmware Versions: Define here
+#define API_RELEASE_VERSION	0x01
+//Freescale
+const FWVersion_t KL26_fw = {
+		0x00, //major "v1"
+		0x0D, //minor "v2"
+		1 ///build number 1
+};
+//Nordic
+const FWVersion_t Nordic_fw = {
+		0x00, //major "v1"
+		0x0D, //minor "v2"
+		1 ///build number 1
+};
+///////////////////////////////////
+
 
 /*
  * Neblina communication interface definitions
@@ -91,12 +123,28 @@ typedef enum {
 
 // Power management command code
 #define POWERMGMT_CMD_GET_BAT_LEVEL			0	// Get battery level
+#define POWERMGMT_CMD_GET_TEMPERATURE		1	// Get temperature
 
 // Debug command code
 #define DEBUG_CMD_SET_INTERFACE						1	//sets the protocol interface
 #define DEBUG_CMD_MOTENGINE_RECORDER_STATUS			2	//asks for the streaming status of the motion engine, as well as the flash recorder state
 #define DEBUG_CMD_MOTION_ENG_UNIT_TEST_START_STOP	3	//starts/stops the motion engine unit-test mode
 #define DEBUG_CMD_MOTION_ENG_UNIT_TEST_DATA			4	//data being transferred between the host and Neblina for motion engine's unit testing
+#define DEBUG_CMD_GET_FW_VERSION					5
+
+// LED control command codes
+#define LED_CMD_SET_VALUE							1	// Set LED value
+#define LED_CMD_GET_VALUE							2	// Get LED value
+#define LED_CMD_SET_CFG								3	// Set config
+#define LED_CMD_GET_CFG								4	// Get config
+
+typedef struct _LedCtrl_Data {
+	uint8_t NbLed;						// Number of LED to control
+	struct {
+		uint8_t	No;						// LED number
+		uint8_t	Value;					// data - value depending on command code
+	} Led[8];
+} NEB_LEDCTRL_DATA;
 
 typedef struct Fusion_DataPacket_t
 {
@@ -135,6 +183,7 @@ extern "C" {
  */
 bool ValidatePacket(NEB_PKT *pPkt, int Len);
 void ProcessPacket(NEB_PKT *pPkt);
+bool ProcessLedCtrlCmd(NEB_PKT *pPkt);
 
 #ifdef __cplusplus
 }
