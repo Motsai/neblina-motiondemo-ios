@@ -589,7 +589,7 @@ class Neblina : NSObject, CBPeripheralDelegate {
 protocol NeblinaDelegate {
 	
 	func didReceiveFusionData(type : Int32, data : Fusion_DataPacket_t, errFlag : Bool)
-	func didReceiveDebugData(type : Int32, data : [UInt8], errFlag : Bool)
+	func didReceiveDebugData(type : Int32, data : UnsafePointer<UInt8>, errFlag : Bool)
 	func didConnectNeblina()
 	
 	//TODO: add processing functions callback for each packet type
