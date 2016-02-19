@@ -64,17 +64,15 @@ typedef struct {
 //Firmware Versions: Define here
 #define API_RELEASE_VERSION	0x01
 //Freescale
-const FWVersion_t KL26_fw = {
-		0x00, //major "v1"
-		0x0D, //minor "v2"
-		1 ///build number 1
-};
+#define NEBKL26_FWVERS_MAJOR	0
+#define NEBKL26_FWVERS_MINOR	0xd
+#define NEBKL26_FWVERS_BUILD	3
+
 //Nordic
-const FWVersion_t Nordic_fw = {
-		0x00, //major "v1"
-		0x0D, //minor "v2"
-		1 ///build number 1
-};
+#define NEBNRF51_FWVERS_MAJOR	0
+#define NEBNRF51_FWVERS_MINOR	0xd
+#define NEBNRF51_FWVERS_BUILD	3
+
 ///////////////////////////////////
 
 
@@ -189,5 +187,6 @@ bool ProcessLedCtrlCmd(NEB_PKT *pPkt);
 }
 #endif
 
+extern const FWVersion_t KL26_fw;
 
 #endif // __NEBLINA_H__
