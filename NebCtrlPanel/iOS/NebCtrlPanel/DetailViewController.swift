@@ -455,11 +455,11 @@ class DetailViewController: UIViewController, CBPeripheralDelegate, NeblinaDeleg
 			//
 			//let ship = scene.rootNode.childNodeWithName("ship", recursively: true)!
 			let x = (Int16(data.data.0) & 0xff) | (Int16(data.data.1) << 8)
-			let xq = x / 10
+			let xq = x
 			let y = (Int16(data.data.2) & 0xff) | (Int16(data.data.3) << 8)
-			let yq = y / 10
+			let yq = y
 			let z = (Int16(data.data.4) & 0xff) | (Int16(data.data.5) << 8)
-			let zq = z / 10
+			let zq = z
 			label.text = String("Mag - x:\(xq), y:\(yq), z:\(zq)")
 			//ship.rotation = SCNVector4(Float(xq), Float(yq), 0, GLKMathDegreesToRadians(90))
 			break
@@ -526,7 +526,7 @@ class DetailViewController: UIViewController, CBPeripheralDelegate, NeblinaDeleg
 		
 	}
 	
-	func didReceiveDebugData(type : Int32, data : [UInt8], errFlag : Bool)
+	func didReceiveDebugData(type : Int32, data : UnsafePointer<UInt8>, errFlag : Bool)
 	{
 		switch (type) {
 			case DEBUG_CMD_MOTENGINE_RECORDER_STATUS:
