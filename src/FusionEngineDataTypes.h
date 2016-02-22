@@ -39,6 +39,8 @@
 #define SetAccRange				0x0E
 #define DisableAllStreaming		0x0F
 #define ResetTimeStamp 			0x10
+#define FingerGesture			0x11
+#define RotationInfo			0x12
 ///////////////////////////////////////////////
 
 //Accelerometer full scale modes
@@ -114,6 +116,17 @@ typedef enum{
 	Start_Motion = (uint8_t)0x02, //the device starts moving
 }motionstatus_t;
 
+typedef enum{
+	Swipe_Left 	= (uint8_t)0x00,
+	Swipe_Right = (uint8_t)0x01,
+	Swipe_Up	= (uint8_t)0x02,
+	Swipe_Down 	= (uint8_t)0x03,
+	Flip_Left 	= (uint8_t)0x04,
+	Flip_Right 	= (uint8_t)0x05,
+	Double_Tap	= (uint8_t)0x06,
+	No_Gesture 	= (uint8_t)0xFF, //no gesture
+}finger_gesture_t;
+
 typedef struct Motion_Feature_t{ //all features
 	uint8_t motion; //0: no change in motion, 1: stops moving, 2: starts moving
 	IMURaw_t IMUData; //18 bytes
@@ -127,6 +140,8 @@ typedef struct Motion_Feature_t{ //all features
 	steps_t steps;
 	int16_t direction;
 	sit_stand_t sit_stand;
+	uint8_t swipe; //finger swipe pattern: swipe left (0), or swipe right (1), swipe up (2), swipe down (3), flip left (4), flip right (5), double tap (6)
+	wheels_t rotation_info; //rpm speed, rotation count
 }Motion_Feature_t;
 
 
