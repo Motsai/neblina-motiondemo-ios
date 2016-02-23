@@ -74,12 +74,14 @@ let NEB_DATACHAR_UUID = CBUUID (string:"0df9f022-1532-11e5-8960-0002a5d5c51b")
 let NEB_CTRLCHAR_UUID = CBUUID (string:"0df9f023-1532-11e5-8960-0002a5d5c51b")
 
 class Neblina : NSObject, CBPeripheralDelegate {
+	var id : UInt64 = 0
 	var device : CBPeripheral!
-	var dataChar : CBCharacteristic!
-	var ctrlChar : CBCharacteristic!
+	var dataChar : CBCharacteristic! = nil
+	var ctrlChar : CBCharacteristic! = nil
 	var NebPkt = NEB_PKT()//(SubSys: 0, Len: 0, Crc: 0, Data: [UInt8](count:17, repeatedValue:0)
 	var fp = Fusion_DataPacket_t()
 	var delegate : NeblinaDelegate!
+	var devid : UInt64 = 0
 	
 	func getCmdIdx(subsysId : Int32, cmdId : Int32) -> Int {
 		for (idx, item) in NebCmdList.enumerate() {
@@ -91,9 +93,10 @@ class Neblina : NSObject, CBPeripheralDelegate {
 		return -1
 	}
 	
-	func setPeripheral(peripheral : CBPeripheral) {
-		device = peripheral;
-		device!.delegate = self;
+	func setPeripheral(devid : UInt64, peripheral : CBPeripheral) {
+		device = peripheral
+		id = devid
+		device!.delegate = self
 		//while (device.state != CBPeripheralState.Connected) {}
 		if (device.state == CBPeripheralState.Connected)
 		{
@@ -105,6 +108,11 @@ class Neblina : NSObject, CBPeripheralDelegate {
 	//
 	// CBPeripheral stuffs
 	//
+	
+	func peripheralDidUpdateRSSI(peripheral: CBPeripheral, error: NSError?) {
+		delegate.didReceiveRSSI(device.RSSI!)
+	}
+	
 	func peripheral(peripheral: CBPeripheral, didDiscoverServices error: NSError?)
 	{
 		for service in peripheral.services ?? []
@@ -184,6 +192,11 @@ class Neblina : NSObject, CBPeripheralDelegate {
 					characteristic.value?.getBytes(&dd, range: NSMakeRange(sizeof(NEB_PKTHDR), Int(hdr.Len)))
 					delegate.didReceiveDebugData(id, data: dd, errFlag: errflag)
 					break
+				case NEB_CTRL_SUBSYS_POWERMGMT:
+					var dd = [UInt8](count:16, repeatedValue:0)
+					characteristic.value?.getBytes(&dd, range: NSMakeRange(sizeof(NEB_PKTHDR), Int(hdr.Len)))
+					delegate.didReceivePmgntData(id, data: dd, errFlag: errflag)
+					break
 				default:
 					break
 			}
@@ -194,7 +207,7 @@ class Neblina : NSObject, CBPeripheralDelegate {
 		}
 	}
 	func isDeviceReady()-> Bool {
-		if (device == nil) {
+		if (device == nil || ctrlChar == nil) {
 			return false
 		}
 		
@@ -556,7 +569,7 @@ class Neblina : NSObject, CBPeripheralDelegate {
 		var pkbuf = [UInt8](count:20, repeatedValue:0)
 		
 		pkbuf[0] = UInt8((NEB_CTRL_PKTYPE_CMD << 5) | NEB_CTRL_SUBSYS_MOTION_ENG)
-		pkbuf[1] = 16//UInt8(sizeof(Fusion_DataPacket_t))
+		pkbuf[1] = UInt8(sizeof(Fusion_DataPacket_t))
 		pkbuf[2] = 0
 		pkbuf[3] = UInt8(DisableAllStreaming)	// Cmd
 		
@@ -571,7 +584,7 @@ class Neblina : NSObject, CBPeripheralDelegate {
 		var pkbuf = [UInt8](count:20, repeatedValue:0)
 		
 		pkbuf[0] = UInt8((NEB_CTRL_PKTYPE_CMD << 5) | NEB_CTRL_SUBSYS_MOTION_ENG)
-		pkbuf[1] = 16//UInt8(sizeof(Fusion_DataPacket_t))
+		pkbuf[1] = UInt8(sizeof(Fusion_DataPacket_t))
 		pkbuf[2] = 0
 		pkbuf[3] = UInt8(ResetTimeStamp)	// Cmd
 		
@@ -656,15 +669,27 @@ class Neblina : NSObject, CBPeripheralDelegate {
 		device.writeValue(NSData(bytes: UnsafeMutablePointer<Void>(pkbuf), length: 20), forCharacteristic: ctrlChar, type: CBCharacteristicWriteType.WithoutResponse)
 	}
 	
+	func SendCmdGetTemperature() {
+		if (isDeviceReady() == false) {
+			return
+		}
+		
+		var pkbuf = [UInt8](count:20, repeatedValue:0)
+		
+		pkbuf[0] = UInt8((NEB_CTRL_PKTYPE_CMD << 5) | NEB_CTRL_SUBSYS_POWERMGMT)
+		pkbuf[1] = 0//UInt8(sizeof(Fusion_DataPacket_t))
+		pkbuf[2] = 0
+		pkbuf[3] = UInt8(POWERMGMT_CMD_GET_TEMPERATURE)	// Cmd
+		
+		device.writeValue(NSData(bytes: UnsafeMutablePointer<Void>(pkbuf), length: 4), forCharacteristic: ctrlChar, type: CBCharacteristicWriteType.WithoutResponse)
+	}
 }
 
 protocol NeblinaDelegate {
 	
+	func didConnectNeblina()
+	func didReceiveRSSI(rssi : NSNumber)
 	func didReceiveFusionData(type : Int32, data : Fusion_DataPacket_t, errFlag : Bool)
 	func didReceiveDebugData(type : Int32, data : UnsafePointer<UInt8>, errFlag : Bool)
-	func didConnectNeblina()
-	
-	//TODO: add processing functions callback for each packet type
-	
-	// Process Fusion data
+	func didReceivePmgntData(type : Int32, data : UnsafePointer<UInt8>, errFlag : Bool)
 }
