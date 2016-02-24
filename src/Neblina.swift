@@ -110,7 +110,9 @@ class Neblina : NSObject, CBPeripheralDelegate {
 	//
 	
 	func peripheralDidUpdateRSSI(peripheral: CBPeripheral, error: NSError?) {
-		delegate.didReceiveRSSI(device.RSSI!)
+		if (device.RSSI != nil) {
+			delegate.didReceiveRSSI(device.RSSI!)
+		}
 	}
 	
 	func peripheral(peripheral: CBPeripheral, didDiscoverServices error: NSError?)
@@ -122,7 +124,6 @@ class Neblina : NSObject, CBPeripheralDelegate {
 				peripheral.discoverCharacteristics(nil, forService: service)
 			}
 		}
-		//NebPeripheral.discoverCharacteristics([NEB_CHAR_UUID], forService: <#T##CBService#>)
 	}
 	
 	func peripheral(peripheral: CBPeripheral, didDiscoverCharacteristicsForService service: CBService, error: NSError?)
@@ -217,6 +218,8 @@ class Neblina : NSObject, CBPeripheralDelegate {
 		
 		return true
 	}
+	
+	// MARK : Fusion Engine Commands
 	
 	func SendCmdMotionStream(Enable:Bool)
 	{
@@ -457,87 +460,15 @@ class Neblina : NSObject, CBPeripheralDelegate {
 		device.writeValue(NSData(bytes: UnsafeMutablePointer<Void>(pkbuf), length: 20), forCharacteristic: ctrlChar, type: CBCharacteristicWriteType.WithoutResponse)
 	}
 	
-	func SendCmdFlashErase(Enable:Bool) {
-		if (isDeviceReady() == false) {
-			return
-		}
-		
-		var pkbuf = [UInt8](count:20, repeatedValue:0)
-		
-		pkbuf[0] = UInt8((NEB_CTRL_PKTYPE_CMD << 5) | NEB_CTRL_SUBSYS_STORAGE) //0x41
-		pkbuf[1] = UInt8(sizeof(Fusion_DataPacket_t))
-		pkbuf[2] = 0
-		pkbuf[3] = UInt8(FlashEraseAll) // FusionId.FlashEraseAll.rawValue // RecorderErase.rawValue	// Cmd
-		
-		if Enable == true
-		{
-			pkbuf[8] = 1
-		}
-		else
-		{
-			pkbuf[8] = 0
-		}
-		device.writeValue(NSData(bytes: UnsafeMutablePointer<Void>(pkbuf), length: 20), forCharacteristic: ctrlChar, type: CBCharacteristicWriteType.WithoutResponse)
-		
-	}
-	
-	func SendCmdFlashRecord(Enable:Bool) {
-		if (isDeviceReady() == false) {
-			return
-		}
-		
-		var pkbuf = [UInt8](count:20, repeatedValue:0)
-		
-		pkbuf[0] = UInt8((NEB_CTRL_PKTYPE_CMD << 5) | NEB_CTRL_SUBSYS_STORAGE) //0x41
-		pkbuf[1] = UInt8(sizeof(Fusion_DataPacket_t))
-		pkbuf[2] = 0
-		pkbuf[3] = UInt8(FlashRecordStartStop)//FusionId.FlashRecordStartStop.rawValue	// Cmd
-		
-		if Enable == true
-		{
-			pkbuf[8] = 1
-		}
-		else
-		{
-			pkbuf[8] = 0
-		}
-		device.writeValue(NSData(bytes: UnsafeMutablePointer<Void>(pkbuf), length: 20), forCharacteristic: ctrlChar, type: CBCharacteristicWriteType.WithoutResponse)
-	}
-	
-	func SendCmdFlashPlayback(Enable:Bool) {
-		if (isDeviceReady() == false) {
-			return
-		}
-		
-		var pkbuf = [UInt8](count:20, repeatedValue:0)
-		
-		pkbuf[0] = UInt8((NEB_CTRL_PKTYPE_CMD << 5) | NEB_CTRL_SUBSYS_STORAGE) //0x41
-		pkbuf[1] = 16//UInt8(sizeof(Fusion_DataPacket_t))
-		pkbuf[2] = 0
-		pkbuf[3] = UInt8(FlashPlaybackStartStop) //FusionId.FlashPlaybackStartStop.rawValue	// Cmd
-		
-		if Enable == true
-		{
-			pkbuf[8] = 1
-		}
-		else
-		{
-			pkbuf[8] = 0
-		}
-		pkbuf[9] = 0xff
-		pkbuf[10] = 0xff
-		device.writeValue(NSData(bytes: UnsafeMutablePointer<Void>(pkbuf), length: 20), forCharacteristic: ctrlChar, type: CBCharacteristicWriteType.WithoutResponse)
-	}
-	
 	func SendCmdLockHeading(Enable:Bool) {
 		if (isDeviceReady() == false) {
 			return
 		}
 		
 		var pkbuf = [UInt8](count:20, repeatedValue:0)
-	
+		
 		pkbuf[0] = UInt8((NEB_CTRL_PKTYPE_CMD << 5) | NEB_CTRL_SUBSYS_MOTION_ENG) //0x41
-		pkbuf[1] = 16 //UInt8(sizeof(Fusion_DataPacket_t))
+		pkbuf[1] = UInt8(sizeof(Fusion_DataPacket_t))
 		pkbuf[2] = 0
 		pkbuf[3] = UInt8(LockHeadingRef)	// Cmd
 		
@@ -614,6 +545,97 @@ class Neblina : NSObject, CBPeripheralDelegate {
 		device.writeValue(NSData(bytes: UnsafeMutablePointer<Void>(pkbuf), length: 20), forCharacteristic: ctrlChar, type: CBCharacteristicWriteType.WithoutResponse)
 	}
 	
+	// MARK : Storage subsystem commands
+	
+	func SendCmdFlashErase(Enable:Bool) {
+		if (isDeviceReady() == false) {
+			return
+		}
+		
+		var pkbuf = [UInt8](count:20, repeatedValue:0)
+		
+		pkbuf[0] = UInt8((NEB_CTRL_PKTYPE_CMD << 5) | NEB_CTRL_SUBSYS_STORAGE) //0x41
+		pkbuf[1] = UInt8(sizeof(Fusion_DataPacket_t))
+		pkbuf[2] = 0
+		pkbuf[3] = UInt8(FlashEraseAll) // FusionId.FlashEraseAll.rawValue // RecorderErase.rawValue	// Cmd
+		
+		if Enable == true
+		{
+			pkbuf[8] = 1
+		}
+		else
+		{
+			pkbuf[8] = 0
+		}
+		device.writeValue(NSData(bytes: UnsafeMutablePointer<Void>(pkbuf), length: 20), forCharacteristic: ctrlChar, type: CBCharacteristicWriteType.WithoutResponse)
+		
+	}
+	
+	func SendCmdFlashRecord(Enable:Bool) {
+		if (isDeviceReady() == false) {
+			return
+		}
+		
+		var pkbuf = [UInt8](count:20, repeatedValue:0)
+		
+		pkbuf[0] = UInt8((NEB_CTRL_PKTYPE_CMD << 5) | NEB_CTRL_SUBSYS_STORAGE) //0x41
+		pkbuf[1] = UInt8(sizeof(Fusion_DataPacket_t))
+		pkbuf[2] = 0
+		pkbuf[3] = UInt8(FlashRecordStartStop)//FusionId.FlashRecordStartStop.rawValue	// Cmd
+		
+		if Enable == true
+		{
+			pkbuf[8] = 1
+		}
+		else
+		{
+			pkbuf[8] = 0
+		}
+		device.writeValue(NSData(bytes: UnsafeMutablePointer<Void>(pkbuf), length: 20), forCharacteristic: ctrlChar, type: CBCharacteristicWriteType.WithoutResponse)
+	}
+	
+	func SendCmdFlashPlayback(Enable:Bool) {
+		if (isDeviceReady() == false) {
+			return
+		}
+		
+		var pkbuf = [UInt8](count:20, repeatedValue:0)
+		
+		pkbuf[0] = UInt8((NEB_CTRL_PKTYPE_CMD << 5) | NEB_CTRL_SUBSYS_STORAGE)
+		pkbuf[1] = 16//UInt8(sizeof(Fusion_DataPacket_t))
+		pkbuf[2] = 0
+		pkbuf[3] = UInt8(FlashPlaybackStartStop) //FusionId.FlashPlaybackStartStop.rawValue	// Cmd
+		
+		if Enable == true
+		{
+			pkbuf[8] = 1
+		}
+		else
+		{
+			pkbuf[8] = 0
+		}
+		pkbuf[9] = 0xff
+		pkbuf[10] = 0xff
+		device.writeValue(NSData(bytes: UnsafeMutablePointer<Void>(pkbuf), length: 20), forCharacteristic: ctrlChar, type: CBCharacteristicWriteType.WithoutResponse)
+	}
+	
+	// MARK : Debug subsystem commands
+	
+	func SendCmdGetFirmwareVersions() {
+		if (isDeviceReady() == false) {
+			return
+		}
+		
+		var pkbuf = [UInt8](count:20, repeatedValue:0)
+		
+		pkbuf[0] = UInt8((NEB_CTRL_PKTYPE_CMD << 5) | NEB_CTRL_SUBSYS_DEBUG)
+		pkbuf[1] = 16
+		pkbuf[2] = 0
+		pkbuf[3] = UInt8(DEBUG_CMD_GET_FW_VERSION)	// Cmd
+		
+		device.writeValue(NSData(bytes: UnsafeMutablePointer<Void>(pkbuf), length: 4), forCharacteristic: ctrlChar, type: CBCharacteristicWriteType.WithoutResponse)
+	}
+
 	func SendCmdControlInterface(Interf : Int) {
 		if (isDeviceReady() == false) {
 			return
@@ -621,7 +643,7 @@ class Neblina : NSObject, CBPeripheralDelegate {
 		
 		var pkbuf = [UInt8](count:20, repeatedValue:0)
 		
-		pkbuf[0] = 0x40
+		pkbuf[0] = UInt8((NEB_CTRL_PKTYPE_CMD << 5) | NEB_CTRL_SUBSYS_DEBUG) // 0x40
 		pkbuf[1] = 16//UInt8(sizeof(Fusion_DataPacket_t))
 		pkbuf[2] = 0
 		pkbuf[3] = 1//FusionId.FlashPlaybackStartStop.rawValue	// Cmd
@@ -650,6 +672,8 @@ class Neblina : NSObject, CBPeripheralDelegate {
 		device.writeValue(NSData(bytes: UnsafeMutablePointer<Void>(pkbuf), length: 20), forCharacteristic: ctrlChar, type: CBCharacteristicWriteType.WithoutResponse)
 	}
 
+	// MARK : LED subsystem commands
+	
 	func SendCmdLedSetValue(LedNo : UInt8, Value:UInt8) {
 		if (isDeviceReady() == false) {
 			return
@@ -669,6 +693,8 @@ class Neblina : NSObject, CBPeripheralDelegate {
 		device.writeValue(NSData(bytes: UnsafeMutablePointer<Void>(pkbuf), length: 20), forCharacteristic: ctrlChar, type: CBCharacteristicWriteType.WithoutResponse)
 	}
 	
+	// MARK : Power management sybsystem commands
+	
 	func SendCmdGetTemperature() {
 		if (isDeviceReady() == false) {
 			return
@@ -683,6 +709,7 @@ class Neblina : NSObject, CBPeripheralDelegate {
 		
 		device.writeValue(NSData(bytes: UnsafeMutablePointer<Void>(pkbuf), length: 4), forCharacteristic: ctrlChar, type: CBCharacteristicWriteType.WithoutResponse)
 	}
+	
 }
 
 protocol NeblinaDelegate {

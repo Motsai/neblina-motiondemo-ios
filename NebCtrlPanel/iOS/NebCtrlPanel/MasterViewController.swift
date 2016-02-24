@@ -64,13 +64,13 @@ class MasterViewController: UITableViewController, CBCentralManagerDelegate {
 		        let object = objects[indexPath.row]
 				bleCentralManager.connectPeripheral(object.peripheral, options: nil)
 		        let controller = (segue.destinationViewController as! UINavigationController).topViewController as! DetailViewController
-				//controller.NebDevice.setPeripheral(object)
+				//controller.nebdev.setPeripheral(object)
 		        controller.navigationItem.leftBarButtonItem = self.splitViewController?.displayModeButtonItem()
 		        controller.navigationItem.leftItemsSupplementBackButton = true
 				if (controller.detailItem != nil) {
-					bleCentralManager.cancelPeripheralConnection(controller.detailItem!)
+					bleCentralManager.cancelPeripheralConnection(controller.detailItem!.peripheral)
 				}
-				controller.detailItem = object.peripheral
+				controller.detailItem = object
 		    }
 		}
 	}
