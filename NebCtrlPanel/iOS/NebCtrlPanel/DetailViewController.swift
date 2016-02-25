@@ -34,7 +34,7 @@ class DetailViewController: UIViewController, CBPeripheralDelegate, NeblinaDeleg
 	@IBOutlet weak var cmdView: UITableView!
 	@IBOutlet weak var versionLabel: UILabel!
 	@IBOutlet weak var label: UILabel!
-	@IBOutlet weak var flashrec: UILabel!
+	@IBOutlet weak var flashLabel: UILabel!
 	
 	//var eulerAngles = SCNVector3(x: 0,y:0,z:0)
 	var ship : SCNNode! //= scene.rootNode.childNodeWithName("ship", recursively: true)!
@@ -291,7 +291,21 @@ class DetailViewController: UIViewController, CBPeripheralDelegate, NeblinaDeleg
 							nebdev.SendCmdFlashRecord(sender.selectedSegmentIndex == 1)
 							break
 						case FlashPlaybackStartStop:
-							nebdev.SendCmdFlashPlayback(sender.selectedSegmentIndex == 1)
+							nebdev.SendCmdFlashPlayback(sender.selectedSegmentIndex == 1, sessionId : 0xffff)
+							break
+						default:
+							break
+					}
+					break
+				case NEB_CTRL_SUBSYS_EEPROM:
+					switch (NebCmdList[row].CmdId)
+					{
+						case EEPROM_Read:
+							nebdev.SendCmdEepromRead(0)
+							break
+						case EEPROM_Write:
+							//UInt8_t eepdata[8]
+							//nebdev.SendCmdEepromWrite(0, eepdata)
 							break
 						default:
 							break
@@ -597,6 +611,48 @@ class DetailViewController: UIViewController, CBPeripheralDelegate, NeblinaDeleg
 		}
 	}
 	
+	func didReceiveStorageData(type : Int32, data : UnsafePointer<UInt8>, errFlag : Bool) {
+		switch (type) {
+			case FlashEraseAll:
+				flashLabel.text = "Flash erased"
+				break
+			case FlashRecordStartStop:
+				let session = Int16(data[5]) | (Int16(data[6]) << 8)
+				if (data[4] != 0) {
+					flashLabel.text = String(format: "Recording session %d", session)
+				}
+				else {
+					flashLabel.text = String(format: "Recorded session %d", session)
+				}
+				break
+			case FlashPlaybackStartStop:
+				let session = Int16(data[5]) | (Int16(data[6]) << 8)
+				if (data[4] != 0) {
+					flashLabel.text = String(format: "Playing session %d", session)
+				}
+				else {
+					flashLabel.text = String(format: "End session %d", session)
+				}
+				break
+			default:
+				break
+		}
+	}
+	
+	func didReceiveEepromData(type : Int32, data : UnsafePointer<UInt8>, errFlag : Bool) {
+		switch (type) {
+			case EEPROM_Read:
+				let pageno = UInt16(data[0]) | (UInt16(data[5]) << 8)
+				flashLabel.text = String(format: "EEP page [%d] : %02x %02x %02x %02x %02x %02x %02x %02x",
+					pageno, data[6], data[7], data[8], data[9], data[10], data[11], data[12], data[13])
+				break
+			case EEPROM_Write:
+				break;
+			default:
+				break
+		}
+	}
+
 	// MARK : UITableView
 	
 	func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
