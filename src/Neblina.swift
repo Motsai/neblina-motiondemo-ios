@@ -13,19 +13,20 @@ struct NebCmdItem {
 	let SubSysId : Int32
 	let	CmdId : Int32
 	let Name : String
+	let Actuator : Int
 }
 
 let NebCmdList = [NebCmdItem] (arrayLiteral:
-	NebCmdItem(SubSysId: NEB_CTRL_SUBSYS_DEBUG, CmdId: DEBUG_CMD_SET_INTERFACE, Name: "Set Interface (BLE/UART)"),
-	NebCmdItem(SubSysId: NEB_CTRL_SUBSYS_MOTION_ENG, CmdId: Quaternion, Name: "Quaternion Stream"),
-	NebCmdItem(SubSysId: NEB_CTRL_SUBSYS_MOTION_ENG, CmdId: MAG_Data, Name: "Mag Stream"),
-	NebCmdItem(SubSysId: NEB_CTRL_SUBSYS_MOTION_ENG, CmdId: LockHeadingRef, Name: "Lock Heading Ref."),
-	NebCmdItem(SubSysId: NEB_CTRL_SUBSYS_STORAGE, CmdId: FlashEraseAll, Name: "Flash Erase All"),
-	NebCmdItem(SubSysId: NEB_CTRL_SUBSYS_STORAGE, CmdId: FlashRecordStartStop, Name: "Flash Record"),
-	NebCmdItem(SubSysId: NEB_CTRL_SUBSYS_STORAGE, CmdId: FlashPlaybackStartStop, Name: "Flash Playback"),
-	NebCmdItem(SubSysId: NEB_CTRL_SUBSYS_LED, CmdId: LED_CMD_SET_VALUE, Name: "Set LED0"),
-	NebCmdItem(SubSysId: NEB_CTRL_SUBSYS_LED, CmdId: LED_CMD_SET_VALUE, Name: "Set LED1"),
-	NebCmdItem(SubSysId: NEB_CTRL_SUBSYS_EEPROM, CmdId: EEPROM_Read, Name: "EEPROM Read")
+	NebCmdItem(SubSysId: NEB_CTRL_SUBSYS_DEBUG, CmdId: DEBUG_CMD_SET_INTERFACE, Name: "Set Interface (BLE/UART)", Actuator : 1),
+	NebCmdItem(SubSysId: NEB_CTRL_SUBSYS_MOTION_ENG, CmdId: Quaternion, Name: "Quaternion Stream", Actuator : 1),
+	NebCmdItem(SubSysId: NEB_CTRL_SUBSYS_MOTION_ENG, CmdId: MAG_Data, Name: "Mag Stream", Actuator : 1),
+	NebCmdItem(SubSysId: NEB_CTRL_SUBSYS_MOTION_ENG, CmdId: LockHeadingRef, Name: "Lock Heading Ref.", Actuator : 1),
+	NebCmdItem(SubSysId: NEB_CTRL_SUBSYS_STORAGE, CmdId: FlashEraseAll, Name: "Flash Erase All", Actuator : 1),
+	NebCmdItem(SubSysId: NEB_CTRL_SUBSYS_STORAGE, CmdId: FlashRecordStartStop, Name: "Flash Record", Actuator : 1),
+	NebCmdItem(SubSysId: NEB_CTRL_SUBSYS_STORAGE, CmdId: FlashPlaybackStartStop, Name: "Flash Playback", Actuator : 1),
+	NebCmdItem(SubSysId: NEB_CTRL_SUBSYS_LED, CmdId: LED_CMD_SET_VALUE, Name: "Set LED0", Actuator : 1),
+	NebCmdItem(SubSysId: NEB_CTRL_SUBSYS_LED, CmdId: LED_CMD_SET_VALUE, Name: "Set LED1", Actuator : 1),
+	NebCmdItem(SubSysId: NEB_CTRL_SUBSYS_EEPROM, CmdId: EEPROM_Read, Name: "EEPROM Read", Actuator : 1)
 )
 
 // BLE custom UUID
@@ -166,7 +167,7 @@ class Neblina : NSObject, CBPeripheralDelegate {
 				case NEB_CTRL_SUBSYS_EEPROM:
 					var dd = [UInt8](count:16, repeatedValue:0)
 					characteristic.value?.getBytes(&dd, range: NSMakeRange(sizeof(NEB_PKTHDR), Int(hdr.Len)))
-					delegate.didReceiveStorageData(id, data: dd, errFlag: errflag)
+					delegate.didReceiveEepromData(id, data: dd, errFlag: errflag)
 					break
 
 				default:
@@ -632,10 +633,10 @@ class Neblina : NSObject, CBPeripheralDelegate {
 		
 		var pkbuf = [UInt8](count:20, repeatedValue:0)
 		
-		pkbuf[0] = UInt8((NEB_CTRL_PKTYPE_CMD << 5) | NEB_CTRL_SUBSYS_STORAGE)
+		pkbuf[0] = UInt8((NEB_CTRL_PKTYPE_CMD << 5) | NEB_CTRL_SUBSYS_EEPROM)
 		pkbuf[1] = 16//UInt8(sizeof(Fusion_DataPacket_t))
 		pkbuf[2] = 0
-		pkbuf[3] = UInt8(EEPROM_Read) //FusionId.FlashPlaybackStartStop.rawValue	// Cmd
+		pkbuf[3] = UInt8(EEPROM_Read) // Cmd
 		
 		pkbuf[4] = UInt8(pageNo & 0xff)
 		pkbuf[5] = UInt8((pageNo >> 8) & 0xff)
@@ -650,10 +651,10 @@ class Neblina : NSObject, CBPeripheralDelegate {
 		
 		var pkbuf = [UInt8](count:20, repeatedValue:0)
 		
-		pkbuf[0] = UInt8((NEB_CTRL_PKTYPE_CMD << 5) | NEB_CTRL_SUBSYS_STORAGE)
+		pkbuf[0] = UInt8((NEB_CTRL_PKTYPE_CMD << 5) | NEB_CTRL_SUBSYS_EEPROM)
 		pkbuf[1] = 16//UInt8(sizeof(Fusion_DataPacket_t))
 		pkbuf[2] = 0
-		pkbuf[3] = UInt8(EEPROM_Write) //FusionId.FlashPlaybackStartStop.rawValue	// Cmd
+		pkbuf[3] = UInt8(EEPROM_Write) // Cmd
 		
 		pkbuf[4] = UInt8(pageNo & 0xff)
 		pkbuf[5] = UInt8((pageNo >> 8) & 0xff)

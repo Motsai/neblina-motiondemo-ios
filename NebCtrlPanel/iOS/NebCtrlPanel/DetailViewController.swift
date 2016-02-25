@@ -642,9 +642,9 @@ class DetailViewController: UIViewController, CBPeripheralDelegate, NeblinaDeleg
 	func didReceiveEepromData(type : Int32, data : UnsafePointer<UInt8>, errFlag : Bool) {
 		switch (type) {
 			case EEPROM_Read:
-				let pageno = UInt16(data[0]) | (UInt16(data[5]) << 8)
+				let pageno = UInt16(data[0]) | (UInt16(data[1]) << 8)
 				flashLabel.text = String(format: "EEP page [%d] : %02x %02x %02x %02x %02x %02x %02x %02x",
-					pageno, data[6], data[7], data[8], data[9], data[10], data[11], data[12], data[13])
+					pageno, data[2], data[3], data[4], data[5], data[6], data[7], data[8], data[9])
 				break
 			case EEPROM_Write:
 				break;
