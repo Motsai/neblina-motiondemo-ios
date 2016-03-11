@@ -26,7 +26,7 @@ let NebCmdList = [NebCmdItem] (arrayLiteral:
 	NebCmdItem(SubSysId: NEB_CTRL_SUBSYS_STORAGE, CmdId: FlashPlaybackStartStop, Name: "Flash Playback", Actuator : 1),
 	NebCmdItem(SubSysId: NEB_CTRL_SUBSYS_LED, CmdId: LED_CMD_SET_VALUE, Name: "Set LED0", Actuator : 1),
 	NebCmdItem(SubSysId: NEB_CTRL_SUBSYS_LED, CmdId: LED_CMD_SET_VALUE, Name: "Set LED1", Actuator : 1),
-	NebCmdItem(SubSysId: NEB_CTRL_SUBSYS_EEPROM, CmdId: EEPROM_Read, Name: "EEPROM Read", Actuator : 1)
+	NebCmdItem(SubSysId: NEB_CTRL_SUBSYS_EEPROM, CmdId: EEPROM_Read, Name: "EEPROM Read", Actuator : 0)
 )
 
 // BLE custom UUID
@@ -43,6 +43,11 @@ class Neblina : NSObject, CBPeripheralDelegate {
 	var fp = Fusion_DataPacket_t()
 	var delegate : NeblinaDelegate!
 	var devid : UInt64 = 0
+	var packetCnt : UInt32 = 0		// Data packet count
+	var startTime : UInt64 = 0
+	var currTime : UInt64 = 0
+	var dataRate : Float = 0.0
+	var timeBaseInfo = mach_timebase_info(numer: 0, denom:0)
 	
 	func getCmdIdx(subsysId : Int32, cmdId : Int32) -> Int {
 		for (idx, item) in NebCmdList.enumerate() {
@@ -63,6 +68,9 @@ class Neblina : NSObject, CBPeripheralDelegate {
 		{
 			device!.discoverServices([NEB_SERVICE_UUID])
 		}
+		var info = mach_timebase_info(numer: 0, denom:0)
+		mach_timebase_info(&timeBaseInfo)
+
 		//print("Device : \(device)")
 	}
 	
@@ -98,6 +106,8 @@ class Neblina : NSObject, CBPeripheralDelegate {
 				if ((dataChar.properties.rawValue & CBCharacteristicProperties.Notify.rawValue) != 0)
 				{
 					peripheral.setNotifyValue(true, forCharacteristic: dataChar);
+					packetCnt = 0	// reset packet count
+					startTime = 0	// reset timer
 				}
 			}
 			if (characteristic.UUID .isEqual(NEB_CTRLCHAR_UUID))
@@ -132,6 +142,21 @@ class Neblina : NSObject, CBPeripheralDelegate {
 				errflag = true;
 				hdr.SubSys &= 0x7F;
 			}
+			
+			packetCnt++
+			
+			if (startTime == 0) {
+				// first time use
+				startTime = mach_absolute_time()
+			}
+			else {
+				currTime = mach_absolute_time()
+				let elapse = currTime - startTime
+				if (elapse > 0) {
+					dataRate = Float(UInt64(packetCnt) * 1000000000 * UInt64(timeBaseInfo.denom)) / Float((currTime - startTime) * UInt64(timeBaseInfo.numer))
+				}
+			}
+			
 			switch (Int32(hdr.SubSys))
 			{
 				case NEB_CTRL_SUBSYS_MOTION_ENG:	// Motion Engine
@@ -189,6 +214,14 @@ class Neblina : NSObject, CBPeripheralDelegate {
 		}
 		
 		return true
+	}
+	
+	func getPacketCount()-> UInt32 {
+		return packetCnt
+	}
+	
+	func getDataRate()->Float {
+		return dataRate
 	}
 	
 	// MARK : Fusion Engine Commands

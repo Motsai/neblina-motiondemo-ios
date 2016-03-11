@@ -45,7 +45,7 @@ class DetailViewController: UIViewController, CBPeripheralDelegate, NeblinaDeleg
 	var zf = Int16(0)
 	var heading = Bool(false)
 	var flashEraseProgress = Bool(false)
-	
+	var PaketCnt = UInt32(0)
 	var detailItem: NebDevice? {
 		didSet {
 		    // Update the view.
@@ -132,6 +132,7 @@ class DetailViewController: UIViewController, CBPeripheralDelegate, NeblinaDeleg
 		// add a tap gesture recognizer
 		let tapGesture = UITapGestureRecognizer(target: self, action: "handleTap:")
 		scnView.addGestureRecognizer(tapGesture)
+		//scnView.preferredFramesPerSecond = 60
 		
 	}
 
@@ -292,6 +293,9 @@ class DetailViewController: UIViewController, CBPeripheralDelegate, NeblinaDeleg
 							break
 						case FlashPlaybackStartStop:
 							nebdev.SendCmdFlashPlayback(sender.selectedSegmentIndex == 1, sessionId : 0xffff)
+							if (sender.selectedSegmentIndex == 1) {
+								PaketCnt = 0
+							}
 							break
 						default:
 							break
@@ -364,7 +368,8 @@ class DetailViewController: UIViewController, CBPeripheralDelegate, NeblinaDeleg
 		//let errflag = Bool(type.rawValue & 0x80 == 0x80)
 
 		//let id = FusionId(rawValue: type.rawValue & 0x7F)! as FusionId
-		
+		flashLabel.text = String(format: "Total packet %u @ %0.2f pps", nebdev.getPacketCount(), nebdev.getDataRate())
+	
 		switch (type) {
 			
 		case MotionState:
@@ -484,6 +489,7 @@ class DetailViewController: UIViewController, CBPeripheralDelegate, NeblinaDeleg
 			let z = (Int16(data.data.4) & 0xff) | (Int16(data.data.5) << 8)
 			let zq = z
 			label.text = String("Mag - x:\(xq), y:\(yq), z:\(zq)")
+			
 			//ship.rotation = SCNVector4(Float(xq), Float(yq), 0, GLKMathDegreesToRadians(90))
 			break
 /*		case FlashEraseAll:
@@ -604,7 +610,7 @@ class DetailViewController: UIViewController, CBPeripheralDelegate, NeblinaDeleg
 				
 				break
 			case DEBUG_CMD_GET_FW_VERSION:
-				versionLabel.text = String(format: "API:%d, FE:%d.%d, BLE:%d.%d", data[0], data[1], data[2], data[4], data[5])
+				versionLabel.text = String(format: "API:%d, FEN:%d.%d.%d, BLE:%d.%d.%d", data[0], data[1], data[2], data[3], data[4], data[5], data[6])
 				break
 			default:
 				break
@@ -631,7 +637,7 @@ class DetailViewController: UIViewController, CBPeripheralDelegate, NeblinaDeleg
 					flashLabel.text = String(format: "Playing session %d", session)
 				}
 				else {
-					flashLabel.text = String(format: "End session %d", session)
+					flashLabel.text = String(format: "End session %d, %u", session, nebdev.getPacketCount())
 				}
 				break
 			default:
@@ -665,15 +671,23 @@ class DetailViewController: UIViewController, CBPeripheralDelegate, NeblinaDeleg
 	{
 		let cellView = tableView.dequeueReusableCellWithIdentifier("CellCommand", forIndexPath: indexPath!)
 		let labelView = cellView.viewWithTag(1) as! UILabel
-		//let switchCtrl = cellView.viewWithTag(2) as! UISwitch
+		let switchCtrl = cellView.viewWithTag(2) as! UISegmentedControl
 		//switchCtrl.addTarget(self, action: "switchAction:", forControlEvents: UIControlEvents.ValueChanged)
 /*		if (indexPath!.row < FusionCmdList.count) {
 			labelView.text = FusionCmdList[indexPath!.row].Name //NebApiName[indexPath!.row] as String//"Row \(row)"//"self.objects.objectAtIndex(row) as! String
-		} else */if (indexPath!.row < /*FusionCmdList.count + */NebCmdList.count) {
+		} else */
+		if (indexPath!.row < /*FusionCmdList.count + */NebCmdList.count) {
 			labelView.text = NebCmdList[indexPath!.row].Name// - FusionCmdList.count].Name
-		} else {
+			if (NebCmdList[indexPath!.row].Actuator == 0) {
+				//switchCtrl.enabled = false
+				switchCtrl.hidden = true
+			}
+		}
+		else {
 			labelView.text = CtrlName[indexPath!.row /*- FusionCmdList.count*/ - NebCmdList.count] //NebApiName[indexPath!.row] as String//"Row \(row)"//"self.objects.objectAtIndex(row) as! String
 		}
+		
+		
 		//cellView.textLabel!.text = NebApiName[indexPath!.row] as String//"Row \(row)"//"self.objects.objectAtIndex(row) as! String
 			
 		return cellView;
