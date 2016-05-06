@@ -177,6 +177,19 @@ class MasterViewController: UITableViewController, CBCentralManagerDelegate {
 		
 	}
 	
+	func centralManager(_ central: CBCentralManager,
+	                      didDisconnectPeripheral peripheral: CBPeripheral,
+	                                              error error: NSError?) {
+		//peripheral.delegate = self
+		//peripheral.discoverServices(nil)
+		//gameView.PeripheralConnected(peripheral)
+		//		detailView.setPeripheral(NebDevice)
+		//NebDevice.setPeripheral(peripheral)
+		print("disconnected from peripheral")
+		
+		
+	}
+
 	func centralManager(central: CBCentralManager, didFailToConnectPeripheral peripheral: CBPeripheral, error: NSError?) {
 		//        sensorData.text = "FAILED TO CONNECT \(error)"
 	}

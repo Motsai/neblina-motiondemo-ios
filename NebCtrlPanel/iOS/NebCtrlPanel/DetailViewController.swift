@@ -35,10 +35,12 @@ class DetailViewController: UIViewController, CBPeripheralDelegate, NeblinaDeleg
 	@IBOutlet weak var versionLabel: UILabel!
 	@IBOutlet weak var label: UILabel!
 	@IBOutlet weak var flashLabel: UILabel!
+	@IBOutlet weak var dumpLabel: UILabel!
 	
 	//var eulerAngles = SCNVector3(x: 0,y:0,z:0)
 	var ship : SCNNode! //= scene.rootNode.childNodeWithName("ship", recursively: true)!
 	let max_count = Int16(15)
+	var prevTimeStamp = UInt32(0)
 	var cnt = Int16(15)
 	var xf = Int16(0)
 	var yf = Int16(0)
@@ -46,6 +48,7 @@ class DetailViewController: UIViewController, CBPeripheralDelegate, NeblinaDeleg
 	var heading = Bool(false)
 	var flashEraseProgress = Bool(false)
 	var PaketCnt = UInt32(0)
+	var dropCnt = UInt32(0)
 	var detailItem: NebDevice? {
 		didSet {
 		    // Update the view.
@@ -203,6 +206,38 @@ class DetailViewController: UIViewController, CBPeripheralDelegate, NeblinaDeleg
 		// Dispose of any resources that can be recreated.
 	}
 	
+	@IBAction func buttonAction(sender:UIButton)
+	{
+		let idx = cmdView.indexPathForCell(sender.superview!.superview as! UITableViewCell)
+		let row = (idx?.row)! as Int
+		
+		if (detailItem == nil) {
+			return
+		}
+		
+		if (row < NebCmdList.count) {
+			switch (NebCmdList[row].SubSysId)
+			{
+				case NEB_CTRL_SUBSYS_EEPROM:
+					switch (NebCmdList[row].CmdId)
+					{
+						case EEPROM_Read:
+							nebdev.SendCmdEepromRead(0)
+							break
+						case EEPROM_Write:
+								//UInt8_t eepdata[8]
+								//nebdev.SendCmdEepromWrite(0, eepdata)
+							break
+						default:
+							break
+					}
+					break
+				default:
+					break
+			}
+		}
+	}
+	
 	@IBAction func switchAction(sender:UISegmentedControl)
 	{
 		//let tableView = sender.superview?.superview?.superview?.superview as! UITableView
@@ -222,6 +257,11 @@ class DetailViewController: UIViewController, CBPeripheralDelegate, NeblinaDeleg
 						case DEBUG_CMD_SET_INTERFACE:
 							nebdev.SendCmdControlInterface(sender.selectedSegmentIndex)
 							break
+						case DEBUG_CMD_DUMP_DATA:
+							break;
+						case DEBUG_CMD_SET_DATAPORT:
+							nebdev.SendCmdDataInterface(row, Ctrl:UInt8(sender.selectedSegmentIndex))
+							break;
 						default:
 							break
 					}
@@ -239,7 +279,7 @@ class DetailViewController: UIViewController, CBPeripheralDelegate, NeblinaDeleg
 						case Quaternion:
 							nebdev.SendCmdEulerAngleStream(false)
 							heading = false
-							
+							prevTimeStamp = 0
 							nebdev.SendCmdQuaternionStream(sender.selectedSegmentIndex == 1)
 							//var i = nebdev.getCmdIdx(FusionId.FlashPlaybackStartStop)
 							let cell = cmdView.cellForRowAtIndexPath( NSIndexPath(forRow: NebCmdList.count, inSection: 0))
@@ -350,8 +390,10 @@ class DetailViewController: UIViewController, CBPeripheralDelegate, NeblinaDeleg
 	// MARK : Neblina
 	func didConnectNeblina() {
 		// Switch to BLE interface
+		prevTimeStamp = 0;
 		nebdev.SendCmdControlInterface(0)
 		nebdev.SendCmdEngineStatus()
+		nebdev.SendCmdGetDataPortStatus()
 		nebdev.SendCmdGetFirmwareVersions()
 	}
 	
@@ -417,7 +459,20 @@ class DetailViewController: UIViewController, CBPeripheralDelegate, NeblinaDeleg
 			let wq = Float(w) / 32768.0
 			ship.orientation = SCNQuaternion(yq, xq, zq, wq)
 			label.text = String("Quat - x:\(xq), y:\(yq), z:\(zq), w:\(wq)")
-			
+			if (prevTimeStamp == 0)
+			{
+				prevTimeStamp = data.TimeStamp;
+			}
+			else
+			{
+				let tdiff = data.TimeStamp - prevTimeStamp;
+				if (tdiff > 39000)
+				{
+					dropCnt++
+					dumpLabel.text = String("\(dropCnt) Drop : \(tdiff)")
+				}
+				prevTimeStamp = data.TimeStamp
+			}
 			
 			break
 		case ExtForce:
@@ -612,6 +667,23 @@ class DetailViewController: UIViewController, CBPeripheralDelegate, NeblinaDeleg
 			case DEBUG_CMD_GET_FW_VERSION:
 				versionLabel.text = String(format: "API:%d, FEN:%d.%d.%d, BLE:%d.%d.%d", data[0], data[1], data[2], data[3], data[4], data[5], data[6])
 				break
+			case DEBUG_CMD_DUMP_DATA:
+				dumpLabel.text = String(format: "%02x %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x",
+				                        data[0], data[1], data[2], data[3], data[4], data[5], data[6], data[7], data[8], data[9],
+										data[10], data[11], data[12], data[13], data[14], data[15])
+				break
+			case DEBUG_CMD_GET_DATAPORT:
+				let i = nebdev.getCmdIdx(NEB_CTRL_SUBSYS_DEBUG,  cmdId: DEBUG_CMD_SET_DATAPORT)
+				let cell = cmdView.cellForRowAtIndexPath( NSIndexPath(forRow: i, inSection: 0))
+				var sw = cell!.viewWithTag(2) as! UISegmentedControl
+				
+				sw.selectedSegmentIndex = Int(data[0])
+
+				let cell1 = cmdView.cellForRowAtIndexPath( NSIndexPath(forRow: i + 1, inSection: 0))
+				var sw1 = cell1!.viewWithTag(2) as! UISegmentedControl
+				
+				sw1.selectedSegmentIndex = Int(data[1])
+				break
 			default:
 				break
 		}
@@ -649,7 +721,7 @@ class DetailViewController: UIViewController, CBPeripheralDelegate, NeblinaDeleg
 		switch (type) {
 			case EEPROM_Read:
 				let pageno = UInt16(data[0]) | (UInt16(data[1]) << 8)
-				flashLabel.text = String(format: "EEP page [%d] : %02x %02x %02x %02x %02x %02x %02x %02x",
+				dumpLabel.text = String(format: "EEP page [%d] : %02x %02x %02x %02x %02x %02x %02x %02x",
 					pageno, data[2], data[3], data[4], data[5], data[6], data[7], data[8], data[9])
 				break
 			case EEPROM_Write:
@@ -671,16 +743,37 @@ class DetailViewController: UIViewController, CBPeripheralDelegate, NeblinaDeleg
 	{
 		let cellView = tableView.dequeueReusableCellWithIdentifier("CellCommand", forIndexPath: indexPath!)
 		let labelView = cellView.viewWithTag(1) as! UILabel
-		let switchCtrl = cellView.viewWithTag(2) as! UISegmentedControl
+		let switchCtrl = cellView.viewWithTag(2) as! UIControl//UISegmentedControl
+		var buttonCtrl = cellView.viewWithTag(3) as! UIButton
+		buttonCtrl.hidden = true
 		//switchCtrl.addTarget(self, action: "switchAction:", forControlEvents: UIControlEvents.ValueChanged)
 /*		if (indexPath!.row < FusionCmdList.count) {
 			labelView.text = FusionCmdList[indexPath!.row].Name //NebApiName[indexPath!.row] as String//"Row \(row)"//"self.objects.objectAtIndex(row) as! String
 		} else */
 		if (indexPath!.row < /*FusionCmdList.count + */NebCmdList.count) {
 			labelView.text = NebCmdList[indexPath!.row].Name// - FusionCmdList.count].Name
-			if (NebCmdList[indexPath!.row].Actuator == 0) {
-				//switchCtrl.enabled = false
-				switchCtrl.hidden = true
+			switch (NebCmdList[indexPath!.row].Actuator)
+			{
+				case 1:
+					switchCtrl.enabled = true
+					switchCtrl.hidden = false
+					buttonCtrl.hidden = true
+					break
+				case 2:
+					buttonCtrl.enabled = true
+					buttonCtrl.hidden = false
+					if (NebCmdList[indexPath!.row].Text != String(_sel: nil))
+					{
+						buttonCtrl.setTitle(NebCmdList[indexPath!.row].Text, forState: UIControlState.Normal)
+					}
+					switchCtrl.hidden = true
+					break
+				
+				default:
+					//switchCtrl.enabled = false
+					switchCtrl.hidden = true
+					buttonCtrl.hidden = true
+					break
 			}
 		}
 		else {
