@@ -1,0 +1,30 @@
+{
+  "DVTSourceControlWorkspaceBlueprintPrimaryRemoteRepositoryKey" : "0BF07896B98D142C057FC728D4E8AEDCD4971E13",
+  "DVTSourceControlWorkspaceBlueprintWorkingCopyRepositoryLocationsKey" : {
+
+  },
+  "DVTSourceControlWorkspaceBlueprintWorkingCopyStatesKey" : {
+    "0BF07896B98D142C057FC728D4E8AEDCD4971E13" : 0,
+    "E5C52112BFC8F4B1FFE523F2824C7BDB2E54BBE4" : 0
+  },
+  "DVTSourceControlWorkspaceBlueprintIdentifierKey" : "329FC058-539A-46BE-A820-C20DAE99DBE4",
+  "DVTSourceControlWorkspaceBlueprintWorkingCopyPathsKey" : {
+    "0BF07896B98D142C057FC728D4E8AEDCD4971E13" : "neblina-motiondemo-swift\/",
+    "E5C52112BFC8F4B1FFE523F2824C7BDB2E54BBE4" : ""
+  },
+  "DVTSourceControlWorkspaceBlueprintNameKey" : "NebCtrlPanel",
+  "DVTSourceControlWorkspaceBlueprintVersion" : 204,
+  "DVTSourceControlWorkspaceBlueprintRelativePathToProjectKey" : "NebCtrlPanel\/OSX\/NebCtrlPanel\/NebCtrlPanel.xcodeproj",
+  "DVTSourceControlWorkspaceBlueprintRemoteRepositoriesKey" : [
+    {
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryURLKey" : "github.com:Motsai\/neblina-motiondemo-swift.git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositorySystemKey" : "com.apple.dt.Xcode.sourcecontrol.Git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryIdentifierKey" : "0BF07896B98D142C057FC728D4E8AEDCD4971E13"
+    },
+    {
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryURLKey" : "github.com:Motsai\/soucy-iosapp.git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositorySystemKey" : "com.apple.dt.Xcode.sourcecontrol.Git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryIdentifierKey" : "E5C52112BFC8F4B1FFE523F2824C7BDB2E54BBE4"
+    }
+  ]
+}
