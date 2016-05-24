@@ -17,9 +17,9 @@ struct CtrlItem {
 }
 */
 
-let CtrlName = [String](arrayLiteral:"Heading")//, "Test1", "Test2")
+//let CtrlName = [String](arrayLiteral:"Heading")//, "Test1", "Test2")
 
-class DetailViewController: UIViewController, CBPeripheralDelegate, NeblinaDelegate, SCNSceneRendererDelegate {
+class DetailViewController: UIViewController, UITextFieldDelegate, CBPeripheralDelegate, NeblinaDelegate, SCNSceneRendererDelegate {
 
 	let nebdev = Neblina()
 	//let scene = SCNScene(named: "art.scnassets/Millennium_Falcon/Millennium_Falcon.dae") as SCNScene!
@@ -70,6 +70,7 @@ class DetailViewController: UIViewController, CBPeripheralDelegate, NeblinaDeleg
 
 	override func viewDidLoad() {
 		super.viewDidLoad()
+		
 		
 		cnt = max_count
 		//textview = self.view.viewWithTag(3) as! UITextView
@@ -138,15 +139,17 @@ class DetailViewController: UIViewController, CBPeripheralDelegate, NeblinaDeleg
 		//scnView.preferredFramesPerSecond = 60
 		
 	}
+	
+	func textFieldShouldReturn(textField: UITextField!) -> Bool // called when 'return' key pressed. return NO to ignore.
+	{
+		textField.resignFirstResponder()
 
-	/*
-	override func viewDidLoad() {
-		super.viewDidLoad()
-		// Do any additional setup after loading the view, typically from a nib.
-		self.configureView()
-		//NebDevice.delegate = self
+		let value = UInt16(textField.text!)
+		print("textAction \(value)")
+		nebdev.SendCmdSetChargeCurrent(value!)
+
+		return true;
 	}
-*/
 	
 	func handleTap(gestureRecognize: UIGestureRecognizer) {
 		// retrieve the SCNView
@@ -281,9 +284,9 @@ class DetailViewController: UIViewController, CBPeripheralDelegate, NeblinaDeleg
 							heading = false
 							prevTimeStamp = 0
 							nebdev.SendCmdQuaternionStream(sender.selectedSegmentIndex == 1)
-							//var i = nebdev.getCmdIdx(FusionId.FlashPlaybackStartStop)
-							let cell = cmdView.cellForRowAtIndexPath( NSIndexPath(forRow: NebCmdList.count, inSection: 0))
-							let sw = cell!.viewWithTag(2) as! UISegmentedControl
+							let i = nebdev.getCmdIdx(0xf,  cmdId: 1)
+							let cell = cmdView.cellForRowAtIndexPath( NSIndexPath(forRow: i, inSection: 0))
+							let sw = cell!.viewWithTag(1) as! UISegmentedControl
 							sw.selectedSegmentIndex = 0
 							break
 						case EulerAngle:
@@ -308,7 +311,7 @@ class DetailViewController: UIViewController, CBPeripheralDelegate, NeblinaDeleg
 						case LockHeadingRef:
 							nebdev.SendCmdLockHeading(sender.selectedSegmentIndex == 1)
 							let cell = cmdView.cellForRowAtIndexPath( NSIndexPath(forRow: row, inSection: 0))
-							let sw = cell!.viewWithTag(2) as! UISegmentedControl
+							let sw = cell!.viewWithTag(1) as! UISegmentedControl
 							sw.selectedSegmentIndex = 0
 							break
 						default:
@@ -355,6 +358,21 @@ class DetailViewController: UIViewController, CBPeripheralDelegate, NeblinaDeleg
 							break
 					}
 					break
+				case 0xf:
+					switch (NebCmdList[row].CmdId) {
+						case 1:
+							nebdev.SendCmdQuaternionStream(false)
+							nebdev.SendCmdEulerAngleStream(true)
+							heading = sender.selectedSegmentIndex == 1
+							let i = nebdev.getCmdIdx(NEB_CTRL_SUBSYS_MOTION_ENG,  cmdId: Quaternion)
+							let cell = cmdView.cellForRowAtIndexPath( NSIndexPath(forRow: i, inSection: 0))
+							let control = cell!.viewWithTag(1) as! UISegmentedControl
+							control.selectedSegmentIndex = 0
+							break
+						default:
+							break
+					}
+					break
 				default:
 					break
 			}
@@ -368,7 +386,7 @@ class DetailViewController: UIViewController, CBPeripheralDelegate, NeblinaDeleg
 				heading = sender.selectedSegmentIndex == 1
 				var i = nebdev.getCmdIdx(NEB_CTRL_SUBSYS_MOTION_ENG,  cmdId: Quaternion)
 				let cell = cmdView.cellForRowAtIndexPath( NSIndexPath(forRow: i, inSection: 0))
-				let sw = cell!.viewWithTag(2) as! UISegmentedControl
+				let sw = cell!.viewWithTag(1) as! UISegmentedControl
 				sw.selectedSegmentIndex = 0
 				break
 			default:
@@ -391,9 +409,10 @@ class DetailViewController: UIViewController, CBPeripheralDelegate, NeblinaDeleg
 	func didConnectNeblina() {
 		// Switch to BLE interface
 		prevTimeStamp = 0;
-		nebdev.SendCmdControlInterface(0)
+		//nebdev.SendCmdControlInterface(0)
 		nebdev.SendCmdEngineStatus()
-		nebdev.SendCmdGetDataPortStatus()
+		nebdev.SendCmdGetDataPortState()
+		nebdev.SendCmdLedGetValue ()
 		nebdev.SendCmdGetFirmwareVersions()
 	}
 	
@@ -402,7 +421,14 @@ class DetailViewController: UIViewController, CBPeripheralDelegate, NeblinaDeleg
 	}
 
 	func didReceivePmgntData(type : Int32, data : UnsafePointer<UInt8>, errFlag : Bool) {
-		
+		let value = UInt16(data[0]) | (UInt16(data[1]) << 8)
+		if (type == POWERMGMT_CMD_SET_CHARGE_CURRENT)
+		{
+			let i = nebdev.getCmdIdx(NEB_CTRL_SUBSYS_POWERMGMT,  cmdId: POWERMGMT_CMD_SET_CHARGE_CURRENT)
+			let cell = cmdView.cellForRowAtIndexPath( NSIndexPath(forRow: i, inSection: 0))
+			let control = cell!.viewWithTag(3) as! UITextField
+			control.text = String(value)
+		}
 	}
 
 	func didReceiveFusionData(type : Int32, data : Fusion_DataPacket_t, errFlag : Bool) {
@@ -434,8 +460,6 @@ class DetailViewController: UIViewController, CBPeripheralDelegate, NeblinaDeleg
 				ship.eulerAngles = SCNVector3Make(GLKMathDegreesToRadians(90), 0, GLKMathDegreesToRadians(180) - GLKMathDegreesToRadians(xrot))
 			}
 			else {
-//				ship.eulerAngles = SCNVector3Make(GLKMathDegreesToRadians(90) - GLKMathDegreesToRadians(yrot), GLKMathDegreesToRadians(zrot), GLKMathDegreesToRadians(180) - GLKMathDegreesToRadians(xrot))
-				
 				ship.eulerAngles = SCNVector3Make(GLKMathDegreesToRadians(180) - GLKMathDegreesToRadians(yrot), GLKMathDegreesToRadians(xrot), GLKMathDegreesToRadians(180) - GLKMathDegreesToRadians(zrot))
 			}
 			
@@ -459,16 +483,16 @@ class DetailViewController: UIViewController, CBPeripheralDelegate, NeblinaDeleg
 			let wq = Float(w) / 32768.0
 			ship.orientation = SCNQuaternion(yq, xq, zq, wq)
 			label.text = String("Quat - x:\(xq), y:\(yq), z:\(zq), w:\(wq)")
-			if (prevTimeStamp == 0)
+			if (prevTimeStamp == 0 || data.TimeStamp <= prevTimeStamp)
 			{
 				prevTimeStamp = data.TimeStamp;
 			}
 			else
 			{
 				let tdiff = data.TimeStamp - prevTimeStamp;
-				if (tdiff > 39000)
+				if (tdiff > 49000)
 				{
-					dropCnt++
+					dropCnt += 1
 					dumpLabel.text = String("\(dropCnt) Drop : \(tdiff)")
 				}
 				prevTimeStamp = data.TimeStamp
@@ -492,14 +516,8 @@ class DetailViewController: UIViewController, CBPeripheralDelegate, NeblinaDeleg
 				cnt = max_count
 				//if (xf != xq || yf != yq || zf != zq) {
 				let pos = SCNVector3(CGFloat(xf/cnt), CGFloat(yf/cnt), CGFloat(zf/cnt))
-				//let pos = SCNVector3(CGFloat(yf), CGFloat(xf), CGFloat(zf))
-				//SCNTransaction.flush()
-				//SCNTransaction.begin()
-				//SCNTransaction.setAnimationDuration(0.1)
-				//let action = SCNAction.moveTo(pos, duration: 0.1)
-					ship.position = pos
-				//SCNTransaction.commit()
-				//ship.runAction(action)
+				
+				ship.position = pos
 				
 				xf = xq
 				yf = yq
@@ -516,17 +534,6 @@ class DetailViewController: UIViewController, CBPeripheralDelegate, NeblinaDeleg
 				//if (abs(xf) <= abs(xq)) {
 					zf += zq
 				//}
-			/*	if (xq == 0 && yq == 0 && zq == 0) {
-					//cnt = 1
-					xf = 0
-					yf = 0
-					zf = 0
-					//if (cnt <= 1) {
-						//ship.removeAllActions()
-					//	ship.position = SCNVector3(CGFloat(yf), CGFloat(xf), CGFloat(zf))
-					//}
-					
-				}*/
 			}
 			
 			label.text = String("Extrn Force - x:\(xq), y:\(yq), z:\(zq)")
@@ -547,64 +554,9 @@ class DetailViewController: UIViewController, CBPeripheralDelegate, NeblinaDeleg
 			
 			//ship.rotation = SCNVector4(Float(xq), Float(yq), 0, GLKMathDegreesToRadians(90))
 			break
-/*		case FlashEraseAll:
-			//let session = (Int16(data.data.0) & 0xff) | (Int16(data.data.1) << 8)
-			flashrec.text = String("Flash Erased")
-			flashEraseProgress = false
-			let i = nebdev.getCmdIdx(NEB_CTRL_SUBSYS_MOTION_ENG, cmdId : FlashEraseAll)
-			let cell = cmdView.cellForRowAtIndexPath( NSIndexPath(forRow: i, inSection: 0))
-			let sw = cell!.viewWithTag(2) as! UISegmentedControl
-			sw.selectedSegmentIndex = 0
-			break;
-		case FlashRecordStartStop:
-			if (errFlag) {
-				flashrec.text = String("Unable to start recording")
-				let i = nebdev.getCmdIdx(NEB_CTRL_SUBSYS_MOTION_ENG, cmdId : FlashRecordStartStop)
-				let cell = cmdView.cellForRowAtIndexPath( NSIndexPath(forRow: i, inSection: 0))
-				let sw = cell!.viewWithTag(2) as! UISegmentedControl
-				sw.selectedSegmentIndex = 0
-			}
-			else {
-				let onoff = Int8(data.data.0)
-				let session = (Int16(data.data.1) & 0xff) | (Int16(data.data.2) << 8)
-				if (onoff == 0) {
-					flashrec.text = String("Flash Recording Finished \(session)")
-					let i = nebdev.getCmdIdx(NEB_CTRL_SUBSYS_MOTION_ENG, cmdId : FlashRecordStartStop)
-					let cell = cmdView.cellForRowAtIndexPath( NSIndexPath(forRow: i, inSection: 0))
-					let sw = cell!.viewWithTag(2) as! UISegmentedControl
-					sw.selectedSegmentIndex = 0
-				}
-				else {
-					flashrec.text = String("Flash Recording Session \(session)")
-				
-				}
-			}
-			break;
-		case FlashPlaybackStartStop:
-			if (errFlag) {
-				flashrec.text = String("Flash record session not found")
-				let i = nebdev.getCmdIdx(NEB_CTRL_SUBSYS_MOTION_ENG, cmdId : FlashPlaybackStartStop)
-				let cell = cmdView.cellForRowAtIndexPath( NSIndexPath(forRow: i, inSection: 0))
-				let sw = cell!.viewWithTag(2) as! UISegmentedControl
-				sw.selectedSegmentIndex = 0
-			}
-			else {
-				let onoff = Int8(data.data.0)
-				let session = (Int16(data.data.1) & 0xff) | (Int16(data.data.2) << 8)
-				if (onoff == 0) {
-					flashrec.text = String("Flash Playback Finished")
-					let i = nebdev.getCmdIdx(NEB_CTRL_SUBSYS_MOTION_ENG, cmdId : FlashPlaybackStartStop)
-					let cell = cmdView.cellForRowAtIndexPath( NSIndexPath(forRow: i, inSection: 0))
-					let sw = cell!.viewWithTag(2) as! UISegmentedControl
-					sw.selectedSegmentIndex = 0
-				}
-				else {
-					flashrec.text = String("Flash Playback Session \(session)")
-				}
-			}
-			break*/
 			
-		default: break
+		default:
+			break
 		}
 		
 		
@@ -618,43 +570,43 @@ class DetailViewController: UIViewController, CBPeripheralDelegate, NeblinaDeleg
 					case 1:	// Playback
 						var i = nebdev.getCmdIdx(NEB_CTRL_SUBSYS_STORAGE,  cmdId: FlashRecordStartStop)
 						var cell = cmdView.cellForRowAtIndexPath( NSIndexPath(forRow: i, inSection: 0))
-						var sw = cell!.viewWithTag(2) as! UISegmentedControl
+						var sw = cell!.viewWithTag(1) as! UISegmentedControl
 						sw.selectedSegmentIndex = 0
 						i = nebdev.getCmdIdx(NEB_CTRL_SUBSYS_STORAGE,  cmdId: FlashPlaybackStartStop)
 						cell = cmdView.cellForRowAtIndexPath( NSIndexPath(forRow: i, inSection: 0))
-						sw = cell!.viewWithTag(2) as! UISegmentedControl
+						sw = cell!.viewWithTag(1) as! UISegmentedControl
 						sw.selectedSegmentIndex = 1
 
 						break
 					case 2:	// Recording
 						var i = nebdev.getCmdIdx(NEB_CTRL_SUBSYS_STORAGE,  cmdId: FlashPlaybackStartStop)
 						var cell = cmdView.cellForRowAtIndexPath( NSIndexPath(forRow: i, inSection: 0))
-						var sw = cell!.viewWithTag(2) as! UISegmentedControl
+						var sw = cell!.viewWithTag(1) as! UISegmentedControl
 						sw.selectedSegmentIndex = 0
 						i = nebdev.getCmdIdx(NEB_CTRL_SUBSYS_STORAGE,  cmdId: FlashRecordStartStop)
 						cell = cmdView.cellForRowAtIndexPath( NSIndexPath(forRow: i, inSection: 0))
-						sw = cell!.viewWithTag(2) as! UISegmentedControl
+						sw = cell!.viewWithTag(1) as! UISegmentedControl
 						sw.selectedSegmentIndex = 1
 						break
 					default:
 						var i = nebdev.getCmdIdx(NEB_CTRL_SUBSYS_STORAGE,  cmdId: FlashPlaybackStartStop)
 						var cell = cmdView.cellForRowAtIndexPath( NSIndexPath(forRow: i, inSection: 0))
-						var sw = cell!.viewWithTag(2) as! UISegmentedControl
+						var sw = cell!.viewWithTag(1) as! UISegmentedControl
 						sw.selectedSegmentIndex = 0
 						i = nebdev.getCmdIdx(NEB_CTRL_SUBSYS_STORAGE,  cmdId: FlashRecordStartStop)
 						cell = cmdView.cellForRowAtIndexPath( NSIndexPath(forRow: i, inSection: 0))
-						sw = cell!.viewWithTag(2) as! UISegmentedControl
+						sw = cell!.viewWithTag(1) as! UISegmentedControl
 						sw.selectedSegmentIndex = 0
 						break
 				}
 				var i = nebdev.getCmdIdx(NEB_CTRL_SUBSYS_MOTION_ENG,  cmdId: Quaternion)
 				var cell = cmdView.cellForRowAtIndexPath( NSIndexPath(forRow: i, inSection: 0))
-				var sw = cell!.viewWithTag(2) as! UISegmentedControl
+				var sw = cell!.viewWithTag(1) as! UISegmentedControl
 				sw.selectedSegmentIndex = Int(data[4] & 8) >> 3
 				
 				i = nebdev.getCmdIdx(NEB_CTRL_SUBSYS_MOTION_ENG,  cmdId: MAG_Data)
 				cell = cmdView.cellForRowAtIndexPath( NSIndexPath(forRow: i, inSection: 0))
-				sw = cell!.viewWithTag(2) as! UISegmentedControl
+				sw = cell!.viewWithTag(1) as! UISegmentedControl
 				sw.selectedSegmentIndex = Int(data[4] & 0x80) >> 7
 
 //				i = nebdev.getCmdIdx(NEB_CTRL_SUBSYS_MOTION_ENG,  cmdId: EulerAngle)
@@ -675,12 +627,12 @@ class DetailViewController: UIViewController, CBPeripheralDelegate, NeblinaDeleg
 			case DEBUG_CMD_GET_DATAPORT:
 				let i = nebdev.getCmdIdx(NEB_CTRL_SUBSYS_DEBUG,  cmdId: DEBUG_CMD_SET_DATAPORT)
 				let cell = cmdView.cellForRowAtIndexPath( NSIndexPath(forRow: i, inSection: 0))
-				var sw = cell!.viewWithTag(2) as! UISegmentedControl
+				var sw = cell!.viewWithTag(1) as! UISegmentedControl
 				
 				sw.selectedSegmentIndex = Int(data[0])
 
 				let cell1 = cmdView.cellForRowAtIndexPath( NSIndexPath(forRow: i + 1, inSection: 0))
-				var sw1 = cell1!.viewWithTag(2) as! UISegmentedControl
+				var sw1 = cell1!.viewWithTag(1) as! UISegmentedControl
 				
 				sw1.selectedSegmentIndex = Int(data[1])
 				break
@@ -710,6 +662,12 @@ class DetailViewController: UIViewController, CBPeripheralDelegate, NeblinaDeleg
 				}
 				else {
 					flashLabel.text = String(format: "End session %d, %u", session, nebdev.getPacketCount())
+					
+					let i = nebdev.getCmdIdx(NEB_CTRL_SUBSYS_STORAGE,  cmdId: FlashPlaybackStartStop)
+					let cell = cmdView.cellForRowAtIndexPath( NSIndexPath(forRow: i, inSection: 0))
+					let sw = cell!.viewWithTag(1) as! UISegmentedControl
+					
+					sw.selectedSegmentIndex = 0
 				}
 				break
 			default:
@@ -730,55 +688,91 @@ class DetailViewController: UIViewController, CBPeripheralDelegate, NeblinaDeleg
 				break
 		}
 	}
+	
+	func didReceiveLedData(type : Int32, data : UnsafePointer<UInt8>, errFlag : Bool) {
+		switch (type) {
+			case LED_CMD_GET_VALUE:
+				let i = nebdev.getCmdIdx(NEB_CTRL_SUBSYS_LED,  cmdId: LED_CMD_SET_VALUE)
+				var cell = cmdView.cellForRowAtIndexPath( NSIndexPath(forRow: i, inSection: 0))
+				var sw = cell!.viewWithTag(1) as! UISegmentedControl
+				if (data[0] != 0) {
+					sw.selectedSegmentIndex = 1
+				}
+				else {
+					sw.selectedSegmentIndex = 0
+				}
+				
+				cell = cmdView.cellForRowAtIndexPath( NSIndexPath(forRow: i + 1, inSection: 0))
+				sw = cell!.viewWithTag(1) as! UISegmentedControl
+				if (data[1] != 0) {
+					sw.selectedSegmentIndex = 1
+				}
+				else {
+					sw.selectedSegmentIndex = 0
+				}
+				break
+			default:
+				break
+		}
+	}
 
 	// MARK : UITableView
 	
 	func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
 		
-		return /*FusionCmdList.count + */NebCmdList.count + CtrlName.count
+		return /*FusionCmdList.count + */NebCmdList.count //+ CtrlName.count
 		//return 1//detailItem
 	}
 	
 	func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath?) -> UITableViewCell?
 	{
 		let cellView = tableView.dequeueReusableCellWithIdentifier("CellCommand", forIndexPath: indexPath!)
-		let labelView = cellView.viewWithTag(1) as! UILabel
-		let switchCtrl = cellView.viewWithTag(2) as! UIControl//UISegmentedControl
-		var buttonCtrl = cellView.viewWithTag(3) as! UIButton
-		buttonCtrl.hidden = true
+		let labelView = cellView.viewWithTag(255) as! UILabel
+//		let switchCtrl = cellView.viewWithTag(2) as! UIControl//UISegmentedControl
+//		var buttonCtrl = cellView.viewWithTag(3) as! UIButton
+//		buttonCtrl.hidden = true
+		
 		//switchCtrl.addTarget(self, action: "switchAction:", forControlEvents: UIControlEvents.ValueChanged)
 /*		if (indexPath!.row < FusionCmdList.count) {
 			labelView.text = FusionCmdList[indexPath!.row].Name //NebApiName[indexPath!.row] as String//"Row \(row)"//"self.objects.objectAtIndex(row) as! String
 		} else */
 		if (indexPath!.row < /*FusionCmdList.count + */NebCmdList.count) {
+			
+			
 			labelView.text = NebCmdList[indexPath!.row].Name// - FusionCmdList.count].Name
 			switch (NebCmdList[indexPath!.row].Actuator)
 			{
 				case 1:
-					switchCtrl.enabled = true
-					switchCtrl.hidden = false
-					buttonCtrl.hidden = true
+					let control = cellView.viewWithTag(NebCmdList[indexPath!.row].Actuator) as! UISegmentedControl
+					control.hidden = false
 					break
 				case 2:
-					buttonCtrl.enabled = true
-					buttonCtrl.hidden = false
+					let control = cellView.viewWithTag(NebCmdList[indexPath!.row].Actuator) as! UIButton
+					control.hidden = false
 					if (NebCmdList[indexPath!.row].Text != String(_sel: nil))
 					{
-						buttonCtrl.setTitle(NebCmdList[indexPath!.row].Text, forState: UIControlState.Normal)
+						control.setTitle(NebCmdList[indexPath!.row].Text, forState: UIControlState.Normal)
 					}
-					switchCtrl.hidden = true
+					//switchCtrl.hidden = true
 					break
-				
+				case 3:
+					let control = cellView.viewWithTag(NebCmdList[indexPath!.row].Actuator) as! UITextField
+					control.hidden = false
+					if (NebCmdList[indexPath!.row].Text != String(_sel: nil))
+					{
+						control.text = NebCmdList[indexPath!.row].Text
+					}
+					break
 				default:
 					//switchCtrl.enabled = false
-					switchCtrl.hidden = true
-					buttonCtrl.hidden = true
+//					switchCtrl.hidden = true
+//					buttonCtrl.hidden = true
 					break
 			}
 		}
-		else {
-			labelView.text = CtrlName[indexPath!.row /*- FusionCmdList.count*/ - NebCmdList.count] //NebApiName[indexPath!.row] as String//"Row \(row)"//"self.objects.objectAtIndex(row) as! String
-		}
+//		else {
+//			labelView.text = CtrlName[indexPath!.row /*- FusionCmdList.count*/ - NebCmdList.count] //NebApiName[indexPath!.row] as String//"Row \(row)"//"self.objects.objectAtIndex(row) as! String
+//		}
 		
 		
 		//cellView.textLabel!.text = NebApiName[indexPath!.row] as String//"Row \(row)"//"self.objects.objectAtIndex(row) as! String

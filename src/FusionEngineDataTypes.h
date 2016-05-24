@@ -41,6 +41,7 @@
 #define ResetTimeStamp 			0x10
 #define FingerGesture			0x11
 #define RotationInfo			0x12
+#define ExtrnHeadingCorrection	0x13
 ///////////////////////////////////////////////
 
 //Accelerometer full scale modes
@@ -57,6 +58,7 @@ typedef struct Quaternion_t //quaternion
 {
 	int16_t q[4]; //fixed-point quaternion
 }Quaternion_t;
+
 
 typedef enum{ //filter type: 6-axis IMU (no magnetometer), or 9-axis MARG
 	IMU_Filter = (uint8_t)0x00,
@@ -96,6 +98,7 @@ typedef struct steps_t { //steps and pedometer data types
 	uint8_t step_detect; //detection of a step gives 1. It also returns 1, if no step has been detected for 5 seconds
 	uint16_t step_cnt; //number of steps taken so far.
 	uint8_t spm; //cadence: number of steps per minute
+	uint32_t toe_off_timestamp;
 }steps_t;
 
 typedef struct wheels_t { //wheel rotation data type

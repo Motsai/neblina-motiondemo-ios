@@ -14,64 +14,31 @@
 
 #pragma pack(push, 1)
 
-#define NEB_PKT_TYPE_DATA_FLAG		0x80
-#define MAX_NB_BYTES 12
-
-// Neblina command codes.
-typedef enum  {
-	NEB_CMD_UART_RATE,
-	NEB_CMD_RESET = 0xa5		// Initiate system reset
-} NEB_CMD;
-
-// Neblina control packet
-typedef struct {
-	NEB_CMD		Cmd;			// Command code
-	uint8_t		NbParam;		// Number of parameters
-	uint8_t 	ParamData[16];	// Parameter data
-} NEB_CTRL;
-
-// Neblina data packet
-typedef enum {
-	NEB_DATA_TYPE_GYRO,
-} NEB_DATA_TYPE;
-
-// Data packet header
-typedef struct {
-	NEB_DATA_TYPE	Type;		// Data type
-	uint16_t		DataLen;	// Length of following data
-} NEB_DATA_HRD;
-/*
-typedef enum {
-	BLE = (uint8_t)0x00, //default value
-	Serial = (uint8_t)0x01,
-}Intrfc_Protocol;
-*/
-
 typedef struct {
 	uint8_t major;
 	uint8_t minor;
 	uint8_t build;
-}FWVersion_t;
+} FWVersion_t;
 
 typedef struct {
 	uint8_t API_Release;
 	FWVersion_t KL26;
 	FWVersion_t Nordic;
 	uint64_t devid;
-}Neblina_FWVersions_t;
-
+} Neblina_FWVersions_t;
 
 //Firmware Versions: Define here
 #define API_RELEASE_VERSION	0x01
+
 //Freescale
 #define NEBKL26_FWVERS_MAJOR	0
-#define NEBKL26_FWVERS_MINOR	0xd
-#define NEBKL26_FWVERS_BUILD	3
+#define NEBKL26_FWVERS_MINOR	13
+#define NEBKL26_FWVERS_BUILD	8
 
 //Nordic
 #define NEBNRF51_FWVERS_MAJOR	0
-#define NEBNRF51_FWVERS_MINOR	0xd
-#define NEBNRF51_FWVERS_BUILD	3
+#define NEBNRF51_FWVERS_MINOR	13
+#define NEBNRF51_FWVERS_BUILD	8
 
 ///////////////////////////////////
 
@@ -113,22 +80,40 @@ typedef struct {
 #define NEB_CTRL_SUBSYS_I2C					7		// I2C control
 #define NEB_CTRL_SUBSYS_SPI					8		// SPI control
 
-
-//Status Check MASK for SUBSYS
-//#define NEB_SUBSYS_STATUS_MASK				0x80
-//#define NEB_SUBSYS_COMMAND_RESPONSE_MASK	0x40
-//#define NEB_SUBSYS_ACKNOWLEDGE_MASK			0x20
-
-// Power management command code
+// ***
+// Power management subsystem command code
 #define POWERMGMT_CMD_GET_BAT_LEVEL			0	// Get battery level
 #define POWERMGMT_CMD_GET_TEMPERATURE		1	// Get temperature
+#define POWERMGMT_CMD_SET_CHARGE_CURRENT	2	// Set battery charge current
 
-// Debug command code
-#define DEBUG_CMD_SET_INTERFACE						1	//sets the protocol interface
-#define DEBUG_CMD_MOTENGINE_RECORDER_STATUS			2	//asks for the streaming status of the motion engine, as well as the flash recorder state
-#define DEBUG_CMD_MOTION_ENG_UNIT_TEST_START_STOP	3	//starts/stops the motion engine unit-test mode
-#define DEBUG_CMD_MOTION_ENG_UNIT_TEST_DATA			4	//data being transferred between the host and Neblina for motion engine's unit testing
+// ***
+// Debug subsystem command code
+#define DEBUG_CMD_PRINTF							0	// The infamous printf thing.
+#define DEBUG_CMD_SET_INTERFACE						1	// sets the protocol interface - this command is now obsolete
+#define DEBUG_CMD_MOTENGINE_RECORDER_STATUS			2	// asks for the streaming status of the motion engine, as well as the flash recorder state
+#define DEBUG_CMD_MOTION_ENG_UNIT_TEST_START_STOP	3	// starts/stops the motion engine unit-test mode
+#define DEBUG_CMD_MOTION_ENG_UNIT_TEST_DATA			4	// data being transferred between the host and Neblina for motion engine's unit testing
 #define DEBUG_CMD_GET_FW_VERSION					5
+#define DEBUG_CMD_DUMP_DATA							6 	// dump and forward the data to the host (for printing on the screen, etc.)
+#define DEBUG_CMD_STREAM_RSSI						7	// get the BLE signal strength in db
+#define DEBUG_CMD_GET_DATAPORT						8	// Get streaming data interface port state.
+#define DEBUG_CMD_SET_DATAPORT						9	// Enable/Disable streaming data interface port
+
+//
+// Data port control
+#define DATAPORT_MAX								2	// Max number of data port
+
+#define DATAPORT_BLE								0 	// streaming data port BLE
+#define DATAPORT_UART								1	//
+
+#define DATAPORT_OPEN								1	// Open streaming data port
+#define DATAPORT_CLOSE								0	// Close streaming data port
+
+typedef struct _Data_Port {
+	uint8_t	PortIdx;		// Data port index	(DATAPORT_BLE = 0, DATAPORT_UART = 1, ...)
+	uint8_t	PortCtrl;		// Data port control (DATAPORT_OPEN, DATAPORT_CLOSE)
+} NEB_DATAPORT_CTRL;
+
 
 // LED control command codes
 #define LED_CMD_SET_VALUE							1	// Set LED value
@@ -136,19 +121,23 @@ typedef struct {
 #define LED_CMD_SET_CFG								3	// Set config
 #define LED_CMD_GET_CFG								4	// Get config
 
+#define LED_MAX_NB			8	// Max number of LED supported
+
 typedef struct _LedCtrl_Data {
 	uint8_t NbLed;						// Number of LED to control
 	struct {
 		uint8_t	No;						// LED number
 		uint8_t	Value;					// data - value depending on command code
-	} Led[8];
+	} Led[LED_MAX_NB];
 } NEB_LEDCTRL_DATA;
+
+#define NEB_PKT_MAX_FUSION_DATASIZE 	12
 
 typedef struct Fusion_DataPacket_t
 {
 	uint32_t TimeStamp;
-	uint8_t data[MAX_NB_BYTES];
-}Fusion_DataPacket_t;
+	uint8_t data[NEB_PKT_MAX_FUSION_DATASIZE];
+} Fusion_DataPacket_t;
 
 typedef struct {
 	uint8_t SubSys:5; 	// subsystem code
@@ -158,6 +147,8 @@ typedef struct {
 	uint8_t Cmd;
 } NEB_PKTHDR;
 
+// NOTE : Variable length data structure. Do not allocate this structure directly
+//
 typedef struct {
 	NEB_PKTHDR	Header;
 	uint8_t 	Data[1];	// Data buffer follows. i.e. Data array more than one item
@@ -167,26 +158,5 @@ typedef struct {
 
 #pragma pack(pop)
 
-
-#ifdef __cplusplus
-extern "C" {
-#endif
-
-/**
- * @brief Validate the data packet.
- *
- * @param pPkt : Pointer to header of the data packet
- * @param Len	: Total data length. This does not define packet length
- * @return	true - Success
- */
-bool ValidatePacket(NEB_PKT *pPkt, int Len);
-void ProcessPacket(NEB_PKT *pPkt);
-bool ProcessLedCtrlCmd(NEB_PKT *pPkt);
-
-#ifdef __cplusplus
-}
-#endif
-
-extern const FWVersion_t KL26_fw;
 
 #endif // __NEBLINA_H__

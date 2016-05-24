@@ -14,19 +14,23 @@ struct NebCmdItem {
 	let	CmdId : Int32
 	let Name : String
 	let Actuator : Int
+	let Text : String
 }
 
 let NebCmdList = [NebCmdItem] (arrayLiteral:
-	NebCmdItem(SubSysId: NEB_CTRL_SUBSYS_DEBUG, CmdId: DEBUG_CMD_SET_INTERFACE, Name: "Set Interface (BLE/UART)", Actuator : 1),
-	NebCmdItem(SubSysId: NEB_CTRL_SUBSYS_MOTION_ENG, CmdId: Quaternion, Name: "Quaternion Stream", Actuator : 1),
-	NebCmdItem(SubSysId: NEB_CTRL_SUBSYS_MOTION_ENG, CmdId: MAG_Data, Name: "Mag Stream", Actuator : 1),
-	NebCmdItem(SubSysId: NEB_CTRL_SUBSYS_MOTION_ENG, CmdId: LockHeadingRef, Name: "Lock Heading Ref.", Actuator : 1),
-	NebCmdItem(SubSysId: NEB_CTRL_SUBSYS_STORAGE, CmdId: FlashEraseAll, Name: "Flash Erase All", Actuator : 1),
-	NebCmdItem(SubSysId: NEB_CTRL_SUBSYS_STORAGE, CmdId: FlashRecordStartStop, Name: "Flash Record", Actuator : 1),
-	NebCmdItem(SubSysId: NEB_CTRL_SUBSYS_STORAGE, CmdId: FlashPlaybackStartStop, Name: "Flash Playback", Actuator : 1),
-	NebCmdItem(SubSysId: NEB_CTRL_SUBSYS_LED, CmdId: LED_CMD_SET_VALUE, Name: "Set LED0", Actuator : 1),
-	NebCmdItem(SubSysId: NEB_CTRL_SUBSYS_LED, CmdId: LED_CMD_SET_VALUE, Name: "Set LED1", Actuator : 1),
-	NebCmdItem(SubSysId: NEB_CTRL_SUBSYS_EEPROM, CmdId: EEPROM_Read, Name: "EEPROM Read", Actuator : 0)
+	NebCmdItem(SubSysId: NEB_CTRL_SUBSYS_DEBUG, CmdId: DEBUG_CMD_SET_DATAPORT, Name: "BLE Data Port", Actuator : 1, Text:String(_sel: nil)),
+    NebCmdItem(SubSysId: NEB_CTRL_SUBSYS_DEBUG, CmdId: DEBUG_CMD_SET_DATAPORT, Name: "UART Data Port", Actuator : 1, Text:String(_sel: nil)),
+	NebCmdItem(SubSysId: NEB_CTRL_SUBSYS_MOTION_ENG, CmdId: Quaternion, Name: "Quaternion Stream", Actuator : 1, Text:String(_sel: nil)),
+	NebCmdItem(SubSysId: NEB_CTRL_SUBSYS_MOTION_ENG, CmdId: MAG_Data, Name: "Mag Stream", Actuator : 1, Text:String(_sel: nil)),
+	NebCmdItem(SubSysId: NEB_CTRL_SUBSYS_MOTION_ENG, CmdId: LockHeadingRef, Name: "Lock Heading Ref.", Actuator : 1, Text:String(_sel: nil)),
+	NebCmdItem(SubSysId: NEB_CTRL_SUBSYS_STORAGE, CmdId: FlashEraseAll, Name: "Flash Erase All", Actuator : 1, Text:String(_sel: nil)),
+	NebCmdItem(SubSysId: NEB_CTRL_SUBSYS_STORAGE, CmdId: FlashRecordStartStop, Name: "Flash Record", Actuator : 1, Text:String(_sel: nil)),
+	NebCmdItem(SubSysId: NEB_CTRL_SUBSYS_STORAGE, CmdId: FlashPlaybackStartStop, Name: "Flash Playback", Actuator : 1, Text:String(_sel: nil)),
+	NebCmdItem(SubSysId: NEB_CTRL_SUBSYS_LED, CmdId: LED_CMD_SET_VALUE, Name: "Set LED0", Actuator : 1, Text:String(_sel: nil)),
+	NebCmdItem(SubSysId: NEB_CTRL_SUBSYS_LED, CmdId: LED_CMD_SET_VALUE, Name: "Set LED1", Actuator : 1, Text:String(_sel: nil)),
+	NebCmdItem(SubSysId: NEB_CTRL_SUBSYS_EEPROM, CmdId: EEPROM_Read, Name: "EEPROM Read", Actuator : 2, Text:String("Read")),
+	NebCmdItem(SubSysId: NEB_CTRL_SUBSYS_POWERMGMT, CmdId: POWERMGMT_CMD_SET_CHARGE_CURRENT, Name: "Charge Current in mA", Actuator : 3, Text:String(_sel: nil)),
+	NebCmdItem(SubSysId: 0xf, CmdId: 1, Name: "Heading", Actuator : 1, Text:String(_sel: nil))
 )
 
 // BLE custom UUID
@@ -60,20 +64,25 @@ class Neblina : NSObject, CBPeripheralDelegate {
 	}
 	
 	func setPeripheral(devid : UInt64, peripheral : CBPeripheral) {
+		//peripheral.delegate = self
 		device = peripheral
 		id = devid
-		device!.delegate = self
+		device.delegate = self
 		//while (device.state != CBPeripheralState.Connected) {}
-		if (device.state == CBPeripheralState.Connected)
-		{
-			device!.discoverServices([NEB_SERVICE_UUID])
-		}
+		//if (device.state == CBPeripheralState.Connected)
+		//{
+			//print("Peri connected")
+			device.discoverServices([NEB_SERVICE_UUID])
+		//}
 		var info = mach_timebase_info(numer: 0, denom:0)
 		mach_timebase_info(&timeBaseInfo)
 
-		//print("Device : \(device)")
+//		print("Device : \(device), \(peripheral)")
 	}
 	
+	func connected(peripheral : CBPeripheral) {
+		device.discoverServices([NEB_SERVICE_UUID])
+	}
 	//
 	// CBPeripheral stuffs
 	//
@@ -105,6 +114,7 @@ class Neblina : NSObject, CBPeripheralDelegate {
 				dataChar = characteristic;
 				if ((dataChar.properties.rawValue & CBCharacteristicProperties.Notify.rawValue) != 0)
 				{
+					print("Data \(characteristic.UUID)");
 					peripheral.setNotifyValue(true, forCharacteristic: dataChar);
 					packetCnt = 0	// reset packet count
 					startTime = 0	// reset timer
@@ -112,10 +122,17 @@ class Neblina : NSObject, CBPeripheralDelegate {
 			}
 			if (characteristic.UUID .isEqual(NEB_CTRLCHAR_UUID))
 			{
+				print("Ctrl \(characteristic.UUID)");
 				ctrlChar = characteristic;
-				delegate.didConnectNeblina()
+				//delegate.didConnectNeblina()
 			}
 		}
+	}
+	
+	func peripheral(peripheral: CBPeripheral, didUpdateNotificationStateForCharacteristic characteristic: CBCharacteristic, error: NSError?)
+	{
+		delegate.didConnectNeblina()
+	//print("didUpdateNotificationStateForCharacteristic")
 	}
 	
 	func peripheral(peripheral: CBPeripheral, didUpdateValueForCharacteristic characteristic: CBCharacteristic, error: NSError?)
@@ -135,15 +152,22 @@ class Neblina : NSObject, CBPeripheralDelegate {
 			characteristic.value?.getBytes(&NebPkt, length: sizeof(NEB_PKTHDR) + 1)
 
 			let id = Int32(hdr.Cmd) //FusionId(rawValue: hdr.Cmd)
-			//print("\(characteristic)")
 			var errflag = Bool(false)
+			
+			//print("\(characteristic.value)")
+
+			if (Int32(hdr.PkType) == NEB_CTRL_PKTYPE_ACK) {
+				//print("ACK : \(characteristic.value)")
+				return
+			}
+			
 			if ((hdr.SubSys  & 0x80) == 0x80)
 			{
 				errflag = true;
 				hdr.SubSys &= 0x7F;
 			}
 			
-			packetCnt++
+			packetCnt += 1
 			
 			if (startTime == 0) {
 				// first time use
@@ -156,6 +180,7 @@ class Neblina : NSObject, CBPeripheralDelegate {
 					dataRate = Float(UInt64(packetCnt) * 1000000000 * UInt64(timeBaseInfo.denom)) / Float((currTime - startTime) * UInt64(timeBaseInfo.numer))
 				}
 			}
+			//print("header \(hdr)")
 			
 			switch (Int32(hdr.SubSys))
 			{
@@ -193,6 +218,11 @@ class Neblina : NSObject, CBPeripheralDelegate {
 					var dd = [UInt8](count:16, repeatedValue:0)
 					characteristic.value?.getBytes(&dd, range: NSMakeRange(sizeof(NEB_PKTHDR), Int(hdr.Len)))
 					delegate.didReceiveEepromData(id, data: dd, errFlag: errflag)
+					break
+				case NEB_CTRL_SUBSYS_LED:
+					var dd = [UInt8](count:16, repeatedValue:0)
+					characteristic.value?.getBytes(&dd, range: NSMakeRange(sizeof(NEB_PKTHDR), Int(hdr.Len)))
+					delegate.didReceiveLedData(id, data: dd, errFlag: errflag)
 					break
 
 				default:
@@ -692,7 +722,7 @@ class Neblina : NSObject, CBPeripheralDelegate {
 		pkbuf[4] = UInt8(pageNo & 0xff)
 		pkbuf[5] = UInt8((pageNo >> 8) & 0xff)
 		
-		for (var i = 0; i < 8; i++) {
+		for (var i = 0; i < 8; i += 1) {
 			pkbuf[i + 6] = data[i]
 		}
 		
@@ -731,11 +761,45 @@ class Neblina : NSObject, CBPeripheralDelegate {
 		// Interf = 0 : BLE
 		// Interf = 1 : UART
 		pkbuf[4] = UInt8(Interf)
+		pkbuf[8] = 0
 		//pkbuf[9] = 0xff
 		//pkbuf[10] = 0xff
 		device.writeValue(NSData(bytes: UnsafeMutablePointer<Void>(pkbuf), length: 20), forCharacteristic: ctrlChar, type: CBCharacteristicWriteType.WithoutResponse)
 	}
 	
+	func SendCmdGetDataPortState() {
+		if (isDeviceReady() == false) {
+			return
+		}
+		
+		var pkbuf = [UInt8](count:20, repeatedValue:0)
+		
+		pkbuf[0] = UInt8((NEB_CTRL_PKTYPE_CMD << 5) | NEB_CTRL_SUBSYS_DEBUG) // 0x40
+		pkbuf[1] = 0	// Data len
+		pkbuf[2] = 0	
+		pkbuf[3] = UInt8(DEBUG_CMD_GET_DATAPORT)	// Cmd
+		
+		device.writeValue(NSData(bytes: UnsafeMutablePointer<Void>(pkbuf), length: 4), forCharacteristic: ctrlChar, type: CBCharacteristicWriteType.WithoutResponse)
+	}
+
+	func SendCmdDataInterface(PortIdx : Int, Ctrl : UInt8) {
+		if (isDeviceReady() == false) {
+			return
+		}
+		
+		var pkbuf = [UInt8](count:20, repeatedValue:0)
+		
+		pkbuf[0] = UInt8((NEB_CTRL_PKTYPE_CMD << 5) | NEB_CTRL_SUBSYS_DEBUG) // 0x40
+		pkbuf[1] = 2
+		pkbuf[2] = 0
+		pkbuf[3] = UInt8(DEBUG_CMD_SET_DATAPORT)	// Cmd
+		
+		// Port = 0 : BLE
+		// Port = 1 : UART
+		pkbuf[4] = UInt8(PortIdx)
+		pkbuf[5] = Ctrl		// 1 - Open, 0 - Close
+		device.writeValue(NSData(bytes: UnsafeMutablePointer<Void>(pkbuf), length: 6), forCharacteristic: ctrlChar, type: CBCharacteristicWriteType.WithoutResponse)
+	}
 	
 	func SendCmdEngineStatus() {
 		if (isDeviceReady() == false) {
@@ -752,6 +816,7 @@ class Neblina : NSObject, CBPeripheralDelegate {
 		device.writeValue(NSData(bytes: UnsafeMutablePointer<Void>(pkbuf), length: 20), forCharacteristic: ctrlChar, type: CBCharacteristicWriteType.WithoutResponse)
 	}
 
+
 	// MARK : LED subsystem commands
 	
 	func SendCmdLedSetValue(LedNo : UInt8, Value:UInt8) {
@@ -762,7 +827,7 @@ class Neblina : NSObject, CBPeripheralDelegate {
 		var pkbuf = [UInt8](count:20, repeatedValue:0)
 		
 		pkbuf[0] = UInt8((NEB_CTRL_PKTYPE_CMD << 5) | NEB_CTRL_SUBSYS_LED)
-		pkbuf[1] = 16//UInt8(sizeof(Fusion_DataPacket_t))
+		pkbuf[1] = 16 //UInt8(sizeof(Fusion_DataPacket_t))
 		pkbuf[2] = 0
 		pkbuf[3] = UInt8(LED_CMD_SET_VALUE)	// Cmd
 		
@@ -771,6 +836,21 @@ class Neblina : NSObject, CBPeripheralDelegate {
 		pkbuf[5] = LedNo
 		pkbuf[6] = Value
 		device.writeValue(NSData(bytes: UnsafeMutablePointer<Void>(pkbuf), length: 20), forCharacteristic: ctrlChar, type: CBCharacteristicWriteType.WithoutResponse)
+	}
+
+	func SendCmdLedGetValue() {
+		if (isDeviceReady() == false) {
+			return
+		}
+		
+		var pkbuf = [UInt8](count:20, repeatedValue:0)
+		
+		pkbuf[0] = UInt8((NEB_CTRL_PKTYPE_CMD << 5) | NEB_CTRL_SUBSYS_LED)
+		pkbuf[1] = 0	// Data length
+		pkbuf[2] = 0
+		pkbuf[3] = UInt8(LED_CMD_GET_VALUE)	// Cmd
+		
+		device.writeValue(NSData(bytes: UnsafeMutablePointer<Void>(pkbuf), length: 4), forCharacteristic: ctrlChar, type: CBCharacteristicWriteType.WithoutResponse)
 	}
 	
 	// MARK : Power management sybsystem commands
@@ -783,13 +863,31 @@ class Neblina : NSObject, CBPeripheralDelegate {
 		var pkbuf = [UInt8](count:20, repeatedValue:0)
 		
 		pkbuf[0] = UInt8((NEB_CTRL_PKTYPE_CMD << 5) | NEB_CTRL_SUBSYS_POWERMGMT)
-		pkbuf[1] = 0//UInt8(sizeof(Fusion_DataPacket_t))
+		pkbuf[1] = 0	// Data length
 		pkbuf[2] = 0
 		pkbuf[3] = UInt8(POWERMGMT_CMD_GET_TEMPERATURE)	// Cmd
 		
 		device.writeValue(NSData(bytes: UnsafeMutablePointer<Void>(pkbuf), length: 4), forCharacteristic: ctrlChar, type: CBCharacteristicWriteType.WithoutResponse)
 	}
 	
+	func SendCmdSetChargeCurrent(Current: UInt16) {
+		if (isDeviceReady() == false) {
+			return
+		}
+		
+		var pkbuf = [UInt8](count:20, repeatedValue:0)
+
+		pkbuf[0] = UInt8((NEB_CTRL_PKTYPE_CMD << 5) | NEB_CTRL_SUBSYS_POWERMGMT)
+		pkbuf[1] = 2	// Data length
+		pkbuf[2] = 0
+		pkbuf[3] = UInt8(POWERMGMT_CMD_SET_CHARGE_CURRENT)	// Cmd
+		
+		// Data
+		pkbuf[4] = UInt8(Current & 0xFF)
+		pkbuf[5] = UInt8((Current >> 8) & 0xFF)
+		
+		device.writeValue(NSData(bytes: UnsafeMutablePointer<Void>(pkbuf), length: 6), forCharacteristic: ctrlChar, type: CBCharacteristicWriteType.WithoutResponse)
+	}
 }
 
 protocol NeblinaDelegate {
@@ -801,4 +899,5 @@ protocol NeblinaDelegate {
 	func didReceivePmgntData(type : Int32, data : UnsafePointer<UInt8>, errFlag : Bool)
 	func didReceiveStorageData(type : Int32, data : UnsafePointer<UInt8>, errFlag : Bool)
 	func didReceiveEepromData(type : Int32, data : UnsafePointer<UInt8>, errFlag : Bool)
+	func didReceiveLedData(type : Int32, data : UnsafePointer<UInt8>, errFlag : Bool)
 }
