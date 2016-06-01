@@ -35,6 +35,8 @@ class ViewController: NSViewController, NSTableViewDataSource, NSTableViewDelega
 	var heading = Bool(false)
 	var flashEraseProgress = Bool(false)
 	var PaketCnt = UInt32(0)
+	var startTime = NSDate()
+	var rxCount = Int(0)
 	
 	@IBOutlet weak var devListView : NSTableView!
 	@IBOutlet weak var cmdView : NSTableView!
@@ -625,11 +627,11 @@ class ViewController: NSViewController, NSTableViewDataSource, NSTableViewDelega
 			let zq = Float(z) / 32768.0
 			let w = (Int16(data.data.6) & 0xff) | (Int16(data.data.7) << 8)
 			let wq = Float(w) / 32768.0
-			ship.orientation = SCNQuaternion(yq, xq, zq, wq)
-			dataLabel.stringValue = String("Quat - x:\(xq), y:\(yq), z:\(zq), w:\(wq)")
 			if (prevTimeStamp == 0 || data.TimeStamp <= prevTimeStamp)
 			{
 				prevTimeStamp = data.TimeStamp;
+				startTime = NSDate()
+				rxCount = 0
 			}
 			else
 			{
@@ -639,8 +641,14 @@ class ViewController: NSViewController, NSTableViewDataSource, NSTableViewDelega
 					dropCnt += 1
 					dumpLabel.stringValue = String("\(dropCnt) Drop : \(tdiff)")
 				}
+				rxCount += 1
 				prevTimeStamp = data.TimeStamp
+				let curDate =  NSDate()
+				let rate = (Double(rxCount) * 20.0) / curDate.timeIntervalSinceDate(startTime)
+				print("\(rate)")
 			}
+			ship.orientation = SCNQuaternion(yq, xq, zq, wq)
+			dataLabel.stringValue = String("Quat - x:\(xq), y:\(yq), z:\(zq), w:\(wq)")
 			
 			break
 		case ExtForce:
@@ -712,7 +720,7 @@ class ViewController: NSViewController, NSTableViewDataSource, NSTableViewDelega
 			let z = (Int16(data.data.4) & 0xff) | (Int16(data.data.5) << 8)
 			let zq = z
 			dataLabel.stringValue = String("Mag - x:\(xq), y:\(yq), z:\(zq)")
-			
+			rxCount += 1
 			//ship.rotation = SCNVector4(Float(xq), Float(yq), 0, GLKMathDegreesToRadians(90))
 			break
 			/*		case FlashEraseAll:
