@@ -1,0 +1,527 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		C9DEDB5C1D0734F200A76BA3 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9DEDB5B1D0734F200A76BA3 /* AppDelegate.swift */; };
+		C9DEDB5E1D0734F200A76BA3 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9DEDB5D1D0734F200A76BA3 /* ViewController.swift */; };
+		C9DEDB611D0734F200A76BA3 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = C9DEDB5F1D0734F200A76BA3 /* Main.storyboard */; };
+		C9DEDB631D0734F200A76BA3 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C9DEDB621D0734F200A76BA3 /* Assets.xcassets */; };
+		C9DEDB661D0734F200A76BA3 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = C9DEDB641D0734F200A76BA3 /* LaunchScreen.storyboard */; };
+		C9DEDB711D0734F300A76BA3 /* NebTutorial1Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9DEDB701D0734F300A76BA3 /* NebTutorial1Tests.swift */; };
+		C9DEDB7C1D0734F300A76BA3 /* NebTutorial1UITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9DEDB7B1D0734F300A76BA3 /* NebTutorial1UITests.swift */; };
+		C9DEDB8E1D0735A700A76BA3 /* Neblina.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9DEDB8C1D0735A700A76BA3 /* Neblina.swift */; };
+		C9DEDB921D0763CF00A76BA3 /* Logo_motsai_CMYK_Final.png in Resources */ = {isa = PBXBuildFile; fileRef = C9DEDB911D0763CF00A76BA3 /* Logo_motsai_CMYK_Final.png */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		C9DEDB6D1D0734F300A76BA3 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = C9DEDB501D0734F200A76BA3 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = C9DEDB571D0734F200A76BA3;
+			remoteInfo = NebTutorial1;
+		};
+		C9DEDB781D0734F300A76BA3 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = C9DEDB501D0734F200A76BA3 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = C9DEDB571D0734F200A76BA3;
+			remoteInfo = NebTutorial1;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		C9DEDB581D0734F200A76BA3 /* NebTutorial1.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = NebTutorial1.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		C9DEDB5B1D0734F200A76BA3 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		C9DEDB5D1D0734F200A76BA3 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
+		C9DEDB601D0734F200A76BA3 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
+		C9DEDB621D0734F200A76BA3 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		C9DEDB651D0734F200A76BA3 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
+		C9DEDB671D0734F200A76BA3 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		C9DEDB6C1D0734F300A76BA3 /* NebTutorial1Tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = NebTutorial1Tests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		C9DEDB701D0734F300A76BA3 /* NebTutorial1Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NebTutorial1Tests.swift; sourceTree = "<group>"; };
+		C9DEDB721D0734F300A76BA3 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		C9DEDB771D0734F300A76BA3 /* NebTutorial1UITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = NebTutorial1UITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		C9DEDB7B1D0734F300A76BA3 /* NebTutorial1UITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NebTutorial1UITests.swift; sourceTree = "<group>"; };
+		C9DEDB7D1D0734F300A76BA3 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		C9DEDB891D0735A700A76BA3 /* FusionEngineDataTypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FusionEngineDataTypes.h; path = ../../../src/FusionEngineDataTypes.h; sourceTree = "<group>"; };
+		C9DEDB8A1D0735A700A76BA3 /* Neblina-Bridging-Header.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "Neblina-Bridging-Header.h"; path = "../../../src/Neblina-Bridging-Header.h"; sourceTree = "<group>"; };
+		C9DEDB8B1D0735A700A76BA3 /* neblina.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = neblina.h; path = ../../../src/neblina.h; sourceTree = "<group>"; };
+		C9DEDB8C1D0735A700A76BA3 /* Neblina.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Neblina.swift; path = ../../../src/Neblina.swift; sourceTree = "<group>"; };
+		C9DEDB8D1D0735A700A76BA3 /* ProMotion.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ProMotion.h; path = ../../../src/ProMotion.h; sourceTree = "<group>"; };
+		C9DEDB911D0763CF00A76BA3 /* Logo_motsai_CMYK_Final.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Logo_motsai_CMYK_Final.png; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		C9DEDB551D0734F200A76BA3 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		C9DEDB691D0734F300A76BA3 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		C9DEDB741D0734F300A76BA3 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		C9DEDB4F1D0734F200A76BA3 = {
+			isa = PBXGroup;
+			children = (
+				C9DEDB5A1D0734F200A76BA3 /* NebTutorial1 */,
+				C9DEDB6F1D0734F300A76BA3 /* NebTutorial1Tests */,
+				C9DEDB7A1D0734F300A76BA3 /* NebTutorial1UITests */,
+				C9DEDB591D0734F200A76BA3 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		C9DEDB591D0734F200A76BA3 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				C9DEDB581D0734F200A76BA3 /* NebTutorial1.app */,
+				C9DEDB6C1D0734F300A76BA3 /* NebTutorial1Tests.xctest */,
+				C9DEDB771D0734F300A76BA3 /* NebTutorial1UITests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		C9DEDB5A1D0734F200A76BA3 /* NebTutorial1 */ = {
+			isa = PBXGroup;
+			children = (
+				C9DEDB911D0763CF00A76BA3 /* Logo_motsai_CMYK_Final.png */,
+				C9DEDB891D0735A700A76BA3 /* FusionEngineDataTypes.h */,
+				C9DEDB8A1D0735A700A76BA3 /* Neblina-Bridging-Header.h */,
+				C9DEDB8B1D0735A700A76BA3 /* neblina.h */,
+				C9DEDB8C1D0735A700A76BA3 /* Neblina.swift */,
+				C9DEDB8D1D0735A700A76BA3 /* ProMotion.h */,
+				C9DEDB5B1D0734F200A76BA3 /* AppDelegate.swift */,
+				C9DEDB5D1D0734F200A76BA3 /* ViewController.swift */,
+				C9DEDB5F1D0734F200A76BA3 /* Main.storyboard */,
+				C9DEDB621D0734F200A76BA3 /* Assets.xcassets */,
+				C9DEDB641D0734F200A76BA3 /* LaunchScreen.storyboard */,
+				C9DEDB671D0734F200A76BA3 /* Info.plist */,
+			);
+			path = NebTutorial1;
+			sourceTree = "<group>";
+		};
+		C9DEDB6F1D0734F300A76BA3 /* NebTutorial1Tests */ = {
+			isa = PBXGroup;
+			children = (
+				C9DEDB701D0734F300A76BA3 /* NebTutorial1Tests.swift */,
+				C9DEDB721D0734F300A76BA3 /* Info.plist */,
+			);
+			path = NebTutorial1Tests;
+			sourceTree = "<group>";
+		};
+		C9DEDB7A1D0734F300A76BA3 /* NebTutorial1UITests */ = {
+			isa = PBXGroup;
+			children = (
+				C9DEDB7B1D0734F300A76BA3 /* NebTutorial1UITests.swift */,
+				C9DEDB7D1D0734F300A76BA3 /* Info.plist */,
+			);
+			path = NebTutorial1UITests;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		C9DEDB571D0734F200A76BA3 /* NebTutorial1 */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = C9DEDB801D0734F300A76BA3 /* Build configuration list for PBXNativeTarget "NebTutorial1" */;
+			buildPhases = (
+				C9DEDB541D0734F200A76BA3 /* Sources */,
+				C9DEDB551D0734F200A76BA3 /* Frameworks */,
+				C9DEDB561D0734F200A76BA3 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = NebTutorial1;
+			productName = NebTutorial1;
+			productReference = C9DEDB581D0734F200A76BA3 /* NebTutorial1.app */;
+			productType = "com.apple.product-type.application";
+		};
+		C9DEDB6B1D0734F300A76BA3 /* NebTutorial1Tests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = C9DEDB831D0734F300A76BA3 /* Build configuration list for PBXNativeTarget "NebTutorial1Tests" */;
+			buildPhases = (
+				C9DEDB681D0734F300A76BA3 /* Sources */,
+				C9DEDB691D0734F300A76BA3 /* Frameworks */,
+				C9DEDB6A1D0734F300A76BA3 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				C9DEDB6E1D0734F300A76BA3 /* PBXTargetDependency */,
+			);
+			name = NebTutorial1Tests;
+			productName = NebTutorial1Tests;
+			productReference = C9DEDB6C1D0734F300A76BA3 /* NebTutorial1Tests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		C9DEDB761D0734F300A76BA3 /* NebTutorial1UITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = C9DEDB861D0734F300A76BA3 /* Build configuration list for PBXNativeTarget "NebTutorial1UITests" */;
+			buildPhases = (
+				C9DEDB731D0734F300A76BA3 /* Sources */,
+				C9DEDB741D0734F300A76BA3 /* Frameworks */,
+				C9DEDB751D0734F300A76BA3 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				C9DEDB791D0734F300A76BA3 /* PBXTargetDependency */,
+			);
+			name = NebTutorial1UITests;
+			productName = NebTutorial1UITests;
+			productReference = C9DEDB771D0734F300A76BA3 /* NebTutorial1UITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		C9DEDB501D0734F200A76BA3 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastSwiftUpdateCheck = 0730;
+				LastUpgradeCheck = 0730;
+				ORGANIZATIONNAME = "Hoan Hoang";
+				TargetAttributes = {
+					C9DEDB571D0734F200A76BA3 = {
+						CreatedOnToolsVersion = 7.3.1;
+					};
+					C9DEDB6B1D0734F300A76BA3 = {
+						CreatedOnToolsVersion = 7.3.1;
+						TestTargetID = C9DEDB571D0734F200A76BA3;
+					};
+					C9DEDB761D0734F300A76BA3 = {
+						CreatedOnToolsVersion = 7.3.1;
+						TestTargetID = C9DEDB571D0734F200A76BA3;
+					};
+				};
+			};
+			buildConfigurationList = C9DEDB531D0734F200A76BA3 /* Build configuration list for PBXProject "NebTutorial1" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = C9DEDB4F1D0734F200A76BA3;
+			productRefGroup = C9DEDB591D0734F200A76BA3 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				C9DEDB571D0734F200A76BA3 /* NebTutorial1 */,
+				C9DEDB6B1D0734F300A76BA3 /* NebTutorial1Tests */,
+				C9DEDB761D0734F300A76BA3 /* NebTutorial1UITests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		C9DEDB561D0734F200A76BA3 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C9DEDB661D0734F200A76BA3 /* LaunchScreen.storyboard in Resources */,
+				C9DEDB631D0734F200A76BA3 /* Assets.xcassets in Resources */,
+				C9DEDB921D0763CF00A76BA3 /* Logo_motsai_CMYK_Final.png in Resources */,
+				C9DEDB611D0734F200A76BA3 /* Main.storyboard in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		C9DEDB6A1D0734F300A76BA3 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		C9DEDB751D0734F300A76BA3 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		C9DEDB541D0734F200A76BA3 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C9DEDB5E1D0734F200A76BA3 /* ViewController.swift in Sources */,
+				C9DEDB5C1D0734F200A76BA3 /* AppDelegate.swift in Sources */,
+				C9DEDB8E1D0735A700A76BA3 /* Neblina.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		C9DEDB681D0734F300A76BA3 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C9DEDB711D0734F300A76BA3 /* NebTutorial1Tests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		C9DEDB731D0734F300A76BA3 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C9DEDB7C1D0734F300A76BA3 /* NebTutorial1UITests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		C9DEDB6E1D0734F300A76BA3 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = C9DEDB571D0734F200A76BA3 /* NebTutorial1 */;
+			targetProxy = C9DEDB6D1D0734F300A76BA3 /* PBXContainerItemProxy */;
+		};
+		C9DEDB791D0734F300A76BA3 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = C9DEDB571D0734F200A76BA3 /* NebTutorial1 */;
+			targetProxy = C9DEDB781D0734F300A76BA3 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin PBXVariantGroup section */
+		C9DEDB5F1D0734F200A76BA3 /* Main.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				C9DEDB601D0734F200A76BA3 /* Base */,
+			);
+			name = Main.storyboard;
+			sourceTree = "<group>";
+		};
+		C9DEDB641D0734F200A76BA3 /* LaunchScreen.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				C9DEDB651D0734F200A76BA3 /* Base */,
+			);
+			name = LaunchScreen.storyboard;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		C9DEDB7E1D0734F300A76BA3 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.3;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		C9DEDB7F1D0734F300A76BA3 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.3;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		C9DEDB811D0734F300A76BA3 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				INFOPLIST_FILE = NebTutorial1/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = com.motsai.NebTutorial1;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "../../src/Neblina-Bridging-Header.h";
+			};
+			name = Debug;
+		};
+		C9DEDB821D0734F300A76BA3 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				INFOPLIST_FILE = NebTutorial1/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = com.motsai.NebTutorial1;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "../../src/Neblina-Bridging-Header.h";
+			};
+			name = Release;
+		};
+		C9DEDB841D0734F300A76BA3 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				INFOPLIST_FILE = NebTutorial1Tests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = com.motsai.NebTutorial1Tests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/NebTutorial1.app/NebTutorial1";
+			};
+			name = Debug;
+		};
+		C9DEDB851D0734F300A76BA3 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				INFOPLIST_FILE = NebTutorial1Tests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = com.motsai.NebTutorial1Tests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/NebTutorial1.app/NebTutorial1";
+			};
+			name = Release;
+		};
+		C9DEDB871D0734F300A76BA3 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				INFOPLIST_FILE = NebTutorial1UITests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = com.motsai.NebTutorial1UITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TEST_TARGET_NAME = NebTutorial1;
+			};
+			name = Debug;
+		};
+		C9DEDB881D0734F300A76BA3 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				INFOPLIST_FILE = NebTutorial1UITests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = com.motsai.NebTutorial1UITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TEST_TARGET_NAME = NebTutorial1;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		C9DEDB531D0734F200A76BA3 /* Build configuration list for PBXProject "NebTutorial1" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				C9DEDB7E1D0734F300A76BA3 /* Debug */,
+				C9DEDB7F1D0734F300A76BA3 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		C9DEDB801D0734F300A76BA3 /* Build configuration list for PBXNativeTarget "NebTutorial1" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				C9DEDB811D0734F300A76BA3 /* Debug */,
+				C9DEDB821D0734F300A76BA3 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
+		C9DEDB831D0734F300A76BA3 /* Build configuration list for PBXNativeTarget "NebTutorial1Tests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				C9DEDB841D0734F300A76BA3 /* Debug */,
+				C9DEDB851D0734F300A76BA3 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
+		C9DEDB861D0734F300A76BA3 /* Build configuration list for PBXNativeTarget "NebTutorial1UITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				C9DEDB871D0734F300A76BA3 /* Debug */,
+				C9DEDB881D0734F300A76BA3 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = C9DEDB501D0734F200A76BA3 /* Project object */;
+}
