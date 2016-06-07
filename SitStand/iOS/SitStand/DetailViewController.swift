@@ -25,12 +25,12 @@ class DetailViewController: UIViewController, CBPeripheralDelegate, SCNSceneRend
 	var cadence = UInt8(0)
 	var stepcnt = UInt16(0)
 
-	var detailItem: CBPeripheral? {
+	var detailItem: NebDevice? {
 		didSet {
 			// Update the view.
 			//self.configureView()
 			//detailItem!.delegate = self
-			device.setPeripheral(detailItem!)
+			device.setPeripheral(detailItem!.id, peripheral : detailItem!.peripheral)
 			device.delegate = self
 		}
 	}
@@ -119,6 +119,30 @@ class DetailViewController: UIViewController, CBPeripheralDelegate, SCNSceneRend
 		device.SendCmdSittingStanding(true)
 		device.SendCmdPedometerStream(true)
 
+	}
+	
+	func didReceiveRSSI(rssi : NSNumber) {
+		
+	}
+	
+	func didReceiveDebugData(type : Int32, data : UnsafePointer<UInt8>, errFlag : Bool) {
+		
+	}
+	
+	func didReceivePmgntData(type : Int32, data : UnsafePointer<UInt8>, errFlag : Bool) {
+		
+	}
+	
+	func didReceiveStorageData(type : Int32, data : UnsafePointer<UInt8>, errFlag : Bool) {
+		
+	}
+	
+	func didReceiveEepromData(type : Int32, data : UnsafePointer<UInt8>, errFlag : Bool) {
+		
+	}
+	
+	func didReceiveLedData(type : Int32, data : UnsafePointer<UInt8>, errFlag : Bool) {
+		
 	}
 
 	func didReceiveFusionData(type : Int32, data : Fusion_DataPacket_t, errFlag : Bool) {

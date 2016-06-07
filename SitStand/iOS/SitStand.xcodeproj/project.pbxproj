@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		C9DEDB4E1D0723A200A76BA3 /* art.scnassets in Resources */ = {isa = PBXBuildFile; fileRef = C9DEDB4D1D0723A200A76BA3 /* art.scnassets */; };
 		C9EDE8761BFCC9B40039E9F1 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9EDE8751BFCC9B40039E9F1 /* AppDelegate.swift */; };
 		C9EDE8781BFCC9B40039E9F1 /* MasterViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9EDE8771BFCC9B40039E9F1 /* MasterViewController.swift */; };
 		C9EDE87A1BFCC9B40039E9F1 /* DetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9EDE8791BFCC9B40039E9F1 /* DetailViewController.swift */; };
@@ -16,7 +17,6 @@
 		C9EDE88D1BFCC9B40039E9F1 /* SitStandTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9EDE88C1BFCC9B40039E9F1 /* SitStandTests.swift */; };
 		C9EDE8981BFCC9B40039E9F1 /* SitStandUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9EDE8971BFCC9B40039E9F1 /* SitStandUITests.swift */; };
 		C9EDE8AC1BFCCA330039E9F1 /* Neblina.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9EDE8AB1BFCCA330039E9F1 /* Neblina.swift */; };
-		C9EDE8AE1BFCDA240039E9F1 /* art.scnassets in Resources */ = {isa = PBXBuildFile; fileRef = C9EDE8AD1BFCDA240039E9F1 /* art.scnassets */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -37,6 +37,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		C9DEDB4D1D0723A200A76BA3 /* art.scnassets */ = {isa = PBXFileReference; lastKnownFileType = wrapper.scnassets; name = art.scnassets; path = ../../../art.scnassets; sourceTree = "<group>"; };
 		C9EDE8721BFCC9B40039E9F1 /* SitStand.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SitStand.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		C9EDE8751BFCC9B40039E9F1 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		C9EDE8771BFCC9B40039E9F1 /* MasterViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MasterViewController.swift; sourceTree = "<group>"; };
@@ -55,7 +56,6 @@
 		C9EDE8A91BFCCA330039E9F1 /* Neblina-Bridging-Header.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "Neblina-Bridging-Header.h"; path = "../../../src/Neblina-Bridging-Header.h"; sourceTree = "<group>"; };
 		C9EDE8AA1BFCCA330039E9F1 /* neblina.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = neblina.h; path = ../../../src/neblina.h; sourceTree = "<group>"; };
 		C9EDE8AB1BFCCA330039E9F1 /* Neblina.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Neblina.swift; path = ../../../src/Neblina.swift; sourceTree = "<group>"; };
-		C9EDE8AD1BFCDA240039E9F1 /* art.scnassets */ = {isa = PBXFileReference; lastKnownFileType = wrapper.scnassets; path = art.scnassets; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -106,6 +106,7 @@
 		C9EDE8741BFCC9B40039E9F1 /* SitStand */ = {
 			isa = PBXGroup;
 			children = (
+				C9DEDB4D1D0723A200A76BA3 /* art.scnassets */,
 				C9EDE8A81BFCCA330039E9F1 /* FusionEngineDataTypes.h */,
 				C9EDE8A91BFCCA330039E9F1 /* Neblina-Bridging-Header.h */,
 				C9EDE8AA1BFCCA330039E9F1 /* neblina.h */,
@@ -114,7 +115,6 @@
 				C9EDE8771BFCC9B40039E9F1 /* MasterViewController.swift */,
 				C9EDE8791BFCC9B40039E9F1 /* DetailViewController.swift */,
 				C9EDE87B1BFCC9B40039E9F1 /* Main.storyboard */,
-				C9EDE8AD1BFCDA240039E9F1 /* art.scnassets */,
 				C9EDE87E1BFCC9B40039E9F1 /* Assets.xcassets */,
 				C9EDE8801BFCC9B40039E9F1 /* LaunchScreen.storyboard */,
 				C9EDE8831BFCC9B40039E9F1 /* Info.plist */,
@@ -245,7 +245,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				C9EDE8821BFCC9B40039E9F1 /* LaunchScreen.storyboard in Resources */,
-				C9EDE8AE1BFCDA240039E9F1 /* art.scnassets in Resources */,
+				C9DEDB4E1D0723A200A76BA3 /* art.scnassets in Resources */,
 				C9EDE87F1BFCC9B40039E9F1 /* Assets.xcassets in Resources */,
 				C9EDE87D1BFCC9B40039E9F1 /* Main.storyboard in Resources */,
 			);

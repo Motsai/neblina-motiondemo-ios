@@ -12,7 +12,7 @@ import SceneKit
 
 class DetailViewController: UIViewController, CBPeripheralDelegate, NeblinaDelegate, SCNSceneRendererDelegate {
 
-	let NebDevice = Neblina()
+	let nebdev = Neblina()
 	let scene = SCNScene(named: "art.scnassets/C-3PO.dae")!
 	//let scene = SCNScene(named: "art.scnassets/Millenium_Falcon/Millenium_Falcon.dae")!
 	var ship = SCNNode() //= scene.rootNode.childNodeWithName("ship", recursively: true)!
@@ -21,12 +21,12 @@ class DetailViewController: UIViewController, CBPeripheralDelegate, NeblinaDeleg
 	@IBOutlet weak var label2: UILabel!
 	@IBOutlet weak var level:UIProgressView!
 	
-	var detailItem: CBPeripheral? {
+	var detailItem: NebDevice? {
 		didSet {
 		    // Update the view.
 		    self.configureView()
-			NebDevice.setPeripheral(detailItem!)
-			NebDevice.delegate = self
+			nebdev.setPeripheral(detailItem!.id, peripheral: (detailItem?.peripheral)!)
+			nebdev.delegate = self
 		}
 	}
 
@@ -104,14 +104,33 @@ class DetailViewController: UIViewController, CBPeripheralDelegate, NeblinaDeleg
 
 	@IBAction func buttonTrajectRecord(button: UIButton)
 	{
-		NebDevice.SendCmdTrajectoryRecord(true)
+		nebdev.SendCmdTrajectoryRecord(true)
 	}
 	
 	// MARK : Neblina
 	func didConnectNeblina() {
-		NebDevice.SendCmdEulerAngleStream(false)
-		NebDevice.SendCmdQuaternionStream(true)
-		NebDevice.SendCmdTrajectoryInfo(true)
+		nebdev.SendCmdEulerAngleStream(false)
+		nebdev.SendCmdQuaternionStream(true)
+		nebdev.SendCmdTrajectoryInfo(true)
+	}
+	
+	func didReceiveRSSI(rssi : NSNumber) {
+		
+	}
+	func didReceiveDebugData(type : Int32, data : UnsafePointer<UInt8>, errFlag : Bool) {
+		
+	}
+	func didReceivePmgntData(type : Int32, data : UnsafePointer<UInt8>, errFlag : Bool) {
+		
+	}
+	
+	func didReceiveStorageData(type : Int32, data : UnsafePointer<UInt8>, errFlag : Bool) {
+		
+	}
+	func didReceiveEepromData(type : Int32, data : UnsafePointer<UInt8>, errFlag : Bool) {
+		
+	}
+	func didReceiveLedData(type : Int32, data : UnsafePointer<UInt8>, errFlag : Bool) {
 	}
 	
 	func didReceiveFusionData(type : Int32, data : Fusion_DataPacket_t, errFlag : Bool) {

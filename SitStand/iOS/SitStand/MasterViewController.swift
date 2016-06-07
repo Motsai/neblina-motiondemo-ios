@@ -65,9 +65,9 @@ class MasterViewController: UITableViewController, CBCentralManagerDelegate {
 				controller.navigationItem.leftBarButtonItem = self.splitViewController?.displayModeButtonItem()
 				controller.navigationItem.leftItemsSupplementBackButton = true
 				if (controller.detailItem != nil) {
-					bleCentralManager.cancelPeripheralConnection(controller.detailItem!)
+					bleCentralManager.cancelPeripheralConnection((controller.detailItem?.peripheral)!)
 				}
-				controller.detailItem = object.peripheral
+				controller.detailItem = object
 			}
 		}
 	}

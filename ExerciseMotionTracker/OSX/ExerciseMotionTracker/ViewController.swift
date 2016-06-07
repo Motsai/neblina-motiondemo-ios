@@ -150,7 +150,7 @@ class ViewController: NSViewController, NSTableViewDataSource, NSTableViewDelega
 			let peripheral = self.objects[self.tableView.selectedRow].peripheral
 			
 			
-			device.setPeripheral(peripheral)
+			device.setPeripheral(self.objects[self.tableView.selectedRow].id, peripheral: self.objects[self.tableView.selectedRow].peripheral)
 			device.delegate = self
 			//print(peripheral)
 			
@@ -291,7 +291,25 @@ class ViewController: NSViewController, NSTableViewDataSource, NSTableViewDelega
 		device.SendCmdQuaternionStream(true)
 		device.SendCmdTrajectoryInfo(true)
 	}
-	
+	func didReceiveRSSI(rssi : NSNumber) {
+		
+	}
+	func didReceiveDebugData(type : Int32, data : UnsafePointer<UInt8>, errFlag : Bool) {
+		
+	}
+	func didReceivePmgntData(type : Int32, data : UnsafePointer<UInt8>, errFlag : Bool) {
+		
+	}
+	func didReceiveStorageData(type : Int32, data : UnsafePointer<UInt8>, errFlag : Bool) {
+		
+	}
+	func didReceiveEepromData(type : Int32, data : UnsafePointer<UInt8>, errFlag : Bool) {
+		
+	}
+	func didReceiveLedData(type : Int32, data : UnsafePointer<UInt8>, errFlag : Bool) {
+		
+	}
+
 	func didReceiveFusionData(type : Int32, data : Fusion_DataPacket_t, errFlag : Bool) {
 		//	let textview = self.view.viewWithTag(3) as! UITextView
 		

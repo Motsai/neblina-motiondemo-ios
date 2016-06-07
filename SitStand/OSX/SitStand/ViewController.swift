@@ -18,7 +18,7 @@ class ViewController: NSViewController, NSTableViewDataSource, NSTableViewDelega
 
 	var bleCentralManager : CBCentralManager!
 	var objects = [NebDevice]()
-	let device = Neblina()
+	var device = Neblina()
 	
 	@IBOutlet weak var sitLabel : NSTextField!
 	@IBOutlet weak var standLabel : NSTextField!
@@ -99,7 +99,7 @@ class ViewController: NSViewController, NSTableViewDataSource, NSTableViewDelega
 			let peripheral = self.objects[self.tableView.selectedRow].peripheral
 			
 			
-			device.setPeripheral(peripheral)
+			device.setPeripheral(self.objects[self.tableView.selectedRow].id, peripheral: self.objects[self.tableView.selectedRow].peripheral)
 			device.delegate = self
 			//print(peripheral)
 			
@@ -238,6 +238,25 @@ class ViewController: NSViewController, NSTableViewDataSource, NSTableViewDelega
 		device.SendCmdPedometerStream(false)
 		device.SendCmdSittingStanding(true)
 		device.SendCmdPedometerStream(true)
+	}
+	func didReceiveRSSI(rssi : NSNumber) {
+		
+	}
+	
+	func didReceiveDebugData(type : Int32, data : UnsafePointer<UInt8>, errFlag : Bool) {
+		
+	}
+	func didReceivePmgntData(type : Int32, data : UnsafePointer<UInt8>, errFlag : Bool) {
+		
+	}
+	func didReceiveStorageData(type : Int32, data : UnsafePointer<UInt8>, errFlag : Bool) {
+		
+	}
+	func didReceiveEepromData(type : Int32, data : UnsafePointer<UInt8>, errFlag : Bool) {
+		
+	}
+	func didReceiveLedData(type : Int32, data : UnsafePointer<UInt8>, errFlag : Bool) {
+		
 	}
 
 	func didReceiveFusionData(type : Int32, data : Fusion_DataPacket_t, errFlag : Bool) {
