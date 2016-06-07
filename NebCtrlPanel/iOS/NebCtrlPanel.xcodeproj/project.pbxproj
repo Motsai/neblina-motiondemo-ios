@@ -17,6 +17,7 @@
 		C90AF9A01BEBABD20040D4CA /* NebCtrlPanelUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C90AF99F1BEBABD20040D4CA /* NebCtrlPanelUITests.swift */; };
 		C90AF9B41BEBAD370040D4CA /* Neblina.swift in Sources */ = {isa = PBXBuildFile; fileRef = C90AF9B31BEBAD370040D4CA /* Neblina.swift */; };
 		C90AF9B71BEBB1090040D4CA /* CoreBluetooth.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C90AF9B61BEBB1090040D4CA /* CoreBluetooth.framework */; };
+		C9DEDB481D05D45900A76BA3 /* Phone.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = C9DEDB461D05D45900A76BA3 /* Phone.storyboard */; };
 		C9DF6B311C08AD73007DB407 /* art.scnassets in Resources */ = {isa = PBXBuildFile; fileRef = C9DF6B301C08AD73007DB407 /* art.scnassets */; };
 /* End PBXBuildFile section */
 
@@ -58,6 +59,7 @@
 		C9242AB31C24A51200F7BF8A /* ProMotion.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ProMotion.h; path = ../../../src/ProMotion.h; sourceTree = "<group>"; };
 		C98A75B61BF147AD002D7601 /* FusionEngineDataTypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FusionEngineDataTypes.h; path = ../../../src/FusionEngineDataTypes.h; sourceTree = "<group>"; };
 		C98A75B71BF147AD002D7601 /* neblina.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = neblina.h; path = ../../../src/neblina.h; sourceTree = "<group>"; };
+		C9DEDB471D05D45900A76BA3 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Phone.storyboard; sourceTree = "<group>"; };
 		C9DF6B301C08AD73007DB407 /* art.scnassets */ = {isa = PBXFileReference; lastKnownFileType = wrapper.scnassets; name = art.scnassets; path = ../../../art.scnassets; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -111,6 +113,7 @@
 		C90AF97C1BEBABD20040D4CA /* NebCtrlPanel */ = {
 			isa = PBXGroup;
 			children = (
+				C9DEDB461D05D45900A76BA3 /* Phone.storyboard */,
 				C9242AB31C24A51200F7BF8A /* ProMotion.h */,
 				C9DF6B301C08AD73007DB407 /* art.scnassets */,
 				C98A75B61BF147AD002D7601 /* FusionEngineDataTypes.h */,
@@ -251,6 +254,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C9DEDB481D05D45900A76BA3 /* Phone.storyboard in Resources */,
 				C90AF98A1BEBABD20040D4CA /* LaunchScreen.storyboard in Resources */,
 				C9DF6B311C08AD73007DB407 /* art.scnassets in Resources */,
 				C90AF9871BEBABD20040D4CA /* Assets.xcassets in Resources */,
@@ -332,6 +336,14 @@
 				C90AF9891BEBABD20040D4CA /* Base */,
 			);
 			name = LaunchScreen.storyboard;
+			sourceTree = "<group>";
+		};
+		C9DEDB461D05D45900A76BA3 /* Phone.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				C9DEDB471D05D45900A76BA3 /* Base */,
+			);
+			name = Phone.storyboard;
 			sourceTree = "<group>";
 		};
 /* End PBXVariantGroup section */
@@ -435,6 +447,7 @@
 				PROVISIONING_PROFILE = "";
 				SWIFT_OBJC_BRIDGING_HEADER = "../../src/Neblina-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Debug;
 		};
@@ -452,6 +465,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
 				SWIFT_OBJC_BRIDGING_HEADER = "../../src/Neblina-Bridging-Header.h";
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Release;
 		};

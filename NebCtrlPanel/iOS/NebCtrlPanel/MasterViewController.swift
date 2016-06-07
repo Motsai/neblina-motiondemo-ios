@@ -14,11 +14,12 @@ struct NebDevice {
 	let peripheral : CBPeripheral
 }
 
+var bleCentralManager : CBCentralManager!
+
 class MasterViewController: UITableViewController, CBCentralManagerDelegate {
 
-	var detailViewController: DetailViewController? = nil
+	var detailViewController: UIViewController? = nil
 	var objects = [NebDevice]()
-	var bleCentralManager : CBCentralManager!
 	//var NebPeripheral : CBPeripheral!
 
 
@@ -33,7 +34,14 @@ class MasterViewController: UITableViewController, CBCentralManagerDelegate {
 		self.navigationItem.rightBarButtonItem = addButton
 		if let split = self.splitViewController {
 		    let controllers = split.viewControllers
-		    self.detailViewController = (controllers[controllers.count-1] as! UINavigationController).topViewController as? DetailViewController
+			//if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiom.Pad ) {
+				self.detailViewController = (controllers[controllers.count-1] as! UINavigationController).topViewController as? DetailViewController
+			/*}
+			else {
+				let splitController = controllers[controllers.count-1] as! UISplitViewController
+				let controllers1 = splitController.viewControllers
+				self.detailViewController = (controllers1[controllers1.count-1] as! UINavigationController).topViewController as? iPhoneCmdViewController
+			}*/
 		}
 	}
 
@@ -59,18 +67,31 @@ class MasterViewController: UITableViewController, CBCentralManagerDelegate {
 	// MARK: - Segues
 
 	override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
+		print("Segue \(segue.identifier)")
 		if segue.identifier == "showDetail" {
 		    if let indexPath = self.tableView.indexPathForSelectedRow {
 		        let object = objects[indexPath.row]
+				//if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiom.Pad ) {
+					let controller = (segue.destinationViewController as! UINavigationController).topViewController as! DetailViewController
+					controller.navigationItem.leftBarButtonItem = self.splitViewController?.displayModeButtonItem()
+					controller.navigationItem.leftItemsSupplementBackButton = true
+					if (controller.detailItem != nil) {
+						bleCentralManager.cancelPeripheralConnection(controller.detailItem!.peripheral)
+					}
+					controller.detailItem = object
+				/*}
+				else {
+					let controller = (segue.destinationViewController as! UINavigationController).topViewController as! iPhoneCmdViewController
+					controller.navigationItem.leftBarButtonItem = self.splitViewController?.displayModeButtonItem()
+					controller.navigationItem.leftItemsSupplementBackButton = true
+					if (controller.detailItem != nil) {
+						bleCentralManager.cancelPeripheralConnection(controller.detailItem!.peripheral)
+					}
+					controller.detailItem = object
+				}*/
 				bleCentralManager.connectPeripheral(object.peripheral, options: nil)
-		        let controller = (segue.destinationViewController as! UINavigationController).topViewController as! DetailViewController
+				
 				//controller.nebdev.setPeripheral(object)
-		        controller.navigationItem.leftBarButtonItem = self.splitViewController?.displayModeButtonItem()
-		        controller.navigationItem.leftItemsSupplementBackButton = true
-				if (controller.detailItem != nil) {
-					bleCentralManager.cancelPeripheralConnection(controller.detailItem!.peripheral)
-				}
-				controller.detailItem = object
 		    }
 		}
 	}

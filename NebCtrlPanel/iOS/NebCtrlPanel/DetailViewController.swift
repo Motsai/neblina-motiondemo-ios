@@ -208,6 +208,19 @@ class DetailViewController: UIViewController, UITextFieldDelegate, CBPeripheralD
 		super.didReceiveMemoryWarning()
 		// Dispose of any resources that can be recreated.
 	}
+	@IBAction func switch3DView(sender:UISwitch)
+	{
+		if (sender.on) {
+			cmdView.hidden = true
+			let scnView = self.view.subviews[0] as! SCNView
+			scnView.hidden = false
+		}
+		else {
+			cmdView.hidden = false
+			let scnView = self.view.subviews[0] as! SCNView
+			scnView.hidden = true
+		}
+	}
 	
 	@IBAction func buttonAction(sender:UIButton)
 	{
@@ -286,8 +299,10 @@ class DetailViewController: UIViewController, UITextFieldDelegate, CBPeripheralD
 							nebdev.SendCmdQuaternionStream(sender.selectedSegmentIndex == 1)
 							let i = nebdev.getCmdIdx(0xf,  cmdId: 1)
 							let cell = cmdView.cellForRowAtIndexPath( NSIndexPath(forRow: i, inSection: 0))
-							let sw = cell!.viewWithTag(1) as! UISegmentedControl
-							sw.selectedSegmentIndex = 0
+							if (cell != nil) {
+								let sw = cell!.viewWithTag(1) as! UISegmentedControl
+								sw.selectedSegmentIndex = 0
+							}
 							break
 						case EulerAngle:
 							nebdev.SendCmdQuaternionStream(false)
@@ -311,8 +326,10 @@ class DetailViewController: UIViewController, UITextFieldDelegate, CBPeripheralD
 						case LockHeadingRef:
 							nebdev.SendCmdLockHeading(sender.selectedSegmentIndex == 1)
 							let cell = cmdView.cellForRowAtIndexPath( NSIndexPath(forRow: row, inSection: 0))
-							let sw = cell!.viewWithTag(1) as! UISegmentedControl
-							sw.selectedSegmentIndex = 0
+							if (cell != nil) {
+								let sw = cell!.viewWithTag(1) as! UISegmentedControl
+								sw.selectedSegmentIndex = 0
+							}
 							break
 						default:
 							break
@@ -366,8 +383,10 @@ class DetailViewController: UIViewController, UITextFieldDelegate, CBPeripheralD
 							heading = sender.selectedSegmentIndex == 1
 							let i = nebdev.getCmdIdx(NEB_CTRL_SUBSYS_MOTION_ENG,  cmdId: Quaternion)
 							let cell = cmdView.cellForRowAtIndexPath( NSIndexPath(forRow: i, inSection: 0))
-							let control = cell!.viewWithTag(1) as! UISegmentedControl
-							control.selectedSegmentIndex = 0
+							if (cell != nil) {
+								let control = cell!.viewWithTag(1) as! UISegmentedControl
+								control.selectedSegmentIndex = 0
+							}
 							break
 						default:
 							break
@@ -386,8 +405,10 @@ class DetailViewController: UIViewController, UITextFieldDelegate, CBPeripheralD
 				heading = sender.selectedSegmentIndex == 1
 				var i = nebdev.getCmdIdx(NEB_CTRL_SUBSYS_MOTION_ENG,  cmdId: Quaternion)
 				let cell = cmdView.cellForRowAtIndexPath( NSIndexPath(forRow: i, inSection: 0))
-				let sw = cell!.viewWithTag(1) as! UISegmentedControl
-				sw.selectedSegmentIndex = 0
+				if (cell != nil) {
+					let sw = cell!.viewWithTag(1) as! UISegmentedControl
+					sw.selectedSegmentIndex = 0
+				}
 				break
 			default:
 				break
@@ -426,8 +447,10 @@ class DetailViewController: UIViewController, UITextFieldDelegate, CBPeripheralD
 		{
 			let i = nebdev.getCmdIdx(NEB_CTRL_SUBSYS_POWERMGMT,  cmdId: POWERMGMT_CMD_SET_CHARGE_CURRENT)
 			let cell = cmdView.cellForRowAtIndexPath( NSIndexPath(forRow: i, inSection: 0))
-			let control = cell!.viewWithTag(3) as! UITextField
-			control.text = String(value)
+			if (cell != nil) {
+				let control = cell!.viewWithTag(3) as! UITextField
+				control.text = String(value)
+			}
 		}
 	}
 
@@ -570,45 +593,58 @@ class DetailViewController: UIViewController, UITextFieldDelegate, CBPeripheralD
 					case 1:	// Playback
 						var i = nebdev.getCmdIdx(NEB_CTRL_SUBSYS_STORAGE,  cmdId: FlashRecordStartStop)
 						var cell = cmdView.cellForRowAtIndexPath( NSIndexPath(forRow: i, inSection: 0))
-						var sw = cell!.viewWithTag(1) as! UISegmentedControl
-						sw.selectedSegmentIndex = 0
+						if (cell != nil) {
+							var sw = cell!.viewWithTag(1) as! UISegmentedControl
+							sw.selectedSegmentIndex = 0
+						}
 						i = nebdev.getCmdIdx(NEB_CTRL_SUBSYS_STORAGE,  cmdId: FlashPlaybackStartStop)
 						cell = cmdView.cellForRowAtIndexPath( NSIndexPath(forRow: i, inSection: 0))
-						sw = cell!.viewWithTag(1) as! UISegmentedControl
-						sw.selectedSegmentIndex = 1
-
+						if (cell != nil) {
+							var sw = cell!.viewWithTag(1) as! UISegmentedControl
+							sw.selectedSegmentIndex = 1
+						}
 						break
 					case 2:	// Recording
 						var i = nebdev.getCmdIdx(NEB_CTRL_SUBSYS_STORAGE,  cmdId: FlashPlaybackStartStop)
 						var cell = cmdView.cellForRowAtIndexPath( NSIndexPath(forRow: i, inSection: 0))
-						var sw = cell!.viewWithTag(1) as! UISegmentedControl
-						sw.selectedSegmentIndex = 0
+						if (cell != nil) {
+							var sw = cell!.viewWithTag(1) as! UISegmentedControl
+							sw.selectedSegmentIndex = 0
+						}
 						i = nebdev.getCmdIdx(NEB_CTRL_SUBSYS_STORAGE,  cmdId: FlashRecordStartStop)
 						cell = cmdView.cellForRowAtIndexPath( NSIndexPath(forRow: i, inSection: 0))
-						sw = cell!.viewWithTag(1) as! UISegmentedControl
-						sw.selectedSegmentIndex = 1
+						if (cell != nil) {
+							var sw = cell!.viewWithTag(1) as! UISegmentedControl
+							sw.selectedSegmentIndex = 1
+						}
 						break
 					default:
 						var i = nebdev.getCmdIdx(NEB_CTRL_SUBSYS_STORAGE,  cmdId: FlashPlaybackStartStop)
 						var cell = cmdView.cellForRowAtIndexPath( NSIndexPath(forRow: i, inSection: 0))
-						var sw = cell!.viewWithTag(1) as! UISegmentedControl
-						sw.selectedSegmentIndex = 0
+						if (cell != nil) {
+							var sw = cell!.viewWithTag(1) as! UISegmentedControl
+							sw.selectedSegmentIndex = 0
+						}
 						i = nebdev.getCmdIdx(NEB_CTRL_SUBSYS_STORAGE,  cmdId: FlashRecordStartStop)
 						cell = cmdView.cellForRowAtIndexPath( NSIndexPath(forRow: i, inSection: 0))
-						sw = cell!.viewWithTag(1) as! UISegmentedControl
-						sw.selectedSegmentIndex = 0
+						if (cell != nil) {
+							var sw = cell!.viewWithTag(1) as! UISegmentedControl
+							sw.selectedSegmentIndex = 0
+						}
 						break
 				}
 				var i = nebdev.getCmdIdx(NEB_CTRL_SUBSYS_MOTION_ENG,  cmdId: Quaternion)
 				var cell = cmdView.cellForRowAtIndexPath( NSIndexPath(forRow: i, inSection: 0))
-				var sw = cell!.viewWithTag(1) as! UISegmentedControl
-				sw.selectedSegmentIndex = Int(data[4] & 8) >> 3
-				
+				if (cell != nil) {
+					var sw = cell!.viewWithTag(1) as! UISegmentedControl
+					sw.selectedSegmentIndex = Int(data[4] & 8) >> 3
+				}
 				i = nebdev.getCmdIdx(NEB_CTRL_SUBSYS_MOTION_ENG,  cmdId: MAG_Data)
 				cell = cmdView.cellForRowAtIndexPath( NSIndexPath(forRow: i, inSection: 0))
-				sw = cell!.viewWithTag(1) as! UISegmentedControl
-				sw.selectedSegmentIndex = Int(data[4] & 0x80) >> 7
-
+				if (cell != nil) {
+					var sw = cell!.viewWithTag(1) as! UISegmentedControl
+					sw.selectedSegmentIndex = Int(data[4] & 0x80) >> 7
+				}
 //				i = nebdev.getCmdIdx(NEB_CTRL_SUBSYS_MOTION_ENG,  cmdId: EulerAngle)
 /*				cell = cmdView.cellForRowAtIndexPath( NSIndexPath(forRow: NebCmdList.count, inSection: 0))
 				sw = cell!.viewWithTag(2) as! UISegmentedControl
@@ -626,15 +662,16 @@ class DetailViewController: UIViewController, UITextFieldDelegate, CBPeripheralD
 				break
 			case DEBUG_CMD_GET_DATAPORT:
 				let i = nebdev.getCmdIdx(NEB_CTRL_SUBSYS_DEBUG,  cmdId: DEBUG_CMD_SET_DATAPORT)
-				let cell = cmdView.cellForRowAtIndexPath( NSIndexPath(forRow: i, inSection: 0))
-				var sw = cell!.viewWithTag(1) as! UISegmentedControl
-				
-				sw.selectedSegmentIndex = Int(data[0])
-
-				let cell1 = cmdView.cellForRowAtIndexPath( NSIndexPath(forRow: i + 1, inSection: 0))
-				var sw1 = cell1!.viewWithTag(1) as! UISegmentedControl
-				
-				sw1.selectedSegmentIndex = Int(data[1])
+				var cell = cmdView.cellForRowAtIndexPath( NSIndexPath(forRow: i, inSection: 0))
+				if (cell != nil) {
+					let sw = cell!.viewWithTag(1) as! UISegmentedControl
+					sw.selectedSegmentIndex = Int(data[0])
+				}
+				cell = cmdView.cellForRowAtIndexPath( NSIndexPath(forRow: i + 1, inSection: 0))
+				if (cell != nil) {
+					let sw = cell!.viewWithTag(1) as! UISegmentedControl
+					sw.selectedSegmentIndex = Int(data[1])
+				}
 				break
 			default:
 				break
@@ -665,9 +702,10 @@ class DetailViewController: UIViewController, UITextFieldDelegate, CBPeripheralD
 					
 					let i = nebdev.getCmdIdx(NEB_CTRL_SUBSYS_STORAGE,  cmdId: FlashPlaybackStartStop)
 					let cell = cmdView.cellForRowAtIndexPath( NSIndexPath(forRow: i, inSection: 0))
-					let sw = cell!.viewWithTag(1) as! UISegmentedControl
-					
-					sw.selectedSegmentIndex = 0
+					if (cell != nil) {
+						let sw = cell!.viewWithTag(1) as! UISegmentedControl
+						sw.selectedSegmentIndex = 0
+					}
 				}
 				break
 			default:
@@ -694,21 +732,24 @@ class DetailViewController: UIViewController, UITextFieldDelegate, CBPeripheralD
 			case LED_CMD_GET_VALUE:
 				let i = nebdev.getCmdIdx(NEB_CTRL_SUBSYS_LED,  cmdId: LED_CMD_SET_VALUE)
 				var cell = cmdView.cellForRowAtIndexPath( NSIndexPath(forRow: i, inSection: 0))
-				var sw = cell!.viewWithTag(1) as! UISegmentedControl
-				if (data[0] != 0) {
-					sw.selectedSegmentIndex = 1
+				if (cell != nil) {
+					var sw = cell!.viewWithTag(1) as! UISegmentedControl
+					if (data[0] != 0) {
+						sw.selectedSegmentIndex = 1
+					}
+					else {
+						sw.selectedSegmentIndex = 0
+					}
 				}
-				else {
-					sw.selectedSegmentIndex = 0
-				}
-				
 				cell = cmdView.cellForRowAtIndexPath( NSIndexPath(forRow: i + 1, inSection: 0))
-				sw = cell!.viewWithTag(1) as! UISegmentedControl
-				if (data[1] != 0) {
-					sw.selectedSegmentIndex = 1
-				}
-				else {
-					sw.selectedSegmentIndex = 0
+				if (cell != nil) {
+					let sw = cell!.viewWithTag(1) as! UISegmentedControl
+					if (data[1] != 0) {
+						sw.selectedSegmentIndex = 1
+					}
+					else {
+						sw.selectedSegmentIndex = 0
+					}
 				}
 				break
 			default:
