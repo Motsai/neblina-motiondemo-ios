@@ -28,7 +28,7 @@ iPhone Screen Shot | OSX Screen Shot
 
 ---
 
-On iPhoa & iPad will switch to the command screen. If the communication with Neblina is successful, the "BLE Data Port" switch will be on. 
+The iPhone & iPad will switch to the command screen. The "BLE Data Port" switch will be on if the communication with Neblina is successful.  Switch on the Quaternion stream.  The quaternion data should be displayed at the bottom of the screen. 
 
 iPhone Screen Shot | iPad Screen Shot
 ---|---
