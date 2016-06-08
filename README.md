@@ -1,4 +1,4 @@
-<table><tr><td height="50"><b><font size="200%">Neblina <img src="http://www.brandsoftheworld.com/sites/default/files/styles/logo-original-577x577/public/042014/c_0.png?itok=GPAwoY4R" width="50" height="50"/></td></tr></table>
+
 ![ProMotion Board](http://i.imgur.com/FvKbWka.jpg)  
 
 
@@ -22,7 +22,8 @@ Quick Start
 
 Open the NebCtrlPanel project (iOS or OSX), compile and execute the App.  The initial screen will list all available Neblina devices.  
 
-![NebCtrlPanel OSX](http://imgur.com/OBKejPf)
+![Imgur](http://i.imgur.com/yOCMsVQ.jpg)
+![NebCtrlPanel OSX](http://i.imgur.com/RnfRS5b.png)
 
 
 
