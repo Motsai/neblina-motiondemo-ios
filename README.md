@@ -22,8 +22,9 @@ Quick Start
 
 Open the NebCtrlPanel project (iOS or OSX), compile and execute the App.  The initial screen will list all available Neblina devices.  
 
-![Imgur](http://i.imgur.com/yOCMsVQ.jpg)
-![NebCtrlPanel OSX](http://i.imgur.com/RnfRS5b.png)
+iPhone Sceen Shot | OSX Screen Shot
+---|---
+![Imgur](http://i.imgur.com/yOCMsVQ.jpg)|![NebCtrlPanel OSX](http://i.imgur.com/RnfRS5b.png)
 
-
+---
 
