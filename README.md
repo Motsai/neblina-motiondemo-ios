@@ -20,11 +20,18 @@ Quick Start
 
 ### Functionnal check
 
-Open the NebCtrlPanel project (iOS or OSX), compile and execute the App.  The initial screen will list all available Neblina devices.  
+Open the NebCtrlPanel project (iOS or OSX), compile and execute the App.  The initial screen will list all available Neblina devices.  Select one of the Neblina that showed up.
 
-iPhone Sceen Shot | OSX Screen Shot
+iPhone Screen Shot | OSX Screen Shot
 ---|---
 ![Imgur](http://i.imgur.com/yOCMsVQ.jpg)|![NebCtrlPanel OSX](http://i.imgur.com/RnfRS5b.png)
 
+---
+
+On iPhoa & iPad will switch to the command screen. If the communication with Neblina is successful, the "BLE Data Port" switch will be on. 
+
+iPhone Screen Shot | iPad Screen Shot
+---|---
+![Imgur](http://i.imgur.com/sde4YFf.jpg)|![Imgur](http://i.imgur.com/Mf73hrb.jpg)
 ---
 
