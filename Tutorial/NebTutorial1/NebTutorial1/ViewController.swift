@@ -34,8 +34,9 @@ class ViewController: UIViewController, CBCentralManagerDelegate, NeblinaDelegat
 	}
 
 	@IBAction func quaternionStream(sender:UISwitch) {
-		nebdev.SendCmdQuaternionStream(sender.on);
+		nebdev.streamQuaternion(sender.on);
 	}
+	
 	// MARK: - Table View
 		
 	func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -165,7 +166,7 @@ class ViewController: UIViewController, CBCentralManagerDelegate, NeblinaDelegat
 	
 	// MARK : Neblina
 	func didConnectNeblina() {
-		nebdev.SendCmdEngineStatus()
+		nebdev.getMotionStatus()
 	}
 	
 	func didReceiveRSSI(rssi : NSNumber) {}

@@ -18,6 +18,30 @@ struct NebDevice {
 	let peripheral : CBPeripheral
 }
 
+struct NebCmdItem {
+	let SubSysId : Int32
+	let	CmdId : Int32
+	let Name : String
+	let Actuator : Int
+	let Text : String
+}
+
+let NebCmdList = [NebCmdItem] (arrayLiteral:
+	NebCmdItem(SubSysId: NEB_CTRL_SUBSYS_DEBUG, CmdId: DEBUG_CMD_SET_DATAPORT, Name: "BLE Data Port", Actuator : 1, Text:String(_sel: nil)),
+                               NebCmdItem(SubSysId: NEB_CTRL_SUBSYS_DEBUG, CmdId: DEBUG_CMD_SET_DATAPORT, Name: "UART Data Port", Actuator : 1, Text:String(_sel: nil)),
+                               NebCmdItem(SubSysId: NEB_CTRL_SUBSYS_MOTION_ENG, CmdId: Quaternion, Name: "Quaternion Stream", Actuator : 1, Text:String(_sel: nil)),
+                               NebCmdItem(SubSysId: NEB_CTRL_SUBSYS_MOTION_ENG, CmdId: MAG_Data, Name: "Mag Stream", Actuator : 1, Text:String(_sel: nil)),
+                               NebCmdItem(SubSysId: NEB_CTRL_SUBSYS_MOTION_ENG, CmdId: LockHeadingRef, Name: "Lock Heading Ref.", Actuator : 1, Text:String(_sel: nil)),
+                               NebCmdItem(SubSysId: NEB_CTRL_SUBSYS_STORAGE, CmdId: FlashEraseAll, Name: "Flash Erase All", Actuator : 1, Text:String(_sel: nil)),
+                               NebCmdItem(SubSysId: NEB_CTRL_SUBSYS_STORAGE, CmdId: FlashRecordStartStop, Name: "Flash Record", Actuator : 1, Text:String(_sel: nil)),
+                               NebCmdItem(SubSysId: NEB_CTRL_SUBSYS_STORAGE, CmdId: FlashPlaybackStartStop, Name: "Flash Playback", Actuator : 1, Text:String(_sel: nil)),
+                               NebCmdItem(SubSysId: NEB_CTRL_SUBSYS_LED, CmdId: LED_CMD_SET_VALUE, Name: "Set LED0", Actuator : 1, Text:String(_sel: nil)),
+                               NebCmdItem(SubSysId: NEB_CTRL_SUBSYS_LED, CmdId: LED_CMD_SET_VALUE, Name: "Set LED1", Actuator : 1, Text:String(_sel: nil)),
+                               NebCmdItem(SubSysId: NEB_CTRL_SUBSYS_EEPROM, CmdId: EEPROM_Read, Name: "EEPROM Read", Actuator : 2, Text:String("Read")),
+                               NebCmdItem(SubSysId: NEB_CTRL_SUBSYS_POWERMGMT, CmdId: POWERMGMT_CMD_SET_CHARGE_CURRENT, Name: "Charge Current in mA", Actuator : 3, Text:String(_sel: nil)),
+                               NebCmdItem(SubSysId: 0xf, CmdId: 1, Name: "Heading", Actuator : 1, Text:String(_sel: nil))
+)
+
 class ViewController: NSViewController, NSTableViewDataSource, NSTableViewDelegate, CBCentralManagerDelegate, NeblinaDelegate  {
 
 	let scene = SCNScene(named: "art.scnassets/ship.scn")!
@@ -45,6 +69,16 @@ class ViewController: NSViewController, NSTableViewDataSource, NSTableViewDelega
 	@IBOutlet weak var flashLabel: NSTextField!
 	@IBOutlet weak var dumpLabel: NSTextField!
 	@IBOutlet weak var scnView: SCNView!
+	
+	func getCmdIdx(subsysId : Int32, cmdId : Int32) -> Int {
+		for (idx, item) in NebCmdList.enumerate() {
+			if (item.SubSysId == subsysId && item.CmdId == cmdId) {
+				return idx
+			}
+		}
+		
+		return -1
+	}
 	
 	override func viewDidLoad() {
 		super.viewDidLoad()
@@ -127,7 +161,7 @@ class ViewController: NSViewController, NSTableViewDataSource, NSTableViewDelega
 				switch (NebCmdList[row].CmdId)
 				{
 				case EEPROM_Read:
-					nebdev.SendCmdEepromRead(0)
+					nebdev.eepromRead(0)
 					break
 				case EEPROM_Write:
 					//UInt8_t eepdata[8]
@@ -148,7 +182,7 @@ class ViewController: NSViewController, NSTableViewDataSource, NSTableViewDelega
 		//let row = cmdView.rowForView(sender.superview!.superview!)// as! NSTableCellView)
 		let value = sender.integerValue
 		print("textAction \(value)")
-		nebdev.SendCmdSetChargeCurrent(UInt16(value))
+		nebdev.setBatteryChargeCurrent(UInt16(value))
 	}
 	
 	@IBAction func switchAction(sender:NSSegmentedControl)
@@ -164,12 +198,12 @@ class ViewController: NSViewController, NSTableViewDataSource, NSTableViewDelega
 				switch (NebCmdList[row].CmdId)
 				{
 				case DEBUG_CMD_SET_INTERFACE:
-					nebdev.SendCmdControlInterface(sender.selectedSegment)
+					nebdev.setInterface(sender.selectedSegment)
 					break
 				case DEBUG_CMD_DUMP_DATA:
 					break;
 				case DEBUG_CMD_SET_DATAPORT:
-					nebdev.SendCmdDataInterface(row, Ctrl:UInt8(sender.selectedSegment))
+					nebdev.setDataPort(row, Ctrl:UInt8(sender.selectedSegment))
 					break;
 				default:
 					break
@@ -180,43 +214,43 @@ class ViewController: NSViewController, NSTableViewDataSource, NSTableViewDelega
 				switch (NebCmdList[row].CmdId)
 				{
 				case MotionState:
-					nebdev.SendCmdMotionStream(sender.selectedSegment == 1)
+					nebdev.streamMotionState(sender.selectedSegment == 1)
 					break
 				case IMU_Data:
-					nebdev.SendCmdSixAxisIMUStream(sender.selectedSegment == 1)
+					nebdev.streamIMU(sender.selectedSegment == 1)
 					break
 				case Quaternion:
-					nebdev.SendCmdEulerAngleStream(false)
+					nebdev.streamEulerAngle(false)
 					heading = false
 					prevTimeStamp = 0
-					nebdev.SendCmdQuaternionStream(sender.selectedSegment == 1)
-					let i = nebdev.getCmdIdx(0xf,  cmdId: 1)
+					nebdev.streamQuaternion(sender.selectedSegment == 1)
+					let i = getCmdIdx(0xf,  cmdId: 1)
 					let cell = cmdView.viewAtColumn(0, row: i, makeIfNecessary: false)! as NSView
 					let control = cell.viewWithTag(1) as! NSSegmentedControl
 
 					control.selectedSegment = 0
 					break
 				case EulerAngle:
-					nebdev.SendCmdQuaternionStream(false)
-					nebdev.SendCmdEulerAngleStream(sender.selectedSegment == 1)
+					nebdev.streamQuaternion(false)
+					nebdev.streamEulerAngle(sender.selectedSegment == 1)
 					break
 				case ExtForce:
-					nebdev.SendCmdExternalForceStream(sender.selectedSegment == 1)
+					nebdev.streamExternalForce(sender.selectedSegment == 1)
 					break
 				case Pedometer:
-					nebdev.SendCmdPedometerStream(sender.selectedSegment == 1)
+					nebdev.streamPedometer(sender.selectedSegment == 1)
 					break;
 				case TrajectoryRecStartStop:
-					nebdev.SendCmdTrajectoryRecord(sender.selectedSegment == 1)
+					nebdev.recordTrajectory(sender.selectedSegment == 1)
 					break;
 				case TrajectoryDistance:
-					nebdev.SendCmdTrajectoryInfo(sender.selectedSegment == 1)
+					nebdev.streamTrajectoryInfo(sender.selectedSegment == 1)
 					break;
 				case MAG_Data:
-					nebdev.SendCmdMagStream(sender.selectedSegment == 1)
+					nebdev.streamMAG(sender.selectedSegment == 1)
 					break;
 				case LockHeadingRef:
-					nebdev.SendCmdLockHeading(sender.selectedSegment == 1)
+					nebdev.setLockHeadingReference(sender.selectedSegment == 1)
 					let cell = cmdView.rowViewAtRow(row, makeIfNecessary: false)
 					let sw = cell!.viewWithTag(1) as! NSSegmentedControl
 					sw.selectedSegment = 0
@@ -225,8 +259,8 @@ class ViewController: NSViewController, NSTableViewDataSource, NSTableViewDelega
 					break
 				}
 			case NEB_CTRL_SUBSYS_LED:
-				let i = nebdev.getCmdIdx(NEB_CTRL_SUBSYS_LED,  cmdId: LED_CMD_SET_VALUE)
-				nebdev.SendCmdLedSetValue(UInt8(row - i), Value: UInt8(sender.selectedSegment))
+				let i = getCmdIdx(NEB_CTRL_SUBSYS_LED,  cmdId: LED_CMD_SET_VALUE)
+				nebdev.setLed(UInt8(row - i), Value: UInt8(sender.selectedSegment))
 				break
 			case NEB_CTRL_SUBSYS_STORAGE:
 				switch (NebCmdList[row].CmdId)
@@ -236,14 +270,14 @@ class ViewController: NSViewController, NSTableViewDataSource, NSTableViewDelega
 					if (sender.selectedSegment == 1) {
 						flashEraseProgress = true;
 					}
-					nebdev.SendCmdFlashErase(sender.selectedSegment == 1)
+					nebdev.eraseStorage(sender.selectedSegment == 1)
 					break
 				case FlashRecordStartStop:
-					nebdev.SendCmdFlashRecord(sender.selectedSegment == 1)
+					nebdev.sessionRecord(sender.selectedSegment == 1)
 					break
 				case FlashPlaybackStartStop:
 					
-					nebdev.SendCmdFlashPlayback(sender.selectedSegment == 1, sessionId : 0xffff)
+					nebdev.sessionPlayback(sender.selectedSegment == 1, sessionId : 0xffff)
 					if (sender.selectedSegment == 1) {
 						PaketCnt = 0
 					}
@@ -257,7 +291,7 @@ class ViewController: NSViewController, NSTableViewDataSource, NSTableViewDelega
 				switch (NebCmdList[row].CmdId)
 				{
 				case EEPROM_Read:
-					nebdev.SendCmdEepromRead(0)
+					nebdev.eepromRead(0)
 					break
 				case EEPROM_Write:
 					//UInt8_t eepdata[8]
@@ -270,10 +304,10 @@ class ViewController: NSViewController, NSTableViewDataSource, NSTableViewDelega
 			case 0xF:
 				switch (NebCmdList[row].CmdId) {
 					case 1:	// Heading
-						nebdev.SendCmdQuaternionStream(false)
-						nebdev.SendCmdEulerAngleStream(true)
+						nebdev.streamQuaternion(false)
+						nebdev.streamEulerAngle(true)
 						heading = sender.selectedSegment == 1
-						var i = nebdev.getCmdIdx(NEB_CTRL_SUBSYS_MOTION_ENG,  cmdId: Quaternion)
+						var i = getCmdIdx(NEB_CTRL_SUBSYS_MOTION_ENG,  cmdId: Quaternion)
 						let cell = cmdView.rowViewAtRow(i, makeIfNecessary: false)
 						let control = cell!.viewWithTag(1) as! NSSegmentedControl
 						control.selectedSegment = 0
@@ -290,10 +324,10 @@ class ViewController: NSViewController, NSTableViewDataSource, NSTableViewDelega
 		else {
 			switch (row - NebCmdList.count) {
 			case 0:
-				nebdev.SendCmdQuaternionStream(false)
-				nebdev.SendCmdEulerAngleStream(true)
+				nebdev.streamQuaternion(false)
+				nebdev.streamEulerAngle(true)
 				heading = sender.selectedSegment == 1
-				var i = nebdev.getCmdIdx(NEB_CTRL_SUBSYS_MOTION_ENG,  cmdId: Quaternion)
+				let i = getCmdIdx(NEB_CTRL_SUBSYS_MOTION_ENG,  cmdId: Quaternion)
 				let cell = cmdView.rowViewAtRow(i, makeIfNecessary: false)
 				let sw = cell!.viewWithTag(1) as! NSSegmentedControl
 				sw.selectedSegment = 0
@@ -546,14 +580,11 @@ class ViewController: NSViewController, NSTableViewDataSource, NSTableViewDelega
 	// MARK : Neblina
 	
 	func didConnectNeblina() {
-		// Switch to BLE interface
-		//print("didConnectNeblina")
 		prevTimeStamp = 0;
-		//nebdev.SendCmdControlInterface(0)
-		nebdev.SendCmdGetFirmwareVersions()
-		nebdev.SendCmdEngineStatus()
-		nebdev.SendCmdGetDataPortState()
-		nebdev.SendCmdLedGetValue ()
+		nebdev.getFirmwareVersion()
+		nebdev.getMotionStatus()
+		nebdev.getDataPortState()
+		nebdev.getLed ()
 	}
 	
 	func didReceiveRSSI(rssi : NSNumber) {
@@ -565,9 +596,9 @@ class ViewController: NSViewController, NSTableViewDataSource, NSTableViewDelega
 		if (type == POWERMGMT_CMD_SET_CHARGE_CURRENT)
 		{
 			//print("**V*** \(value) : \(data)")
-			let i = nebdev.getCmdIdx(NEB_CTRL_SUBSYS_POWERMGMT,  cmdId: POWERMGMT_CMD_SET_CHARGE_CURRENT)
+			let i = getCmdIdx(NEB_CTRL_SUBSYS_POWERMGMT,  cmdId: POWERMGMT_CMD_SET_CHARGE_CURRENT)
 			let cell = cmdView.viewAtColumn(0, row: i, makeIfNecessary: false)! as NSView
-			var control = cell.viewWithTag(3) as! NSTextField
+			let control = cell.viewWithTag(3) as! NSTextField
 			control.stringValue = String(value)
 		}
 		cmdView.setNeedsDisplay()
@@ -794,43 +825,43 @@ class ViewController: NSViewController, NSTableViewDataSource, NSTableViewDelega
 			//print("DEBUG_CMD_MOTENGINE_RECORDER_STATUS \(data)")
 			switch (data[8]) {
 			case 1:	// Playback
-				var i = nebdev.getCmdIdx(NEB_CTRL_SUBSYS_STORAGE,  cmdId: FlashRecordStartStop)
+				var i = getCmdIdx(NEB_CTRL_SUBSYS_STORAGE,  cmdId: FlashRecordStartStop)
 				var cell = cmdView.viewAtColumn(0, row: i, makeIfNecessary: false)! as NSView // cellForRowAtIndexPath( NSIndexPath(forRow: i, inSection: 0))
 				var sw = cell.viewWithTag(1) as! NSSegmentedControl
 				sw.selectedSegment = 0
-				i = nebdev.getCmdIdx(NEB_CTRL_SUBSYS_STORAGE,  cmdId: FlashPlaybackStartStop)
+				i = getCmdIdx(NEB_CTRL_SUBSYS_STORAGE,  cmdId: FlashPlaybackStartStop)
 				cell = cmdView.viewAtColumn(0, row:i, makeIfNecessary: false)! as NSView // cellForRowAtIndexPath( NSIndexPath(forRow: i, inSection: 0))
 				sw = cell.viewWithTag(1) as! NSSegmentedControl
 				sw.selectedSegment = 1
 				
 				break
 			case 2:	// Recording
-				var i = nebdev.getCmdIdx(NEB_CTRL_SUBSYS_STORAGE,  cmdId: FlashPlaybackStartStop)
+				var i = getCmdIdx(NEB_CTRL_SUBSYS_STORAGE,  cmdId: FlashPlaybackStartStop)
 				var cell = cmdView.viewAtColumn(0, row: i, makeIfNecessary: false)! as NSView // cellForRowAtIndexPath( NSIndexPath(forRow: i, inSection: 0))
 				var sw = cell.viewWithTag(1) as! NSSegmentedControl
 				sw.selectedSegment = 0
-				i = nebdev.getCmdIdx(NEB_CTRL_SUBSYS_STORAGE,  cmdId: FlashRecordStartStop)
+				i = getCmdIdx(NEB_CTRL_SUBSYS_STORAGE,  cmdId: FlashRecordStartStop)
 				cell = cmdView.viewAtColumn(0, row:i, makeIfNecessary: false)! as NSView // cellForRowAtIndexPath( NSIndexPath(forRow: i, inSection: 0))
 				sw = cell.viewWithTag(1) as! NSSegmentedControl
 				sw.selectedSegment = 1
 				break
 			default:
-				var i = nebdev.getCmdIdx(NEB_CTRL_SUBSYS_STORAGE,  cmdId: FlashPlaybackStartStop)
+				var i = getCmdIdx(NEB_CTRL_SUBSYS_STORAGE,  cmdId: FlashPlaybackStartStop)
 				var cell = cmdView.viewAtColumn(0, row: i, makeIfNecessary: false)! as NSView // cellForRowAtIndexPath( NSIndexPath(forRow: i, inSection: 0))
 				var sw = cell.viewWithTag(1) as! NSSegmentedControl
 				sw.selectedSegment = 0
-				i = nebdev.getCmdIdx(NEB_CTRL_SUBSYS_STORAGE,  cmdId: FlashRecordStartStop)
+				i = getCmdIdx(NEB_CTRL_SUBSYS_STORAGE,  cmdId: FlashRecordStartStop)
 				cell = cmdView.viewAtColumn(0, row:i, makeIfNecessary: false)! as NSView // cellForRowAtIndexPath( NSIndexPath(forRow: i, inSection: 0))
 				sw = cell.viewWithTag(1) as! NSSegmentedControl
 				sw.selectedSegment = 0
 				break
 			}
-			var i = nebdev.getCmdIdx(NEB_CTRL_SUBSYS_MOTION_ENG,  cmdId: Quaternion)
+			var i = getCmdIdx(NEB_CTRL_SUBSYS_MOTION_ENG,  cmdId: Quaternion)
 			var cell = cmdView.viewAtColumn(0, row: i, makeIfNecessary: false)! as NSView // cellForRowAtIndexPath( NSIndexPath(forRow: i, inSection: 0))
 			var sw = cell.viewWithTag(1) as! NSSegmentedControl
 			sw.selectedSegment = Int(data[4] & 8) >> 3
 			
-			i = nebdev.getCmdIdx(NEB_CTRL_SUBSYS_MOTION_ENG,  cmdId: MAG_Data)
+			i = getCmdIdx(NEB_CTRL_SUBSYS_MOTION_ENG,  cmdId: MAG_Data)
 			cell = cmdView.viewAtColumn(0, row:i, makeIfNecessary: false)! as NSView // cellForRowAtIndexPath( NSIndexPath(forRow: i, inSection: 0))
 			sw = cell.viewWithTag(1) as! NSSegmentedControl
 			sw.selectedSegment = 1
@@ -841,7 +872,7 @@ class ViewController: NSViewController, NSTableViewDataSource, NSTableViewDelega
 			sw = cell!.viewWithTag(2) as! UISegmentedControl
 			sw.selectedSegmentIndex = Int(data[4] & 0x4) >> 2*/
 			//print("\(d)")
-			nebdev.SendCmdGetFirmwareVersions()
+			nebdev.getFirmwareVersion()
 			
 			break
 		case DEBUG_CMD_GET_FW_VERSION:
@@ -855,7 +886,7 @@ class ViewController: NSViewController, NSTableViewDataSource, NSTableViewDelega
 			                        data[10], data[11], data[12], data[13], data[14], data[15])
 			break
 		case DEBUG_CMD_GET_DATAPORT:
-			let i = nebdev.getCmdIdx(NEB_CTRL_SUBSYS_DEBUG,  cmdId: DEBUG_CMD_SET_DATAPORT)
+			let i = getCmdIdx(NEB_CTRL_SUBSYS_DEBUG,  cmdId: DEBUG_CMD_SET_DATAPORT)
 			var cell = cmdView.viewAtColumn(0, row: i, makeIfNecessary: false)! as NSView // cellForRowAtIndexPath( NSIndexPath(forRow: i, inSection: 0))
 			var control = cell.viewWithTag(1) as! NSSegmentedControl
 			
@@ -895,7 +926,7 @@ class ViewController: NSViewController, NSTableViewDataSource, NSTableViewDelega
 			else {
 				flashLabel.stringValue = String(format: "End session %d, %u", session, nebdev.getPacketCount())
 				
-				let i = nebdev.getCmdIdx(NEB_CTRL_SUBSYS_STORAGE,  cmdId: FlashPlaybackStartStop)
+				let i = getCmdIdx(NEB_CTRL_SUBSYS_STORAGE,  cmdId: FlashPlaybackStartStop)
 				var cell = cmdView.viewAtColumn(0, row: i, makeIfNecessary: false)! as NSView // cellForRowAtIndexPath( NSIndexPath(forRow: i, inSection: 0))
 				let sw = cell.viewWithTag(1) as! NSSegmentedControl
 				
@@ -923,7 +954,7 @@ class ViewController: NSViewController, NSTableViewDataSource, NSTableViewDelega
 	func didReceiveLedData(type : Int32, data : UnsafePointer<UInt8>, errFlag : Bool) {
 		switch (type) {
 		case LED_CMD_GET_VALUE:
-			let i = nebdev.getCmdIdx(NEB_CTRL_SUBSYS_LED,  cmdId: LED_CMD_SET_VALUE)
+			let i = getCmdIdx(NEB_CTRL_SUBSYS_LED,  cmdId: LED_CMD_SET_VALUE)
 			var cell = cmdView.viewAtColumn(0, row: i, makeIfNecessary: false)
 			var sw = cell!.viewWithTag(1) as! NSSegmentedControl
 			if (data[0] != 0) {

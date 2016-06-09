@@ -118,7 +118,7 @@ class ViewController: NSViewController, NSTableViewDataSource, NSTableViewDelega
 	
 	@IBAction func buttonTrajectRecord(button: NSButton)
 	{
-		device.SendCmdTrajectoryRecord(true)
+		device.recordTrajectory(true)
 	}
 	
 	// MARK: - Table View
@@ -288,8 +288,8 @@ class ViewController: NSViewController, NSTableViewDataSource, NSTableViewDelega
 	
 	func didConnectNeblina() {
 		//device.SittingStanding(true)
-		device.SendCmdQuaternionStream(true)
-		device.SendCmdTrajectoryInfo(true)
+		device.streamQuaternion(true)
+		device.streamTrajectoryInfo(true)
 	}
 	func didReceiveRSSI(rssi : NSNumber) {
 		

@@ -232,12 +232,11 @@ class ViewController: NSViewController, NSTableViewDataSource, NSTableViewDelega
 	// MARK : Neblina
 	
 	func didConnectNeblina() {
-		device.SendCmdEulerAngleStream(false)
-		device.SendCmdQuaternionStream(false)
-		device.SendCmdSittingStanding(false)	// Reset counts
-		device.SendCmdPedometerStream(false)
-		device.SendCmdSittingStanding(true)
-		device.SendCmdPedometerStream(true)
+		device.streamDisableAll()
+		device.streamSittingStanding(false)	// Reset counts
+		device.streamPedometer(false)
+		device.streamSittingStanding(true)
+		device.streamPedometer(true)
 	}
 	func didReceiveRSSI(rssi : NSNumber) {
 		

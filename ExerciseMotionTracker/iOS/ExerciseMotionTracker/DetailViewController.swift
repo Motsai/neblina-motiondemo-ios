@@ -104,14 +104,14 @@ class DetailViewController: UIViewController, CBPeripheralDelegate, NeblinaDeleg
 
 	@IBAction func buttonTrajectRecord(button: UIButton)
 	{
-		nebdev.SendCmdTrajectoryRecord(true)
+		nebdev.recordTrajectory(true)
 	}
 	
 	// MARK : Neblina
 	func didConnectNeblina() {
-		nebdev.SendCmdEulerAngleStream(false)
-		nebdev.SendCmdQuaternionStream(true)
-		nebdev.SendCmdTrajectoryInfo(true)
+		nebdev.streamEulerAngle(false)
+		nebdev.streamQuaternion(true)
+		nebdev.streamTrajectoryInfo(true)
 	}
 	
 	func didReceiveRSSI(rssi : NSNumber) {
