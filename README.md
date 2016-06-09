@@ -47,10 +47,10 @@ In order to get swift compiler to compile with C defined constant, we need to sp
   
 Beside the bridging head, the following files are also needed to be added to the project. They are located in scr folder from the root of this repo.    
 
-*FusionEngineDataTypes.h
-*Neblina-Bridging-Header.h
-*neblina.h
-*Neblina.swift
-*ProMotion.h  
+* FusionEngineDataTypes.h
+* Neblina-Bridging-Header.h
+* neblina.h
+* Neblina.swift
+* ProMotion.h  
   
   
