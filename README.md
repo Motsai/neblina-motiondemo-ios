@@ -34,10 +34,14 @@ iPhone Screen Shot | iPad Screen Shot
 ---|---
 ![Imgur](http://i.imgur.com/sde4YFf.jpg)|![Imgur](http://i.imgur.com/Mf73hrb.jpg)
 ---
-  
-### Making your own App with Neblina
+    
+### Making your own App with Neblina  
 
-The project NebTurorial1 is the starting point to get a feel of how to connect to the Neblina via Bluetooth and retreive data. 
+The project NebTurorial1 is the starting point to get a feel of how to connect to the Neblina via Bluetooth and retreive data.   
+
+#### Need to know when creating new project  
+
+In order to get swift compiler to compile with C defined constant, we need to specify a bridging header.  This is done going into Build Settings and set the Object-C Bridging Header with "Neblina-Bridging-Header.h". This Neblina-Bridging-Header.h header file located in scr folder of the root of this repository.  See Xcode screen shot bellow for more details.
 
 ![Imgur](http://i.imgur.com/CrLCeoW.png)
 
