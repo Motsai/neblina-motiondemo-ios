@@ -33,8 +33,8 @@ class ViewController: UIViewController, CBCentralManagerDelegate, NeblinaDelegat
 		// Dispose of any resources that can be recreated.
 	}
 
-	@IBAction func quaternionStream(sender:UISwitch) {
-		nebdev.streamQuaternion(sender.on);
+	@IBAction func actionButton(sender:UISwitch) {
+		nebdev.streamEulerAngle(sender.on)
 	}
 	
 	// MARK: - Table View
@@ -173,7 +173,7 @@ class ViewController: UIViewController, CBCentralManagerDelegate, NeblinaDelegat
 	func didReceiveFusionData(type : Int32, data : Fusion_DataPacket_t, errFlag : Bool) {
 		
 		switch (type) {
-		case Quaternion:
+/*		case Quaternion:
 			
 			//
 			// Process Quaternion
@@ -188,6 +188,20 @@ class ViewController: UIViewController, CBCentralManagerDelegate, NeblinaDelegat
 			let wq = Float(w) / 32768.0
 			label.text = String("Quat - x:\(xq), y:\(yq), z:\(zq), w:\(wq)")
 			
+			break*/
+		case EulerAngle:
+			//
+			// Process Euler Angle
+			//
+				
+			let x = (Int16(data.data.0) & 0xff) | (Int16(data.data.1) << 8)
+			let xrot = Float(x) / 10.0
+			let y = (Int16(data.data.2) & 0xff) | (Int16(data.data.3) << 8)
+			let yrot = Float(y) / 10.0
+			let z = (Int16(data.data.4) & 0xff) | (Int16(data.data.5) << 8)
+			let zrot = Float(z) / 10.0
+				
+			label.text = String("Euler - Yaw:\(xrot), Pitch:\(yrot), Roll:\(zrot)")
 			break
 		default:
 			break
