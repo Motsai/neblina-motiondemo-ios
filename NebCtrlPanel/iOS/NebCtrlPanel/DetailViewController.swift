@@ -11,6 +11,9 @@ import CoreBluetooth
 import QuartzCore
 import SceneKit
 
+let MotionDataStream = Int32(1)
+let Heading = Int32(2)
+
 struct NebCmdItem {
 	let SubSysId : Int32
 	let	CmdId : Int32
@@ -21,18 +24,20 @@ struct NebCmdItem {
 
 let NebCmdList = [NebCmdItem] (arrayLiteral:
 	NebCmdItem(SubSysId: NEB_CTRL_SUBSYS_DEBUG, CmdId: DEBUG_CMD_SET_DATAPORT, Name: "BLE Data Port", Actuator : 1, Text:String(_sel: nil)),
-                               NebCmdItem(SubSysId: NEB_CTRL_SUBSYS_DEBUG, CmdId: DEBUG_CMD_SET_DATAPORT, Name: "UART Data Port", Actuator : 1, Text:String(_sel: nil)),
-                               NebCmdItem(SubSysId: NEB_CTRL_SUBSYS_MOTION_ENG, CmdId: Quaternion, Name: "Quaternion Stream", Actuator : 1, Text:String(_sel: nil)),
-                               NebCmdItem(SubSysId: NEB_CTRL_SUBSYS_MOTION_ENG, CmdId: MAG_Data, Name: "Mag Stream", Actuator : 1, Text:String(_sel: nil)),
-                               NebCmdItem(SubSysId: NEB_CTRL_SUBSYS_MOTION_ENG, CmdId: LockHeadingRef, Name: "Lock Heading Ref.", Actuator : 1, Text:String(_sel: nil)),
-                               NebCmdItem(SubSysId: NEB_CTRL_SUBSYS_STORAGE, CmdId: FlashEraseAll, Name: "Flash Erase All", Actuator : 1, Text:String(_sel: nil)),
-                               NebCmdItem(SubSysId: NEB_CTRL_SUBSYS_STORAGE, CmdId: FlashRecordStartStop, Name: "Flash Record", Actuator : 1, Text:String(_sel: nil)),
-                               NebCmdItem(SubSysId: NEB_CTRL_SUBSYS_STORAGE, CmdId: FlashPlaybackStartStop, Name: "Flash Playback", Actuator : 1, Text:String(_sel: nil)),
-                               NebCmdItem(SubSysId: NEB_CTRL_SUBSYS_LED, CmdId: LED_CMD_SET_VALUE, Name: "Set LED0", Actuator : 1, Text:String(_sel: nil)),
-                               NebCmdItem(SubSysId: NEB_CTRL_SUBSYS_LED, CmdId: LED_CMD_SET_VALUE, Name: "Set LED1", Actuator : 1, Text:String(_sel: nil)),
-                               NebCmdItem(SubSysId: NEB_CTRL_SUBSYS_EEPROM, CmdId: EEPROM_Read, Name: "EEPROM Read", Actuator : 2, Text:String("Read")),
-                               NebCmdItem(SubSysId: NEB_CTRL_SUBSYS_POWERMGMT, CmdId: POWERMGMT_CMD_SET_CHARGE_CURRENT, Name: "Charge Current in mA", Actuator : 3, Text:String(_sel: nil)),
-                               NebCmdItem(SubSysId: 0xf, CmdId: 1, Name: "Heading", Actuator : 1, Text:String(_sel: nil))
+    NebCmdItem(SubSysId: NEB_CTRL_SUBSYS_DEBUG, CmdId: DEBUG_CMD_SET_DATAPORT, Name: "UART Data Port", Actuator : 1, Text:String(_sel: nil)),
+    NebCmdItem(SubSysId: NEB_CTRL_SUBSYS_MOTION_ENG, CmdId: SetFusionType, Name: "Fusion 9 axis", Actuator : 1, Text:String(_sel: nil)),
+    NebCmdItem(SubSysId: NEB_CTRL_SUBSYS_MOTION_ENG, CmdId: Quaternion, Name: "Quaternion Stream", Actuator : 1, Text:String(_sel: nil)),
+    NebCmdItem(SubSysId: NEB_CTRL_SUBSYS_MOTION_ENG, CmdId: MAG_Data, Name: "Mag Stream", Actuator : 1, Text:String(_sel: nil)),
+	NebCmdItem(SubSysId: NEB_CTRL_SUBSYS_MOTION_ENG, CmdId: LockHeadingRef, Name: "Lock Heading Ref.", Actuator : 1, Text:String(_sel: nil)),
+	NebCmdItem(SubSysId: NEB_CTRL_SUBSYS_STORAGE, CmdId: FlashEraseAll, Name: "Flash Erase All", Actuator : 1, Text:String(_sel: nil)),
+	NebCmdItem(SubSysId: NEB_CTRL_SUBSYS_STORAGE, CmdId: FlashRecordStartStop, Name: "Flash Record", Actuator : 1, Text:String(_sel: nil)),
+	NebCmdItem(SubSysId: NEB_CTRL_SUBSYS_STORAGE, CmdId: FlashPlaybackStartStop, Name: "Flash Playback", Actuator : 1, Text:String(_sel: nil)),
+	NebCmdItem(SubSysId: NEB_CTRL_SUBSYS_LED, CmdId: LED_CMD_SET_VALUE, Name: "Set LED0", Actuator : 1, Text:String(_sel: nil)),
+	NebCmdItem(SubSysId: NEB_CTRL_SUBSYS_LED, CmdId: LED_CMD_SET_VALUE, Name: "Set LED1", Actuator : 1, Text:String(_sel: nil)),
+	NebCmdItem(SubSysId: NEB_CTRL_SUBSYS_EEPROM, CmdId: EEPROM_Read, Name: "EEPROM Read", Actuator : 2, Text:String("Read")),
+	NebCmdItem(SubSysId: NEB_CTRL_SUBSYS_POWERMGMT, CmdId: POWERMGMT_CMD_SET_CHARGE_CURRENT, Name: "Charge Current in mA", Actuator : 3, Text:String(_sel: nil)),
+	NebCmdItem(SubSysId: 0xf, CmdId: MotionDataStream, Name: "Motion data stream", Actuator : 1, Text:String(_sel: nil)),
+	NebCmdItem(SubSysId: 0xf, CmdId: Heading, Name: "Heading", Actuator : 1, Text:String(_sel: nil))
 )
 
 
@@ -169,7 +174,7 @@ class DetailViewController: UIViewController, UITextFieldDelegate, CBPeripheralD
 		
 	}
 	
-	func textFieldShouldReturn(textField: UITextField!) -> Bool // called when 'return' key pressed. return NO to ignore.
+	func textFieldShouldReturn(textField: UITextField) -> Bool // called when 'return' key pressed. return NO to ignore.
 	{
 		textField.resignFirstResponder()
 
@@ -318,6 +323,9 @@ class DetailViewController: UIViewController, UITextFieldDelegate, CBPeripheralD
 						case MotionState:
 							nebdev.streamMotionState(sender.selectedSegmentIndex == 1)
 							break
+						case SetFusionType:
+							nebdev.setFusionType(UInt8(sender.selectedSegmentIndex))
+							break
 						case IMU_Data:
 							nebdev.streamIMU(sender.selectedSegmentIndex == 1)
 							break
@@ -364,7 +372,7 @@ class DetailViewController: UIViewController, UITextFieldDelegate, CBPeripheralD
 							break
 					}
 				case NEB_CTRL_SUBSYS_LED:
-					var i = getCmdIdx(NEB_CTRL_SUBSYS_LED,  cmdId: LED_CMD_SET_VALUE)
+					let i = getCmdIdx(NEB_CTRL_SUBSYS_LED,  cmdId: LED_CMD_SET_VALUE)
 					nebdev.setLed(UInt8(row - i), Value: UInt8(sender.selectedSegmentIndex))
 					break
 				case NEB_CTRL_SUBSYS_STORAGE:
@@ -406,7 +414,7 @@ class DetailViewController: UIViewController, UITextFieldDelegate, CBPeripheralD
 					break
 				case 0xf:
 					switch (NebCmdList[row].CmdId) {
-						case 1:
+						case Heading:
 							nebdev.streamQuaternion(false)
 							nebdev.streamEulerAngle(true)
 							heading = sender.selectedSegmentIndex == 1
@@ -415,6 +423,50 @@ class DetailViewController: UIViewController, UITextFieldDelegate, CBPeripheralD
 							if (cell != nil) {
 								let control = cell!.viewWithTag(1) as! UISegmentedControl
 								control.selectedSegmentIndex = 0
+							}
+							break
+						case MotionDataStream:
+							nebdev.streamQuaternion(true)
+							var i = getCmdIdx(NEB_CTRL_SUBSYS_MOTION_ENG,  cmdId: Quaternion)
+							var cell = cmdView.cellForRowAtIndexPath( NSIndexPath(forRow: i, inSection: 0))
+							if (cell != nil) {
+								let control = cell!.viewWithTag(1) as! UISegmentedControl
+								control.selectedSegmentIndex = 1
+							}
+							nebdev.streamIMU(true)
+							i = getCmdIdx(NEB_CTRL_SUBSYS_MOTION_ENG,  cmdId: IMU_Data)
+							cell = cmdView.cellForRowAtIndexPath( NSIndexPath(forRow: i, inSection: 0))
+							if (cell != nil) {
+								let control = cell!.viewWithTag(1) as! UISegmentedControl
+								control.selectedSegmentIndex = 1
+							}
+							nebdev.streamMAG(true)
+							i = getCmdIdx(NEB_CTRL_SUBSYS_MOTION_ENG,  cmdId: MAG_Data)
+							cell = cmdView.cellForRowAtIndexPath( NSIndexPath(forRow: i, inSection: 0))
+							if (cell != nil) {
+								let control = cell!.viewWithTag(1) as! UISegmentedControl
+								control.selectedSegmentIndex = 1
+							}
+							nebdev.streamExternalForce(true)
+							i = getCmdIdx(NEB_CTRL_SUBSYS_MOTION_ENG,  cmdId: ExtForce)
+							cell = cmdView.cellForRowAtIndexPath( NSIndexPath(forRow: i, inSection: 0))
+							if (cell != nil) {
+								let control = cell!.viewWithTag(1) as! UISegmentedControl
+								control.selectedSegmentIndex = 1
+							}
+							nebdev.streamPedometer(true)
+							i = getCmdIdx(NEB_CTRL_SUBSYS_MOTION_ENG,  cmdId: Pedometer)
+							cell = cmdView.cellForRowAtIndexPath( NSIndexPath(forRow: i, inSection: 0))
+							if (cell != nil) {
+								let control = cell!.viewWithTag(1) as! UISegmentedControl
+								control.selectedSegmentIndex = 1
+							}
+							nebdev.streamRotationInfo(true)
+							i = getCmdIdx(NEB_CTRL_SUBSYS_MOTION_ENG,  cmdId: RotationInfo)
+							cell = cmdView.cellForRowAtIndexPath( NSIndexPath(forRow: i, inSection: 0))
+							if (cell != nil) {
+								let control = cell!.viewWithTag(1) as! UISegmentedControl
+								control.selectedSegmentIndex = 1
 							}
 							break
 						default:
@@ -426,13 +478,13 @@ class DetailViewController: UIViewController, UITextFieldDelegate, CBPeripheralD
 			}
 
 		}
-		else {
+/*		else {
 			switch (row - NebCmdList.count) {
 			case 0:
 				nebdev.streamQuaternion(false)
 				nebdev.streamEulerAngle(true)
 				heading = sender.selectedSegmentIndex == 1
-				var i = getCmdIdx(NEB_CTRL_SUBSYS_MOTION_ENG,  cmdId: Quaternion)
+				let i = getCmdIdx(NEB_CTRL_SUBSYS_MOTION_ENG,  cmdId: Quaternion)
 				let cell = cmdView.cellForRowAtIndexPath( NSIndexPath(forRow: i, inSection: 0))
 				if (cell != nil) {
 					let sw = cell!.viewWithTag(1) as! UISegmentedControl
@@ -442,7 +494,7 @@ class DetailViewController: UIViewController, UITextFieldDelegate, CBPeripheralD
 			default:
 				break
 			}
-		}
+		}*/
 	}
 	
 	//func renderer(renderer: SCNSceneRenderer,
@@ -623,13 +675,13 @@ class DetailViewController: UIViewController, UITextFieldDelegate, CBPeripheralD
 						var i = getCmdIdx(NEB_CTRL_SUBSYS_STORAGE,  cmdId: FlashRecordStartStop)
 						var cell = cmdView.cellForRowAtIndexPath( NSIndexPath(forRow: i, inSection: 0))
 						if (cell != nil) {
-							var sw = cell!.viewWithTag(1) as! UISegmentedControl
+							let sw = cell!.viewWithTag(1) as! UISegmentedControl
 							sw.selectedSegmentIndex = 0
 						}
 						i = getCmdIdx(NEB_CTRL_SUBSYS_STORAGE,  cmdId: FlashPlaybackStartStop)
 						cell = cmdView.cellForRowAtIndexPath( NSIndexPath(forRow: i, inSection: 0))
 						if (cell != nil) {
-							var sw = cell!.viewWithTag(1) as! UISegmentedControl
+							let sw = cell!.viewWithTag(1) as! UISegmentedControl
 							sw.selectedSegmentIndex = 1
 						}
 						break
@@ -637,13 +689,13 @@ class DetailViewController: UIViewController, UITextFieldDelegate, CBPeripheralD
 						var i = getCmdIdx(NEB_CTRL_SUBSYS_STORAGE,  cmdId: FlashPlaybackStartStop)
 						var cell = cmdView.cellForRowAtIndexPath( NSIndexPath(forRow: i, inSection: 0))
 						if (cell != nil) {
-							var sw = cell!.viewWithTag(1) as! UISegmentedControl
+							let sw = cell!.viewWithTag(1) as! UISegmentedControl
 							sw.selectedSegmentIndex = 0
 						}
 						i = getCmdIdx(NEB_CTRL_SUBSYS_STORAGE,  cmdId: FlashRecordStartStop)
 						cell = cmdView.cellForRowAtIndexPath( NSIndexPath(forRow: i, inSection: 0))
 						if (cell != nil) {
-							var sw = cell!.viewWithTag(1) as! UISegmentedControl
+							let sw = cell!.viewWithTag(1) as! UISegmentedControl
 							sw.selectedSegmentIndex = 1
 						}
 						break
@@ -651,13 +703,13 @@ class DetailViewController: UIViewController, UITextFieldDelegate, CBPeripheralD
 						var i = getCmdIdx(NEB_CTRL_SUBSYS_STORAGE,  cmdId: FlashPlaybackStartStop)
 						var cell = cmdView.cellForRowAtIndexPath( NSIndexPath(forRow: i, inSection: 0))
 						if (cell != nil) {
-							var sw = cell!.viewWithTag(1) as! UISegmentedControl
+							let sw = cell!.viewWithTag(1) as! UISegmentedControl
 							sw.selectedSegmentIndex = 0
 						}
 						i = getCmdIdx(NEB_CTRL_SUBSYS_STORAGE,  cmdId: FlashRecordStartStop)
 						cell = cmdView.cellForRowAtIndexPath( NSIndexPath(forRow: i, inSection: 0))
 						if (cell != nil) {
-							var sw = cell!.viewWithTag(1) as! UISegmentedControl
+							let sw = cell!.viewWithTag(1) as! UISegmentedControl
 							sw.selectedSegmentIndex = 0
 						}
 						break
@@ -665,16 +717,17 @@ class DetailViewController: UIViewController, UITextFieldDelegate, CBPeripheralD
 				var i = getCmdIdx(NEB_CTRL_SUBSYS_MOTION_ENG,  cmdId: Quaternion)
 				var cell = cmdView.cellForRowAtIndexPath( NSIndexPath(forRow: i, inSection: 0))
 				if (cell != nil) {
-					var sw = cell!.viewWithTag(1) as! UISegmentedControl
+					let sw = cell!.viewWithTag(1) as! UISegmentedControl
 					sw.selectedSegmentIndex = Int(data[4] & 8) >> 3
 				}
 				i = getCmdIdx(NEB_CTRL_SUBSYS_MOTION_ENG,  cmdId: MAG_Data)
 				cell = cmdView.cellForRowAtIndexPath( NSIndexPath(forRow: i, inSection: 0))
 				if (cell != nil) {
-					var sw = cell!.viewWithTag(1) as! UISegmentedControl
+					let sw = cell!.viewWithTag(1) as! UISegmentedControl
 					sw.selectedSegmentIndex = Int(data[4] & 0x80) >> 7
 				}
-//				i = nebdev.getCmdIdx(NEB_CTRL_SUBSYS_MOTION_ENG,  cmdId: EulerAngle)
+
+				//				i = nebdev.getCmdIdx(NEB_CTRL_SUBSYS_MOTION_ENG,  cmdId: EulerAngle)
 /*				cell = cmdView.cellForRowAtIndexPath( NSIndexPath(forRow: NebCmdList.count, inSection: 0))
 				sw = cell!.viewWithTag(2) as! UISegmentedControl
 				sw.selectedSegmentIndex = Int(data[4] & 0x4) >> 2*/
@@ -762,7 +815,7 @@ class DetailViewController: UIViewController, UITextFieldDelegate, CBPeripheralD
 				let i = getCmdIdx(NEB_CTRL_SUBSYS_LED,  cmdId: LED_CMD_SET_VALUE)
 				var cell = cmdView.cellForRowAtIndexPath( NSIndexPath(forRow: i, inSection: 0))
 				if (cell != nil) {
-					var sw = cell!.viewWithTag(1) as! UISegmentedControl
+					let sw = cell!.viewWithTag(1) as! UISegmentedControl
 					if (data[0] != 0) {
 						sw.selectedSegmentIndex = 1
 					}

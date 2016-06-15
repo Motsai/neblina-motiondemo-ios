@@ -416,6 +416,24 @@ class Neblina : NSObject, CBPeripheralDelegate {
 		device.writeValue(NSData(bytes: UnsafeMutablePointer<Void>(pkbuf), length: 20), forCharacteristic: ctrlChar, type: CBCharacteristicWriteType.WithoutResponse)
 	}
 	
+	func setFusionType(Mode:UInt8) {
+		if (isDeviceReady() == false) {
+			return
+		}
+		
+		var pkbuf = [UInt8](count:20, repeatedValue:0)
+		
+		pkbuf[0] = UInt8((NEB_CTRL_PKTYPE_CMD << 5) | NEB_CTRL_SUBSYS_MOTION_ENG) //0x41
+		pkbuf[1] = UInt8(sizeof(Fusion_DataPacket_t))
+		pkbuf[2] = 0
+		pkbuf[3] = UInt8(SetFusionType)	// Cmd
+		
+		// Data
+		pkbuf[8] = Mode
+		
+		device.writeValue(NSData(bytes: UnsafeMutablePointer<Void>(pkbuf), length: 20), forCharacteristic: ctrlChar, type: CBCharacteristicWriteType.WithoutResponse)
+	}
+	
 	func setLockHeadingReference(Enable:Bool) {
 		if (isDeviceReady() == false) {
 			return
