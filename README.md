@@ -37,7 +37,7 @@ Open the NebCtrlPanel project (iOS or OSX), compile and execute the App.  The in
 
 iPhone Screen Shot | OSX Screen Shot
 ---|---
-![Imgur](http://i.imgur.com/yOCMsVQ.jpg)|![NebCtrlPanel OSX](http://i.imgur.com/RnfRS5b.png)
+![iPhone Screen Shot](docs/images/IMG_2887_Overlay.jpg)|![NebCtrlPanel OSX](docs/images/OSX_ScreenShot.png)
 
 ---  
 
@@ -52,13 +52,15 @@ iPhone Screen Shot | iPad Screen Shot
 
 The project NebTutorial1 is the starting point to get a feel of how to connect to the Neblina via Bluetooth and retreive data.  It is a simple iPhone App that shows a TableView with a list of detected Neblina device, a button to enable Euler Angle Stream and a TextField to display the Euler data.
 
-![Tutorial1](docs/images/iOS_Tutorial1.jpg)
+<p align="center">
+<img src="docs/images/iOS_Tutorial1.jpg" alt="Tutorial1 Screen Shot" style="width: 200px;" />
+</p>
 
 #### Need to know when creating new project  
 
 In order to get swift compiler to compile with C defined constant, we need to specify a bridging header.  This is done going into Build Settings and set the Object-C Bridging Header with "Neblina-Bridging-Header.h". This Neblina-Bridging-Header.h header file located in src folder of the root of this repository.  See Xcode screen shot bellow for more details.
 
-![Imgur](http://i.imgur.com/CrLCeoW.png)  
+![XCode Screen Shot](docs/images/XCode_ScreenShot.png)  
 
 Beside the bridging head, the following files are also needed to be added to the project. They are located in src folder from the root of this repo.    
 
