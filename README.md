@@ -2,10 +2,16 @@
 ![ProMotion Board](http://i.imgur.com/FvKbWka.jpg)  
 
 
-Neblina 9 axis sensor fusion iOS & OSX demo applciations
+# Neblina&trade; ProMotion Development Kit Python Scripts
 =========  
 
-This repository contains example code to communicate with the Motsai Neblina via Bluetooth Smart (Low Energy).  The examples are written in Swift for both iOS & OSX
+## Neblina&trade;
+The Neblina&trade; module is a low-power self-contained [AHRS](https://en.wikipedia.org/wiki/Attitude_and_heading_reference_system), [VRU](https://en.wikipedia.org/wiki/Inertial_measurement_unit) and [IMU](https://en.wikipedia.org/wiki/Inertial_measurement_unit) with [Bluetooth&reg; SMART](https://en.wikipedia.org/wiki/Bluetooth_low_energy) connectivity developed by Motsai. The miniature board built with the latest [HDI PCB](https://en.wikipedia.org/wiki/Microvia) technology, features a high-performance patent-pending sensor fusion algorithm on-board, that makes it perfect for [wearable technology devices](https://en.wikipedia.org/wiki/Wearable_technology) in applications such as [biomechanical analysis](https://en.wikipedia.org/wiki/Biomechanics), [sports performance analytics](https://en.wikipedia.org/wiki/Sports_biomechanics), remote [physical therapy](https://en.wikipedia.org/wiki/Physical_therapy) monitoring, [quantified self](https://en.wikipedia.org/wiki/Quantified_Self) , [health and fitness tracking](https://en.wikipedia.org/wiki/Activity_tracker), among others.
+
+## ProMotion Development Kit
+The [ProMotion Development Kit](http://promotion.motsai.com/) serves as a reference design for Neblina integration; adding storage, micro-USB port, battery, and I/O expansion to the Neblina. A NOR flash recorder and an EEPROM module are also included on the ProMotion board. The development kit with the extensive software support allows system integrators and evaluators to start development within minutes.
+
+This repository is part of the development kit that provides a Swift interface to interact with and simulate the behaviour of Neblina.
 
 
 Quick Start
@@ -56,5 +62,5 @@ Beside the bridging head, the following files are also needed to be added to the
   
 #### API documentations
   
-http://dox.motsai.com
+http://nebdox.motsai.com
 
