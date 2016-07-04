@@ -14,9 +14,10 @@ Quick Start
 ### Prerequisite
 
 * Have on hand a Neblina module or Promotion Kit
-* An iPad or iPhone or a MAC with Bluetooth LE capability.
-* Follow the hardware quickstart guide to makesure that the Neblina module or Promotion kit is powered on and functionnal.
+* An iPad or iPhone and a Mac computer with Bluetooth LE capability.
+* Follow the hardware quickstart guide to make sure that the Neblina module or Promotion kit is powered on and functionnal.
 * Clone or download this repo.
+* XCode 7 is required to compile
 
 ### Functionnal check  
   
@@ -55,5 +56,5 @@ Beside the bridging head, the following files are also needed to be added to the
   
 #### API documentations
   
-http://documentation.motsai.com
+http://dox.motsai.com
 
