@@ -30,7 +30,7 @@ This repository is part of the development kit that provides a Swift interface t
 Download or Clone this repo using the command
 
 ```
-$ git clone https://github.com/Motsai/neblina-python.git
+$ git clone https://github.com/Motsai/neblina-motiondemo-swift.git
 ``` 
  
 Open the NebCtrlPanel project (iOS or OSX), compile and execute the App.  The initial screen will list all available Neblina devices.  Select one of the Neblina that shows up.  
