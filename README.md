@@ -50,7 +50,8 @@ iPhone Screen Shot | iPad Screen Shot
     
 ### Making your own App with Neblina  
 
-The project NebTurorial1 is the starting point to get a feel of how to connect to the Neblina via Bluetooth and retreive data.   
+The project NebTutorial1 is the starting point to get a feel of how to connect to the Neblina via Bluetooth and retreive data.  It is a simple iPhone App that shows a TableView with a list of detected Neblina device, a button to enable Euler Angle Stream and a TextField to display the Euler data.
+
 
 #### Need to know when creating new project  
 
