@@ -16,20 +16,24 @@ The [ProMotion Development Kit](http://promotion.motsai.com/) serves as a refere
 This repository is part of the development kit that provides a Swift interface to interact with and simulate the behaviour of Neblina.
 
 
-Quick Start
------------
 
 ### Prerequisite
 
 * Have on hand a Neblina module or Promotion Kit
 * An iPad or iPhone and a Mac computer with Bluetooth LE capability.
-* Follow the hardware quickstart guide to make sure that the Neblina module or Promotion kit is powered on and functionnal.
+* Follow the hardware [Quick Start guide](http://nebdox.motsai.com/ProMotion_DevKit/Getting_Started) to make sure that the Neblina module or Promotion kit is powered on and functionnal.
 * Clone or download this repo.
 * XCode 7 is required to compile
 
 ### Functionnal check  
-  
-Open the NebCtrlPanel project (iOS or OSX), compile and execute the App.  The initial screen will list all available Neblina devices.  Select one of the Neblina that showed up.  
+
+Download or Clone this repo using the command
+
+```
+$ git clone https://github.com/Motsai/neblina-python.git
+``` 
+ 
+Open the NebCtrlPanel project (iOS or OSX), compile and execute the App.  The initial screen will list all available Neblina devices.  Select one of the Neblina that shows up.  
   
 iPhone Screen Shot | OSX Screen Shot
 ---|---
