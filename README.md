@@ -2,7 +2,7 @@
 ![ProMotion Board](http://i.imgur.com/FvKbWka.jpg)  
 
 
-# Neblina&trade; ProMotion Development Kit Python Scripts
+# Neblina&trade; ProMotion Development Kit iOS/OSX Swift
 =========  
 
 ## Neblina&trade;
