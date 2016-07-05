@@ -45,7 +45,7 @@ The iPhone & iPad will switch to the command screen. The "BLE Data Port" switch 
 
 iPhone Screen Shot | iPad Screen Shot
 ---|---
-![iPhone Screen Shot](docs/images/IMG_2888.jpg)|![iPad Screen Shot](docs/images/IMG_0003.jpg)
+![iPhone Screen Shot](docs/images/IMG_2888.jpg)|![iPad Screen Shot](docs/images/iPad_ScreenShot.jpg)
 ---  
 
 ### Making your own App with Neblina  
