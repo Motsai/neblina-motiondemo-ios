@@ -29,12 +29,18 @@ class Neblina : NSObject, CBPeripheralDelegate {
 	var dataRate : Float = 0.0
 	var timeBaseInfo = mach_timebase_info(numer: 0, denom:0)
 	
+	init(devid : UInt64, peripheral : CBPeripheral) {
+		super.init()
+		device = peripheral
+		id = devid
+		device.delegate = self
+	}
 	func setPeripheral(devid : UInt64, peripheral : CBPeripheral) {
 		device = peripheral
 		id = devid
 		device.delegate = self
 		device.discoverServices([NEB_SERVICE_UUID])
-		var info = mach_timebase_info(numer: 0, denom:0)
+		_ = mach_timebase_info(numer: 0, denom:0)
 		mach_timebase_info(&timeBaseInfo)
 	}
 	
@@ -188,7 +194,6 @@ class Neblina : NSObject, CBPeripheralDelegate {
 	}
 	
 	// MARK : **** API
-	
 	// Debug
 	func getDataPortState() {
 		if (isDeviceReady() == false) {

@@ -8,18 +8,18 @@
 
 import UIKit
 import CoreBluetooth
-
+/*
 struct NebDevice {
 	let id : UInt64
 	let peripheral : CBPeripheral
 }
-
+*/
 var bleCentralManager : CBCentralManager!
 
 class MasterViewController: UITableViewController, CBCentralManagerDelegate {
 
 	var detailViewController: UIViewController? = nil
-	var objects = [NebDevice]()
+	var objects = [Neblina]()
 	//var NebPeripheral : CBPeripheral!
 
 
@@ -75,10 +75,10 @@ class MasterViewController: UITableViewController, CBCentralManagerDelegate {
 					let controller = (segue.destinationViewController as! UINavigationController).topViewController as! DetailViewController
 					controller.navigationItem.leftBarButtonItem = self.splitViewController?.displayModeButtonItem()
 					controller.navigationItem.leftItemsSupplementBackButton = true
-					if (controller.detailItem != nil) {
-						bleCentralManager.cancelPeripheralConnection(controller.detailItem!.peripheral)
+					if (controller.nebdev != nil) {
+						bleCentralManager.cancelPeripheralConnection(controller.nebdev!.device)
 					}
-					controller.detailItem = object
+					controller.nebdev = object
 				/*}
 				else {
 					let controller = (segue.destinationViewController as! UINavigationController).topViewController as! iPhoneCmdViewController
@@ -89,7 +89,7 @@ class MasterViewController: UITableViewController, CBCentralManagerDelegate {
 					}
 					controller.detailItem = object
 				}*/
-				bleCentralManager.connectPeripheral(object.peripheral, options: nil)
+				bleCentralManager.connectPeripheral(object.device, options: nil)
 				
 				//controller.nebdev.setPeripheral(object)
 		    }
@@ -110,9 +110,9 @@ class MasterViewController: UITableViewController, CBCentralManagerDelegate {
 		let cell = tableView.dequeueReusableCellWithIdentifier("Cell", forIndexPath: indexPath)
 
 		let object = objects[indexPath.row]
-		cell.textLabel!.text = object.peripheral.name
+		cell.textLabel!.text = object.device.name
 		print("\(cell.textLabel!.text)")
-		cell.textLabel!.text = object.peripheral.name! + String(format: "_%lX", object.id)
+		cell.textLabel!.text = object.device.name! + String(format: "_%lX", object.id)
 		print("Cell Name : \(cell.textLabel!.text)")
 		return cell
 	}
@@ -163,7 +163,7 @@ class MasterViewController: UITableViewController, CBCentralManagerDelegate {
 			//	return
 			//}
 			
-			let device = NebDevice(id: id, peripheral: peripheral)
+			let device = Neblina(devid: id, peripheral: peripheral)
 
 			for dev in objects
 			{

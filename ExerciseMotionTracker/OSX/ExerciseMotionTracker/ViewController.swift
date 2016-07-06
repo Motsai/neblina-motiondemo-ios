@@ -18,8 +18,8 @@ struct NebDevice {
 class ViewController: NSViewController, NSTableViewDataSource, NSTableViewDelegate, CBCentralManagerDelegate, NeblinaDelegate {
 
 	var bleCentralManager : CBCentralManager!
-	var objects = [NebDevice]()
-	let device = Neblina()
+	var objects = [Neblina]()
+	var nebdev : Neblina!
 	let scene = SCNScene(named: "art.scnassets/C-3PO.obj")!
 	var ship = SCNNode()
 	@IBOutlet weak var tableView : NSTableView!
@@ -111,14 +111,14 @@ class ViewController: NSViewController, NSTableViewDataSource, NSTableViewDelega
 
 	@IBAction func buttonDisconnect(button: NSButton)
 	{
-		bleCentralManager.cancelPeripheralConnection(device.device)
-		device.device = nil
+		bleCentralManager.cancelPeripheralConnection(nebdev.device)
+		nebdev.device = nil
 		tableView.deselectAll(nil)
 	}
 	
 	@IBAction func buttonTrajectRecord(button: NSButton)
 	{
-		device.recordTrajectory(true)
+		nebdev.recordTrajectory(true)
 	}
 	
 	// MARK: - Table View
@@ -135,7 +135,7 @@ class ViewController: NSViewController, NSTableViewDataSource, NSTableViewDelega
 		{
 			let cellView = tableView.makeViewWithIdentifier("CellDevice", owner: self) as! NSTableCellView
 			
-			cellView.textField!.stringValue = objects[row].peripheral.name! + String(format: "_%lX", objects[row].id) //objects[row].name;// "test"//"self.objects.objectAtIndex(row) as! String
+			cellView.textField!.stringValue = objects[row].device.name! + String(format: "_%lX", objects[row].id) //objects[row].name;// "test"//"self.objects.objectAtIndex(row) as! String
 			
 			return cellView;
 		}
@@ -147,14 +147,14 @@ class ViewController: NSViewController, NSTableViewDataSource, NSTableViewDelega
 	{
 		if (self.tableView.numberOfSelectedRows > 0)
 		{
-			let peripheral = self.objects[self.tableView.selectedRow].peripheral
+			let peripheral = self.objects[self.tableView.selectedRow].device
 			
 			
-			device.setPeripheral(self.objects[self.tableView.selectedRow].id, peripheral: self.objects[self.tableView.selectedRow].peripheral)
-			device.delegate = self
+			nebdev = self.objects[self.tableView.selectedRow]
+			nebdev.delegate = self
 			//print(peripheral)
 			
-			bleCentralManager.connectPeripheral(peripheral, options: nil)
+			bleCentralManager.connectPeripheral(nebdev.device, options: nil)
 			bleCentralManager.stopScan()
 			//self.tableView.deselectRow(self.tableView.selectedRow)
 		}
@@ -194,7 +194,7 @@ class ViewController: NSViewController, NSTableViewDataSource, NSTableViewDelega
 				return
 			}
 			*/
-			let device = NebDevice(id: id, peripheral: peripheral)
+			let device = Neblina(devid: id, peripheral: peripheral)
 			
 			for dev in objects
 			{
@@ -288,8 +288,8 @@ class ViewController: NSViewController, NSTableViewDataSource, NSTableViewDelega
 	
 	func didConnectNeblina() {
 		//device.SittingStanding(true)
-		device.streamQuaternion(true)
-		device.streamTrajectoryInfo(true)
+		nebdev.streamQuaternion(true)
+		nebdev.streamTrajectoryInfo(true)
 	}
 	func didReceiveRSSI(rssi : NSNumber) {
 		

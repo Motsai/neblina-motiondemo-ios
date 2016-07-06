@@ -9,14 +9,9 @@
 import UIKit
 import CoreBluetooth
 
-struct NebDevice {
-	let id : UInt64
-	let peripheral : CBPeripheral
-}
-
 class ViewController: UIViewController, CBCentralManagerDelegate, NeblinaDelegate {
-	var objects = [NebDevice]()
-	var nebdev = Neblina()
+	var objects = [Neblina]()//[NebDevice]()
+	var nebdev : Neblina!
 	var bleCentralManager : CBCentralManager!
 	var NebPeripheral : CBPeripheral!
 	@IBOutlet weak var deviceView: UITableView!
@@ -47,9 +42,9 @@ class ViewController: UIViewController, CBCentralManagerDelegate, NeblinaDelegat
 		let cell = tableView.dequeueReusableCellWithIdentifier("Cell", forIndexPath: indexPath)
 		
 		let object = objects[indexPath.row]
-		cell.textLabel!.text = object.peripheral.name
+		cell.textLabel!.text = object.device.name// peripheral.name
 		print("\(cell.textLabel!.text)")
-		cell.textLabel!.text = object.peripheral.name! + String(format: "_%lX", object.id)
+		cell.textLabel!.text = object.device.name! + String(format: "_%lX", object.id)
 		print("Cell Name : \(cell.textLabel!.text)")
 		return cell
 	}
@@ -69,18 +64,18 @@ class ViewController: UIViewController, CBCentralManagerDelegate, NeblinaDelegat
 	}
 	
 	func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
-		let object = objects[indexPath.row]
-		nebdev.setPeripheral(object.id, peripheral: object.peripheral)
+		nebdev = objects[indexPath.row]
 		nebdev.delegate = self
-		bleCentralManager.cancelPeripheralConnection(object.peripheral)
-		bleCentralManager.connectPeripheral(object.peripheral, options: nil)
+		
+		bleCentralManager.cancelPeripheralConnection(nebdev.device)
+		bleCentralManager.connectPeripheral(nebdev.device, options: nil)
 	}
 	
 	// MARK: - Bluetooth
 	func centralManager(central: CBCentralManager,
 	                    didDiscoverPeripheral peripheral: CBPeripheral,
-	                                          advertisementData : [String : AnyObject],
-	                                          RSSI: NSNumber) {
+						advertisementData : [String : AnyObject],
+						RSSI: NSNumber) {
 		print("PERIPHERAL NAME: \(peripheral.name)\n AdvertisementData: \(advertisementData)\n RSSI: \(RSSI)\n")
 		
 		print("UUID DESCRIPTION: \(peripheral.identifier.UUIDString)\n")
@@ -90,7 +85,7 @@ class ViewController: UIViewController, CBCentralManagerDelegate, NeblinaDelegat
 		var id : UInt64 = 0
 		advertisementData[CBAdvertisementDataManufacturerDataKey]?.getBytes(&id, range: NSMakeRange(2, 8))
 		
-		let device = NebDevice(id: id, peripheral: peripheral)
+		let device = Neblina(devid: id, peripheral: peripheral)
 		
 		for dev in objects
 		{

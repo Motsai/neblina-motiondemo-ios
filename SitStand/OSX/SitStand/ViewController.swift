@@ -8,17 +8,17 @@
 
 import Cocoa
 import CoreBluetooth
-
+/*
 struct NebDevice {
 	let id : UInt64
 	let peripheral : CBPeripheral
 }
-
+*/
 class ViewController: NSViewController, NSTableViewDataSource, NSTableViewDelegate, CBCentralManagerDelegate, NeblinaDelegate {
 
 	var bleCentralManager : CBCentralManager!
-	var objects = [NebDevice]()
-	var device = Neblina()
+	var objects = [Neblina]()
+	var nebdev : Neblina!
 	
 	@IBOutlet weak var sitLabel : NSTextField!
 	@IBOutlet weak var standLabel : NSTextField!
@@ -59,7 +59,7 @@ class ViewController: NSViewController, NSTableViewDataSource, NSTableViewDelega
 		{
 			let cellView = tableView.makeViewWithIdentifier("CellDevice", owner: self) as! NSTableCellView
 			
-			cellView.textField!.stringValue = objects[row].peripheral.name! + String(format: "_%lX", objects[row].id) //objects[row].name;// "test"//"self.objects.objectAtIndex(row) as! String
+			cellView.textField!.stringValue = objects[row].device.name! + String(format: "_%lX", objects[row].id) //objects[row].name;// "test"//"self.objects.objectAtIndex(row) as! String
 			
 			return cellView;
 		}
@@ -96,14 +96,14 @@ class ViewController: NSViewController, NSTableViewDataSource, NSTableViewDelega
 	{
 		if (self.tableView.numberOfSelectedRows > 0)
 		{
-			let peripheral = self.objects[self.tableView.selectedRow].peripheral
+			//let peripheral = self.objects[self.tableView.selectedRow].device
 			
-			
-			device.setPeripheral(self.objects[self.tableView.selectedRow].id, peripheral: self.objects[self.tableView.selectedRow].peripheral)
-			device.delegate = self
+			nebdev = self.objects[self.tableView.selectedRow]
+			//device.setPeripheral(self.objects[self.tableView.selectedRow].id, peripheral: self.objects[self.tableView.selectedRow].peripheral)
+			nebdev.delegate = self
 			//print(peripheral)
 			
-			bleCentralManager.connectPeripheral(peripheral, options: nil)
+			bleCentralManager.connectPeripheral(nebdev.device, options: nil)
 			bleCentralManager.stopScan()
 			//self.tableView.deselectRow(self.tableView.selectedRow)
 		}
@@ -141,7 +141,7 @@ class ViewController: NSViewController, NSTableViewDataSource, NSTableViewDelega
 			if (id == 0) {
 				return
 			}
-			let device = NebDevice(id: id, peripheral: peripheral)
+			let device = Neblina(devid: id, peripheral: peripheral)
 			
 			//print("Peri : \(device)\n");
 			
@@ -232,11 +232,11 @@ class ViewController: NSViewController, NSTableViewDataSource, NSTableViewDelega
 	// MARK : Neblina
 	
 	func didConnectNeblina() {
-		device.streamDisableAll()
-		device.streamSittingStanding(false)	// Reset counts
-		device.streamPedometer(false)
-		device.streamSittingStanding(true)
-		device.streamPedometer(true)
+		nebdev.streamDisableAll()
+		nebdev.streamSittingStanding(false)	// Reset counts
+		nebdev.streamPedometer(false)
+		nebdev.streamSittingStanding(true)
+		nebdev.streamPedometer(true)
 	}
 	func didReceiveRSSI(rssi : NSNumber) {
 		

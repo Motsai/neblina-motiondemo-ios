@@ -45,7 +45,11 @@ let NebCmdList = [NebCmdItem] (arrayLiteral:
 
 class DetailViewController: UIViewController, UITextFieldDelegate, CBPeripheralDelegate, NeblinaDelegate, SCNSceneRendererDelegate {
 
-	let nebdev = Neblina()
+	var nebdev : Neblina? {
+		didSet {
+			nebdev!.delegate = self
+		}
+	}
 	//let scene = SCNScene(named: "art.scnassets/Millennium_Falcon/Millennium_Falcon.dae") as SCNScene!
 	//let scene = SCNScene(named: "art.scnassets/Arc-170_ship/Obj_Shaded/Arc170.dae")!
 	let scene = SCNScene(named: "art.scnassets/ship.scn")!
@@ -73,19 +77,20 @@ class DetailViewController: UIViewController, UITextFieldDelegate, CBPeripheralD
 	var flashEraseProgress = Bool(false)
 	var PaketCnt = UInt32(0)
 	var dropCnt = UInt32(0)
-	var detailItem: NebDevice? {
+/*	var detailItem: Neblina? {
 		didSet {
 		    // Update the view.
 		    //self.configureView()
 			//detailItem!.delegate = self
+			nebdev = detailItem
 			nebdev.setPeripheral(detailItem!.id, peripheral : detailItem!.peripheral)
 			nebdev.delegate = self
 		}
-	}
+	}*/
 	
 	func configureView() {
 		// Update the user interface for the detail item.
-		if let detail = self.detailItem {
+		if self.nebdev != nil {
 		    //if let label = self.consoleTextView {
 	        //label.text = detail.description
 		   // }
@@ -180,7 +185,7 @@ class DetailViewController: UIViewController, UITextFieldDelegate, CBPeripheralD
 
 		let value = UInt16(textField.text!)
 		
-		nebdev.setBatteryChargeCurrent(value!)
+		nebdev!.setBatteryChargeCurrent(value!)
 
 		return true;
 	}
@@ -261,7 +266,7 @@ class DetailViewController: UIViewController, UITextFieldDelegate, CBPeripheralD
 		let idx = cmdView.indexPathForCell(sender.superview!.superview as! UITableViewCell)
 		let row = (idx?.row)! as Int
 		
-		if (detailItem == nil) {
+		if (nebdev == nil) {
 			return
 		}
 		
@@ -272,7 +277,7 @@ class DetailViewController: UIViewController, UITextFieldDelegate, CBPeripheralD
 					switch (NebCmdList[row].CmdId)
 					{
 						case EEPROM_Read:
-							nebdev.eepromRead(0)
+							nebdev!.eepromRead(0)
 							break
 						case EEPROM_Write:
 								//UInt8_t eepdata[8]
@@ -294,7 +299,7 @@ class DetailViewController: UIViewController, UITextFieldDelegate, CBPeripheralD
 		let idx = cmdView.indexPathForCell(sender.superview!.superview as! UITableViewCell)
 		let row = (idx?.row)! as Int
 		
-		if (detailItem == nil) {
+		if (nebdev == nil) {
 			return
 		}
 		
@@ -305,12 +310,12 @@ class DetailViewController: UIViewController, UITextFieldDelegate, CBPeripheralD
 					switch (NebCmdList[row].CmdId)
 					{
 						case DEBUG_CMD_SET_INTERFACE:
-							nebdev.setInterface(sender.selectedSegmentIndex)
+							nebdev!.setInterface(sender.selectedSegmentIndex)
 							break
 						case DEBUG_CMD_DUMP_DATA:
 							break;
 						case DEBUG_CMD_SET_DATAPORT:
-							nebdev.setDataPort(row, Ctrl:UInt8(sender.selectedSegmentIndex))
+							nebdev!.setDataPort(row, Ctrl:UInt8(sender.selectedSegmentIndex))
 							break;
 						default:
 							break
@@ -321,19 +326,19 @@ class DetailViewController: UIViewController, UITextFieldDelegate, CBPeripheralD
 					switch (NebCmdList[row].CmdId)
 					{
 						case MotionState:
-							nebdev.streamMotionState(sender.selectedSegmentIndex == 1)
+							nebdev!.streamMotionState(sender.selectedSegmentIndex == 1)
 							break
 						case SetFusionType:
-							nebdev.setFusionType(UInt8(sender.selectedSegmentIndex))
+							nebdev!.setFusionType(UInt8(sender.selectedSegmentIndex))
 							break
 						case IMU_Data:
-							nebdev.streamIMU(sender.selectedSegmentIndex == 1)
+							nebdev!.streamIMU(sender.selectedSegmentIndex == 1)
 							break
 						case Quaternion:
-							nebdev.streamEulerAngle(false)
+							nebdev!.streamEulerAngle(false)
 							heading = false
 							prevTimeStamp = 0
-							nebdev.streamQuaternion(sender.selectedSegmentIndex == 1)
+							nebdev!.streamQuaternion(sender.selectedSegmentIndex == 1)
 							let i = getCmdIdx(0xf,  cmdId: 1)
 							let cell = cmdView.cellForRowAtIndexPath( NSIndexPath(forRow: i, inSection: 0))
 							if (cell != nil) {
@@ -342,26 +347,26 @@ class DetailViewController: UIViewController, UITextFieldDelegate, CBPeripheralD
 							}
 							break
 						case EulerAngle:
-							nebdev.streamQuaternion(false)
-							nebdev.streamEulerAngle(sender.selectedSegmentIndex == 1)
+							nebdev!.streamQuaternion(false)
+							nebdev!.streamEulerAngle(sender.selectedSegmentIndex == 1)
 							break
 						case ExtForce:
-							nebdev.streamExternalForce(sender.selectedSegmentIndex == 1)
+							nebdev!.streamExternalForce(sender.selectedSegmentIndex == 1)
 							break
 						case Pedometer:
-							nebdev.streamPedometer(sender.selectedSegmentIndex == 1)
+							nebdev!.streamPedometer(sender.selectedSegmentIndex == 1)
 							break;
 						case TrajectoryRecStartStop:
-							nebdev.recordTrajectory(sender.selectedSegmentIndex == 1)
+							nebdev!.recordTrajectory(sender.selectedSegmentIndex == 1)
 							break;
 						case TrajectoryDistance:
-							nebdev.streamTrajectoryInfo(sender.selectedSegmentIndex == 1)
+							nebdev!.streamTrajectoryInfo(sender.selectedSegmentIndex == 1)
 							break;
 						case MAG_Data:
-							nebdev.streamMAG(sender.selectedSegmentIndex == 1)
+							nebdev!.streamMAG(sender.selectedSegmentIndex == 1)
 							break;
 						case LockHeadingRef:
-							nebdev.setLockHeadingReference(sender.selectedSegmentIndex == 1)
+							nebdev!.setLockHeadingReference(sender.selectedSegmentIndex == 1)
 							let cell = cmdView.cellForRowAtIndexPath( NSIndexPath(forRow: row, inSection: 0))
 							if (cell != nil) {
 								let sw = cell!.viewWithTag(1) as! UISegmentedControl
@@ -373,7 +378,7 @@ class DetailViewController: UIViewController, UITextFieldDelegate, CBPeripheralD
 					}
 				case NEB_CTRL_SUBSYS_LED:
 					let i = getCmdIdx(NEB_CTRL_SUBSYS_LED,  cmdId: LED_CMD_SET_VALUE)
-					nebdev.setLed(UInt8(row - i), Value: UInt8(sender.selectedSegmentIndex))
+					nebdev!.setLed(UInt8(row - i), Value: UInt8(sender.selectedSegmentIndex))
 					break
 				case NEB_CTRL_SUBSYS_STORAGE:
 					switch (NebCmdList[row].CmdId)
@@ -383,13 +388,13 @@ class DetailViewController: UIViewController, UITextFieldDelegate, CBPeripheralD
 							if (sender.selectedSegmentIndex == 1) {
 								flashEraseProgress = true;
 							}
-							nebdev.eraseStorage(sender.selectedSegmentIndex == 1)
+							nebdev!.eraseStorage(sender.selectedSegmentIndex == 1)
 							break
 						case FlashRecordStartStop:
-							nebdev.sessionRecord(sender.selectedSegmentIndex == 1)
+							nebdev!.sessionRecord(sender.selectedSegmentIndex == 1)
 							break
 						case FlashPlaybackStartStop:
-							nebdev.sessionPlayback(sender.selectedSegmentIndex == 1, sessionId : 0xffff)
+							nebdev!.sessionPlayback(sender.selectedSegmentIndex == 1, sessionId : 0xffff)
 							if (sender.selectedSegmentIndex == 1) {
 								PaketCnt = 0
 							}
@@ -402,7 +407,7 @@ class DetailViewController: UIViewController, UITextFieldDelegate, CBPeripheralD
 					switch (NebCmdList[row].CmdId)
 					{
 						case EEPROM_Read:
-							nebdev.eepromRead(0)
+							nebdev!.eepromRead(0)
 							break
 						case EEPROM_Write:
 							//UInt8_t eepdata[8]
@@ -415,8 +420,8 @@ class DetailViewController: UIViewController, UITextFieldDelegate, CBPeripheralD
 				case 0xf:
 					switch (NebCmdList[row].CmdId) {
 						case Heading:
-							nebdev.streamQuaternion(false)
-							nebdev.streamEulerAngle(true)
+							nebdev!.streamQuaternion(false)
+							nebdev!.streamEulerAngle(true)
 							heading = sender.selectedSegmentIndex == 1
 							let i = getCmdIdx(NEB_CTRL_SUBSYS_MOTION_ENG,  cmdId: Quaternion)
 							let cell = cmdView.cellForRowAtIndexPath( NSIndexPath(forRow: i, inSection: 0))
@@ -426,42 +431,42 @@ class DetailViewController: UIViewController, UITextFieldDelegate, CBPeripheralD
 							}
 							break
 						case MotionDataStream:
-							nebdev.streamQuaternion(true)
+							nebdev!.streamQuaternion(true)
 							var i = getCmdIdx(NEB_CTRL_SUBSYS_MOTION_ENG,  cmdId: Quaternion)
 							var cell = cmdView.cellForRowAtIndexPath( NSIndexPath(forRow: i, inSection: 0))
 							if (cell != nil) {
 								let control = cell!.viewWithTag(1) as! UISegmentedControl
 								control.selectedSegmentIndex = 1
 							}
-							nebdev.streamIMU(true)
+							nebdev!.streamIMU(true)
 							i = getCmdIdx(NEB_CTRL_SUBSYS_MOTION_ENG,  cmdId: IMU_Data)
 							cell = cmdView.cellForRowAtIndexPath( NSIndexPath(forRow: i, inSection: 0))
 							if (cell != nil) {
 								let control = cell!.viewWithTag(1) as! UISegmentedControl
 								control.selectedSegmentIndex = 1
 							}
-							nebdev.streamMAG(true)
+							nebdev!.streamMAG(true)
 							i = getCmdIdx(NEB_CTRL_SUBSYS_MOTION_ENG,  cmdId: MAG_Data)
 							cell = cmdView.cellForRowAtIndexPath( NSIndexPath(forRow: i, inSection: 0))
 							if (cell != nil) {
 								let control = cell!.viewWithTag(1) as! UISegmentedControl
 								control.selectedSegmentIndex = 1
 							}
-							nebdev.streamExternalForce(true)
+							nebdev!.streamExternalForce(true)
 							i = getCmdIdx(NEB_CTRL_SUBSYS_MOTION_ENG,  cmdId: ExtForce)
 							cell = cmdView.cellForRowAtIndexPath( NSIndexPath(forRow: i, inSection: 0))
 							if (cell != nil) {
 								let control = cell!.viewWithTag(1) as! UISegmentedControl
 								control.selectedSegmentIndex = 1
 							}
-							nebdev.streamPedometer(true)
+							nebdev!.streamPedometer(true)
 							i = getCmdIdx(NEB_CTRL_SUBSYS_MOTION_ENG,  cmdId: Pedometer)
 							cell = cmdView.cellForRowAtIndexPath( NSIndexPath(forRow: i, inSection: 0))
 							if (cell != nil) {
 								let control = cell!.viewWithTag(1) as! UISegmentedControl
 								control.selectedSegmentIndex = 1
 							}
-							nebdev.streamRotationInfo(true)
+							nebdev!.streamRotationInfo(true)
 							i = getCmdIdx(NEB_CTRL_SUBSYS_MOTION_ENG,  cmdId: RotationInfo)
 							cell = cmdView.cellForRowAtIndexPath( NSIndexPath(forRow: i, inSection: 0))
 							if (cell != nil) {
@@ -512,10 +517,10 @@ class DetailViewController: UIViewController, UITextFieldDelegate, CBPeripheralD
 		// Switch to BLE interface
 		prevTimeStamp = 0;
 		//nebdev.SendCmdControlInterface(0)
-		nebdev.getMotionStatus()
-		nebdev.getDataPortState()
-		nebdev.getLed ()
-		nebdev.getFirmwareVersion()
+		nebdev!.getMotionStatus()
+		nebdev!.getDataPortState()
+		nebdev!.getLed ()
+		nebdev!.getFirmwareVersion()
 	}
 	
 	func didReceiveRSSI(rssi : NSNumber) {
@@ -540,7 +545,7 @@ class DetailViewController: UIViewController, UITextFieldDelegate, CBPeripheralD
 		//let errflag = Bool(type.rawValue & 0x80 == 0x80)
 
 		//let id = FusionId(rawValue: type.rawValue & 0x7F)! as FusionId
-		flashLabel.text = String(format: "Total packet %u @ %0.2f pps", nebdev.getPacketCount(), nebdev.getDataRate())
+		flashLabel.text = String(format: "Total packet %u @ %0.2f pps", nebdev!.getPacketCount(), nebdev!.getDataRate())
 	
 		switch (type) {
 			
@@ -780,7 +785,7 @@ class DetailViewController: UIViewController, UITextFieldDelegate, CBPeripheralD
 					flashLabel.text = String(format: "Playing session %d", session)
 				}
 				else {
-					flashLabel.text = String(format: "End session %d, %u", session, nebdev.getPacketCount())
+					flashLabel.text = String(format: "End session %d, %u", session, nebdev!.getPacketCount())
 					
 					let i = getCmdIdx(NEB_CTRL_SUBSYS_STORAGE,  cmdId: FlashPlaybackStartStop)
 					let cell = cmdView.cellForRowAtIndexPath( NSIndexPath(forRow: i, inSection: 0))

@@ -13,7 +13,11 @@ import SceneKit
 
 class DetailViewController: UIViewController, CBPeripheralDelegate, SCNSceneRendererDelegate, NeblinaDelegate {
 
-	let device = Neblina()
+	var nebdev : Neblina! {
+		didSet {
+			nebdev.delegate = self
+		}
+	}
 	//let scene = SCNScene(named: "art.scnassets/C-3PO.obj")!
 	let max_count = Int16(15)
 	var cnt = Int16(15)
@@ -25,7 +29,7 @@ class DetailViewController: UIViewController, CBPeripheralDelegate, SCNSceneRend
 	var cadence = UInt8(0)
 	var stepcnt = UInt16(0)
 
-	var detailItem: NebDevice? {
+/*	var detailItem: Neblina? {
 		didSet {
 			// Update the view.
 			//self.configureView()
@@ -34,11 +38,11 @@ class DetailViewController: UIViewController, CBPeripheralDelegate, SCNSceneRend
 			device.delegate = self
 		}
 	}
-
+*/
 	func configureView() {
 		// Update the user interface for the detail item.
-		if let detail = self.detailItem {
-		}
+//		if let detail = self.detailItem {
+//		}
 	}
 
 	override func viewDidLoad() {
@@ -112,11 +116,11 @@ class DetailViewController: UIViewController, CBPeripheralDelegate, SCNSceneRend
 	// MARK : Neblina
 	
 	func didConnectNeblina() {
-		device.streamDisableAll()
-		device.streamSittingStanding(false)	// Reset counts
-		device.streamPedometer(false)
-		device.streamSittingStanding(true)
-		device.streamPedometer(true)
+		nebdev.streamDisableAll()
+		nebdev.streamSittingStanding(false)	// Reset counts
+		nebdev.streamPedometer(false)
+		nebdev.streamSittingStanding(true)
+		nebdev.streamPedometer(true)
 
 	}
 	

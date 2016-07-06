@@ -12,7 +12,12 @@ import SceneKit
 
 class DetailViewController: UIViewController, CBPeripheralDelegate, NeblinaDelegate, SCNSceneRendererDelegate {
 
-	let nebdev = Neblina()
+	var nebdev : Neblina! {
+		didSet {
+			self.configureView()
+			nebdev.delegate = self
+		}
+	}
 	let scene = SCNScene(named: "art.scnassets/C-3PO.dae")!
 	//let scene = SCNScene(named: "art.scnassets/Millenium_Falcon/Millenium_Falcon.dae")!
 	var ship = SCNNode() //= scene.rootNode.childNodeWithName("ship", recursively: true)!
@@ -21,22 +26,22 @@ class DetailViewController: UIViewController, CBPeripheralDelegate, NeblinaDeleg
 	@IBOutlet weak var label2: UILabel!
 	@IBOutlet weak var level:UIProgressView!
 	
-	var detailItem: NebDevice? {
+/*	var detailItem: Neblina? {
 		didSet {
 		    // Update the view.
 		    self.configureView()
 			nebdev.setPeripheral(detailItem!.id, peripheral: (detailItem?.peripheral)!)
 			nebdev.delegate = self
 		}
-	}
+	}*/
 
 	func configureView() {
 		// Update the user interface for the detail item.
-		if let detail = self.detailItem {
+//		if let detail = self.detailItem {
 //		    if let label = self.detailDescriptionLabel {
 //		        label.text = detail.description
 //		    }
-		}
+//		}
 	}
 
 	override func viewDidLoad() {

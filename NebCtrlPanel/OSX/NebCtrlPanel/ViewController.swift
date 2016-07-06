@@ -12,12 +12,12 @@ import SceneKit
 import QuartzCore
 import CoreBluetooth
 
-
+/*
 struct NebDevice {
 	let id : UInt64
 	let peripheral : CBPeripheral
 }
-
+*/
 struct NebCmdItem {
 	let SubSysId : Int32
 	let	CmdId : Int32
@@ -47,8 +47,8 @@ class ViewController: NSViewController, NSTableViewDataSource, NSTableViewDelega
 	let scene = SCNScene(named: "art.scnassets/ship.scn")!
 	var ship : SCNNode! //= scene.rootNode.childNodeWithName("ship", recursively: true)!
 	var bleCentralManager : CBCentralManager!
-	var objects = [NebDevice]()
-	let nebdev = Neblina()
+	var objects = [Neblina]()
+	var nebdev : Neblina!
 	var prevTimeStamp = UInt32(0)
 	var dropCnt = UInt32(0)
 	let max_count = Int16(15)
@@ -139,7 +139,7 @@ class ViewController: NSViewController, NSTableViewDataSource, NSTableViewDelega
 		scnView.backgroundColor = NSColor.blackColor()
 		
 		//scnView.preferredFramesPerSecond = 60
-		nebdev.delegate = self
+		//nebdev.delegate = self
 	}
 
 	override var representedObject: AnyObject? {
@@ -359,7 +359,7 @@ class ViewController: NSViewController, NSTableViewDataSource, NSTableViewDelega
 			if (row < objects.count) {
 				let cellView = tableView.makeViewWithIdentifier("CellDevice", owner: self) as! NSTableCellView
 			
-				cellView.textField!.stringValue = objects[row].peripheral.name! + String(format: "_%lX", objects[row].id) //objects[row].name;// "test"//"self.objects.objectAtIndex(row) as! String
+				cellView.textField!.stringValue = objects[row].device.name! + String(format: "_%lX", objects[row].id) //objects[row].name;// "test"//"self.objects.objectAtIndex(row) as! String
 			
 				return cellView;
 			}
@@ -431,7 +431,7 @@ class ViewController: NSViewController, NSTableViewDataSource, NSTableViewDelega
 			if (self.devListView.numberOfSelectedRows > 0)
 			{
 				bleCentralManager.stopScan()
-				bleCentralManager.connectPeripheral(self.objects[self.devListView.selectedRow].peripheral, options: nil)
+				bleCentralManager.connectPeripheral(self.objects[self.devListView.selectedRow].device, options: nil)
 			//self.tableView.deselectRow(self.tableView.selectedRow)
 			}
 		}
@@ -469,7 +469,7 @@ class ViewController: NSViewController, NSTableViewDataSource, NSTableViewDelega
 			return
 		}
 		
-		let device = NebDevice(id: id, peripheral: peripheral)
+		let device = Neblina(devid: id, peripheral: peripheral)
 		
 		for dev in objects
 		{
@@ -501,7 +501,8 @@ class ViewController: NSViewController, NSTableViewDataSource, NSTableViewDelega
 		if (self.devListView.numberOfSelectedRows > 0)
 		{
 			//let peripheral = self.objects[self.devListView.selectedRow].peripheral
-			nebdev.setPeripheral(objects[self.devListView.selectedRow].id, peripheral: objects[self.devListView.selectedRow].peripheral)
+			//nebdev.setPeripheral(objects[self.devListView.selectedRow].id, peripheral: objects[self.devListView.selectedRow].peripheral)
+			nebdev = objects[self.devListView.selectedRow]
 		}
 		//nebdev.connected(peripheral)
 		print("Connected to peripheral")
