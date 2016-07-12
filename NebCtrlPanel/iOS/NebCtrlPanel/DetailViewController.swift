@@ -421,7 +421,7 @@ class DetailViewController: UIViewController, UITextFieldDelegate, CBPeripheralD
 					switch (NebCmdList[row].CmdId) {
 						case Heading:
 							nebdev!.streamQuaternion(false)
-							nebdev!.streamEulerAngle(true)
+							nebdev!.streamEulerAngle(sender.selectedSegmentIndex == 1)
 							heading = sender.selectedSegmentIndex == 1
 							let i = getCmdIdx(NEB_CTRL_SUBSYS_MOTION_ENG,  cmdId: Quaternion)
 							let cell = cmdView.cellForRowAtIndexPath( NSIndexPath(forRow: i, inSection: 0))
@@ -431,47 +431,47 @@ class DetailViewController: UIViewController, UITextFieldDelegate, CBPeripheralD
 							}
 							break
 						case MotionDataStream:
-							nebdev!.streamQuaternion(true)
+							nebdev!.streamQuaternion(sender.selectedSegmentIndex == 1)
 							var i = getCmdIdx(NEB_CTRL_SUBSYS_MOTION_ENG,  cmdId: Quaternion)
 							var cell = cmdView.cellForRowAtIndexPath( NSIndexPath(forRow: i, inSection: 0))
 							if (cell != nil) {
 								let control = cell!.viewWithTag(1) as! UISegmentedControl
-								control.selectedSegmentIndex = 1
+								control.selectedSegmentIndex = sender.selectedSegmentIndex
 							}
-							nebdev!.streamIMU(true)
+							nebdev!.streamIMU(sender.selectedSegmentIndex == 1)
 							i = getCmdIdx(NEB_CTRL_SUBSYS_MOTION_ENG,  cmdId: IMU_Data)
 							cell = cmdView.cellForRowAtIndexPath( NSIndexPath(forRow: i, inSection: 0))
 							if (cell != nil) {
 								let control = cell!.viewWithTag(1) as! UISegmentedControl
-								control.selectedSegmentIndex = 1
+								control.selectedSegmentIndex = sender.selectedSegmentIndex
 							}
-							nebdev!.streamMAG(true)
+							nebdev!.streamMAG(sender.selectedSegmentIndex == 1)
 							i = getCmdIdx(NEB_CTRL_SUBSYS_MOTION_ENG,  cmdId: MAG_Data)
 							cell = cmdView.cellForRowAtIndexPath( NSIndexPath(forRow: i, inSection: 0))
 							if (cell != nil) {
 								let control = cell!.viewWithTag(1) as! UISegmentedControl
-								control.selectedSegmentIndex = 1
+								control.selectedSegmentIndex = sender.selectedSegmentIndex
 							}
-							nebdev!.streamExternalForce(true)
+							nebdev!.streamExternalForce(sender.selectedSegmentIndex == 1)
 							i = getCmdIdx(NEB_CTRL_SUBSYS_MOTION_ENG,  cmdId: ExtForce)
 							cell = cmdView.cellForRowAtIndexPath( NSIndexPath(forRow: i, inSection: 0))
 							if (cell != nil) {
 								let control = cell!.viewWithTag(1) as! UISegmentedControl
-								control.selectedSegmentIndex = 1
+								control.selectedSegmentIndex = sender.selectedSegmentIndex
 							}
-							nebdev!.streamPedometer(true)
+							nebdev!.streamPedometer(sender.selectedSegmentIndex == 1)
 							i = getCmdIdx(NEB_CTRL_SUBSYS_MOTION_ENG,  cmdId: Pedometer)
 							cell = cmdView.cellForRowAtIndexPath( NSIndexPath(forRow: i, inSection: 0))
 							if (cell != nil) {
 								let control = cell!.viewWithTag(1) as! UISegmentedControl
-								control.selectedSegmentIndex = 1
+								control.selectedSegmentIndex = sender.selectedSegmentIndex
 							}
-							nebdev!.streamRotationInfo(true)
+							nebdev!.streamRotationInfo(sender.selectedSegmentIndex == 1)
 							i = getCmdIdx(NEB_CTRL_SUBSYS_MOTION_ENG,  cmdId: RotationInfo)
 							cell = cmdView.cellForRowAtIndexPath( NSIndexPath(forRow: i, inSection: 0))
 							if (cell != nil) {
 								let control = cell!.viewWithTag(1) as! UISegmentedControl
-								control.selectedSegmentIndex = 1
+								control.selectedSegmentIndex = sender.selectedSegmentIndex
 							}
 							break
 						default:
