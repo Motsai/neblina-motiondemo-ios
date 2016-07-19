@@ -122,20 +122,20 @@ class DetailViewController: UIViewController, CBPeripheralDelegate, NeblinaDeleg
 	func didReceiveRSSI(rssi : NSNumber) {
 		
 	}
-	func didReceiveDebugData(type : Int32, data : UnsafePointer<UInt8>, errFlag : Bool) {
+	func didReceiveDebugData(type : Int32, data : UnsafePointer<UInt8>, dataLen: Int, errFlag : Bool) {
 		
 	}
-	func didReceivePmgntData(type : Int32, data : UnsafePointer<UInt8>, errFlag : Bool) {
+	func didReceivePmgntData(type : Int32, data : UnsafePointer<UInt8>, dataLen: Int, errFlag : Bool) {
 		
 	}
 	
-	func didReceiveStorageData(type : Int32, data : UnsafePointer<UInt8>, errFlag : Bool) {
+	func didReceiveStorageData(type : Int32, data : UnsafePointer<UInt8>, dataLen: Int, errFlag : Bool) {
 		
 	}
-	func didReceiveEepromData(type : Int32, data : UnsafePointer<UInt8>, errFlag : Bool) {
+	func didReceiveEepromData(type : Int32, data : UnsafePointer<UInt8>, dataLen: Int, errFlag : Bool) {
 		
 	}
-	func didReceiveLedData(type : Int32, data : UnsafePointer<UInt8>, errFlag : Bool) {
+	func didReceiveLedData(type : Int32, data : UnsafePointer<UInt8>, dataLen: Int, errFlag : Bool) {
 	}
 	
 	func didReceiveFusionData(type : Int32, data : Fusion_DataPacket_t, errFlag : Bool) {

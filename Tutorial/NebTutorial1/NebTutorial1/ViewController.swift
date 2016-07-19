@@ -202,7 +202,7 @@ class ViewController: UIViewController, CBCentralManagerDelegate, NeblinaDelegat
 			break
 		}
 	}
-	func didReceiveDebugData(type : Int32, data : UnsafePointer<UInt8>, errFlag : Bool) {
+	func didReceiveDebugData(type : Int32, data : UnsafePointer<UInt8>, dataLen: Int, errFlag : Bool) {
 		switch (type) {
 		case DEBUG_CMD_MOTENGINE_RECORDER_STATUS:
 			switchButton.on = (Int(data[4] & 8) >> 3 != 0)
@@ -212,10 +212,10 @@ class ViewController: UIViewController, CBCentralManagerDelegate, NeblinaDelegat
 			break
 		}
 	}
-	func didReceivePmgntData(type : Int32, data : UnsafePointer<UInt8>, errFlag : Bool) {}
-	func didReceiveStorageData(type : Int32, data : UnsafePointer<UInt8>, errFlag : Bool) {}
-	func didReceiveEepromData(type : Int32, data : UnsafePointer<UInt8>, errFlag : Bool) {}
-	func didReceiveLedData(type : Int32, data : UnsafePointer<UInt8>, errFlag : Bool) {}
+	func didReceivePmgntData(type : Int32, data : UnsafePointer<UInt8>, dataLen: Int, errFlag : Bool) {}
+	func didReceiveStorageData(type : Int32, data : UnsafePointer<UInt8>, dataLen: Int, errFlag : Bool) {}
+	func didReceiveEepromData(type : Int32, data : UnsafePointer<UInt8>, dataLen: Int, errFlag : Bool) {}
+	func didReceiveLedData(type : Int32, data : UnsafePointer<UInt8>, dataLen: Int, errFlag : Bool) {}
 
 
 }

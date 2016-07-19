@@ -128,23 +128,23 @@ class DetailViewController: UIViewController, CBPeripheralDelegate, SCNSceneRend
 		
 	}
 	
-	func didReceiveDebugData(type : Int32, data : UnsafePointer<UInt8>, errFlag : Bool) {
+	func didReceiveDebugData(type : Int32, data : UnsafePointer<UInt8>, dataLen: Int, errFlag : Bool) {
 		
 	}
 	
-	func didReceivePmgntData(type : Int32, data : UnsafePointer<UInt8>, errFlag : Bool) {
+	func didReceivePmgntData(type : Int32, data : UnsafePointer<UInt8>, dataLen: Int, errFlag : Bool) {
 		
 	}
 	
-	func didReceiveStorageData(type : Int32, data : UnsafePointer<UInt8>, errFlag : Bool) {
+	func didReceiveStorageData(type : Int32, data : UnsafePointer<UInt8>, dataLen: Int, errFlag : Bool) {
 		
 	}
 	
-	func didReceiveEepromData(type : Int32, data : UnsafePointer<UInt8>, errFlag : Bool) {
+	func didReceiveEepromData(type : Int32, data : UnsafePointer<UInt8>, dataLen: Int, errFlag : Bool) {
 		
 	}
 	
-	func didReceiveLedData(type : Int32, data : UnsafePointer<UInt8>, errFlag : Bool) {
+	func didReceiveLedData(type : Int32, data : UnsafePointer<UInt8>, dataLen: Int, errFlag : Bool) {
 		
 	}
 

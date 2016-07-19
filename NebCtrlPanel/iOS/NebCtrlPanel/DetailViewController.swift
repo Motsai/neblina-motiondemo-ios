@@ -77,6 +77,9 @@ class DetailViewController: UIViewController, UITextFieldDelegate, CBPeripheralD
 	var flashEraseProgress = Bool(false)
 	var PaketCnt = UInt32(0)
 	var dropCnt = UInt32(0)
+	var curDownloadSession = UInt16(0xFFFF)
+	var curDownloadOffset = UInt32(0)
+	
 /*	var detailItem: Neblina? {
 		didSet {
 		    // Update the view.
@@ -399,6 +402,11 @@ class DetailViewController: UIViewController, UITextFieldDelegate, CBPeripheralD
 								PaketCnt = 0
 							}
 							break
+						case FlashSessionRead:
+							curDownloadSession = 0xFFFF
+							curDownloadOffset = 0
+							nebdev!.sessionRead(curDownloadSession, Len: 32, Offset: curDownloadOffset)
+							break
 						default:
 							break
 					}
@@ -423,8 +431,14 @@ class DetailViewController: UIViewController, UITextFieldDelegate, CBPeripheralD
 							nebdev!.streamQuaternion(false)
 							nebdev!.streamEulerAngle(sender.selectedSegmentIndex == 1)
 							heading = sender.selectedSegmentIndex == 1
-							let i = getCmdIdx(NEB_CTRL_SUBSYS_MOTION_ENG,  cmdId: Quaternion)
-							let cell = cmdView.cellForRowAtIndexPath( NSIndexPath(forRow: i, inSection: 0))
+							var i = getCmdIdx(NEB_CTRL_SUBSYS_MOTION_ENG,  cmdId: Quaternion)
+							var cell = cmdView.cellForRowAtIndexPath( NSIndexPath(forRow: i, inSection: 0))
+							if (cell != nil) {
+								let control = cell!.viewWithTag(1) as! UISegmentedControl
+								control.selectedSegmentIndex = 0
+							}
+							i = getCmdIdx(0xF,  cmdId: MotionDataStream)
+							cell = cmdView.cellForRowAtIndexPath( NSIndexPath(forRow: i, inSection: 0))
 							if (cell != nil) {
 								let control = cell!.viewWithTag(1) as! UISegmentedControl
 								control.selectedSegmentIndex = 0
@@ -472,6 +486,12 @@ class DetailViewController: UIViewController, UITextFieldDelegate, CBPeripheralD
 							if (cell != nil) {
 								let control = cell!.viewWithTag(1) as! UISegmentedControl
 								control.selectedSegmentIndex = sender.selectedSegmentIndex
+							}
+							i = getCmdIdx(0xF,  cmdId: Heading)
+							cell = cmdView.cellForRowAtIndexPath( NSIndexPath(forRow: i, inSection: 0))
+							if (cell != nil) {
+								let control = cell!.viewWithTag(1) as! UISegmentedControl
+								control.selectedSegmentIndex = 0
 							}
 							break
 						default:
@@ -527,7 +547,7 @@ class DetailViewController: UIViewController, UITextFieldDelegate, CBPeripheralD
 		
 	}
 
-	func didReceivePmgntData(type : Int32, data : UnsafePointer<UInt8>, errFlag : Bool) {
+	func didReceivePmgntData(type : Int32, data : UnsafePointer<UInt8>, dataLen: Int, errFlag : Bool) {
 		let value = UInt16(data[0]) | (UInt16(data[1]) << 8)
 		if (type == POWERMGMT_CMD_SET_CHARGE_CURRENT)
 		{
@@ -671,7 +691,7 @@ class DetailViewController: UIViewController, UITextFieldDelegate, CBPeripheralD
 		
 	}
 	
-	func didReceiveDebugData(type : Int32, data : UnsafePointer<UInt8>, errFlag : Bool)
+	func didReceiveDebugData(type : Int32, data : UnsafePointer<UInt8>, dataLen: Int, errFlag : Bool)
 	{
 		switch (type) {
 			case DEBUG_CMD_MOTENGINE_RECORDER_STATUS:
@@ -765,7 +785,7 @@ class DetailViewController: UIViewController, UITextFieldDelegate, CBPeripheralD
 		}
 	}
 	
-	func didReceiveStorageData(type : Int32, data : UnsafePointer<UInt8>, errFlag : Bool) {
+	func didReceiveStorageData(type : Int32, data : UnsafePointer<UInt8>, dataLen: Int, errFlag : Bool) {
 		switch (type) {
 			case FlashEraseAll:
 				flashLabel.text = "Flash erased"
@@ -800,7 +820,7 @@ class DetailViewController: UIViewController, UITextFieldDelegate, CBPeripheralD
 		}
 	}
 	
-	func didReceiveEepromData(type : Int32, data : UnsafePointer<UInt8>, errFlag : Bool) {
+	func didReceiveEepromData(type : Int32, data : UnsafePointer<UInt8>, dataLen: Int, errFlag : Bool) {
 		switch (type) {
 			case EEPROM_Read:
 				let pageno = UInt16(data[0]) | (UInt16(data[1]) << 8)
@@ -814,7 +834,7 @@ class DetailViewController: UIViewController, UITextFieldDelegate, CBPeripheralD
 		}
 	}
 	
-	func didReceiveLedData(type : Int32, data : UnsafePointer<UInt8>, errFlag : Bool) {
+	func didReceiveLedData(type : Int32, data : UnsafePointer<UInt8>, dataLen: Int, errFlag : Bool) {
 		switch (type) {
 			case LED_CMD_GET_VALUE:
 				let i = getCmdIdx(NEB_CTRL_SUBSYS_LED,  cmdId: LED_CMD_SET_VALUE)
@@ -866,13 +886,16 @@ class DetailViewController: UIViewController, UITextFieldDelegate, CBPeripheralD
 		} else */
 		if (indexPath!.row < /*FusionCmdList.count + */NebCmdList.count) {
 			
-			
 			labelView.text = NebCmdList[indexPath!.row].Name// - FusionCmdList.count].Name
 			switch (NebCmdList[indexPath!.row].Actuator)
 			{
 				case 1:
 					let control = cellView.viewWithTag(NebCmdList[indexPath!.row].Actuator) as! UISegmentedControl
 					control.hidden = false
+					let b = cellView.viewWithTag(2) as! UIButton
+					b.hidden = true
+					let t = cellView.viewWithTag(3) as! UITextField
+					t.hidden = true
 					break
 				case 2:
 					let control = cellView.viewWithTag(NebCmdList[indexPath!.row].Actuator) as! UIButton
@@ -881,7 +904,10 @@ class DetailViewController: UIViewController, UITextFieldDelegate, CBPeripheralD
 					{
 						control.setTitle(NebCmdList[indexPath!.row].Text, forState: UIControlState.Normal)
 					}
-					//switchCtrl.hidden = true
+					let s = cellView.viewWithTag(1) as! UISegmentedControl
+					s.hidden = true
+					let t = cellView.viewWithTag(3) as! UITextField
+					t.hidden = true
 					break
 				case 3:
 					let control = cellView.viewWithTag(NebCmdList[indexPath!.row].Actuator) as! UITextField
@@ -890,6 +916,10 @@ class DetailViewController: UIViewController, UITextFieldDelegate, CBPeripheralD
 					{
 						control.text = NebCmdList[indexPath!.row].Text
 					}
+					let s = cellView.viewWithTag(1) as! UISegmentedControl
+					s.hidden = true
+					let b = cellView.viewWithTag(2) as! UIButton
+					b.hidden = true
 					break
 				default:
 					//switchCtrl.enabled = false
