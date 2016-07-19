@@ -130,6 +130,11 @@ typedef enum{
 	No_Gesture 	= (uint8_t)0xFF, //no gesture
 }finger_gesture_t;
 
+typedef struct gyro_rotate_param_t{
+	uint8_t min_angle; //The minimum rotation angle that is taken into consideration. The default value is 40 degrees
+	uint8_t ticks_per_revolution; //the total number of partial rotations within a full revolution. This value is 2 for the Soucy Tank, and 3 for the Soucy Tractor. The default value is 2
+}gyro_rotate_param_t;
+
 typedef struct Motion_Feature_t{ //all features
 	uint8_t motion; //0: no change in motion, 1: stops moving, 2: starts moving
 	IMURaw_t IMUData; //18 bytes

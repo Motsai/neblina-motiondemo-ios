@@ -11,7 +11,12 @@
 #ifndef PROMOTION_H_
 #define PROMOTION_H_
 
+#include "stdint.h"
+
 #pragma pack(push, 1)
+
+#define PROMOTION_PROD_ID			0xBABE
+#define PROMOTION_PROD_VER			0x100
 
 //Additional subsystems on the ProMotion board
 #define NEB_CTRL_SUBSYS_STORAGE				0x0B		//NOR flash memory recorder
@@ -25,6 +30,7 @@
 #define FlashPlaybackStartStop 	0x03 //playing back a pre-recorded session: either start or stop
 #define FlashGetNbSessions		0x04 //a command to get the total number of sessions in the NOR flash recorder
 #define FlashGetSessionInfo		0x05 //get the session length of a session ID. The session IDs start from 0 to n-1, where n is the total number of sessions in the NOR flash
+#define FlashSessionRead		0x06 // Read session data
 //////////////////////////////////////////////////////////
 
 

@@ -115,10 +115,14 @@ class Neblina : NSObject, CBPeripheralDelegate {
 				return
 			}
 			
-			if ((hdr.SubSys  & 0x80) == 0x80)
+		/*	if ((hdr.SubSys  & 0x80) == 0x80)
 			{
 				errflag = true;
 				hdr.SubSys &= 0x7F;
+			}*/
+			if (Int32(hdr.PkType) == NEB_CTRL_PKTYPE_ERR)
+			{
+				errflag = true;
 			}
 			
 			packetCnt += 1
@@ -144,27 +148,27 @@ class Neblina : NSObject, CBPeripheralDelegate {
 				case NEB_CTRL_SUBSYS_DEBUG:
 					var dd = [UInt8](count:16, repeatedValue:0)
 					characteristic.value?.getBytes(&dd, range: NSMakeRange(sizeof(NEB_PKTHDR), Int(hdr.Len)))
-					delegate.didReceiveDebugData(id, data: dd, errFlag: errflag)
+					delegate.didReceiveDebugData(id, data: dd, dataLen: Int(hdr.Len), errFlag: errflag)
 					break
 				case NEB_CTRL_SUBSYS_POWERMGMT:
 					var dd = [UInt8](count:16, repeatedValue:0)
 					characteristic.value?.getBytes(&dd, range: NSMakeRange(sizeof(NEB_PKTHDR), Int(hdr.Len)))
-					delegate.didReceivePmgntData(id, data: dd, errFlag: errflag)
+					delegate.didReceivePmgntData(id, data: dd, dataLen: Int(hdr.Len), errFlag: errflag)
 					break
 				case NEB_CTRL_SUBSYS_STORAGE:
 					var dd = [UInt8](count:16, repeatedValue:0)
 					characteristic.value?.getBytes(&dd, range: NSMakeRange(sizeof(NEB_PKTHDR), Int(hdr.Len)))
-					delegate.didReceiveStorageData(id, data: dd, errFlag: errflag)
+					delegate.didReceiveStorageData(id, data: dd, dataLen: Int(hdr.Len), errFlag: errflag)
 					break
 				case NEB_CTRL_SUBSYS_EEPROM:
 					var dd = [UInt8](count:16, repeatedValue:0)
 					characteristic.value?.getBytes(&dd, range: NSMakeRange(sizeof(NEB_PKTHDR), Int(hdr.Len)))
-					delegate.didReceiveEepromData(id, data: dd, errFlag: errflag)
+					delegate.didReceiveEepromData(id, data: dd, dataLen: Int(hdr.Len), errFlag: errflag)
 					break
 				case NEB_CTRL_SUBSYS_LED:
 					var dd = [UInt8](count:16, repeatedValue:0)
 					characteristic.value?.getBytes(&dd, range: NSMakeRange(sizeof(NEB_PKTHDR), Int(hdr.Len)))
-					delegate.didReceiveLedData(id, data: dd, errFlag: errflag)
+					delegate.didReceiveLedData(id, data: dd, dataLen: Int(hdr.Len), errFlag: errflag)
 					break
 
 				default:
@@ -857,6 +861,31 @@ class Neblina : NSObject, CBPeripheralDelegate {
 		device.writeValue(NSData(bytes: UnsafeMutablePointer<Void>(pkbuf), length: 20), forCharacteristic: ctrlChar, type: CBCharacteristicWriteType.WithoutResponse)
 	}
 	
+	func sessionRead(SessionId:UInt16, Len:UInt16, Offset:UInt32) {
+		if (isDeviceReady() == false) {
+			return
+		}
+		
+		var pkbuf = [UInt8](count:20, repeatedValue:0)
+		
+		pkbuf[0] = UInt8((NEB_CTRL_PKTYPE_CMD << 5) | NEB_CTRL_SUBSYS_STORAGE) //0x41
+		pkbuf[1] = 16
+		pkbuf[2] = 0
+		pkbuf[3] = UInt8(FlashSessionRead)	// Cmd
+
+		// Command parameter
+		pkbuf[4] = UInt8(SessionId & 0xFF)
+		pkbuf[5] = UInt8((SessionId >> 8) & 0xFF)
+		pkbuf[6] = UInt8(Len & 0xFF)
+		pkbuf[7] = UInt8((Len >> 8) & 0xFF)
+		pkbuf[8] = UInt8(Offset & 0xFF)
+		pkbuf[9] = UInt8((Offset >> 8) & 0xFF)
+		pkbuf[10] = UInt8((Offset >> 16) & 0xFF)
+		pkbuf[11] = UInt8((Offset >> 24) & 0xFF)
+		
+		device.writeValue(NSData(bytes: UnsafeMutablePointer<Void>(pkbuf), length: 20), forCharacteristic: ctrlChar, type: CBCharacteristicWriteType.WithoutResponse)
+	}
+	
 }
 
 protocol NeblinaDelegate {
@@ -864,9 +893,9 @@ protocol NeblinaDelegate {
 	func didConnectNeblina()
 	func didReceiveRSSI(rssi : NSNumber)
 	func didReceiveFusionData(type : Int32, data : Fusion_DataPacket_t, errFlag : Bool)
-	func didReceiveDebugData(type : Int32, data : UnsafePointer<UInt8>, errFlag : Bool)
-	func didReceivePmgntData(type : Int32, data : UnsafePointer<UInt8>, errFlag : Bool)
-	func didReceiveStorageData(type : Int32, data : UnsafePointer<UInt8>, errFlag : Bool)
-	func didReceiveEepromData(type : Int32, data : UnsafePointer<UInt8>, errFlag : Bool)
-	func didReceiveLedData(type : Int32, data : UnsafePointer<UInt8>, errFlag : Bool)
+	func didReceiveDebugData(type : Int32, data : UnsafePointer<UInt8>, dataLen : Int, errFlag : Bool)
+	func didReceivePmgntData(type : Int32, data : UnsafePointer<UInt8>, dataLen : Int, errFlag : Bool)
+	func didReceiveStorageData(type : Int32, data : UnsafePointer<UInt8>, dataLen : Int, errFlag : Bool)
+	func didReceiveEepromData(type : Int32, data : UnsafePointer<UInt8>, dataLen : Int, errFlag : Bool)
+	func didReceiveLedData(type : Int32, data : UnsafePointer<UInt8>, dataLen : Int, errFlag : Bool)
 }
