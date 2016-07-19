@@ -1,8 +1,8 @@
 //
 //  AppDelegate.swift
-//  RotationInfo
+//  SourcyPanel
 //
-//  Created by Hoan Hoang on 2016-07-18.
+//  Created by Hoan Hoang on 2016-02-18.
 //  Copyright © 2016 Hoan Hoang. All rights reserved.
 //
 
