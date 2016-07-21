@@ -29,11 +29,17 @@ class Neblina : NSObject, CBPeripheralDelegate {
 	var dataRate : Float = 0.0
 	var timeBaseInfo = mach_timebase_info(numer: 0, denom:0)
 	
-	init(devid : UInt64, peripheral : CBPeripheral) {
+	init(devid : UInt64, peripheral : CBPeripheral?) {
 		super.init()
-		device = peripheral
-		id = devid
-		device.delegate = self
+		if (peripheral != nil) {
+			id = devid
+			device = peripheral
+			device.delegate = self
+		}
+		else {
+			id = 0
+			device = nil
+		}
 	}
 	func setPeripheral(devid : UInt64, peripheral : CBPeripheral) {
 		device = peripheral
@@ -95,7 +101,9 @@ class Neblina : NSObject, CBPeripheralDelegate {
 	
 	func peripheral(peripheral: CBPeripheral, didUpdateNotificationStateForCharacteristic characteristic: CBCharacteristic, error: NSError?)
 	{
-		delegate.didConnectNeblina()
+		if (delegate != nil) {
+			delegate.didConnectNeblina()
+		}
 	}
 	
 	func peripheral(peripheral: CBPeripheral, didUpdateValueForCharacteristic characteristic: CBCharacteristic, error: NSError?)

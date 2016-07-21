@@ -9,7 +9,7 @@
 
 import Cocoa
 import SceneKit
-import QuartzCore
+import AppKit//QuartzCore
 import CoreBluetooth
 
 /*
@@ -40,8 +40,9 @@ let NebCmdList = [NebCmdItem] (arrayLiteral:
                                NebCmdItem(SubSysId: NEB_CTRL_SUBSYS_STORAGE, CmdId: FlashRecordStartStop, Name: "Flash Record", Actuator : 1, Text:String(_sel: nil)),
                                NebCmdItem(SubSysId: NEB_CTRL_SUBSYS_STORAGE, CmdId: FlashPlaybackStartStop, Name: "Flash Playback", Actuator : 1, Text:String(_sel: nil)),
                                NebCmdItem(SubSysId: NEB_CTRL_SUBSYS_STORAGE, CmdId: FlashSessionRead, Name: "Flash Download", Actuator : 1, Text:String(_sel: nil)),
-                               NebCmdItem(SubSysId: NEB_CTRL_SUBSYS_LED, CmdId: LED_CMD_SET_VALUE, Name: "Set LED0", Actuator : 1, Text:String(_sel: nil)),
-                               NebCmdItem(SubSysId: NEB_CTRL_SUBSYS_LED, CmdId: LED_CMD_SET_VALUE, Name: "Set LED1", Actuator : 1, Text:String(_sel: nil)),
+                               NebCmdItem(SubSysId: NEB_CTRL_SUBSYS_LED, CmdId: LED_CMD_SET_VALUE, Name: "Set LED0 level", Actuator : 3, Text:String(_sel: nil)),
+                               NebCmdItem(SubSysId: NEB_CTRL_SUBSYS_LED, CmdId: LED_CMD_SET_VALUE, Name: "Set LED1 level", Actuator : 3, Text:String(_sel: nil)),
+                               NebCmdItem(SubSysId: NEB_CTRL_SUBSYS_LED, CmdId: LED_CMD_SET_VALUE, Name: "Set LED2", Actuator : 1, Text:String(_sel: nil)),
                                NebCmdItem(SubSysId: NEB_CTRL_SUBSYS_EEPROM, CmdId: EEPROM_Read, Name: "EEPROM Read", Actuator : 2, Text:String("Read")),
                                NebCmdItem(SubSysId: NEB_CTRL_SUBSYS_POWERMGMT, CmdId: POWERMGMT_CMD_SET_CHARGE_CURRENT, Name: "Charge Current in mA", Actuator : 3, Text:String(_sel: nil)),
                                NebCmdItem(SubSysId: 0xf, CmdId: MotionDataStream, Name: "Motion data stream", Actuator : 1, Text:String(_sel: nil)),
@@ -54,7 +55,7 @@ class ViewController: NSViewController, NSTableViewDataSource, NSTableViewDelega
 	var ship : SCNNode! //= scene.rootNode.childNodeWithName("ship", recursively: true)!
 	var bleCentralManager : CBCentralManager!
 	var objects = [Neblina]()
-	var nebdev : Neblina!
+	var nebdev = Neblina(devid: 0, peripheral: nil)
 	var prevTimeStamp = UInt32(0)
 	var dropCnt = UInt32(0)
 	let max_count = Int16(15)
@@ -189,10 +190,22 @@ class ViewController: NSViewController, NSTableViewDataSource, NSTableViewDelega
 	
 	@IBAction func textAction(sender:NSTextField)
 	{
-		//let row = cmdView.rowForView(sender.superview!.superview!)// as! NSTableCellView)
+		let row = cmdView.rowForView((sender.superview!.superview)!)// as! NSTableCellView)
 		let value = sender.integerValue
-		print("textAction \(value)")
-		nebdev.setBatteryChargeCurrent(UInt16(value))
+		switch (NebCmdList[row].SubSysId)
+		{
+			case NEB_CTRL_SUBSYS_LED:
+				let i = getCmdIdx(NEB_CTRL_SUBSYS_LED,  cmdId: LED_CMD_SET_VALUE)
+				nebdev.setLed(UInt8(row - i), Value: UInt8(value))
+				
+				break
+			case NEB_CTRL_SUBSYS_POWERMGMT:
+				nebdev.setBatteryChargeCurrent(UInt16(value))
+				break
+			default:
+				break
+		}
+//		print("textAction \(value)")
 	}
 	
 	@IBAction func switchAction(sender:NSSegmentedControl)
@@ -1049,17 +1062,15 @@ class ViewController: NSViewController, NSTableViewDataSource, NSTableViewDelega
 		case LED_CMD_GET_VALUE:
 			let i = getCmdIdx(NEB_CTRL_SUBSYS_LED,  cmdId: LED_CMD_SET_VALUE)
 			var cell = cmdView.viewAtColumn(0, row: i, makeIfNecessary: false)
-			var sw = cell!.viewWithTag(1) as! NSSegmentedControl
-			if (data[0] != 0) {
-				sw.selectedSegment = 1
-			}
-			else {
-				sw.selectedSegment = 0
-			}
-			
+			var tf = cell!.viewWithTag(3) as! NSTextField
+			tf.intValue = Int32(data[0])
 			cell = cmdView.viewAtColumn(0, row: i + 1, makeIfNecessary: false)
-			sw = cell!.viewWithTag(1) as! NSSegmentedControl
-			if (data[1] != 0) {
+			tf = cell!.viewWithTag(3) as! NSTextField
+			tf.intValue = Int32(data[1])
+			
+			cell = cmdView.viewAtColumn(0, row: i + 2, makeIfNecessary: false)
+			var sw = cell!.viewWithTag(1) as! NSSegmentedControl
+			if (data[2] != 0) {
 				sw.selectedSegment = 1
 			}
 			else {

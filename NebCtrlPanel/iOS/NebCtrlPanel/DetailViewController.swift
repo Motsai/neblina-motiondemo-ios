@@ -32,8 +32,9 @@ let NebCmdList = [NebCmdItem] (arrayLiteral:
 	NebCmdItem(SubSysId: NEB_CTRL_SUBSYS_STORAGE, CmdId: FlashEraseAll, Name: "Flash Erase All", Actuator : 1, Text:String(_sel: nil)),
 	NebCmdItem(SubSysId: NEB_CTRL_SUBSYS_STORAGE, CmdId: FlashRecordStartStop, Name: "Flash Record", Actuator : 1, Text:String(_sel: nil)),
 	NebCmdItem(SubSysId: NEB_CTRL_SUBSYS_STORAGE, CmdId: FlashPlaybackStartStop, Name: "Flash Playback", Actuator : 1, Text:String(_sel: nil)),
-	NebCmdItem(SubSysId: NEB_CTRL_SUBSYS_LED, CmdId: LED_CMD_SET_VALUE, Name: "Set LED0", Actuator : 1, Text:String(_sel: nil)),
-	NebCmdItem(SubSysId: NEB_CTRL_SUBSYS_LED, CmdId: LED_CMD_SET_VALUE, Name: "Set LED1", Actuator : 1, Text:String(_sel: nil)),
+	NebCmdItem(SubSysId: NEB_CTRL_SUBSYS_LED, CmdId: LED_CMD_SET_VALUE, Name: "Set LED0 level", Actuator : 3, Text:String(_sel: nil)),
+	NebCmdItem(SubSysId: NEB_CTRL_SUBSYS_LED, CmdId: LED_CMD_SET_VALUE, Name: "Set LED1 level", Actuator : 3, Text:String(_sel: nil)),
+	NebCmdItem(SubSysId: NEB_CTRL_SUBSYS_LED, CmdId: LED_CMD_SET_VALUE, Name: "Set LED2", Actuator : 1, Text:String(_sel: nil)),
 	NebCmdItem(SubSysId: NEB_CTRL_SUBSYS_EEPROM, CmdId: EEPROM_Read, Name: "EEPROM Read", Actuator : 2, Text:String("Read")),
 	NebCmdItem(SubSysId: NEB_CTRL_SUBSYS_POWERMGMT, CmdId: POWERMGMT_CMD_SET_CHARGE_CURRENT, Name: "Charge Current in mA", Actuator : 3, Text:String(_sel: nil)),
 	NebCmdItem(SubSysId: 0xf, CmdId: MotionDataStream, Name: "Motion data stream", Actuator : 1, Text:String(_sel: nil)),
@@ -186,9 +187,24 @@ class DetailViewController: UIViewController, UITextFieldDelegate, CBPeripheralD
 	{
 		textField.resignFirstResponder()
 
-		let value = UInt16(textField.text!)
-		
-		nebdev!.setBatteryChargeCurrent(value!)
+		var value = UInt16(textField.text!)
+		let idx = cmdView.indexPathForCell(textField.superview!.superview as! UITableViewCell)
+		let row = (idx?.row)! as Int
+		if (value == nil) {
+			value = 0
+		}
+		switch (NebCmdList[row].SubSysId) {
+			case NEB_CTRL_SUBSYS_LED:
+				let i = getCmdIdx(NEB_CTRL_SUBSYS_LED,  cmdId: LED_CMD_SET_VALUE)
+				nebdev!.setLed(UInt8(row - i), Value: UInt8(value!))
+			
+				break
+			case NEB_CTRL_SUBSYS_POWERMGMT:
+				nebdev!.setBatteryChargeCurrent(value!)
+				break
+			default:
+				break
+		}
 
 		return true;
 	}
@@ -840,18 +856,18 @@ class DetailViewController: UIViewController, UITextFieldDelegate, CBPeripheralD
 				let i = getCmdIdx(NEB_CTRL_SUBSYS_LED,  cmdId: LED_CMD_SET_VALUE)
 				var cell = cmdView.cellForRowAtIndexPath( NSIndexPath(forRow: i, inSection: 0))
 				if (cell != nil) {
-					let sw = cell!.viewWithTag(1) as! UISegmentedControl
-					if (data[0] != 0) {
-						sw.selectedSegmentIndex = 1
-					}
-					else {
-						sw.selectedSegmentIndex = 0
-					}
+					let tf = cell!.viewWithTag(3) as! UITextField
+					tf.text = String(data[0])
 				}
 				cell = cmdView.cellForRowAtIndexPath( NSIndexPath(forRow: i + 1, inSection: 0))
 				if (cell != nil) {
+					let tf = cell!.viewWithTag(3) as! UITextField
+					tf.text = String(data[1])
+				}
+				cell = cmdView.cellForRowAtIndexPath( NSIndexPath(forRow: i + 2, inSection: 0))
+				if (cell != nil) {
 					let sw = cell!.viewWithTag(1) as! UISegmentedControl
-					if (data[1] != 0) {
+					if (data[2] != 0) {
 						sw.selectedSegmentIndex = 1
 					}
 					else {
@@ -941,6 +957,12 @@ class DetailViewController: UIViewController, UITextFieldDelegate, CBPeripheralD
 	func tableView(tableView: UITableView, canEditRowAtIndexPath indexPath: NSIndexPath?) -> Bool
 	{
 		return false
+	}
+	func scrollViewDidScroll(scrollView: UIScrollView)
+	{
+		nebdev!.getMotionStatus()
+		nebdev!.getDataPortState()
+		nebdev!.getLed()
 	}
 }
 
