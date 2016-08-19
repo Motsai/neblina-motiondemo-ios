@@ -206,6 +206,24 @@ class Neblina : NSObject, CBPeripheralDelegate {
 	}
 	
 	// MARK : **** API
+	func crc8(data : [UInt8], Len : Int) -> UInt8
+	{
+		var i = Int(0)
+		var e = UInt8(0)
+		var f = UInt8(0)
+		var crc = UInt8(0)
+		
+		//for (i = 0; i < Len; i += 1)
+		while i < Len {
+			e = crc ^ data[i];
+			f = e ^ (e >> 4) ^ (e >> 7);
+			crc = (f << 1) ^ (f << 4);
+			i += 1
+		}
+	
+		return crc;
+	}
+
 	// Debug
 	func getDataPortState() {
 		if (isDeviceReady() == false) {
@@ -216,8 +234,10 @@ class Neblina : NSObject, CBPeripheralDelegate {
 		
 		pkbuf[0] = UInt8((NEB_CTRL_PKTYPE_CMD << 5) | NEB_CTRL_SUBSYS_DEBUG) // 0x40
 		pkbuf[1] = 0	// Data len
-		pkbuf[2] = 0
+		pkbuf[2] = 0xFF
 		pkbuf[3] = UInt8(DEBUG_CMD_GET_DATAPORT)	// Cmd
+		
+		pkbuf[2] = crc8(pkbuf, Len: Int(pkbuf[1]) + 4)
 		
 		device.writeValue(NSData(bytes: UnsafeMutablePointer<Void>(pkbuf), length: 4), forCharacteristic: ctrlChar, type: CBCharacteristicWriteType.WithoutResponse)
 	}
@@ -231,9 +251,11 @@ class Neblina : NSObject, CBPeripheralDelegate {
 		
 		pkbuf[0] = UInt8((NEB_CTRL_PKTYPE_CMD << 5) | NEB_CTRL_SUBSYS_DEBUG)
 		pkbuf[1] = 16
-		pkbuf[2] = 0
+		pkbuf[2] = 0xFF
 		pkbuf[3] = UInt8(DEBUG_CMD_GET_FW_VERSION)	// Cmd
 		
+		pkbuf[2] = crc8(pkbuf, Len: Int(pkbuf[1]) + 4)
+
 		device.writeValue(NSData(bytes: UnsafeMutablePointer<Void>(pkbuf), length: 4), forCharacteristic: ctrlChar, type: CBCharacteristicWriteType.WithoutResponse)
 	}
 	
@@ -246,9 +268,11 @@ class Neblina : NSObject, CBPeripheralDelegate {
 		
 		pkbuf[0] = UInt8((NEB_CTRL_PKTYPE_CMD << 5) | NEB_CTRL_SUBSYS_DEBUG)
 		pkbuf[1] = 16
-		pkbuf[2] = 0
+		pkbuf[2] = 0xFF
 		pkbuf[3] = UInt8(DEBUG_CMD_MOTENGINE_RECORDER_STATUS)	// Cmd
 		
+		pkbuf[2] = crc8(pkbuf, Len: Int(pkbuf[1]) + 4)
+
 		device.writeValue(NSData(bytes: UnsafeMutablePointer<Void>(pkbuf), length: 20), forCharacteristic: ctrlChar, type: CBCharacteristicWriteType.WithoutResponse)
 	}
 	
@@ -261,9 +285,11 @@ class Neblina : NSObject, CBPeripheralDelegate {
 		
 		pkbuf[0] = UInt8((NEB_CTRL_PKTYPE_CMD << 5) | NEB_CTRL_SUBSYS_DEBUG)
 		pkbuf[1] = 16
-		pkbuf[2] = 0
+		pkbuf[2] = 0xFF
 		pkbuf[3] = UInt8(DEBUG_CMD_MOTENGINE_RECORDER_STATUS)	// Cmd
 		
+		pkbuf[2] = crc8(pkbuf, Len: Int(pkbuf[1]) + 4)
+
 		device.writeValue(NSData(bytes: UnsafeMutablePointer<Void>(pkbuf), length: 20), forCharacteristic: ctrlChar, type: CBCharacteristicWriteType.WithoutResponse)
 	}
 	
@@ -276,13 +302,16 @@ class Neblina : NSObject, CBPeripheralDelegate {
 		
 		pkbuf[0] = UInt8((NEB_CTRL_PKTYPE_CMD << 5) | NEB_CTRL_SUBSYS_DEBUG) // 0x40
 		pkbuf[1] = 2
-		pkbuf[2] = 0
+		pkbuf[2] = 0xFF
 		pkbuf[3] = UInt8(DEBUG_CMD_SET_DATAPORT)	// Cmd
 		
 		// Port = 0 : BLE
 		// Port = 1 : UART
 		pkbuf[4] = UInt8(PortIdx)
 		pkbuf[5] = Ctrl		// 1 - Open, 0 - Close
+		
+		pkbuf[2] = crc8(pkbuf, Len: Int(pkbuf[1]) + 4)
+
 		device.writeValue(NSData(bytes: UnsafeMutablePointer<Void>(pkbuf), length: 6), forCharacteristic: ctrlChar, type: CBCharacteristicWriteType.WithoutResponse)
 	}
 	
@@ -295,13 +324,16 @@ class Neblina : NSObject, CBPeripheralDelegate {
 		
 		pkbuf[0] = UInt8((NEB_CTRL_PKTYPE_CMD << 5) | NEB_CTRL_SUBSYS_DEBUG) // 0x40
 		pkbuf[1] = 16
-		pkbuf[2] = 0
+		pkbuf[2] = 0xFF
 		pkbuf[3] = UInt8(DEBUG_CMD_SET_INTERFACE)	// Cmd
 		
 		// Interf = 0 : BLE
 		// Interf = 1 : UART
 		pkbuf[4] = UInt8(Interf)
 		pkbuf[8] = 0
+		
+		pkbuf[2] = crc8(pkbuf, Len: Int(pkbuf[1]) + 4)
+
 		device.writeValue(NSData(bytes: UnsafeMutablePointer<Void>(pkbuf), length: 20), forCharacteristic: ctrlChar, type: CBCharacteristicWriteType.WithoutResponse)
 	}
 	
@@ -315,12 +347,14 @@ class Neblina : NSObject, CBPeripheralDelegate {
 		
 		pkbuf[0] = UInt8((NEB_CTRL_PKTYPE_CMD << 5) | NEB_CTRL_SUBSYS_EEPROM)
 		pkbuf[1] = 16
-		pkbuf[2] = 0
+		pkbuf[2] = 0xFF
 		pkbuf[3] = UInt8(EEPROM_Read) // Cmd
 		
 		pkbuf[4] = UInt8(pageNo & 0xff)
 		pkbuf[5] = UInt8((pageNo >> 8) & 0xff)
 		
+		pkbuf[2] = crc8(pkbuf, Len: Int(pkbuf[1]) + 4)
+
 		device.writeValue(NSData(bytes: UnsafeMutablePointer<Void>(pkbuf), length: 20), forCharacteristic: ctrlChar, type: CBCharacteristicWriteType.WithoutResponse)
 	}
 	
@@ -333,7 +367,7 @@ class Neblina : NSObject, CBPeripheralDelegate {
 		
 		pkbuf[0] = UInt8((NEB_CTRL_PKTYPE_CMD << 5) | NEB_CTRL_SUBSYS_EEPROM)
 		pkbuf[1] = 16
-		pkbuf[2] = 0
+		pkbuf[2] = 0xFF
 		pkbuf[3] = UInt8(EEPROM_Write) // Cmd
 		
 		pkbuf[4] = UInt8(pageNo & 0xff)
@@ -343,6 +377,8 @@ class Neblina : NSObject, CBPeripheralDelegate {
 			pkbuf[i + 6] = data[i]
 		}
 		
+		
+		pkbuf[2] = crc8(pkbuf, Len: Int(pkbuf[1]) + 4)
 		device.writeValue(NSData(bytes: UnsafeMutablePointer<Void>(pkbuf), length: 20), forCharacteristic: ctrlChar, type: CBCharacteristicWriteType.WithoutResponse)
 	}
 	
@@ -356,9 +392,11 @@ class Neblina : NSObject, CBPeripheralDelegate {
 		
 		pkbuf[0] = UInt8((NEB_CTRL_PKTYPE_CMD << 5) | NEB_CTRL_SUBSYS_LED)
 		pkbuf[1] = 0	// Data length
-		pkbuf[2] = 0
+		pkbuf[2] = 0xFF
 		pkbuf[3] = UInt8(LED_CMD_GET_VALUE)	// Cmd
 		
+		pkbuf[2] = crc8(pkbuf, Len: Int(pkbuf[1]) + 4)
+
 		device.writeValue(NSData(bytes: UnsafeMutablePointer<Void>(pkbuf), length: 4), forCharacteristic: ctrlChar, type: CBCharacteristicWriteType.WithoutResponse)
 	}
 	
@@ -371,13 +409,16 @@ class Neblina : NSObject, CBPeripheralDelegate {
 		
 		pkbuf[0] = UInt8((NEB_CTRL_PKTYPE_CMD << 5) | NEB_CTRL_SUBSYS_LED)
 		pkbuf[1] = 16 //UInt8(sizeof(Fusion_DataPacket_t))
-		pkbuf[2] = 0
+		pkbuf[2] = 0xFF
 		pkbuf[3] = UInt8(LED_CMD_SET_VALUE)	// Cmd
 		
 		// Nb of LED to set
 		pkbuf[4] = 1
 		pkbuf[5] = LedNo
 		pkbuf[6] = Value
+		
+		pkbuf[2] = crc8(pkbuf, Len: Int(pkbuf[1]) + 4)
+
 		device.writeValue(NSData(bytes: UnsafeMutablePointer<Void>(pkbuf), length: 20), forCharacteristic: ctrlChar, type: CBCharacteristicWriteType.WithoutResponse)
 	}
 	
@@ -391,9 +432,11 @@ class Neblina : NSObject, CBPeripheralDelegate {
 		
 		pkbuf[0] = UInt8((NEB_CTRL_PKTYPE_CMD << 5) | NEB_CTRL_SUBSYS_POWERMGMT)
 		pkbuf[1] = 0	// Data length
-		pkbuf[2] = 0
+		pkbuf[2] = 0xFF
 		pkbuf[3] = UInt8(POWERMGMT_CMD_GET_TEMPERATURE)	// Cmd
 		
+		pkbuf[2] = crc8(pkbuf, Len: Int(pkbuf[1]) + 4)
+
 		device.writeValue(NSData(bytes: UnsafeMutablePointer<Void>(pkbuf), length: 4), forCharacteristic: ctrlChar, type: CBCharacteristicWriteType.WithoutResponse)
 	}
 	
@@ -406,13 +449,15 @@ class Neblina : NSObject, CBPeripheralDelegate {
 		
 		pkbuf[0] = UInt8((NEB_CTRL_PKTYPE_CMD << 5) | NEB_CTRL_SUBSYS_POWERMGMT)
 		pkbuf[1] = 2	// Data length
-		pkbuf[2] = 0
+		pkbuf[2] = 0xFF
 		pkbuf[3] = UInt8(POWERMGMT_CMD_SET_CHARGE_CURRENT)	// Cmd
 		
 		// Data
 		pkbuf[4] = UInt8(Current & 0xFF)
 		pkbuf[5] = UInt8((Current >> 8) & 0xFF)
 		
+		pkbuf[2] = crc8(pkbuf, Len: Int(pkbuf[1]) + 4)
+
 		device.writeValue(NSData(bytes: UnsafeMutablePointer<Void>(pkbuf), length: 6), forCharacteristic: ctrlChar, type: CBCharacteristicWriteType.WithoutResponse)
 	}
 
@@ -426,10 +471,12 @@ class Neblina : NSObject, CBPeripheralDelegate {
 		
 		pkbuf[0] = UInt8((NEB_CTRL_PKTYPE_CMD << 5) | NEB_CTRL_SUBSYS_MOTION_ENG) //0x41
 		pkbuf[1] = UInt8(sizeof(Fusion_DataPacket_t))
-		pkbuf[2] = 0
+		pkbuf[2] = 0xFF
 		pkbuf[3] = UInt8(SetAccRange)	// Cmd
 		pkbuf[8] = Mode
 		
+		pkbuf[2] = crc8(pkbuf, Len: Int(pkbuf[1]) + 4)
+
 		device.writeValue(NSData(bytes: UnsafeMutablePointer<Void>(pkbuf), length: 20), forCharacteristic: ctrlChar, type: CBCharacteristicWriteType.WithoutResponse)
 	}
 	
@@ -442,12 +489,14 @@ class Neblina : NSObject, CBPeripheralDelegate {
 		
 		pkbuf[0] = UInt8((NEB_CTRL_PKTYPE_CMD << 5) | NEB_CTRL_SUBSYS_MOTION_ENG) //0x41
 		pkbuf[1] = UInt8(sizeof(Fusion_DataPacket_t))
-		pkbuf[2] = 0
+		pkbuf[2] = 0xFF
 		pkbuf[3] = UInt8(SetFusionType)	// Cmd
 		
 		// Data
 		pkbuf[8] = Mode
 		
+		pkbuf[2] = crc8(pkbuf, Len: Int(pkbuf[1]) + 4)
+
 		device.writeValue(NSData(bytes: UnsafeMutablePointer<Void>(pkbuf), length: 20), forCharacteristic: ctrlChar, type: CBCharacteristicWriteType.WithoutResponse)
 	}
 	
@@ -460,9 +509,11 @@ class Neblina : NSObject, CBPeripheralDelegate {
 		
 		pkbuf[0] = UInt8((NEB_CTRL_PKTYPE_CMD << 5) | NEB_CTRL_SUBSYS_MOTION_ENG) //0x41
 		pkbuf[1] = UInt8(sizeof(Fusion_DataPacket_t))
-		pkbuf[2] = 0
+		pkbuf[2] = 0xFF
 		pkbuf[3] = UInt8(LockHeadingRef)	// Cmd
 		
+		pkbuf[2] = crc8(pkbuf, Len: Int(pkbuf[1]) + 4)
+
 		device.writeValue(NSData(bytes: UnsafeMutablePointer<Void>(pkbuf), length: 20), forCharacteristic: ctrlChar, type: CBCharacteristicWriteType.WithoutResponse)
 	}
 	
@@ -477,9 +528,11 @@ class Neblina : NSObject, CBPeripheralDelegate {
 		
 		pkbuf[0] = UInt8((NEB_CTRL_PKTYPE_CMD << 5) | NEB_CTRL_SUBSYS_MOTION_ENG)
 		pkbuf[1] = UInt8(sizeof(Fusion_DataPacket_t))
-		pkbuf[2] = 0
+		pkbuf[2] = 0xFF
 		pkbuf[3] = UInt8(DisableAllStreaming)	// Cmd
 		
+		pkbuf[2] = crc8(pkbuf, Len: Int(pkbuf[1]) + 4)
+
 		device.writeValue(NSData(bytes: UnsafeMutablePointer<Void>(pkbuf), length: 20), forCharacteristic: ctrlChar, type: CBCharacteristicWriteType.WithoutResponse)
 	}
 	
@@ -493,7 +546,7 @@ class Neblina : NSObject, CBPeripheralDelegate {
 		
 		pkbuf[0] = UInt8((NEB_CTRL_PKTYPE_CMD << 5) | NEB_CTRL_SUBSYS_MOTION_ENG) //0x41
 		pkbuf[1] = UInt8(sizeof(Fusion_DataPacket_t))
-		pkbuf[2] = 0
+		pkbuf[2] = 0xFF
 		pkbuf[3] = UInt8(EulerAngle)// Cmd
 		
 		if (Enable == true)
@@ -504,6 +557,9 @@ class Neblina : NSObject, CBPeripheralDelegate {
 		{
 			pkbuf[8] = 0
 		}
+		
+		pkbuf[2] = crc8(pkbuf, Len: Int(pkbuf[1]) + 4)
+
 		device.writeValue(NSData(bytes: UnsafeMutablePointer<Void>(pkbuf), length: 20), forCharacteristic: ctrlChar, type: CBCharacteristicWriteType.WithoutResponse)
 	}
 	
@@ -517,7 +573,7 @@ class Neblina : NSObject, CBPeripheralDelegate {
 		
 		pkbuf[0] = UInt8((NEB_CTRL_PKTYPE_CMD << 5) | NEB_CTRL_SUBSYS_MOTION_ENG) //0x41
 		pkbuf[1] = UInt8(sizeof(Fusion_DataPacket_t))
-		pkbuf[2] = 0
+		pkbuf[2] = 0xFF
 		pkbuf[3] = UInt8(ExtForce)	// Cmd
 		
 		if (Enable == true)
@@ -528,6 +584,8 @@ class Neblina : NSObject, CBPeripheralDelegate {
 		{
 			pkbuf[8] = 0
 		}
+		pkbuf[2] = crc8(pkbuf, Len: Int(pkbuf[1]) + 4)
+
 		device.writeValue(NSData(bytes: UnsafeMutablePointer<Void>(pkbuf), length: 20), forCharacteristic: ctrlChar, type: CBCharacteristicWriteType.WithoutResponse)
 	}
 	
@@ -541,7 +599,7 @@ class Neblina : NSObject, CBPeripheralDelegate {
 		
 		pkbuf[0] = UInt8((NEB_CTRL_PKTYPE_CMD << 5) | NEB_CTRL_SUBSYS_MOTION_ENG) //0x41
 		pkbuf[1] = UInt8(sizeof(Fusion_DataPacket_t))
-		pkbuf[2] = 0
+		pkbuf[2] = 0xFF
 		pkbuf[3] = UInt8(IMU_Data)	// Cmd
 		
 		if Enable == true
@@ -552,6 +610,8 @@ class Neblina : NSObject, CBPeripheralDelegate {
 		{
 			pkbuf[8] = 0
 		}
+		pkbuf[2] = crc8(pkbuf, Len: Int(pkbuf[1]) + 4)
+
 		device.writeValue(NSData(bytes: UnsafeMutablePointer<Void>(pkbuf), length: 20), forCharacteristic: ctrlChar, type: CBCharacteristicWriteType.WithoutResponse)
 	}
 	
@@ -565,7 +625,7 @@ class Neblina : NSObject, CBPeripheralDelegate {
 		
 		pkbuf[0] = UInt8((NEB_CTRL_PKTYPE_CMD << 5) | NEB_CTRL_SUBSYS_MOTION_ENG) //0x41
 		pkbuf[1] = UInt8(sizeof(Fusion_DataPacket_t))
-		pkbuf[2] = 0
+		pkbuf[2] = 0xFF
 		pkbuf[3] = UInt8(MAG_Data)	// Cmd
 		
 		if Enable == true
@@ -576,6 +636,8 @@ class Neblina : NSObject, CBPeripheralDelegate {
 		{
 			pkbuf[8] = 0
 		}
+		pkbuf[2] = crc8(pkbuf, Len: Int(pkbuf[1]) + 4)
+
 		device.writeValue(NSData(bytes: UnsafeMutablePointer<Void>(pkbuf), length: 20), forCharacteristic: ctrlChar, type: CBCharacteristicWriteType.WithoutResponse)
 	}
 	
@@ -589,7 +651,7 @@ class Neblina : NSObject, CBPeripheralDelegate {
 		
 		pkbuf[0] = UInt8((NEB_CTRL_PKTYPE_CMD << 5) | NEB_CTRL_SUBSYS_MOTION_ENG) //0x41
 		pkbuf[1] = UInt8(sizeof(Fusion_DataPacket_t))
-		pkbuf[2] = 0
+		pkbuf[2] = 0xFF
 		pkbuf[3] = UInt8(MotionState)	// Cmd
 		
 		if Enable == true
@@ -600,6 +662,8 @@ class Neblina : NSObject, CBPeripheralDelegate {
 		{
 			pkbuf[8] = 0
 		}
+		pkbuf[2] = crc8(pkbuf, Len: Int(pkbuf[1]) + 4)
+
 		device.writeValue(NSData(bytes: UnsafeMutablePointer<Void>(pkbuf), length: 20), forCharacteristic: ctrlChar, type: CBCharacteristicWriteType.WithoutResponse)
 	}
 
@@ -613,7 +677,7 @@ class Neblina : NSObject, CBPeripheralDelegate {
 		
 		pkbuf[0] = UInt8((NEB_CTRL_PKTYPE_CMD << 5) | NEB_CTRL_SUBSYS_MOTION_ENG) //0x41
 		pkbuf[1] = UInt8(sizeof(Fusion_DataPacket_t))
-		pkbuf[2] = 0
+		pkbuf[2] = 0xFF
 		pkbuf[3] = UInt8(Pedometer)// Cmd
 		
 		if Enable == true
@@ -624,6 +688,8 @@ class Neblina : NSObject, CBPeripheralDelegate {
 		{
 			pkbuf[8] = 0
 		}
+		pkbuf[2] = crc8(pkbuf, Len: Int(pkbuf[1]) + 4)
+
 		device.writeValue(NSData(bytes: UnsafeMutablePointer<Void>(pkbuf), length: 20), forCharacteristic: ctrlChar, type: CBCharacteristicWriteType.WithoutResponse)
 	}
 	
@@ -637,7 +703,7 @@ class Neblina : NSObject, CBPeripheralDelegate {
 		
 		pkbuf[0] = UInt8((NEB_CTRL_PKTYPE_CMD << 5) | NEB_CTRL_SUBSYS_MOTION_ENG) //0x41
 		pkbuf[1] = UInt8(sizeof(Fusion_DataPacket_t))
-		pkbuf[2] = 0
+		pkbuf[2] = 0xFF
 		pkbuf[3] = UInt8(Quaternion)	// Cmd
 		
 		if (Enable == true)
@@ -648,6 +714,9 @@ class Neblina : NSObject, CBPeripheralDelegate {
 		{
 			pkbuf[8] = 0
 		}
+		
+		pkbuf[2] = crc8(pkbuf, Len: Int(pkbuf[1]) + 4)
+
 		device.writeValue(NSData(bytes: UnsafeMutablePointer<Void>(pkbuf), length: 20), forCharacteristic: ctrlChar, type: CBCharacteristicWriteType.WithoutResponse)
 	}
 	
@@ -660,7 +729,7 @@ class Neblina : NSObject, CBPeripheralDelegate {
 		
 		pkbuf[0] = UInt8((NEB_CTRL_PKTYPE_CMD << 5) | NEB_CTRL_SUBSYS_MOTION_ENG) //0x41
 		pkbuf[1] = UInt8(sizeof(Fusion_DataPacket_t))
-		pkbuf[2] = 0
+		pkbuf[2] = 0xFF
 		pkbuf[3] = UInt8(RotationInfo)	// Cmd
 		
 		if Enable == true
@@ -671,6 +740,8 @@ class Neblina : NSObject, CBPeripheralDelegate {
 		{
 			pkbuf[8] = 0
 		}
+		pkbuf[2] = crc8(pkbuf, Len: Int(pkbuf[1]) + 4)
+
 		device.writeValue(NSData(bytes: UnsafeMutablePointer<Void>(pkbuf), length: 20), forCharacteristic: ctrlChar, type: CBCharacteristicWriteType.WithoutResponse)
 	}
 	
@@ -683,7 +754,7 @@ class Neblina : NSObject, CBPeripheralDelegate {
 		
 		pkbuf[0] = UInt8((NEB_CTRL_PKTYPE_CMD << 5) | NEB_CTRL_SUBSYS_MOTION_ENG) //0x41
 		pkbuf[1] = UInt8(sizeof(Fusion_DataPacket_t))
-		pkbuf[2] = 0
+		pkbuf[2] = 0xFF
 		pkbuf[3] = UInt8(SittingStanding)	// Cmd
 		
 		if Enable == true
@@ -694,6 +765,8 @@ class Neblina : NSObject, CBPeripheralDelegate {
 		{
 			pkbuf[8] = 0
 		}
+		pkbuf[2] = crc8(pkbuf, Len: Int(pkbuf[1]) + 4)
+
 		device.writeValue(NSData(bytes: UnsafeMutablePointer<Void>(pkbuf), length: 20), forCharacteristic: ctrlChar, type: CBCharacteristicWriteType.WithoutResponse)
 	}
 	
@@ -707,7 +780,7 @@ class Neblina : NSObject, CBPeripheralDelegate {
 		
 		pkbuf[0] = UInt8((NEB_CTRL_PKTYPE_CMD << 5) | NEB_CTRL_SUBSYS_MOTION_ENG) //0x41
 		pkbuf[1] = UInt8(sizeof(Fusion_DataPacket_t))
-		pkbuf[2] = 0
+		pkbuf[2] = 0xFF
 		pkbuf[3] = UInt8(TrajectoryInfo)	// Cmd
 		
 		if Enable == true
@@ -718,6 +791,8 @@ class Neblina : NSObject, CBPeripheralDelegate {
 		{
 			pkbuf[8] = 0
 		}
+		pkbuf[2] = crc8(pkbuf, Len: Int(pkbuf[1]) + 4)
+
 		device.writeValue(NSData(bytes: UnsafeMutablePointer<Void>(pkbuf), length: 20), forCharacteristic: ctrlChar, type: CBCharacteristicWriteType.WithoutResponse)
 	}
 	
@@ -731,9 +806,11 @@ class Neblina : NSObject, CBPeripheralDelegate {
 		
 		pkbuf[0] = UInt8((NEB_CTRL_PKTYPE_CMD << 5) | NEB_CTRL_SUBSYS_MOTION_ENG)
 		pkbuf[1] = UInt8(sizeof(Fusion_DataPacket_t))
-		pkbuf[2] = 0
+		pkbuf[2] = 0xFF
 		pkbuf[3] = UInt8(ResetTimeStamp)	// Cmd
 		
+		pkbuf[2] = crc8(pkbuf, Len: Int(pkbuf[1]) + 4)
+
 		device.writeValue(NSData(bytes: UnsafeMutablePointer<Void>(pkbuf), length: 20), forCharacteristic: ctrlChar, type: CBCharacteristicWriteType.WithoutResponse)
 	}
 	
@@ -747,7 +824,7 @@ class Neblina : NSObject, CBPeripheralDelegate {
 		
 		pkbuf[0] = UInt8((NEB_CTRL_PKTYPE_CMD << 5) | NEB_CTRL_SUBSYS_MOTION_ENG) //0x41
 		pkbuf[1] = UInt8(sizeof(Fusion_DataPacket_t))
-		pkbuf[2] = 0
+		pkbuf[2] = 0xFF
 		pkbuf[3] = UInt8(TrajectoryRecStartStop)	// Cmd
 		
 		if Enable == true
@@ -758,6 +835,8 @@ class Neblina : NSObject, CBPeripheralDelegate {
 		{
 			pkbuf[8] = 0
 		}
+		pkbuf[2] = crc8(pkbuf, Len: Int(pkbuf[1]) + 4)
+
 		device.writeValue(NSData(bytes: UnsafeMutablePointer<Void>(pkbuf), length: 20), forCharacteristic: ctrlChar, type: CBCharacteristicWriteType.WithoutResponse)
 	}
 	
@@ -771,9 +850,11 @@ class Neblina : NSObject, CBPeripheralDelegate {
 		
 		pkbuf[0] = UInt8((NEB_CTRL_PKTYPE_CMD << 5) | NEB_CTRL_SUBSYS_STORAGE)
 		pkbuf[1] = 16
-		pkbuf[2] = 0
+		pkbuf[2] = 0xFF
 		pkbuf[3] = UInt8(FlashGetNbSessions) // Cmd
 		
+		pkbuf[2] = crc8(pkbuf, Len: Int(pkbuf[1]) + 4)
+
 		device.writeValue(NSData(bytes: UnsafeMutablePointer<Void>(pkbuf), length: 20), forCharacteristic: ctrlChar, type: CBCharacteristicWriteType.WithoutResponse)
 	}
 	
@@ -786,12 +867,14 @@ class Neblina : NSObject, CBPeripheralDelegate {
 		
 		pkbuf[0] = UInt8((NEB_CTRL_PKTYPE_CMD << 5) | NEB_CTRL_SUBSYS_STORAGE)
 		pkbuf[1] = 16
-		pkbuf[2] = 0
+		pkbuf[2] = 0xFF
 		pkbuf[3] = UInt8(FlashGetSessionInfo) // Cmd
 		
 		pkbuf[8] = UInt8(sessionId & 0xff)
 		pkbuf[9] = UInt8((sessionId >> 8) & 0xff)
 		
+		pkbuf[2] = crc8(pkbuf, Len: Int(pkbuf[1]) + 4)
+
 		device.writeValue(NSData(bytes: UnsafeMutablePointer<Void>(pkbuf), length: 20), forCharacteristic: ctrlChar, type: CBCharacteristicWriteType.WithoutResponse)
 	}
 	
@@ -804,7 +887,7 @@ class Neblina : NSObject, CBPeripheralDelegate {
 		
 		pkbuf[0] = UInt8((NEB_CTRL_PKTYPE_CMD << 5) | NEB_CTRL_SUBSYS_STORAGE) //0x41
 		pkbuf[1] = 16
-		pkbuf[2] = 0
+		pkbuf[2] = 0xFF
 		pkbuf[3] = UInt8(FlashEraseAll) // Cmd
 		
 		if Enable == true
@@ -815,6 +898,8 @@ class Neblina : NSObject, CBPeripheralDelegate {
 		{
 			pkbuf[8] = 0
 		}
+		pkbuf[2] = crc8(pkbuf, Len: Int(pkbuf[1]) + 4)
+
 		device.writeValue(NSData(bytes: UnsafeMutablePointer<Void>(pkbuf), length: 20), forCharacteristic: ctrlChar, type: CBCharacteristicWriteType.WithoutResponse)
 		
 	}
@@ -828,7 +913,7 @@ class Neblina : NSObject, CBPeripheralDelegate {
 		
 		pkbuf[0] = UInt8((NEB_CTRL_PKTYPE_CMD << 5) | NEB_CTRL_SUBSYS_STORAGE)
 		pkbuf[1] = 16
-		pkbuf[2] = 0
+		pkbuf[2] = 0xFF
 		pkbuf[3] = UInt8(FlashPlaybackStartStop) // Cmd
 		
 		if Enable == true
@@ -843,6 +928,8 @@ class Neblina : NSObject, CBPeripheralDelegate {
 		pkbuf[9] = UInt8(sessionId & 0xff)
 		pkbuf[10] = UInt8((sessionId >> 8) & 0xff)
 		
+		pkbuf[2] = crc8(pkbuf, Len: Int(pkbuf[1]) + 4)
+
 		device.writeValue(NSData(bytes: UnsafeMutablePointer<Void>(pkbuf), length: 20), forCharacteristic: ctrlChar, type: CBCharacteristicWriteType.WithoutResponse)
 	}
 	
@@ -855,7 +942,7 @@ class Neblina : NSObject, CBPeripheralDelegate {
 		
 		pkbuf[0] = UInt8((NEB_CTRL_PKTYPE_CMD << 5) | NEB_CTRL_SUBSYS_STORAGE) //0x41
 		pkbuf[1] = 16
-		pkbuf[2] = 0
+		pkbuf[2] = 0xFF
 		pkbuf[3] = UInt8(FlashRecordStartStop)	// Cmd
 		
 		if Enable == true
@@ -866,6 +953,8 @@ class Neblina : NSObject, CBPeripheralDelegate {
 		{
 			pkbuf[8] = 0
 		}
+		pkbuf[2] = crc8(pkbuf, Len: Int(pkbuf[1]) + 4)
+
 		device.writeValue(NSData(bytes: UnsafeMutablePointer<Void>(pkbuf), length: 20), forCharacteristic: ctrlChar, type: CBCharacteristicWriteType.WithoutResponse)
 	}
 	
@@ -878,7 +967,7 @@ class Neblina : NSObject, CBPeripheralDelegate {
 		
 		pkbuf[0] = UInt8((NEB_CTRL_PKTYPE_CMD << 5) | NEB_CTRL_SUBSYS_STORAGE) //0x41
 		pkbuf[1] = 16
-		pkbuf[2] = 0
+		pkbuf[2] = 0xFF
 		pkbuf[3] = UInt8(FlashSessionRead)	// Cmd
 
 		// Command parameter
@@ -891,6 +980,8 @@ class Neblina : NSObject, CBPeripheralDelegate {
 		pkbuf[10] = UInt8((Offset >> 16) & 0xFF)
 		pkbuf[11] = UInt8((Offset >> 24) & 0xFF)
 		
+		pkbuf[2] = crc8(pkbuf, Len: Int(pkbuf[1]) + 4)
+
 		device.writeValue(NSData(bytes: UnsafeMutablePointer<Void>(pkbuf), length: 20), forCharacteristic: ctrlChar, type: CBCharacteristicWriteType.WithoutResponse)
 	}
 	
