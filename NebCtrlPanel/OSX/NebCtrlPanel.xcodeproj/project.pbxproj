@@ -15,6 +15,7 @@
 		C9D8CAD41CEF9F9400F9359B /* NebCtrlPanelUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9D8CAD31CEF9F9400F9359B /* NebCtrlPanelUITests.swift */; };
 		C9D8CAE81CEFA0E700F9359B /* Neblina.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9D8CAE61CEFA0E700F9359B /* Neblina.swift */; };
 		C9D8CAED1CEFA29600F9359B /* art.scnassets in Resources */ = {isa = PBXBuildFile; fileRef = C9D8CAEC1CEFA29600F9359B /* art.scnassets */; };
+		C9E62C551D9ED68B0040D053 /* CoreBluetooth.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C9E62C541D9ED68B0040D053 /* CoreBluetooth.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -53,6 +54,7 @@
 		C9D8CAE61CEFA0E700F9359B /* Neblina.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Neblina.swift; path = ../../../src/Neblina.swift; sourceTree = "<group>"; };
 		C9D8CAE71CEFA0E700F9359B /* ProMotion.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ProMotion.h; path = ../../../src/ProMotion.h; sourceTree = "<group>"; };
 		C9D8CAEC1CEFA29600F9359B /* art.scnassets */ = {isa = PBXFileReference; lastKnownFileType = wrapper.scnassets; name = art.scnassets; path = ../../../art.scnassets; sourceTree = "<group>"; };
+		C9E62C541D9ED68B0040D053 /* CoreBluetooth.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreBluetooth.framework; path = System/Library/Frameworks/CoreBluetooth.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -60,6 +62,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C9E62C551D9ED68B0040D053 /* CoreBluetooth.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -87,6 +90,7 @@
 				C9D8CAC71CEF9F9400F9359B /* NebCtrlPanelTests */,
 				C9D8CAD21CEF9F9400F9359B /* NebCtrlPanelUITests */,
 				C9D8CAB41CEF9F9400F9359B /* Products */,
+				C9E62C531D9ED68B0040D053 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -134,6 +138,14 @@
 				C9D8CAD51CEF9F9400F9359B /* Info.plist */,
 			);
 			path = NebCtrlPanelUITests;
+			sourceTree = "<group>";
+		};
+		C9E62C531D9ED68B0040D053 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				C9E62C541D9ED68B0040D053 /* CoreBluetooth.framework */,
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -204,13 +216,16 @@
 				TargetAttributes = {
 					C9D8CAB21CEF9F9400F9359B = {
 						CreatedOnToolsVersion = 7.3.1;
+						LastSwiftMigration = 0800;
 					};
 					C9D8CAC31CEF9F9400F9359B = {
 						CreatedOnToolsVersion = 7.3.1;
+						LastSwiftMigration = 0800;
 						TestTargetID = C9D8CAB21CEF9F9400F9359B;
 					};
 					C9D8CACE1CEF9F9400F9359B = {
 						CreatedOnToolsVersion = 7.3.1;
+						LastSwiftMigration = 0800;
 						TestTargetID = C9D8CAB21CEF9F9400F9359B;
 					};
 				};
@@ -409,8 +424,10 @@
 				MACOSX_DEPLOYMENT_TARGET = 10.10;
 				PRODUCT_BUNDLE_IDENTIFIER = com.motsai.NebCtrlPanel;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
 				SWIFT_OBJC_BRIDGING_HEADER = "../../src/Neblina-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 3.0;
 			};
 			name = Debug;
 		};
@@ -425,7 +442,9 @@
 				MACOSX_DEPLOYMENT_TARGET = 10.10;
 				PRODUCT_BUNDLE_IDENTIFIER = com.motsai.NebCtrlPanel;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
 				SWIFT_OBJC_BRIDGING_HEADER = "../../src/Neblina-Bridging-Header.h";
+				SWIFT_VERSION = 3.0;
 			};
 			name = Release;
 		};
@@ -438,6 +457,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.motsai.NebCtrlPanelTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 3.0;
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/NebCtrlPanel.app/Contents/MacOS/NebCtrlPanel";
 			};
 			name = Debug;
@@ -451,6 +471,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.motsai.NebCtrlPanelTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 3.0;
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/NebCtrlPanel.app/Contents/MacOS/NebCtrlPanel";
 			};
 			name = Release;
@@ -463,6 +484,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.motsai.NebCtrlPanelUITests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 3.0;
 				TEST_TARGET_NAME = NebCtrlPanel;
 			};
 			name = Debug;
@@ -475,6 +497,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.motsai.NebCtrlPanelUITests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 3.0;
 				TEST_TARGET_NAME = NebCtrlPanel;
 			};
 			name = Release;
