@@ -26,9 +26,9 @@ class MasterViewController: UITableViewController, CBCentralManagerDelegate {
 		// Do any additional setup after loading the view, typically from a nib.
 		//self.navigationItem.leftBarButtonItem = self.editButtonItem()
 		
-		bleCentralManager = CBCentralManager(delegate: self, queue: dispatch_get_main_queue())
+		bleCentralManager = CBCentralManager(delegate: self, queue: DispatchQueue.main)
 		
-		let addButton = UIBarButtonItem(barButtonSystemItem: .Refresh, target: self, action: "insertRefreshScan:")
+		let addButton = UIBarButtonItem(barButtonSystemItem: .refresh, target: self, action: #selector(MasterViewController.insertRefreshScan(_:)))
 		self.navigationItem.rightBarButtonItem = addButton
 		if let split = self.splitViewController {
 			let controllers = split.viewControllers
@@ -36,8 +36,8 @@ class MasterViewController: UITableViewController, CBCentralManagerDelegate {
 		}
 	}
 
-	override func viewWillAppear(animated: Bool) {
-		self.clearsSelectionOnViewWillAppear = self.splitViewController!.collapsed
+	override func viewWillAppear(_ animated: Bool) {
+		self.clearsSelectionOnViewWillAppear = self.splitViewController!.isCollapsed
 		super.viewWillAppear(animated)
 	}
 
@@ -46,10 +46,10 @@ class MasterViewController: UITableViewController, CBCentralManagerDelegate {
 		// Dispose of any resources that can be recreated.
 	}
 
-	func insertRefreshScan(sender: AnyObject) {
+	func insertRefreshScan(_ sender: AnyObject) {
 		bleCentralManager.stopScan()
 		objects.removeAll()
-		bleCentralManager.scanForPeripheralsWithServices([NEB_SERVICE_UUID], options: nil)
+		bleCentralManager.scanForPeripherals(withServices: [NEB_SERVICE_UUID], options: nil)
 		//		objects.insert(NSDate(), atIndex: 0)
 		//let indexPath = NSIndexPath(forRow: 0, inSection: 0)
 		//self.tableView.insertRowsAtIndexPaths([indexPath], withRowAnimation: .Automatic)
@@ -57,14 +57,14 @@ class MasterViewController: UITableViewController, CBCentralManagerDelegate {
 
 	// MARK: - Segues
 
-	override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
+	override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
 		if segue.identifier == "showDetail" {
 			if let indexPath = self.tableView.indexPathForSelectedRow {
-				let object = objects[indexPath.row]
-				bleCentralManager.connectPeripheral(object.device, options: nil)
-				let controller = (segue.destinationViewController as! UINavigationController).topViewController as! DetailViewController
+				let object = objects[(indexPath as NSIndexPath).row]
+				bleCentralManager.connect(object.device, options: nil)
+				let controller = (segue.destination as! UINavigationController).topViewController as! DetailViewController
 				//controller.NebDevice.setPeripheral(object)
-				controller.navigationItem.leftBarButtonItem = self.splitViewController?.displayModeButtonItem()
+				controller.navigationItem.leftBarButtonItem = self.splitViewController?.displayModeButtonItem
 				controller.navigationItem.leftItemsSupplementBackButton = true
 				if (controller.nebdev != nil) {
 					bleCentralManager.cancelPeripheralConnection(controller.nebdev!.device)
@@ -76,18 +76,18 @@ class MasterViewController: UITableViewController, CBCentralManagerDelegate {
 
 	// MARK: - Table View
 	
-	override func numberOfSectionsInTableView(tableView: UITableView) -> Int {
+	override func numberOfSections(in tableView: UITableView) -> Int {
 		return 1
 	}
 	
-	override func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+	override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
 		return objects.count
 	}
 	
-	override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
-		let cell = tableView.dequeueReusableCellWithIdentifier("Cell", forIndexPath: indexPath)
+	override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+		let cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath)
 		
-		let object = objects[indexPath.row]
+		let object = objects[(indexPath as NSIndexPath).row]
 		cell.textLabel!.text = object.device.name
 		print("\(cell.textLabel!.text)")
 		cell.textLabel!.text = object.device.name! + String(format: "_%lX", object.id)
@@ -95,25 +95,25 @@ class MasterViewController: UITableViewController, CBCentralManagerDelegate {
 		return cell
 	}
 	
-	override func tableView(tableView: UITableView, canEditRowAtIndexPath indexPath: NSIndexPath) -> Bool {
+	override func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
 		// Return false if you do not want the specified item to be editable.
 		return false
 	}
 	
-	override func tableView(tableView: UITableView, commitEditingStyle editingStyle: UITableViewCellEditingStyle, forRowAtIndexPath indexPath: NSIndexPath) {
-		if editingStyle == .Delete {
-			objects.removeAtIndex(indexPath.row)
-			tableView.deleteRowsAtIndexPaths([indexPath], withRowAnimation: .Fade)
-		} else if editingStyle == .Insert {
+	override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
+		if editingStyle == .delete {
+			objects.remove(at: (indexPath as NSIndexPath).row)
+			tableView.deleteRows(at: [indexPath], with: .fade)
+		} else if editingStyle == .insert {
 			// Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view.
 		}
 	}
 	
 	// MARK: - Bluetooth
-	func centralManager(central: CBCentralManager,
-		didDiscoverPeripheral peripheral: CBPeripheral,
-		advertisementData : [String : AnyObject],
-		RSSI: NSNumber) {
+	func centralManager(_ central: CBCentralManager,
+		didDiscover peripheral: CBPeripheral,
+		advertisementData : [String : Any],
+		rssi RSSI: NSNumber) {
 			//NebPeripheral = peripheral
 			//central.connectPeripheral(peripheral, options: nil)
 			
@@ -130,17 +130,20 @@ class MasterViewController: UITableViewController, CBCentralManagerDelegate {
 			// Hardware beacon
 			print("PERIPHERAL NAME: \(peripheral.name)\n AdvertisementData: \(advertisementData)\n RSSI: \(RSSI)\n")
 			
-			print("UUID DESCRIPTION: \(peripheral.identifier.UUIDString)\n")
+			print("UUID DESCRIPTION: \(peripheral.identifier.uuidString)\n")
 			
 			print("IDENTIFIER: \(peripheral.identifier)\n")
-			
+		if advertisementData[CBAdvertisementDataManufacturerDataKey] == nil {
+			return
+		}
+		
 			//sensorData.text = sensorData.text + "FOUND PERIPHERALS: \(peripheral) AdvertisementData: \(advertisementData) RSSI: \(RSSI)\n"
 			var id : UInt64 = 0
-			advertisementData[CBAdvertisementDataManufacturerDataKey]?.getBytes(&id, range: NSMakeRange(2, 8))
-			if (id == 0) {
-				return
-			}
-			
+		(advertisementData[CBAdvertisementDataManufacturerDataKey] as! NSData).getBytes(&id, range: NSMakeRange(2, 8))
+		if (id == 0) {
+			return
+		}
+		
 			let device = Neblina(devid: id, peripheral: peripheral)
 			
 			for dev in objects
@@ -156,7 +159,7 @@ class MasterViewController: UITableViewController, CBCentralManagerDelegate {
 			print("DEVICES: \(device)\n")
 			//		peripheral.name = String("\(peripheral.name)_")
 			
-			objects.insert(device, atIndex: 0)
+			objects.insert(device, at: 0)
 			
 			tableView.reloadData();
 			// stop scanning, saves the battery
@@ -164,7 +167,7 @@ class MasterViewController: UITableViewController, CBCentralManagerDelegate {
 			
 	}
 	
-	func centralManager(central: CBCentralManager, didConnectPeripheral peripheral: CBPeripheral) {
+	func centralManager(_ central: CBCentralManager, didConnect peripheral: CBPeripheral) {
 		
 		//peripheral.delegate = self
 		peripheral.discoverServices(nil)
@@ -176,29 +179,29 @@ class MasterViewController: UITableViewController, CBCentralManagerDelegate {
 		
 	}
 	
-	func centralManager(central: CBCentralManager, didFailToConnectPeripheral peripheral: CBPeripheral, error: NSError?) {
+	func centralManager(_ central: CBCentralManager, didFailToConnect peripheral: CBPeripheral, error: Error?) {
 		//        sensorData.text = "FAILED TO CONNECT \(error)"
 	}
 	
-	func scanPeripheral(sender: CBCentralManager)
+	func scanPeripheral(_ sender: CBCentralManager)
 	{
 		print("Scan for peripherals")
-		bleCentralManager.scanForPeripheralsWithServices(nil, options: nil)
+		bleCentralManager.scanForPeripherals(withServices: nil, options: nil)
 	}
 	
-	@objc func centralManagerDidUpdateState(central: CBCentralManager) {
+	@objc func centralManagerDidUpdateState(_ central: CBCentralManager) {
 		
 		switch central.state {
 			
-		case .PoweredOff:
+		case .poweredOff:
 			print("CoreBluetooth BLE hardware is powered off")
 			//self.sensorData.text = "CoreBluetooth BLE hardware is powered off\n"
 			break
-		case .PoweredOn:
+		case .poweredOn:
 			print("CoreBluetooth BLE hardware is powered on and ready")
 			//self.sensorData.text = "CoreBluetooth BLE hardware is powered on and ready\n"
 			// We can now call scanForBeacons
-			let lastPeripherals = central.retrieveConnectedPeripheralsWithServices([NEB_SERVICE_UUID])
+			let lastPeripherals = central.retrieveConnectedPeripherals(withServices: [NEB_SERVICE_UUID])
 			
 			if lastPeripherals.count > 0 {
 				// let device = lastPeripherals.last as CBPeripheral;
@@ -206,22 +209,22 @@ class MasterViewController: UITableViewController, CBCentralManagerDelegate {
 				//centralManager.connectPeripheral(connectingPeripheral, options: nil)
 			}
 			//scanPeripheral(central)
-			bleCentralManager.scanForPeripheralsWithServices([NEB_SERVICE_UUID], options: nil)
+			bleCentralManager.scanForPeripherals(withServices: [NEB_SERVICE_UUID], options: nil)
 			break
-		case .Resetting:
+		case .resetting:
 			print("CoreBluetooth BLE hardware is resetting")
 			//self.sensorData.text = "CoreBluetooth BLE hardware is resetting\n"
 			break
-		case .Unauthorized:
+		case .unauthorized:
 			print("CoreBluetooth BLE state is unauthorized")
 			//self.sensorData.text = "CoreBluetooth BLE state is unauthorized\n"
 			
 			break
-		case .Unknown:
+		case .unknown:
 			print("CoreBluetooth BLE state is unknown")
 			//self.sensorData.text = "CoreBluetooth BLE state is unknown\n"
 			break
-		case .Unsupported:
+		case .unsupported:
 			print("CoreBluetooth BLE hardware is unsupported on this platform")
 			//self.sensorData.text = "CoreBluetooth BLE hardware is unsupported on this platform\n"
 			break

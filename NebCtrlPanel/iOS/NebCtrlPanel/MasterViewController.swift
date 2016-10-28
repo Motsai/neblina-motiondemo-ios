@@ -156,9 +156,9 @@ class MasterViewController: UITableViewController, CBCentralManagerDelegate {
 			
 			print("IDENTIFIER: \(peripheral.identifier)\n")
 		
-		if advertisementData[CBAdvertisementDataManufacturerDataKey] == nil {
-			return
-		}
+			if advertisementData[CBAdvertisementDataManufacturerDataKey] == nil {
+				return
+			}
 		
 			//sensorData.text = sensorData.text + "FOUND PERIPHERALS: \(peripheral) AdvertisementData: \(advertisementData) RSSI: \(RSSI)\n"
 			var id : UInt64 = 0

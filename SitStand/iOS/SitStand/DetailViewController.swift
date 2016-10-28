@@ -124,31 +124,31 @@ class DetailViewController: UIViewController, CBPeripheralDelegate, SCNSceneRend
 
 	}
 	
-	func didReceiveRSSI(rssi : NSNumber) {
+	func didReceiveRSSI(_ rssi : NSNumber) {
 		
 	}
 	
-	func didReceiveDebugData(type : Int32, data : UnsafePointer<UInt8>, dataLen: Int, errFlag : Bool) {
+	func didReceiveDebugData(_ type : Int32, data : UnsafePointer<UInt8>, dataLen: Int, errFlag : Bool) {
 		
 	}
 	
-	func didReceivePmgntData(type : Int32, data : UnsafePointer<UInt8>, dataLen: Int, errFlag : Bool) {
+	func didReceivePmgntData(_ type : Int32, data : UnsafePointer<UInt8>, dataLen: Int, errFlag : Bool) {
 		
 	}
 	
-	func didReceiveStorageData(type : Int32, data : UnsafePointer<UInt8>, dataLen: Int, errFlag : Bool) {
+	func didReceiveStorageData(_ type : Int32, data : UnsafePointer<UInt8>, dataLen: Int, errFlag : Bool) {
 		
 	}
 	
-	func didReceiveEepromData(type : Int32, data : UnsafePointer<UInt8>, dataLen: Int, errFlag : Bool) {
+	func didReceiveEepromData(_ type : Int32, data : UnsafePointer<UInt8>, dataLen: Int, errFlag : Bool) {
 		
 	}
 	
-	func didReceiveLedData(type : Int32, data : UnsafePointer<UInt8>, dataLen: Int, errFlag : Bool) {
+	func didReceiveLedData(_ type : Int32, data : UnsafePointer<UInt8>, dataLen: Int, errFlag : Bool) {
 		
 	}
 
-	func didReceiveFusionData(type : Int32, data : Fusion_DataPacket_t, errFlag : Bool) {
+	func didReceiveFusionData(_ type : Int32, data : Fusion_DataPacket_t, errFlag : Bool) {
 		//	let textview = self.view.viewWithTag(3) as! UITextView
 		
 		switch (type) {
@@ -282,24 +282,24 @@ class DetailViewController: UIViewController, CBPeripheralDelegate, SCNSceneRend
 			
 			if (sitTime != prevSitTime)
 			{
-				sitLabel.backgroundColor = UIColor.greenColor()
-				standLabel.backgroundColor = UIColor.grayColor()
+				sitLabel.backgroundColor = UIColor.green
+				standLabel.backgroundColor = UIColor.gray
 			}
 			if (standTime != prevStandTime) {
 				if (cadence == 0)
 				{
-					sitLabel.backgroundColor = UIColor.grayColor()
-					standLabel.backgroundColor = UIColor.greenColor()
+					sitLabel.backgroundColor = UIColor.gray
+					standLabel.backgroundColor = UIColor.green
 				}
 				else if (cadence < 120)
 				{
-					sitLabel.backgroundColor = UIColor.grayColor()
-					standLabel.backgroundColor = UIColor.cyanColor()
+					sitLabel.backgroundColor = UIColor.gray
+					standLabel.backgroundColor = UIColor.cyan
 				}
 				else
 				{
-					sitLabel.backgroundColor = UIColor.grayColor()
-					standLabel.backgroundColor = UIColor.redColor()
+					sitLabel.backgroundColor = UIColor.gray
+					standLabel.backgroundColor = UIColor.red
 				}
 			}
 			prevSitTime = sitTime

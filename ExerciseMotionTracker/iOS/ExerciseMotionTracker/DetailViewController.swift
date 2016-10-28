@@ -62,19 +62,19 @@ class DetailViewController: UIViewController, CBPeripheralDelegate, NeblinaDeleg
 		// create and add a light to the scene
 		let lightNode = SCNNode()
 		lightNode.light = SCNLight()
-		lightNode.light!.type = SCNLightTypeOmni
+		lightNode.light!.type = SCNLight.LightType.omni
 		lightNode.position = SCNVector3(x: 0, y: 10, z: 10)
 		scene.rootNode.addChildNode(lightNode)
 		
 		// create and add an ambient light to the scene
 		let ambientLightNode = SCNNode()
 		ambientLightNode.light = SCNLight()
-		ambientLightNode.light!.type = SCNLightTypeAmbient
-		ambientLightNode.light!.color = UIColor.darkGrayColor()
+		ambientLightNode.light!.type = SCNLight.LightType.ambient
+		ambientLightNode.light!.color = UIColor.darkGray
 		scene.rootNode.addChildNode(ambientLightNode)
 		
 		// retrieve the ship node
-		ship = scene.rootNode.childNodeWithName("C3PO", recursively: true)!
+		ship = scene.rootNode.childNode(withName: "C3PO", recursively: true)!
 		ship.eulerAngles = SCNVector3Make(GLKMathDegreesToRadians(90), 0, GLKMathDegreesToRadians(180))
 		//ship.rotation = SCNVector4(1, 0, 0, GLKMathDegreesToRadians(90))
 		//print("1 - \(ship)")
@@ -95,7 +95,7 @@ class DetailViewController: UIViewController, CBPeripheralDelegate, NeblinaDeleg
 		scnView.showsStatistics = true
 		
 		// configure the view
-		scnView.backgroundColor = UIColor.blackColor()
+		scnView.backgroundColor = UIColor.black
 		
 		// add a tap gesture recognizer
 		let tapGesture = UITapGestureRecognizer(target: self, action: "handleTap:")
@@ -107,8 +107,9 @@ class DetailViewController: UIViewController, CBPeripheralDelegate, NeblinaDeleg
 		// Dispose of any resources that can be recreated.
 	}
 
-	@IBAction func buttonTrajectRecord(button: UIButton)
+	@IBAction func buttonTrajectRecord(_ button: UIButton)
 	{
+		nebdev.streamTrajectoryInfo(true)
 		nebdev.recordTrajectory(true)
 	}
 	
@@ -119,26 +120,26 @@ class DetailViewController: UIViewController, CBPeripheralDelegate, NeblinaDeleg
 		nebdev.streamTrajectoryInfo(true)
 	}
 	
-	func didReceiveRSSI(rssi : NSNumber) {
+	func didReceiveRSSI(_ rssi : NSNumber) {
 		
 	}
-	func didReceiveDebugData(type : Int32, data : UnsafePointer<UInt8>, dataLen: Int, errFlag : Bool) {
+	func didReceiveDebugData(_ type : Int32, data : UnsafePointer<UInt8>, dataLen: Int, errFlag : Bool) {
 		
 	}
-	func didReceivePmgntData(type : Int32, data : UnsafePointer<UInt8>, dataLen: Int, errFlag : Bool) {
+	func didReceivePmgntData(_ type : Int32, data : UnsafePointer<UInt8>, dataLen: Int, errFlag : Bool) {
 		
 	}
 	
-	func didReceiveStorageData(type : Int32, data : UnsafePointer<UInt8>, dataLen: Int, errFlag : Bool) {
+	func didReceiveStorageData(_ type : Int32, data : UnsafePointer<UInt8>, dataLen: Int, errFlag : Bool) {
 		
 	}
-	func didReceiveEepromData(type : Int32, data : UnsafePointer<UInt8>, dataLen: Int, errFlag : Bool) {
+	func didReceiveEepromData(_ type : Int32, data : UnsafePointer<UInt8>, dataLen: Int, errFlag : Bool) {
 		
 	}
-	func didReceiveLedData(type : Int32, data : UnsafePointer<UInt8>, dataLen: Int, errFlag : Bool) {
+	func didReceiveLedData(_ type : Int32, data : UnsafePointer<UInt8>, dataLen: Int, errFlag : Bool) {
 	}
 	
-	func didReceiveFusionData(type : Int32, data : Fusion_DataPacket_t, errFlag : Bool) {
+	func didReceiveFusionData(_ type : Int32, data : Fusion_DataPacket_t, errFlag : Bool) {
 //	func didReceiveFusionData(type : FusionId, data : Fusion_DataPacket_t) {
 		//let textview = self.view.viewWithTag(3) as! UITextView
 		
@@ -269,6 +270,7 @@ class DetailViewController: UIViewController, CBPeripheralDelegate, NeblinaDeleg
 			let z = (Int16(data.data.4) & 0xff) | (Int16(data.data.5) << 8)
 			let count = (Int16(data.data.6) & 0xff) | (Int16(data.data.7) << 8)
 			let prval = Int(data.data.8)
+			print("\(data.data)")
 			label1.text = String("Error \(x),  \(y),  \(z)")
 			label2.text = String("Count \(count), Val \(prval) %")
 			level.progress = Float(prval)/100.0

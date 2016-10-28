@@ -28,6 +28,7 @@ let NebCmdList = [NebCmdItem] (arrayLiteral:
     NebCmdItem(SubSysId: NEB_CTRL_SUBSYS_MOTION_ENG, CmdId: SetFusionType, Name: "Fusion 9 axis", Actuator : 1, Text:""),
     NebCmdItem(SubSysId: NEB_CTRL_SUBSYS_MOTION_ENG, CmdId: Quaternion, Name: "Quaternion Stream", Actuator : 1, Text:""),
     NebCmdItem(SubSysId: NEB_CTRL_SUBSYS_MOTION_ENG, CmdId: MAG_Data, Name: "Mag Stream", Actuator : 1, Text:""),
+    NebCmdItem(SubSysId: NEB_CTRL_SUBSYS_MOTION_ENG, CmdId: IMU_Data, Name: "IMU Stream", Actuator : 1, Text:""),
     NebCmdItem(SubSysId: 0xf, CmdId: MotionDataStream, Name: "Motion data stream", Actuator : 1, Text:""),
     NebCmdItem(SubSysId: 0xf, CmdId: Heading, Name: "Heading", Actuator : 1, Text:""),
 	NebCmdItem(SubSysId: NEB_CTRL_SUBSYS_MOTION_ENG, CmdId: LockHeadingRef, Name: "Lock Heading Ref.", Actuator : 1, Text:""),
@@ -461,6 +462,11 @@ class DetailViewController: UIViewController, UITextFieldDelegate, CBPeripheralD
 							}
 							break
 						case MotionDataStream:
+							if sender.selectedSegmentIndex == 0 {
+								nebdev?.streamDisableAll()
+								break
+							}
+							
 							nebdev!.streamQuaternion(sender.selectedSegmentIndex == 1)
 							var i = getCmdIdx(NEB_CTRL_SUBSYS_MOTION_ENG,  cmdId: Quaternion)
 							var cell = cmdView.cellForRow( at: IndexPath(row: i, section: 0))
