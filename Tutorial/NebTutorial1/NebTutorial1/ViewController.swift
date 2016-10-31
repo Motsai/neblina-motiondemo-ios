@@ -20,7 +20,7 @@ class ViewController: UIViewController, CBCentralManagerDelegate, NeblinaDelegat
 	override func viewDidLoad() {
 		super.viewDidLoad()
 		// Do any additional setup after loading the view, typically from a nib.
-		bleCentralManager = CBCentralManager(delegate: self, queue: dispatch_get_main_queue())
+		bleCentralManager = CBCentralManager(delegate: self, queue: DispatchQueue.main)
 	}
 
 	override func didReceiveMemoryWarning() {
@@ -28,20 +28,20 @@ class ViewController: UIViewController, CBCentralManagerDelegate, NeblinaDelegat
 		// Dispose of any resources that can be recreated.
 	}
 
-	@IBAction func actionButton(sender:UISwitch) {
-		nebdev.streamEulerAngle(sender.on)
+	@IBAction func actionButton(_ sender:UISwitch) {
+		nebdev.streamEulerAngle(sender.isOn)
 	}
 	
 	// MARK: - Table View
 		
-	func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+	func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
 		return objects.count
 	}
 	
-	func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
-		let cell = tableView.dequeueReusableCellWithIdentifier("Cell", forIndexPath: indexPath)
+	func tableView(_ tableView: UITableView, cellForRowAtIndexPath indexPath: IndexPath) -> UITableViewCell {
+		let cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath)
 		
-		let object = objects[indexPath.row]
+		let object = objects[(indexPath as NSIndexPath).row]
 		cell.textLabel!.text = object.device.name// peripheral.name
 		print("\(cell.textLabel!.text)")
 		cell.textLabel!.text = object.device.name! + String(format: "_%lX", object.id)
@@ -49,41 +49,49 @@ class ViewController: UIViewController, CBCentralManagerDelegate, NeblinaDelegat
 		return cell
 	}
 	
-	func tableView(tableView: UITableView, canEditRowAtIndexPath indexPath: NSIndexPath) -> Bool {
+	func tableView(_ tableView: UITableView, canEditRowAtIndexPath indexPath: IndexPath) -> Bool {
 		// Return false if you do not want the specified item to be editable.
 		return false
 	}
 	
-	func tableView(tableView: UITableView, commitEditingStyle editingStyle: UITableViewCellEditingStyle, forRowAtIndexPath indexPath: NSIndexPath) {
-		if editingStyle == .Delete {
-			objects.removeAtIndex(indexPath.row)
-			tableView.deleteRowsAtIndexPaths([indexPath], withRowAnimation: .Fade)
-		} else if editingStyle == .Insert {
+	func tableView(_ tableView: UITableView, commitEditingStyle editingStyle: UITableViewCellEditingStyle, forRowAtIndexPath indexPath: IndexPath) {
+		if editingStyle == .delete {
+			objects.remove(at: (indexPath as NSIndexPath).row)
+			tableView.deleteRows(at: [indexPath], with: .fade)
+		} else if editingStyle == .insert {
 			// Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view.
 		}
 	}
 	
-	func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
-		nebdev = objects[indexPath.row]
+	func tableView(_ tableView: UITableView, didSelectRowAtIndexPath indexPath: IndexPath) {
+		nebdev = objects[(indexPath as NSIndexPath).row]
 		nebdev.delegate = self
 		
 		bleCentralManager.cancelPeripheralConnection(nebdev.device)
-		bleCentralManager.connectPeripheral(nebdev.device, options: nil)
+		bleCentralManager.connect(nebdev.device, options: nil)
 	}
 	
 	// MARK: - Bluetooth
-	func centralManager(central: CBCentralManager,
-	                    didDiscoverPeripheral peripheral: CBPeripheral,
-						advertisementData : [String : AnyObject],
-						RSSI: NSNumber) {
+	func centralManager(_ central: CBCentralManager,
+	                    didDiscover peripheral: CBPeripheral,
+						advertisementData : [String : Any],
+						rssi RSSI: NSNumber) {
 		print("PERIPHERAL NAME: \(peripheral.name)\n AdvertisementData: \(advertisementData)\n RSSI: \(RSSI)\n")
 		
-		print("UUID DESCRIPTION: \(peripheral.identifier.UUIDString)\n")
+		print("UUID DESCRIPTION: \(peripheral.identifier.uuidString)\n")
 		
 		print("IDENTIFIER: \(peripheral.identifier)\n")
 		
+		if advertisementData[CBAdvertisementDataManufacturerDataKey] == nil {
+			return
+		}
+		
+		//sensorData.text = sensorData.text + "FOUND PERIPHERALS: \(peripheral) AdvertisementData: \(advertisementData) RSSI: \(RSSI)\n"
 		var id : UInt64 = 0
-		advertisementData[CBAdvertisementDataManufacturerDataKey]?.getBytes(&id, range: NSMakeRange(2, 8))
+		(advertisementData[CBAdvertisementDataManufacturerDataKey] as! NSData).getBytes(&id, range: NSMakeRange(2, 8))
+		if (id == 0) {
+			return
+		}
 		
 		let device = Neblina(devid: id, peripheral: peripheral)
 		
@@ -97,12 +105,12 @@ class ViewController: UIViewController, CBCentralManagerDelegate, NeblinaDelegat
 		
 		print("DEVICES: \(device)\n")
 		
-		objects.insert(device, atIndex: 0)
+		objects.insert(device, at: 0)
 		
 		deviceView.reloadData();
 	}
 	
-	func centralManager(central: CBCentralManager, didConnectPeripheral peripheral: CBPeripheral) {
+	func centralManager(_ central: CBCentralManager, didConnect peripheral: CBPeripheral) {
 		
 		peripheral.discoverServices(nil)
 		print("Connected to peripheral")
@@ -112,45 +120,45 @@ class ViewController: UIViewController, CBCentralManagerDelegate, NeblinaDelegat
 	
 	func centralManager(_ central: CBCentralManager,
 	                      didDisconnectPeripheral peripheral: CBPeripheral,
-	                                              error error: NSError?) {
+	                                              error: Error?) {
 		print("disconnected from peripheral")
 		
 		
 	}
 	
-	func centralManager(central: CBCentralManager, didFailToConnectPeripheral peripheral: CBPeripheral, error: NSError?) {
+	func centralManager(_ central: CBCentralManager, didFailToConnect peripheral: CBPeripheral, error: Error?) {
 	}
 	
-	func scanPeripheral(sender: CBCentralManager)
+	func scanPeripheral(_ sender: CBCentralManager)
 	{
 		print("Scan for peripherals")
-		bleCentralManager.scanForPeripheralsWithServices(nil, options: nil)
+		bleCentralManager.scanForPeripherals(withServices: nil, options: nil)
 	}
 	
-	@objc func centralManagerDidUpdateState(central: CBCentralManager) {
+	@objc func centralManagerDidUpdateState(_ central: CBCentralManager) {
 		
 		switch central.state {
 			
-		case .PoweredOff:
+		case .poweredOff:
 			print("CoreBluetooth BLE hardware is powered off")
 			break
-		case .PoweredOn:
+		case .poweredOn:
 			print("CoreBluetooth BLE hardware is powered on and ready")
 			//let lastPeripherals = central.retrieveConnectedPeripheralsWithServices([NEB_SERVICE_UUID])
 			
-			bleCentralManager.scanForPeripheralsWithServices([NEB_SERVICE_UUID], options: nil)
+			bleCentralManager.scanForPeripherals(withServices: [NEB_SERVICE_UUID], options: nil)
 			break
-		case .Resetting:
+		case .resetting:
 			print("CoreBluetooth BLE hardware is resetting")
 			break
-		case .Unauthorized:
+		case .unauthorized:
 			print("CoreBluetooth BLE state is unauthorized")
 			
 			break
-		case .Unknown:
+		case .unknown:
 			print("CoreBluetooth BLE state is unknown")
 			break
-		case .Unsupported:
+		case .unsupported:
 			print("CoreBluetooth BLE hardware is unsupported on this platform")
 			break
 			
@@ -164,8 +172,8 @@ class ViewController: UIViewController, CBCentralManagerDelegate, NeblinaDelegat
 		nebdev.getMotionStatus()
 	}
 	
-	func didReceiveRSSI(rssi : NSNumber) {}
-	func didReceiveFusionData(type : Int32, data : Fusion_DataPacket_t, errFlag : Bool) {
+	func didReceiveRSSI(_ rssi : NSNumber) {}
+	func didReceiveFusionData(_ type : Int32, data : Fusion_DataPacket_t, errFlag : Bool) {
 		
 		switch (type) {
 /*		case Quaternion:
@@ -202,20 +210,20 @@ class ViewController: UIViewController, CBCentralManagerDelegate, NeblinaDelegat
 			break
 		}
 	}
-	func didReceiveDebugData(type : Int32, data : UnsafePointer<UInt8>, dataLen: Int, errFlag : Bool) {
+	func didReceiveDebugData(_ type : Int32, data : UnsafePointer<UInt8>, dataLen: Int, errFlag : Bool) {
 		switch (type) {
 		case DEBUG_CMD_MOTENGINE_RECORDER_STATUS:
-			switchButton.on = (Int(data[4] & 8) >> 3 != 0)
+			switchButton.isOn = (Int(data[4] & 8) >> 3 != 0)
 			
 			break
 		default:
 			break
 		}
 	}
-	func didReceivePmgntData(type : Int32, data : UnsafePointer<UInt8>, dataLen: Int, errFlag : Bool) {}
-	func didReceiveStorageData(type : Int32, data : UnsafePointer<UInt8>, dataLen: Int, errFlag : Bool) {}
-	func didReceiveEepromData(type : Int32, data : UnsafePointer<UInt8>, dataLen: Int, errFlag : Bool) {}
-	func didReceiveLedData(type : Int32, data : UnsafePointer<UInt8>, dataLen: Int, errFlag : Bool) {}
+	func didReceivePmgntData(_ type : Int32, data : UnsafePointer<UInt8>, dataLen: Int, errFlag : Bool) {}
+	func didReceiveStorageData(_ type : Int32, data : UnsafePointer<UInt8>, dataLen: Int, errFlag : Bool) {}
+	func didReceiveEepromData(_ type : Int32, data : UnsafePointer<UInt8>, dataLen: Int, errFlag : Bool) {}
+	func didReceiveLedData(_ type : Int32, data : UnsafePointer<UInt8>, dataLen: Int, errFlag : Bool) {}
 
 
 }

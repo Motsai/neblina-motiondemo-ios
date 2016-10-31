@@ -19,7 +19,7 @@ class ViewController: UIViewController, UITextFieldDelegate, CBCentralManagerDel
 	}
 	var bleCentralManager : CBCentralManager!
 	var recState = false
-	var timer = NSTimer()
+	var timer = Timer()
 	
 	@IBOutlet weak var deviceView: UITableView!
 	@IBOutlet weak var recordButton: UIButton!
@@ -37,8 +37,8 @@ class ViewController: UIViewController, UITextFieldDelegate, CBCentralManagerDel
 	override func viewDidLoad() {
 		super.viewDidLoad()
 		// Do any additional setup after loading the view, typically from a nib.
-		bleCentralManager = CBCentralManager(delegate: self, queue: dispatch_get_main_queue())
-		timer = NSTimer.scheduledTimerWithTimeInterval(2, target:self, selector: Selector("updateTimer"), userInfo: nil, repeats: true)
+		bleCentralManager = CBCentralManager(delegate: self, queue: DispatchQueue.main)
+		timer = Timer.scheduledTimer(timeInterval: 2, target:self, selector: #selector(ViewController.updateTimer), userInfo: nil, repeats: true)
 		rimDiam.delegate = self
 	}
 
@@ -54,29 +54,29 @@ class ViewController: UIViewController, UITextFieldDelegate, CBCentralManagerDel
 		}
 	}
 	
-	@IBAction func rescanAction(sender:UIButton) {
+	@IBAction func rescanAction(_ sender:UIButton) {
 		bleCentralManager.stopScan()
 		objects.removeAll()
-		bleCentralManager.scanForPeripheralsWithServices([NEB_SERVICE_UUID], options: nil)	
+		bleCentralManager.scanForPeripherals(withServices: [NEB_SERVICE_UUID], options: nil)	
 	}
 	
-	@IBAction func recordingAction(sender:UIButton) {
+	@IBAction func recordingAction(_ sender:UIButton) {
 		recState = !recState
 		if (recState == true) {
 			// Start recording
-			sender.setTitle("Stop", forState: UIControlState.Normal)
+			sender.setTitle("Stop", for: UIControlState())
 			nebdev.streamMAG(true)
 			nebdev.streamIMU(true)
 		}
 		else {
 			nebdev.streamMAG(false)
 			nebdev.streamIMU(false)
-			sender.setTitle("Start", forState: UIControlState.Normal)
+			sender.setTitle("Start", for: UIControlState())
 		}
 		nebdev.sessionRecord(recState)
 	}
 	
-	@IBAction func resetAction(sender:UIButton) {
+	@IBAction func resetAction(_ sender:UIButton) {
 		nebdev.streamRotationInfo(false);	// Reset counts
 		nebdev.streamRotationInfo(true);
 	}
@@ -92,54 +92,54 @@ class ViewController: UIViewController, UITextFieldDelegate, CBCentralManagerDel
 		}
 	}*/
 	
-	func textFieldShouldReturn(textField: UITextField) -> Bool {
+	func textFieldShouldReturn(_ textField: UITextField) -> Bool {
 		// Hide the keyboard.
 		textField.resignFirstResponder()
 		return true
 	}
 	
-	func didreceiveRSSI(rssi :NSNumber) {
-		rssiLabel.text = String(NSNumber);
+	func didreceiveRSSI(_ rssi :NSNumber) {
+//		rssiLabel.text = String(describing: NSNumber);
 	}
 
 	
 	// MARK : UITableView
 	
-	func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+	func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
 		
 		return objects.count
 	}
 	
-	func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath?) -> UITableViewCell? {
-		let cell = tableView.dequeueReusableCellWithIdentifier("Cell", forIndexPath: indexPath!)
+	func tableView(_ tableView: UITableView, cellForRowAtIndexPath indexPath: IndexPath?) -> UITableViewCell? {
+		let cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath!)
 		
-		let object = objects[indexPath!.row]
+		let object = objects[(indexPath! as NSIndexPath).row]
 		let label = cell.viewWithTag(1) as! UILabel
 		label.text = object.device.name! + String(format: "_%lX", object.id)
 		//print("Cell Name : \(cell.textLabel!.text)")
 		return cell
 	}
 	
-	func tableView(tableView: UITableView, canEditRowAtIndexPath indexPath: NSIndexPath?) -> Bool {
+	func tableView(_ tableView: UITableView, canEditRowAtIndexPath indexPath: IndexPath?) -> Bool {
 		return false
 	}
 	
 	
-	func tableView(tableView: UITableView, commitEditingStyle editingStyle: UITableViewCellEditingStyle, forRowAtIndexPath indexPath: NSIndexPath) {
-		if editingStyle == .Delete {
-			objects.removeAtIndex(indexPath.row)
-			tableView.deleteRowsAtIndexPaths([indexPath], withRowAnimation: .Fade)
-		} else if editingStyle == .Insert {
+	func tableView(_ tableView: UITableView, commitEditingStyle editingStyle: UITableViewCellEditingStyle, forRowAtIndexPath indexPath: IndexPath) {
+		if editingStyle == .delete {
+			objects.remove(at: (indexPath as NSIndexPath).row)
+			tableView.deleteRows(at: [indexPath], with: .fade)
+		} else if editingStyle == .insert {
 			// Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view.
 		}
 	}
 	
-	func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
-		nebdev = objects[indexPath.row]
+	func tableView(_ tableView: UITableView, didSelectRowAtIndexPath indexPath: IndexPath) {
+		nebdev = objects[(indexPath as NSIndexPath).row]
 		if (nebdev != nil) {
 			bleCentralManager.cancelPeripheralConnection(nebdev!.device)
 		}
-		bleCentralManager.connectPeripheral(nebdev.device, options: nil)
+		bleCentralManager.connect(nebdev.device, options: nil)
 		//modelLabel.text = String(format: "%lX", object.id)
 		modelLabel.text = String("1A06002H-D")
 		//snLabel.text = String(format: "%lX", object.id)
@@ -147,10 +147,10 @@ class ViewController: UIViewController, UITextFieldDelegate, CBCentralManagerDel
 	}
 	
 	// MARK: - Bluetooth
-	func centralManager(central: CBCentralManager,
-		didDiscoverPeripheral peripheral: CBPeripheral,
-		advertisementData : [String : AnyObject],
-		RSSI: NSNumber) {
+	func centralManager(_ central: CBCentralManager,
+		didDiscover peripheral: CBPeripheral,
+		advertisementData : [String : Any],
+		rssi RSSI: NSNumber) {
 			//NebPeripheral = peripheral
 			//central.connectPeripheral(peripheral, options: nil)
 			
@@ -167,13 +167,13 @@ class ViewController: UIViewController, UITextFieldDelegate, CBCentralManagerDel
 			// Hardware beacon
 			print("PERIPHERAL NAME: \(peripheral.name)\n AdvertisementData: \(advertisementData)\n RSSI: \(RSSI)\n")
 			
-			print("UUID DESCRIPTION: \(peripheral.identifier.UUIDString)\n")
+			print("UUID DESCRIPTION: \(peripheral.identifier.uuidString)\n")
 			
 			print("IDENTIFIER: \(peripheral.identifier)\n")
 			
 			//sensorData.text = sensorData.text + "FOUND PERIPHERALS: \(peripheral) AdvertisementData: \(advertisementData) RSSI: \(RSSI)\n"
 			var id = UInt64(0)
-			advertisementData[CBAdvertisementDataManufacturerDataKey]?.getBytes(&id, range: NSMakeRange(2, 8))
+			(advertisementData[CBAdvertisementDataManufacturerDataKey] as AnyObject).getBytes(&id, range: NSMakeRange(2, 8))
 			//if (id == 0) {
 			//	return
 			//}
@@ -193,7 +193,7 @@ class ViewController: UIViewController, UITextFieldDelegate, CBCentralManagerDel
 			print("DEVICES: \(device)\n")
 			//		peripheral.name = String("\(peripheral.name)_")
 			
-			objects.insert(device, atIndex: 0)
+			objects.insert(device, at: 0)
 			
 			deviceView.reloadData();
 			// stop scanning, saves the battery
@@ -201,7 +201,7 @@ class ViewController: UIViewController, UITextFieldDelegate, CBCentralManagerDel
 			
 	}
 	
-	func centralManager(central: CBCentralManager, didConnectPeripheral peripheral: CBPeripheral) {
+	func centralManager(_ central: CBCentralManager, didConnect peripheral: CBPeripheral) {
 		
 		//peripheral.delegate = self
 		peripheral.discoverServices(nil)
@@ -213,29 +213,29 @@ class ViewController: UIViewController, UITextFieldDelegate, CBCentralManagerDel
 		
 	}
 	
-	func centralManager(central: CBCentralManager, didFailToConnectPeripheral peripheral: CBPeripheral, error: NSError?) {
+	func centralManager(_ central: CBCentralManager, didFailToConnect peripheral: CBPeripheral, error: Error?) {
 		//        sensorData.text = "FAILED TO CONNECT \(error)"
 	}
 	
-	func scanPeripheral(sender: CBCentralManager)
+	func scanPeripheral(_ sender: CBCentralManager)
 	{
 		print("Scan for peripherals")
-		bleCentralManager.scanForPeripheralsWithServices(nil, options: nil)
+		bleCentralManager.scanForPeripherals(withServices: nil, options: nil)
 	}
 	
-	@objc func centralManagerDidUpdateState(central: CBCentralManager) {
+	@objc func centralManagerDidUpdateState(_ central: CBCentralManager) {
 		
 		switch central.state {
 			
-		case .PoweredOff:
+		case .poweredOff:
 			print("CoreBluetooth BLE hardware is powered off")
 			//self.sensorData.text = "CoreBluetooth BLE hardware is powered off\n"
 			break
-		case .PoweredOn:
+		case .poweredOn:
 			print("CoreBluetooth BLE hardware is powered on and ready")
 			//self.sensorData.text = "CoreBluetooth BLE hardware is powered on and ready\n"
 			// We can now call scanForBeacons
-			let lastPeripherals = central.retrieveConnectedPeripheralsWithServices([NEB_SERVICE_UUID])
+			let lastPeripherals = central.retrieveConnectedPeripherals(withServices: [NEB_SERVICE_UUID])
 			
 			if lastPeripherals.count > 0 {
 				// let device = lastPeripherals.last as CBPeripheral;
@@ -243,22 +243,22 @@ class ViewController: UIViewController, UITextFieldDelegate, CBCentralManagerDel
 				//centralManager.connectPeripheral(connectingPeripheral, options: nil)
 			}
 			//scanPeripheral(central)
-			bleCentralManager.scanForPeripheralsWithServices([NEB_SERVICE_UUID], options: nil)
+			bleCentralManager.scanForPeripherals(withServices: [NEB_SERVICE_UUID], options: nil)
 			break
-		case .Resetting:
+		case .resetting:
 			print("CoreBluetooth BLE hardware is resetting")
 			//self.sensorData.text = "CoreBluetooth BLE hardware is resetting\n"
 			break
-		case .Unauthorized:
+		case .unauthorized:
 			print("CoreBluetooth BLE state is unauthorized")
 			//self.sensorData.text = "CoreBluetooth BLE state is unauthorized\n"
 			
 			break
-		case .Unknown:
+		case .unknown:
 			print("CoreBluetooth BLE state is unknown")
 			//self.sensorData.text = "CoreBluetooth BLE state is unknown\n"
 			break
-		case .Unsupported:
+		case .unsupported:
 			print("CoreBluetooth BLE hardware is unsupported on this platform")
 			//self.sensorData.text = "CoreBluetooth BLE hardware is unsupported on this platform\n"
 			break
@@ -279,11 +279,11 @@ class ViewController: UIViewController, UITextFieldDelegate, CBCentralManagerDel
 		nebdev.streamRotationInfo(true);
 	}
 	
-	func didReceiveRSSI(rssi : NSNumber) {
-		rssiLabel.text = String(rssi) + String(" db")
+	func didReceiveRSSI(_ rssi : NSNumber) {
+		rssiLabel.text = String(describing: rssi) + String(" db")
 	}
 	
-	func didReceivePmgntData(type : Int32, data : UnsafePointer<UInt8>, dataLen: Int, errFlag : Bool) {
+	func didReceivePmgntData(_ type : Int32, data : UnsafePointer<UInt8>, dataLen: Int, errFlag : Bool) {
 		if (type == POWERMGMT_CMD_GET_TEMPERATURE)
 		{
 			let t = Float((Int16(data[4]) & 0xff) | (Int16(data[5]) << 8)) / 100.0
@@ -291,7 +291,7 @@ class ViewController: UIViewController, UITextFieldDelegate, CBCentralManagerDel
 		}
 	}
 
-	func didReceiveFusionData(type : Int32, data : Fusion_DataPacket_t, errFlag : Bool) {
+	func didReceiveFusionData(_ type : Int32, data : Fusion_DataPacket_t, errFlag : Bool) {
 		
 		//let errflag = Bool(type.rawValue & 0x80 == 0x80)
 		
@@ -429,7 +429,7 @@ class ViewController: UIViewController, UITextFieldDelegate, CBCentralManagerDel
 		
 	}
 	
-	func didReceiveDebugData(type : Int32, data : UnsafePointer<UInt8>, dataLen: Int, errFlag : Bool)
+	func didReceiveDebugData(_ type : Int32, data : UnsafePointer<UInt8>, dataLen: Int, errFlag : Bool)
 	{
 		switch (type) {
 		case DEBUG_CMD_MOTENGINE_RECORDER_STATUS:
@@ -496,17 +496,17 @@ class ViewController: UIViewController, UITextFieldDelegate, CBCentralManagerDel
 		}
 	}
 	
-	func didReceiveStorageData(type : Int32, data : UnsafePointer<UInt8>, dataLen: Int, errFlag : Bool)
+	func didReceiveStorageData(_ type : Int32, data : UnsafePointer<UInt8>, dataLen: Int, errFlag : Bool)
 	{
 		
 	}
 	
-	func didReceiveEepromData(type : Int32, data : UnsafePointer<UInt8>, dataLen: Int, errFlag : Bool)
+	func didReceiveEepromData(_ type : Int32, data : UnsafePointer<UInt8>, dataLen: Int, errFlag : Bool)
 	{
 		
 	}
 	
-	func didReceiveLedData(type : Int32, data : UnsafePointer<UInt8>, dataLen : Int, errFlag : Bool)
+	func didReceiveLedData(_ type : Int32, data : UnsafePointer<UInt8>, dataLen : Int, errFlag : Bool)
 	{
 		
 	}

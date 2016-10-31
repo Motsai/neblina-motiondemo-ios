@@ -37,30 +37,32 @@ class ViewController: NSViewController, NSTableViewDataSource, NSTableViewDelega
 		}
 
 		// Do any additional setup after loading the view.
-		bleCentralManager = CBCentralManager(delegate: self, queue: dispatch_get_main_queue())
+		bleCentralManager = CBCentralManager(delegate: self, queue: DispatchQueue.main)
 	}
 
-	override var representedObject: AnyObject? {
+	override var representedObject: Any? {
 		didSet {
 		// Update the view, if already loaded.
 		}
 	}
 
 	// MARK: - Table View
-	func numberOfRowsInTableView(aTableView: NSTableView) -> Int
+	func numberOfRows(in aTableView: NSTableView) -> Int
 	{
 		return objects.count;
 		
 	}
 	
-	func tableView(tableView: NSTableView, viewForTableColumn tableColumn: NSTableColumn?, row: Int) -> NSView?
+	func tableView(_ tableView: NSTableView, viewFor tableColumn: NSTableColumn?, row: Int) -> NSView?
 	{
 		if (row < objects.count)
 		{
-			let cellView = tableView.makeViewWithIdentifier("CellDevice", owner: self) as! NSTableCellView
-			
-			cellView.textField!.stringValue = objects[row].device.name! + String(format: "_%lX", objects[row].id) //objects[row].name;// "test"//"self.objects.objectAtIndex(row) as! String
-			
+			var cellView = tableView.make(withIdentifier: "CellDevice", owner: self) as! NSTableCellView
+			//String
+			if objects[row].device.name != nil {
+			cellView.textField?.stringValue = objects[row].device.name! + String(format: "_%lX", objects[row].id)
+				//objects[row].device.name! + String(format: "_%lX", objects[row].id) //objects[row].name;// "test"//"self.objects.objectAtIndex(row) as! String
+			}
 			return cellView;
 		}
 		
@@ -92,7 +94,7 @@ class ViewController: NSViewController, NSTableViewDataSource, NSTableViewDelega
 	return dataArray;
 	}*/
 	
-	func tableViewSelectionDidChange(notification: NSNotification)
+	func tableViewSelectionDidChange(_ notification: Notification)
 	{
 		if (self.tableView.numberOfSelectedRows > 0)
 		{
@@ -103,17 +105,17 @@ class ViewController: NSViewController, NSTableViewDataSource, NSTableViewDelega
 			nebdev.delegate = self
 			//print(peripheral)
 			
-			bleCentralManager.connectPeripheral(nebdev.device, options: nil)
+			bleCentralManager.connect(nebdev.device, options: nil)
 			bleCentralManager.stopScan()
 			//self.tableView.deselectRow(self.tableView.selectedRow)
 		}
 		
 	}
 	
-	func centralManager(central: CBCentralManager,
-		didDiscoverPeripheral peripheral: CBPeripheral,
-		advertisementData : [String : AnyObject],
-		RSSI: NSNumber) {
+	func centralManager(_ central: CBCentralManager,
+		didDiscover peripheral: CBPeripheral,
+		advertisementData : [String : Any],
+		rssi RSSI: NSNumber) {
 			//NebPeripheral = peripheral
 			//central.connectPeripheral(peripheral, options: nil)
 			
@@ -130,19 +132,22 @@ class ViewController: NSViewController, NSTableViewDataSource, NSTableViewDelega
 			// Hardware beacon
 			print("PERIPHERAL NAME: \(peripheral.name)\n AdvertisementData: \(advertisementData)\n RSSI: \(RSSI)\n")
 			
-			print("UUID DESCRIPTION: \(peripheral.identifier.UUIDString)\n")
+			print("UUID DESCRIPTION: \(peripheral.identifier.uuidString)\n")
 			
 			print("IDENTIFIER: \(peripheral.identifier)\n")
-			
+
+		if advertisementData[CBAdvertisementDataManufacturerDataKey] == nil {
+			return
+		}
+		
 			//sensorData.text = sensorData.text + "FOUND PERIPHERALS: \(peripheral) AdvertisementData: \(advertisementData) RSSI: \(RSSI)\n"
 			
 			var id : UInt64 = 0
-			advertisementData[CBAdvertisementDataManufacturerDataKey]?.getBytes(&id, range: NSMakeRange(2, 8))
+		(advertisementData[CBAdvertisementDataManufacturerDataKey] as! NSData).getBytes(&id, range: NSMakeRange(2, 8))
 			if (id == 0) {
 				return
 			}
-			let device = Neblina(devid: id, peripheral: peripheral)
-			
+		
 			//print("Peri : \(device)\n");
 			
 			for dev in objects
@@ -152,7 +157,10 @@ class ViewController: NSViewController, NSTableViewDataSource, NSTableViewDelega
 					return;
 				}
 			}
-			objects.insert(device, atIndex: 0)
+		
+			let device = Neblina(devid: id, peripheral: peripheral)
+		
+			objects.insert(device, at: 0)
 
 			//objects.addObject(peripheral)
 //			print("DEVICES: \(devices)\n")
@@ -162,7 +170,7 @@ class ViewController: NSViewController, NSTableViewDataSource, NSTableViewDelega
 			
 	}
 	
-	func centralManager(central: CBCentralManager, didConnectPeripheral peripheral: CBPeripheral) {
+	func centralManager(_ central: CBCentralManager, didConnect peripheral: CBPeripheral) {
 		
 		//peripheral.delegate = self
 		peripheral.discoverServices(nil)
@@ -174,29 +182,29 @@ class ViewController: NSViewController, NSTableViewDataSource, NSTableViewDelega
 		
 	}
 	
-	func centralManager(central: CBCentralManager, didFailToConnectPeripheral peripheral: CBPeripheral, error: NSError?) {
+	func centralManager(_ central: CBCentralManager, didFailToConnect peripheral: CBPeripheral, error: Error?) {
 		//        sensorData.text = "FAILED TO CONNECT \(error)"
 	}
 	
-	func scanPeripheral(sender: CBCentralManager)
+	func scanPeripheral(_ sender: CBCentralManager)
 	{
 		print("Scan for peripherals")
-		bleCentralManager.scanForPeripheralsWithServices(nil, options: nil)
+		bleCentralManager.scanForPeripherals(withServices: nil, options: nil)
 	}
 	
-	@objc func centralManagerDidUpdateState(central: CBCentralManager) {
+	@objc func centralManagerDidUpdateState(_ central: CBCentralManager) {
 		
 		switch central.state {
 			
-		case .PoweredOff:
+		case .poweredOff:
 			print("CoreBluetooth BLE hardware is powered off")
 			//self.sensorData.text = "CoreBluetooth BLE hardware is powered off\n"
 			break
-		case .PoweredOn:
+		case .poweredOn:
 			print("CoreBluetooth BLE hardware is powered on and ready")
 			//self.sensorData.text = "CoreBluetooth BLE hardware is powered on and ready\n"
 			// We can now call scanForBeacons
-			let lastPeripherals = central.retrieveConnectedPeripheralsWithServices([NEB_SERVICE_UUID])
+			let lastPeripherals = central.retrieveConnectedPeripherals(withServices: [NEB_SERVICE_UUID])
 			
 			if lastPeripherals.count > 0 {
 				// let device = lastPeripherals.last as CBPeripheral;
@@ -204,22 +212,22 @@ class ViewController: NSViewController, NSTableViewDataSource, NSTableViewDelega
 				//centralManager.connectPeripheral(connectingPeripheral, options: nil)
 			}
 			//scanPeripheral(central)
-			bleCentralManager.scanForPeripheralsWithServices([NEB_SERVICE_UUID], options: nil)
+			bleCentralManager.scanForPeripherals(withServices: [NEB_SERVICE_UUID], options: nil)
 			break
-		case .Resetting:
+		case .resetting:
 			print("CoreBluetooth BLE hardware is resetting")
 			//self.sensorData.text = "CoreBluetooth BLE hardware is resetting\n"
 			break
-		case .Unauthorized:
+		case .unauthorized:
 			print("CoreBluetooth BLE state is unauthorized")
 			//self.sensorData.text = "CoreBluetooth BLE state is unauthorized\n"
 			
 			break
-		case .Unknown:
+		case .unknown:
 			print("CoreBluetooth BLE state is unknown")
 			//self.sensorData.text = "CoreBluetooth BLE state is unknown\n"
 			break
-		case .Unsupported:
+		case .unsupported:
 			print("CoreBluetooth BLE hardware is unsupported on this platform")
 			//self.sensorData.text = "CoreBluetooth BLE hardware is unsupported on this platform\n"
 			break
@@ -238,27 +246,27 @@ class ViewController: NSViewController, NSTableViewDataSource, NSTableViewDelega
 		nebdev.streamSittingStanding(true)
 		nebdev.streamPedometer(true)
 	}
-	func didReceiveRSSI(rssi : NSNumber) {
+	func didReceiveRSSI(_ rssi : NSNumber) {
 		
 	}
 	
-	func didReceiveDebugData(type : Int32, data : UnsafePointer<UInt8>, dataLen: Int, errFlag : Bool) {
+	func didReceiveDebugData(_ type : Int32, data : UnsafePointer<UInt8>, dataLen: Int, errFlag : Bool) {
 		
 	}
-	func didReceivePmgntData(type : Int32, data : UnsafePointer<UInt8>, dataLen: Int, errFlag : Bool) {
+	func didReceivePmgntData(_ type : Int32, data : UnsafePointer<UInt8>, dataLen: Int, errFlag : Bool) {
 		
 	}
-	func didReceiveStorageData(type : Int32, data : UnsafePointer<UInt8>, dataLen: Int, errFlag : Bool) {
+	func didReceiveStorageData(_ type : Int32, data : UnsafePointer<UInt8>, dataLen: Int, errFlag : Bool) {
 		
 	}
-	func didReceiveEepromData(type : Int32, data : UnsafePointer<UInt8>, dataLen: Int, errFlag : Bool) {
+	func didReceiveEepromData(_ type : Int32, data : UnsafePointer<UInt8>, dataLen: Int, errFlag : Bool) {
 		
 	}
-	func didReceiveLedData(type : Int32, data : UnsafePointer<UInt8>, dataLen: Int, errFlag : Bool) {
+	func didReceiveLedData(_ type : Int32, data : UnsafePointer<UInt8>, dataLen: Int, errFlag : Bool) {
 		
 	}
 
-	func didReceiveFusionData(type : Int32, data : Fusion_DataPacket_t, errFlag : Bool) {
+	func didReceiveFusionData(_ type : Int32, data : Fusion_DataPacket_t, errFlag : Bool) {
 	//	let textview = self.view.viewWithTag(3) as! UITextView
 		
 		switch (type) {
@@ -396,26 +404,26 @@ class ViewController: NSViewController, NSTableViewDataSource, NSTableViewDelega
 			if (sitTime != prevSitTime)
 			{
 				// Stitting
-				sitLabel.backgroundColor = NSColor.greenColor()
-				standLabel.backgroundColor = NSColor.grayColor()
+				sitLabel.backgroundColor = NSColor.green
+				standLabel.backgroundColor = NSColor.gray
 			}
 			if (standTime != prevStandTime)
 			{
 				// Standing
 				if (cadence == 0)
 				{
-					sitLabel.backgroundColor = NSColor.grayColor()
-					standLabel.backgroundColor = NSColor.greenColor()
+					sitLabel.backgroundColor = NSColor.gray
+					standLabel.backgroundColor = NSColor.green
 				}
 				else if (cadence < 120)
 				{
-					sitLabel.backgroundColor = NSColor.grayColor()
-					standLabel.backgroundColor = NSColor.cyanColor()// blueColor()
+					sitLabel.backgroundColor = NSColor.gray
+					standLabel.backgroundColor = NSColor.cyan// blueColor()
 				}
 				else
 				{
-					sitLabel.backgroundColor = NSColor.grayColor()
-					standLabel.backgroundColor = NSColor.redColor()
+					sitLabel.backgroundColor = NSColor.gray
+					standLabel.backgroundColor = NSColor.red
 				}
 			}
 			prevSitTime = sitTime
