@@ -453,8 +453,11 @@ class ViewController: NSViewController, NSTableViewDataSource, NSTableViewDelega
 			if (row < objects.count) {
 				let cellView = tableView.make(withIdentifier: "CellDevice", owner: self) as! NSTableCellView
 			
-				cellView.textField!.stringValue = objects[row].device.name! + String(format: "_%lX", objects[row].id) //objects[row].name;// "test"//"self.objects.objectAtIndex(row) as! String
-			
+				if objects[row].device.name != nil {
+					cellView.textField!.stringValue = objects[row].device.name!
+				}
+				cellView.textField!.stringValue += String(format: "_%lX", objects[row].id)
+				
 				return cellView;
 			}
 		}
@@ -536,23 +539,6 @@ class ViewController: NSViewController, NSTableViewDataSource, NSTableViewDelega
 	                    didDiscover peripheral: CBPeripheral,
 						advertisementData : [String : Any],
 						rssi RSSI: NSNumber) {
-		//NebPeripheral = peripheral
-		//central.connectPeripheral(peripheral, options: nil)
-
-		//NSDictionary<CBUUID *, NSData *> *data =
-		//[advertisementData valueForKey:CBAdvertisementDataServiceDataKey];
-		
-		// We have to set the discoveredPeripheral var we declared earlier to reference the peripheral, otherwise we won't be able to interact with it in didConnectPeripheral. And you will get state = connecting> is being dealloc'ed while pending connection error.
-		
-		//self.discoveredPeripheral = peripheral
-		
-		//var curDevice = UIDevice.currentDevice()
-		
-		//iPad or iPhone
-		// println("VENDOR ID: \(curDevice.identifierForVendor) BATTERY LEVEL: \(curDevice.batteryLevel)\n\n")
-		//println("DEVICE DESCRIPTION: \(curDevice.description) MODEL: \(curDevice.model)\n\n")
-		
-		// Hardware beacon
 		print("PERIPHERAL NAME: \(peripheral)\n AdvertisementData: \(advertisementData)\n RSSI: \(RSSI)\n")
 		
 		print("UUID DESCRIPTION: \(peripheral.identifier.uuidString)\n")
@@ -563,21 +549,8 @@ class ViewController: NSViewController, NSTableViewDataSource, NSTableViewDelega
 			return
 		}
 		
-		//sensorData.text = sensorData.text + "FOUND PERIPHERALS: \(peripheral) AdvertisementData: \(advertisementData) RSSI: \(RSSI)\n"
 		var id = UInt64 (0)
-		//let localData = advertisementData as NSDictionary
-		//print("\(localData)")
 		(advertisementData[CBAdvertisementDataManufacturerDataKey] as! NSData).getBytes(&id, range: NSMakeRange(2, 8))
-		//var manudata = localData.object(forKey: CBAdvertisementDataLocalNameKey) as! AnyObject
-		//var manudata = advertisementData[CBAdvertisementDataServiceDataKey] as! NSData
-		//var manudata = localData.object(forKey: CBAdvertisementDataManufacturerDataKey) as! NSData
-		//print("\(manudata)")
-			
-		//manudata.getBytes(&id, range: NSMakeRange(2, 8))
-		//if (id == 0) {
-		//	return
-		//}
-		//((advertisementData[CBAdvertisementDataManufacturerDataKey] as Any) as AnyObject).getBytes(to: &id, from: NSMakeRange(2,8))
 		if (id == 0) {
 			return
 		}
@@ -592,54 +565,31 @@ class ViewController: NSViewController, NSTableViewDataSource, NSTableViewDelega
 		}
 		
 		let device = Neblina(devid: id, peripheral: peripheral)
-		//print("Peri : \(peripheral)\n");
-		//devices.addObject(peripheral)
-		print("DEVICES: \(device)\n")
-		//		peripheral.name = String("\(peripheral.name)_")
-		
 		objects.insert(device, at: 0)
 		
 		devListView.reloadData();
-		// stop scanning, saves the battery
-		//central.stopScan()
-		
 	}
 	
 	func centralManager(_ central: CBCentralManager, didConnect peripheral: CBPeripheral) {
-		//peripheral.delegate = self
-		//peripheral.discoverServices(nil)
-		//gameView.PeripheralConnected(peripheral)
-		//		detailView.setPeripheral(NebDevice)
-		//nebdev.setPeripheral(peripheral)
+		central.stopScan()
+
 		if (self.devListView.numberOfSelectedRows > 0)
 		{
-			//let peripheral = self.objects[self.devListView.selectedRow].peripheral
-			//nebdev.setPeripheral(objects[self.devListView.selectedRow].id, peripheral: objects[self.devListView.selectedRow].peripheral)
 			nebdev = objects[self.devListView.selectedRow]
 			nebdev.delegate = self
 			nebdev.device.discoverServices(nil)
 		}
-		//nebdev.connected(peripheral)
-		print("Connected to peripheral")
-		
-		
 	}
 	
 	func centralManager(_ central: CBCentralManager,
 	                      didDisconnectPeripheral peripheral: CBPeripheral,
 	                                              error: Error?) {
-		//peripheral.delegate = self
-		//peripheral.discoverServices(nil)
-		//gameView.PeripheralConnected(peripheral)
-		//		detailView.setPeripheral(NebDevice)
-		//NebDevice.setPeripheral(peripheral)
 		print("disconnected from peripheral")
 		
 		
 	}
 	
 	func centralManager(_ central: CBCentralManager, didFailToConnect peripheral: CBPeripheral, error: Error?) {
-		//        sensorData.text = "FAILED TO CONNECT \(error)"
 	}
 	
 	func scanPeripheral(_ sender: CBCentralManager)

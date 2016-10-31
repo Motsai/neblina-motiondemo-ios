@@ -20,7 +20,6 @@ class MasterViewController: UITableViewController, CBCentralManagerDelegate {
 
 	var detailViewController: UIViewController? = nil
 	var objects = [Neblina]()
-	//var NebPeripheral : CBPeripheral!
 
 
 	override func viewDidLoad() {
@@ -136,20 +135,6 @@ class MasterViewController: UITableViewController, CBCentralManagerDelegate {
 		didDiscover peripheral: CBPeripheral,
 		advertisementData : [String : Any],
 		rssi RSSI: NSNumber) {
-			//NebPeripheral = peripheral
-			//central.connectPeripheral(peripheral, options: nil)
-			
-			// We have to set the discoveredPeripheral var we declared earlier to reference the peripheral, otherwise we won't be able to interact with it in didConnectPeripheral. And you will get state = connecting> is being dealloc'ed while pending connection error.
-			
-			//self.discoveredPeripheral = peripheral
-			
-			//var curDevice = UIDevice.currentDevice()
-			
-			//iPad or iPhone
-			// println("VENDOR ID: \(curDevice.identifierForVendor) BATTERY LEVEL: \(curDevice.batteryLevel)\n\n")
-			//println("DEVICE DESCRIPTION: \(curDevice.description) MODEL: \(curDevice.model)\n\n")
-			
-			// Hardware beacon
 			print("PERIPHERAL NAME: \(peripheral)\n AdvertisementData: \(advertisementData)\n RSSI: \(RSSI)\n")
 			
 			print("UUID DESCRIPTION: \(peripheral.identifier.uuidString)\n")
@@ -160,7 +145,6 @@ class MasterViewController: UITableViewController, CBCentralManagerDelegate {
 				return
 			}
 		
-			//sensorData.text = sensorData.text + "FOUND PERIPHERALS: \(peripheral) AdvertisementData: \(advertisementData) RSSI: \(RSSI)\n"
 			var id : UInt64 = 0
 			(advertisementData[CBAdvertisementDataManufacturerDataKey] as! NSData).getBytes(&id, range: NSMakeRange(2, 8))
 			if (id == 0) {
@@ -177,26 +161,15 @@ class MasterViewController: UITableViewController, CBCentralManagerDelegate {
 				}
 			}
 			
-			//print("Peri : \(peripheral)\n");
-			//devices.addObject(peripheral)
-			print("DEVICES: \(device)\n")
-	//		peripheral.name = String("\(peripheral.name)_")
-			
 			objects.insert(device, at: 0)
 			
 			tableView.reloadData();
-			// stop scanning, saves the battery
-			//central.stopScan()
-			
 	}
 	
 	func centralManager(_ central: CBCentralManager, didConnect peripheral: CBPeripheral) {
-		
-		//peripheral.delegate = self
+
+		central.stopScan()
 		peripheral.discoverServices(nil)
-		//gameView.PeripheralConnected(peripheral)
-		//		detailView.setPeripheral(NebDevice)
-		//NebDevice.setPeripheral(peripheral)
 		print("Connected to peripheral")
 		
 		
@@ -205,18 +178,10 @@ class MasterViewController: UITableViewController, CBCentralManagerDelegate {
 	func centralManager(_ central: CBCentralManager,
 	                      didDisconnectPeripheral peripheral: CBPeripheral,
 	                                              error: Error?) {
-		//peripheral.delegate = self
-		//peripheral.discoverServices(nil)
-		//gameView.PeripheralConnected(peripheral)
-		//		detailView.setPeripheral(NebDevice)
-		//NebDevice.setPeripheral(peripheral)
 		print("disconnected from peripheral")
-		
-		
 	}
 
 	func centralManager(_ central: CBCentralManager, didFailToConnect peripheral: CBPeripheral, error: Error?) {
-		//        sensorData.text = "FAILED TO CONNECT \(error)"
 	}
 	
 	func scanPeripheral(_ sender: CBCentralManager)
