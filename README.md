@@ -23,7 +23,7 @@ This repository is part of the development kit that provides a Swift interface t
 * An iPad or iPhone and a Mac computer with Bluetooth LE capability.
 * Follow the hardware [Quick Start guide](http://nebdox.motsai.com/ProMotion_DevKit/Getting_Started) to make sure that the Neblina module or Promotion kit is powered on and functionnal.
 * Clone or download this repo.
-* XCode 7 is required to compile
+* XCode 8 is required to compile
 
 ### Functionnal check  
 
