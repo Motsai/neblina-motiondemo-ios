@@ -31,20 +31,24 @@ struct NebCmdItem {
 }
 
 let NebCmdList = [NebCmdItem] (arrayLiteral:
-	NebCmdItem(SubSysId: NEB_CTRL_SUBSYS_DEBUG, CmdId: DEBUG_CMD_SET_DATAPORT, Name: "BLE Data Port", Actuator : 1, Text: ""),
-	NebCmdItem(SubSysId: NEB_CTRL_SUBSYS_DEBUG, CmdId: DEBUG_CMD_SET_DATAPORT, Name: "UART Data Port", Actuator : 1, Text: ""),
-	NebCmdItem(SubSysId: NEB_CTRL_SUBSYS_MOTION_ENG, CmdId: Quaternion, Name: "Quaternion Stream", Actuator : 1, Text: ""),
-	NebCmdItem(SubSysId: NEB_CTRL_SUBSYS_MOTION_ENG, CmdId: MAG_Data, Name: "Mag Stream", Actuator : 1, Text: ""),
-	NebCmdItem(SubSysId: NEB_CTRL_SUBSYS_MOTION_ENG, CmdId: LockHeadingRef, Name: "Lock Heading Ref.", Actuator : 1, Text: ""),
-	NebCmdItem(SubSysId: NEB_CTRL_SUBSYS_STORAGE, CmdId: FlashEraseAll, Name: "Flash Erase All", Actuator : 1, Text: ""),
-	NebCmdItem(SubSysId: NEB_CTRL_SUBSYS_STORAGE, CmdId: FlashRecordStartStop, Name: "Flash Record", Actuator : 1, Text: ""),
-	NebCmdItem(SubSysId: NEB_CTRL_SUBSYS_STORAGE, CmdId: FlashPlaybackStartStop, Name: "Flash Playback", Actuator : 1, Text: ""),
-	NebCmdItem(SubSysId: NEB_CTRL_SUBSYS_STORAGE, CmdId: FlashSessionRead, Name: "Flash Download", Actuator : 1, Text: ""),
-	NebCmdItem(SubSysId: NEB_CTRL_SUBSYS_LED, CmdId: LED_CMD_SET_VALUE, Name: "Set LED0 level", Actuator : 3, Text: ""),
-	NebCmdItem(SubSysId: NEB_CTRL_SUBSYS_LED, CmdId: LED_CMD_SET_VALUE, Name: "Set LED1 level", Actuator : 3, Text: ""),
-	NebCmdItem(SubSysId: NEB_CTRL_SUBSYS_LED, CmdId: LED_CMD_SET_VALUE, Name: "Set LED2", Actuator : 1, Text: ""),
-	NebCmdItem(SubSysId: NEB_CTRL_SUBSYS_EEPROM, CmdId: EEPROM_Read, Name: "EEPROM Read", Actuator : 2, Text: "Read"),
-	NebCmdItem(SubSysId: NEB_CTRL_SUBSYS_POWERMGMT, CmdId: POWERMGMT_CMD_SET_CHARGE_CURRENT, Name: "Charge Current in mA", Actuator : 3, Text: ""),
+	NebCmdItem(SubSysId: NEBLINA_SUBSYSTEM_GENERAL, CmdId: NEBLINA_COMMAND_GENERAL_INTERFACE_STATE, Name: "BLE Data Port", Actuator : 1, Text: ""),
+	NebCmdItem(SubSysId: NEBLINA_SUBSYSTEM_GENERAL, CmdId: NEBLINA_COMMAND_GENERAL_INTERFACE_STATE, Name: "UART Data Port", Actuator : 1, Text: ""),
+	NebCmdItem(SubSysId: NEBLINA_SUBSYSTEM_FUSION, CmdId: NEBLINA_COMMAND_FUSION_QUATERNION_STATE, Name: "Quaternion Stream", Actuator : 1, Text: ""),
+	NebCmdItem(SubSysId: NEBLINA_SUBSYSTEM_SENSOR, CmdId: NEBLINA_COMMAND_SENSOR_ACCELEROMETER, Name: "Accelerometer Sensor Stream", Actuator : 1, Text: ""),
+	NebCmdItem(SubSysId: NEBLINA_SUBSYSTEM_SENSOR, CmdId: NEBLINA_COMMAND_SENSOR_GYROSCOPE, Name: "Gyroscope Sensor Stream", Actuator : 1, Text: ""),
+	NebCmdItem(SubSysId: NEBLINA_SUBSYSTEM_SENSOR, CmdId: NEBLINA_COMMAND_SENSOR_MAGNETOMETER, Name: "Magnetometer Sensor Stream", Actuator : 1, Text: ""),
+	NebCmdItem(SubSysId: NEBLINA_SUBSYSTEM_SENSOR, CmdId: NEBLINA_COMMAND_SENSOR_ACCELEROMETER_GYROSCOPE, Name: "Accel & Gyro Stream", Actuator : 1, Text:""),
+	NebCmdItem(SubSysId: NEBLINA_SUBSYSTEM_SENSOR, CmdId: NEBLINA_COMMAND_SENSOR_HUMIDITY, Name: "Humidity Sensor Stream", Actuator : 1, Text: ""),
+	NebCmdItem(SubSysId: NEBLINA_SUBSYSTEM_FUSION, CmdId: NEBLINA_COMMAND_FUSION_LOCK_HEADING_REFERENCE, Name: "Lock Heading Ref.", Actuator : 1, Text: ""),
+	NebCmdItem(SubSysId: NEBLINA_SUBSYSTEM_RECORDER, CmdId: NEBLINA_COMMAND_STORAGE_ERASE_ALL, Name: "Flash Erase All", Actuator : 1, Text: ""),
+	NebCmdItem(SubSysId: NEBLINA_SUBSYSTEM_RECORDER, CmdId: NEBLINA_COMMAND_STORAGE_RECORD_STATE, Name: "Flash Record", Actuator : 1, Text: ""),
+	NebCmdItem(SubSysId: NEBLINA_SUBSYSTEM_RECORDER, CmdId: NEBLINA_COMMAND_STORAGE_PLAYBACK_STATE, Name: "Flash Playback", Actuator : 1, Text: ""),
+	NebCmdItem(SubSysId: NEBLINA_SUBSYSTEM_RECORDER, CmdId: NEBLINA_COMMAND_STORAGE_SESSION_READ, Name: "Flash Download", Actuator : 1, Text: ""),
+	NebCmdItem(SubSysId: NEBLINA_SUBSYSTEM_LED, CmdId: NEBLINA_COMMAND_LED_STATE, Name: "Set LED0 level", Actuator : 3, Text: ""),
+	NebCmdItem(SubSysId: NEBLINA_SUBSYSTEM_LED, CmdId: NEBLINA_COMMAND_LED_STATE, Name: "Set LED1 level", Actuator : 3, Text: ""),
+	NebCmdItem(SubSysId: NEBLINA_SUBSYSTEM_LED, CmdId: NEBLINA_COMMAND_LED_STATE, Name: "Set LED2", Actuator : 1, Text: ""),
+	NebCmdItem(SubSysId: NEBLINA_SUBSYSTEM_EEPROM, CmdId: NEBLINA_COMMAND_EEPROM_READ, Name: "EEPROM Read", Actuator : 2, Text: "Read"),
+	NebCmdItem(SubSysId: NEBLINA_SUBSYSTEM_POWER, CmdId: NEBLINA_COMMAND_POWER_CHARGE_CURRENT, Name: "Charge Current in mA", Actuator : 3, Text: ""),
 	NebCmdItem(SubSysId: 0xf, CmdId: MotionDataStream, Name: "Motion data stream", Actuator : 1, Text: ""),
 	NebCmdItem(SubSysId: 0xf, CmdId: Heading, Name: "Heading", Actuator : 1, Text: "")
 )
@@ -176,13 +180,13 @@ class ViewController: NSViewController, NSTableViewDataSource, NSTableViewDelega
 		if (row < NebCmdList.count) {
 			switch (NebCmdList[row].SubSysId)
 			{
-			case NEB_CTRL_SUBSYS_EEPROM:
+			case NEBLINA_SUBSYSTEM_EEPROM:
 				switch (NebCmdList[row].CmdId)
 				{
-				case EEPROM_Read:
+				case NEBLINA_COMMAND_EEPROM_READ:
 					nebdev.eepromRead(0)
 					break
-				case EEPROM_Write:
+				case NEBLINA_COMMAND_EEPROM_WRITE:
 					//UInt8_t eepdata[8]
 					//nebdev.SendCmdEepromWrite(0, eepdata)
 					break
@@ -202,12 +206,13 @@ class ViewController: NSViewController, NSTableViewDataSource, NSTableViewDelega
 		let value = sender.integerValue
 		switch (NebCmdList[row].SubSysId)
 		{
-			case NEB_CTRL_SUBSYS_LED:
-				let i = getCmdIdx(NEB_CTRL_SUBSYS_LED,  cmdId: LED_CMD_SET_VALUE)
-				nebdev.setLed(UInt8(row - i), Value: UInt8(value))
-				
+			case NEBLINA_SUBSYSTEM_LED:
+				let i = getCmdIdx(NEBLINA_SUBSYSTEM_LED,  cmdId: NEBLINA_COMMAND_LED_STATE)
+				if i >= 0 {
+					nebdev.setLed(UInt8(row - i), Value: UInt8(value))
+				}
 				break
-			case NEB_CTRL_SUBSYS_POWERMGMT:
+			case NEBLINA_SUBSYSTEM_POWER:
 				nebdev.setBatteryChargeCurrent(UInt16(value))
 				break
 			default:
@@ -225,15 +230,13 @@ class ViewController: NSViewController, NSTableViewDataSource, NSTableViewDelega
 		if (row < NebCmdList.count) {
 			switch (NebCmdList[row].SubSysId)
 			{
-			case NEB_CTRL_SUBSYS_DEBUG:
+			case NEBLINA_SUBSYSTEM_GENERAL:
 				switch (NebCmdList[row].CmdId)
 				{
-				case DEBUG_CMD_SET_INTERFACE:
-					nebdev.setInterface(sender.selectedSegment)
+				case NEBLINA_COMMAND_GENERAL_INTERFACE_STATUS:
+					//nebdev.getDataPort(sender.selectedSegment)
 					break
-				case DEBUG_CMD_DUMP_DATA:
-					break;
-				case DEBUG_CMD_SET_DATAPORT:
+				case NEBLINA_COMMAND_GENERAL_INTERFACE_STATE:
 					nebdev.setDataPort(row, Ctrl:UInt8(sender.selectedSegment))
 					break;
 				default:
@@ -241,46 +244,49 @@ class ViewController: NSViewController, NSTableViewDataSource, NSTableViewDelega
 				}
 				break
 				
-			case NEB_CTRL_SUBSYS_MOTION_ENG:
+			case NEBLINA_SUBSYSTEM_FUSION:
 				switch (NebCmdList[row].CmdId)
 				{
-				case MotionState:
+				case NEBLINA_COMMAND_FUSION_MOTION_STATE:
 					nebdev.streamMotionState(sender.selectedSegment == 1)
 					break
-				case IMU_Data:
-					nebdev.streamIMU(sender.selectedSegment == 1)
+//				case NEBLINA_COMMAND_FUSION_IMU_STATE:
+//					nebdev.streamIMU(sender.selectedSegment == 1)
 					break
-				case Quaternion:
+				case NEBLINA_COMMAND_FUSION_QUATERNION_STATE:
 					nebdev.streamEulerAngle(false)
 					heading = false
 					prevTimeStamp = 0
 					nebdev.streamQuaternion(sender.selectedSegment == 1)
 					let i = getCmdIdx(0xf,  cmdId: 1)
+					if i < 0 {
+						break
+					}
 					let cell = cmdView.view(atColumn: 0, row: i, makeIfNecessary: false)! as NSView
 					let control = cell.viewWithTag(1) as! NSSegmentedControl
 
 					control.selectedSegment = 0
 					break
-				case EulerAngle:
+				case NEBLINA_COMMAND_FUSION_EULER_ANGLE_STATE:
 					nebdev.streamQuaternion(false)
 					nebdev.streamEulerAngle(sender.selectedSegment == 1)
 					break
-				case ExtForce:
+				case NEBLINA_COMMAND_FUSION_EXTERNAL_FORCE_STATE:
 					nebdev.streamExternalForce(sender.selectedSegment == 1)
 					break
-				case Pedometer:
+				case NEBLINA_COMMAND_FUSION_PEDOMETER_STATE:
 					nebdev.streamPedometer(sender.selectedSegment == 1)
 					break;
-				case TrajectoryRecStartStop:
+				case NEBLINA_COMMAND_FUSION_TRAJECTORY_RECORD:
 					nebdev.recordTrajectory(sender.selectedSegment == 1)
 					break;
-				case TrajectoryDistance:
+				case NEBLINA_COMMAND_FUSION_TRAJECTORY_INFO_STATE:
 					nebdev.streamTrajectoryInfo(sender.selectedSegment == 1)
 					break;
-				case MAG_Data:
+				case NEBLINA_COMMAND_FUSION_MAG_STATE:
 					nebdev.streamMAG(sender.selectedSegment == 1)
 					break;
-				case LockHeadingRef:
+				case NEBLINA_COMMAND_FUSION_LOCK_HEADING_REFERENCE:
 					nebdev.setLockHeadingReference(sender.selectedSegment == 1)
 					let cell = cmdView.rowView(atRow: row, makeIfNecessary: false)
 					let sw = cell!.viewWithTag(1) as! NSSegmentedControl
@@ -289,32 +295,34 @@ class ViewController: NSViewController, NSTableViewDataSource, NSTableViewDelega
 				default:
 					break
 				}
-			case NEB_CTRL_SUBSYS_LED:
-				let i = getCmdIdx(NEB_CTRL_SUBSYS_LED,  cmdId: LED_CMD_SET_VALUE)
-				nebdev.setLed(UInt8(row - i), Value: UInt8(sender.selectedSegment))
+			case NEBLINA_SUBSYSTEM_LED:
+				let i = getCmdIdx(NEBLINA_SUBSYSTEM_LED,  cmdId: NEBLINA_COMMAND_LED_STATE)
+				if i >= 0 {
+					nebdev.setLed(UInt8(row - i), Value: UInt8(sender.selectedSegment))
+				}
 				break
-			case NEB_CTRL_SUBSYS_STORAGE:
+			case NEBLINA_SUBSYSTEM_RECORDER:
 				switch (NebCmdList[row].CmdId)
 				{
 					
-				case FlashEraseAll:
+				case NEBLINA_COMMAND_STORAGE_ERASE_ALL:
 					if (sender.selectedSegment == 1) {
 						flashEraseProgress = true;
 					}
 					nebdev.eraseStorage(sender.selectedSegment == 1)
 					break
-				case FlashRecordStartStop:
+				case NEBLINA_COMMAND_STORAGE_RECORD_STATE:
 					nebdev.sessionRecord(sender.selectedSegment == 1)
 					break
-				case FlashPlaybackStartStop:
+				case NEBLINA_COMMAND_STORAGE_PLAYBACK_STATE:
 					
-					nebdev.sessionPlayback(sender.selectedSegment == 1, sessionId : 0xffff)
+					nebdev.sessionPlayback(sender.selectedSegment == 1, sessionId : 0xFFFF)
 					if (sender.selectedSegment == 1) {
 						PaketCnt = 0
 					}
 					prevTimeStamp = 0;
 					break
-				case FlashSessionRead:
+				case NEBLINA_COMMAND_STORAGE_SESSION_READ:
 					nebdev.getSessionCount()
 					startDownload = true
 					curSessionId = 0
@@ -326,13 +334,13 @@ class ViewController: NSViewController, NSTableViewDataSource, NSTableViewDelega
 					break
 				}
 				break
-			case NEB_CTRL_SUBSYS_EEPROM:
+			case NEBLINA_SUBSYSTEM_EEPROM:
 				switch (NebCmdList[row].CmdId)
 				{
-				case EEPROM_Read:
+				case NEBLINA_COMMAND_EEPROM_READ:
 					nebdev.eepromRead(0)
 					break
-				case EEPROM_Write:
+				case NEBLINA_COMMAND_EEPROM_WRITE:
 					//UInt8_t eepdata[8]
 					//nebdev.SendCmdEepromWrite(0, eepdata)
 					break
@@ -340,69 +348,118 @@ class ViewController: NSViewController, NSTableViewDataSource, NSTableViewDelega
 					break
 				}
 				break
+			case NEBLINA_SUBSYSTEM_SENSOR:
+				switch (NebCmdList[row].CmdId)
+				{
+					case NEBLINA_COMMAND_SENSOR_ACCELEROMETER:
+						nebdev.streamAccelSensorData(sender.selectedSegment == 1)
+						break
+					case NEBLINA_COMMAND_SENSOR_GYROSCOPE:
+						nebdev.streamGyroSensorData(sender.selectedSegment == 1)
+						break
+					case NEBLINA_COMMAND_SENSOR_HUMIDITY:
+						nebdev.streamHumiditySensorData(sender.selectedSegment == 1)
+						break
+					case NEBLINA_COMMAND_SENSOR_MAGNETOMETER:
+						nebdev.streamMagSensorData(sender.selectedSegment == 1)
+						break
+					case NEBLINA_COMMAND_SENSOR_PRESSURE:
+						nebdev.streamPressureSensorData(sender.selectedSegment == 1)
+						break
+					case NEBLINA_COMMAND_SENSOR_TEMPERATURE:
+						nebdev.streamTempSensorData(sender.selectedSegment == 1)
+						break
+					case NEBLINA_COMMAND_SENSOR_ACCELEROMETER_GYROSCOPE:
+						nebdev.streamAccelGyroSensorData(sender.selectedSegment == 1)
+						break
+					case NEBLINA_COMMAND_SENSOR_ACCELEROMETER_MAGNETOMETER:
+						nebdev.streamAccelMagSensorData(sender.selectedSegment == 1)
+						break
+					default:
+						break
+				}
+				break;
 			case 0xF:
 				switch (NebCmdList[row].CmdId) {
 					case Heading:	// Heading
 						nebdev.streamQuaternion(false)
 						nebdev.streamEulerAngle(true)
 						heading = sender.selectedSegment == 1
-						var i = getCmdIdx(NEB_CTRL_SUBSYS_MOTION_ENG,  cmdId: Quaternion)
-						var cell = cmdView.rowView(atRow: i, makeIfNecessary: false)
-						var control = cell!.viewWithTag(1) as! NSSegmentedControl
-						control.selectedSegment = 0
+						var i = getCmdIdx(NEBLINA_SUBSYSTEM_FUSION,  cmdId: NEBLINA_COMMAND_FUSION_QUATERNION_STATE)
+						if i >= 0 {
+							let cell = cmdView.rowView(atRow: i, makeIfNecessary: false)
+							let control = cell!.viewWithTag(1) as! NSSegmentedControl
+							control.selectedSegment = 0
+						}
 						i = getCmdIdx(0xF,  cmdId: MotionDataStream)
-						cell = cmdView.rowView(atRow: i, makeIfNecessary: false)
-						control = cell!.viewWithTag(1) as! NSSegmentedControl
-						control.selectedSegment = 0
+						if i >= 0 {
+							let cell = cmdView.rowView(atRow: i, makeIfNecessary: false)
+							let control = cell!.viewWithTag(1) as! NSSegmentedControl
+							control.selectedSegment = 0
+						}
 						break
 					case MotionDataStream:
 						nebdev.streamQuaternion(sender.selectedSegment == 1)
-						var i = getCmdIdx(NEB_CTRL_SUBSYS_MOTION_ENG,  cmdId: Quaternion)
-						var cell = cmdView.rowView(atRow: i, makeIfNecessary: false)
-						if (cell != nil) {
-							let control = cell!.viewWithTag(1) as! NSSegmentedControl
-							control.selectedSegment = sender.selectedSegment
+						var i = getCmdIdx(NEBLINA_SUBSYSTEM_FUSION,  cmdId: NEBLINA_COMMAND_FUSION_QUATERNION_STATE)
+						if i >= 0 {
+							let cell = cmdView.rowView(atRow: i, makeIfNecessary: false)
+							if (cell != nil) {
+								let control = cell!.viewWithTag(1) as! NSSegmentedControl
+								control.selectedSegment = sender.selectedSegment
+							}
 						}
-						nebdev.streamIMU(sender.selectedSegment == 1)
-						i = getCmdIdx(NEB_CTRL_SUBSYS_MOTION_ENG,  cmdId: IMU_Data)
-						cell = cmdView.rowView(atRow: i, makeIfNecessary: false)
-						if (cell != nil) {
-							let control = cell!.viewWithTag(1) as! NSSegmentedControl
-							control.selectedSegment = sender.selectedSegment
-						}
+//						nebdev.streamIMU(sender.selectedSegment == 1)
+//						i = getCmdIdx(NEBLINA_SUBSYSTEM_FUSION,  cmdId: NEBLINA_COMMAND_FUSION_IMU_STATE)
+//						if i >= 0 {
+//							let cell = cmdView.rowView(atRow: i, makeIfNecessary: false)
+//							if (cell != nil) {
+//								let control = cell!.viewWithTag(1) as! NSSegmentedControl
+//								control.selectedSegment = sender.selectedSegment
+//							}
+//						}
 						nebdev.streamMAG(sender.selectedSegment == 1)
-						i = getCmdIdx(NEB_CTRL_SUBSYS_MOTION_ENG,  cmdId: MAG_Data)
-						cell = cmdView.rowView(atRow: i, makeIfNecessary: false)
-						if (cell != nil) {
-							let control = cell!.viewWithTag(1) as! NSSegmentedControl
-							control.selectedSegment = sender.selectedSegment
+						i = getCmdIdx(NEBLINA_SUBSYSTEM_FUSION,  cmdId: NEBLINA_COMMAND_FUSION_MAG_STATE)
+						if i >= 0 {
+							let cell = cmdView.rowView(atRow: i, makeIfNecessary: false)
+							if (cell != nil) {
+								let control = cell!.viewWithTag(1) as! NSSegmentedControl
+								control.selectedSegment = sender.selectedSegment
+							}
 						}
 						nebdev.streamExternalForce(sender.selectedSegment == 1)
-						i = getCmdIdx(NEB_CTRL_SUBSYS_MOTION_ENG,  cmdId: ExtForce)
-						cell = cmdView.rowView(atRow: i, makeIfNecessary: false)
-						if (cell != nil) {
-							let control = cell!.viewWithTag(1) as! NSSegmentedControl
-							control.selectedSegment = sender.selectedSegment
+						i = getCmdIdx(NEBLINA_SUBSYSTEM_FUSION,  cmdId: NEBLINA_COMMAND_FUSION_EXTERNAL_FORCE_STATE)
+						if i >= 0 {
+							let cell = cmdView.rowView(atRow: i, makeIfNecessary: false)
+							if (cell != nil) {
+								let control = cell!.viewWithTag(1) as! NSSegmentedControl
+								control.selectedSegment = sender.selectedSegment
+							}
 						}
 						nebdev.streamPedometer(sender.selectedSegment == 1)
-						i = getCmdIdx(NEB_CTRL_SUBSYS_MOTION_ENG,  cmdId: Pedometer)
-						cell = cmdView.rowView(atRow: i, makeIfNecessary: false)
-						if (cell != nil) {
-							let control = cell!.viewWithTag(1) as! NSSegmentedControl
-							control.selectedSegment = sender.selectedSegment
+						i = getCmdIdx(NEBLINA_SUBSYSTEM_FUSION,  cmdId: NEBLINA_COMMAND_FUSION_PEDOMETER_STATE)
+						if i >= 0 {
+							let cell = cmdView.rowView(atRow: i, makeIfNecessary: false)
+							if (cell != nil) {
+								let control = cell!.viewWithTag(1) as! NSSegmentedControl
+								control.selectedSegment = sender.selectedSegment
+							}
 						}
 						nebdev.streamRotationInfo(sender.selectedSegment == 1)
-						i = getCmdIdx(NEB_CTRL_SUBSYS_MOTION_ENG,  cmdId: RotationInfo)
-						cell = cmdView.rowView(atRow: i, makeIfNecessary: false)
-						if (cell != nil) {
-							let control = cell!.viewWithTag(1) as! NSSegmentedControl
-							control.selectedSegment = sender.selectedSegment
+						i = getCmdIdx(NEBLINA_SUBSYSTEM_FUSION,  cmdId: NEBLINA_COMMAND_FUSION_ROTATION_STATE)
+						if i >= 0 {
+							let cell = cmdView.rowView(atRow: i, makeIfNecessary: false)
+							if (cell != nil) {
+								let control = cell!.viewWithTag(1) as! NSSegmentedControl
+								control.selectedSegment = sender.selectedSegment
+							}
 						}
 						i = getCmdIdx(0xF,  cmdId: Heading)
-						cell = cmdView.rowView(atRow: i, makeIfNecessary: false)
-						if (cell != nil) {
-							let control = cell!.viewWithTag(1) as! NSSegmentedControl
-							control.selectedSegment = 0
+						if i >= 0 {
+							let cell = cmdView.rowView(atRow: i, makeIfNecessary: false)
+							if (cell != nil) {
+								let control = cell!.viewWithTag(1) as! NSSegmentedControl
+								control.selectedSegment = 0
+							}
 						}
 						break
 
@@ -421,7 +478,10 @@ class ViewController: NSViewController, NSTableViewDataSource, NSTableViewDelega
 				nebdev.streamQuaternion(false)
 				nebdev.streamEulerAngle(true)
 				heading = sender.selectedSegment == 1
-				let i = getCmdIdx(NEB_CTRL_SUBSYS_MOTION_ENG,  cmdId: Quaternion)
+				let i = getCmdIdx(NEBLINA_SUBSYSTEM_FUSION,  cmdId: NEBLINA_COMMAND_FUSION_QUATERNION_STATE)
+				if i < 0 {
+					break
+				}
 				let cell = cmdView.rowView(atRow: i, makeIfNecessary: false)
 				let sw = cell!.viewWithTag(1) as! NSSegmentedControl
 				sw.selectedSegment = 0
@@ -455,6 +515,9 @@ class ViewController: NSViewController, NSTableViewDataSource, NSTableViewDelega
 			
 				if objects[row].device.name != nil {
 					cellView.textField!.stringValue = objects[row].device.name!
+				}
+				else {
+					cellView.textField!.stringValue = String("NoName")
 				}
 				cellView.textField!.stringValue += String(format: "_%lX", objects[row].id)
 				
@@ -648,7 +711,7 @@ class ViewController: NSViewController, NSTableViewDataSource, NSTableViewDelega
 	func didConnectNeblina() {
 		prevTimeStamp = 0;
 		nebdev.getFirmwareVersion()
-		nebdev.getMotionStatus()
+		nebdev.getFusionStatus()
 		nebdev.getDataPortState()
 		nebdev.getLed ()
 	}
@@ -656,21 +719,113 @@ class ViewController: NSViewController, NSTableViewDataSource, NSTableViewDelega
 	func didReceiveRSSI(_ rssi : NSNumber) {
 		
 	}
-	
-	func didReceivePmgntData(_ type : Int32, data : UnsafePointer<UInt8>, dataLen : Int, errFlag : Bool) {
-		let value = UInt16(data[0]) | (UInt16(data[1]) << 8)
-		if (type == POWERMGMT_CMD_SET_CHARGE_CURRENT)
-		{
-			//print("**V*** \(value) : \(data)")
-			let i = getCmdIdx(NEB_CTRL_SUBSYS_POWERMGMT,  cmdId: POWERMGMT_CMD_SET_CHARGE_CURRENT)
-			let cell = cmdView.view(atColumn: 0, row: i, makeIfNecessary: false)! as NSView
-			let control = cell.viewWithTag(3) as! NSTextField
-			control.stringValue = String(value)
+
+	//
+	// General data
+	//
+	func didReceiveGeneralData(_ type : Int32, data : UnsafePointer<UInt8>, dataLen : Int, errFlag : Bool) {
+		switch (type) {
+		case NEBLINA_COMMAND_GENERAL_SYSTEM_STATUS:
+			break
+		case NEBLINA_COMMAND_GENERAL_RECORDER_STATUS:
+			//print("DEBUG_CMD_MOTENGINE_RECORDER_STATUS \(data)")
+			switch (data[8]) {
+			case 1:	// Playback
+				var i = getCmdIdx(NEBLINA_SUBSYSTEM_RECORDER,  cmdId: NEBLINA_COMMAND_STORAGE_RECORD_STATE)
+				if i >= 0 {
+					let cell = cmdView.view(atColumn: 0, row: i, makeIfNecessary: false)! as NSView // cellForRowAtIndexPath( NSIndexPath(forRow: i, inSection: 0))
+					let sw = cell.viewWithTag(1) as! NSSegmentedControl
+					sw.selectedSegment = 0
+				}
+				i = getCmdIdx(NEB_CTRL_SUBSYS_STORAGE,  cmdId: NEBLINA_COMMAND_STORAGE_PLAYBACK_STATE)
+				if i >= 0 {
+					let cell = cmdView.view(atColumn: 0, row:i, makeIfNecessary: false)! as NSView // cellForRowAtIndexPath( NSIndexPath(forRow: i, inSection: 0))
+					let sw = cell.viewWithTag(1) as! NSSegmentedControl
+					sw.selectedSegment = 1
+				}
+				break
+			case 2:	// Recording
+				var i = getCmdIdx(NEBLINA_SUBSYSTEM_RECORDER,  cmdId: NEBLINA_COMMAND_STORAGE_PLAYBACK_STATE)
+				if i >= 0 {
+					let cell = cmdView.view(atColumn: 0, row: i, makeIfNecessary: false)! as NSView // cellForRowAtIndexPath( NSIndexPath(forRow: i, inSection: 0))
+					let sw = cell.viewWithTag(1) as! NSSegmentedControl
+					sw.selectedSegment = 0
+				}
+				i = getCmdIdx(NEBLINA_SUBSYSTEM_RECORDER,  cmdId: FlashRecordStartStop)
+				if i >= 0 {
+					let cell = cmdView.view(atColumn: 0, row:i, makeIfNecessary: false)! as NSView // cellForRowAtIndexPath( NSIndexPath(forRow: i, inSection: 0))
+					let sw = cell.viewWithTag(1) as! NSSegmentedControl
+					sw.selectedSegment = 1
+				}
+				break
+			default:
+				var i = getCmdIdx(NEBLINA_SUBSYSTEM_RECORDER,  cmdId: FlashPlaybackStartStop)
+				if i >= 0 {
+					let cell = cmdView.view(atColumn: 0, row: i, makeIfNecessary: false)! as NSView // cellForRowAtIndexPath( NSIndexPath(forRow: i, inSection: 0))
+					let sw = cell.viewWithTag(1) as! NSSegmentedControl
+					sw.selectedSegment = 0
+				}
+				i = getCmdIdx(NEBLINA_SUBSYSTEM_RECORDER,  cmdId: FlashRecordStartStop)
+				if i >= 0 {
+					let cell = cmdView.view(atColumn: 0, row:i, makeIfNecessary: false)! as NSView // cellForRowAtIndexPath( NSIndexPath(forRow: i, inSection: 0))
+					let sw = cell.viewWithTag(1) as! NSSegmentedControl
+					sw.selectedSegment = 0
+				}
+				break
+			}
+			var i = getCmdIdx(NEBLINA_SUBSYSTEM_FUSION,  cmdId: NEBLINA_COMMAND_FUSION_QUATERNION_STATE)
+			if i >= 0 {
+				let cell = cmdView.view(atColumn: 0, row: i, makeIfNecessary: false)! as NSView // cellForRowAtIndexPath( NSIndexPath(forRow: i, inSection: 0))
+				let sw = cell.viewWithTag(1) as! NSSegmentedControl
+				sw.selectedSegment = Int(data[4] & 8) >> 3
+			}
+			i = getCmdIdx(NEBLINA_SUBSYSTEM_FUSION,  cmdId: NEBLINA_COMMAND_FUSION_MAG_STATE)
+			if i >= 0 {
+				let cell = cmdView.view(atColumn: 0, row:i, makeIfNecessary: false)! as NSView // cellForRowAtIndexPath( NSIndexPath(forRow: i, inSection: 0))
+				let sw = cell.viewWithTag(1) as! NSSegmentedControl
+				sw.selectedSegment = 1
+				sw.selectedSegment = Int(data[4] & 0x80) >> 7
+			}
+			
+			//				i = nebdev.getCmdIdx(NEB_CTRL_SUBSYS_MOTION_ENG,  cmdId: EulerAngle)
+			/*				cell = cmdView.cellForRowAtIndexPath( NSIndexPath(forRow: NebCmdList.count, inSection: 0))
+			sw = cell!.viewWithTag(2) as! UISegmentedControl
+			sw.selectedSegmentIndex = Int(data[4] & 0x4) >> 2*/
+			//print("\(d)")
+			//nebdev.getFirmwareVersion()
+			
+				break
+			case NEBLINA_COMMAND_GENERAL_FIRMWARE:
+				versionLabel.stringValue = String(format: "API:%d, FEN:%d.%d.%d, BLE:%d.%d.%d", data[0], data[1], data[2], data[3], data[4], data[5], data[6])
+				//versionLabel.setNeedsDisplay()
+				//print("**")
+				print("\(versionLabel.stringValue)")
+			
+				break
+			case NEBLINA_COMMAND_GENERAL_INTERFACE_STATUS:
+				let i = getCmdIdx(NEBLINA_SUBSYSTEM_GENERAL,  cmdId: NEBLINA_COMMAND_GENERAL_INTERFACE_STATE)
+				if i < 0 {
+					break
+				}
+				var cell = cmdView.view(atColumn: 0, row: i, makeIfNecessary: false)! as NSView // cellForRowAtIndexPath( NSIndexPath(forRow: i, inSection: 0))
+				var control = cell.viewWithTag(1) as! NSSegmentedControl
+			
+				control.selectedSegment = Int(data[0])
+			
+				cell = cmdView.view(atColumn: 0, row: i + 1, makeIfNecessary: false)! as NSView // cellForRowAtIndexPath( NSIndexPath(forRow: i, inSection: 0))
+				control = cell.viewWithTag(1) as! NSSegmentedControl
+			
+				control.selectedSegment = Int(data[1])
+				break
+			default:
+				break
 		}
-		cmdView.setNeedsDisplay()
 	}
 	
-	func didReceiveFusionData(_ type : Int32, data : Fusion_DataPacket_t, errFlag : Bool) {
+	//
+	// Fusion data
+	//
+	func didReceiveFusionData(_ type : Int32, data : NeblinaFusionPacket, errFlag : Bool) {
 		
 		//let errflag = Bool(type.rawValue & 0x80 == 0x80)
 		
@@ -679,11 +834,11 @@ class ViewController: NSViewController, NSTableViewDataSource, NSTableViewDelega
 		
 		switch (type) {
 			
-		case MotionState:
+		case NEBLINA_COMMAND_FUSION_MOTION_STATE:
 			break
-		case IMU_Data:
+		case NEBLINA_COMMAND_FUSION_IMU_STATE:
 			break
-		case EulerAngle:
+		case NEBLINA_COMMAND_FUSION_EULER_ANGLE_STATE:
 			//
 			// Process Euler Angle
 			//
@@ -718,7 +873,7 @@ class ViewController: NSViewController, NSTableViewDataSource, NSTableViewDelega
 			
 			
 			break
-		case Quaternion:
+		case NEBLINA_COMMAND_FUSION_QUATERNION_STATE:
 			
 			//
 			// Process Quaternion
@@ -732,25 +887,26 @@ class ViewController: NSViewController, NSTableViewDataSource, NSTableViewDelega
 			let zq = Float(z) / 32768.0
 			let w = (Int16(data.data.6) & 0xff) | (Int16(data.data.7) << 8)
 			let wq = Float(w) / 32768.0
-			if (prevTimeStamp == 0 || data.TimeStamp <= prevTimeStamp)
+			//print("\(data.TimeStamp)")
+			if (prevTimeStamp == 0 || data.timestamp <= prevTimeStamp)
 			{
-				prevTimeStamp = data.TimeStamp;
+				prevTimeStamp = data.timestamp;
 				startTime = Date()
 				rxCount = 0
 			}
 			else
 			{
-				let tdiff = data.TimeStamp - prevTimeStamp;
+				let tdiff = data.timestamp - prevTimeStamp;
 				if (tdiff > 49000)
 				{
 					dropCnt += 1
 					dumpLabel.stringValue = String("\(dropCnt) Drop : \(tdiff)")
 				}
 				rxCount += 1
-				prevTimeStamp = data.TimeStamp
+				prevTimeStamp = data.timestamp
 				let curDate =  Date()
 				let rate = (Double(rxCount) * 20.0) / curDate.timeIntervalSince(startTime)
-				print("\(rate)")
+				//print("\(data.TimeStamp), \(tdiff)")
 			}
 			if #available(OSX 10.10, *) {
 				ship.orientation = SCNQuaternion(yq, xq, zq, wq)
@@ -760,7 +916,7 @@ class ViewController: NSViewController, NSTableViewDataSource, NSTableViewDelega
 			dataLabel.stringValue = String("Quat - x:\(xq), y:\(yq), z:\(zq), w:\(wq)")
 			
 			break
-		case ExtForce:
+		case NEBLINA_COMMAND_FUSION_EXTERNAL_FORCE_STATE:
 			//
 			// Process External Force
 			//
@@ -817,7 +973,7 @@ class ViewController: NSViewController, NSTableViewDataSource, NSTableViewDelega
 			dataLabel.stringValue = String("Extrn Force - x:\(xq), y:\(yq), z:\(zq)")
 			//print("Extrn Force - x:\(xq), y:\(yq), z:\(zq)")
 			break
-		case MAG_Data:
+		case NEBLINA_COMMAND_FUSION_MAG_STATE:
 			//
 			// Mag data
 			//
@@ -895,163 +1051,34 @@ class ViewController: NSViewController, NSTableViewDataSource, NSTableViewDelega
 		
 	}
 	
-	func didReceiveDebugData(_ type : Int32, data : UnsafePointer<UInt8>, dataLen : Int, errFlag : Bool)
-	{
-		//print("Debug \(type) data \(data)")
-		switch (type) {
-		case DEBUG_CMD_MOTENGINE_RECORDER_STATUS:
-			//print("DEBUG_CMD_MOTENGINE_RECORDER_STATUS \(data)")
-			switch (data[8]) {
-			case 1:	// Playback
-				var i = getCmdIdx(NEB_CTRL_SUBSYS_STORAGE,  cmdId: FlashRecordStartStop)
-				var cell = cmdView.view(atColumn: 0, row: i, makeIfNecessary: false)! as NSView // cellForRowAtIndexPath( NSIndexPath(forRow: i, inSection: 0))
-				var sw = cell.viewWithTag(1) as! NSSegmentedControl
-				sw.selectedSegment = 0
-				i = getCmdIdx(NEB_CTRL_SUBSYS_STORAGE,  cmdId: FlashPlaybackStartStop)
-				cell = cmdView.view(atColumn: 0, row:i, makeIfNecessary: false)! as NSView // cellForRowAtIndexPath( NSIndexPath(forRow: i, inSection: 0))
-				sw = cell.viewWithTag(1) as! NSSegmentedControl
-				sw.selectedSegment = 1
-				
-				break
-			case 2:	// Recording
-				var i = getCmdIdx(NEB_CTRL_SUBSYS_STORAGE,  cmdId: FlashPlaybackStartStop)
-				var cell = cmdView.view(atColumn: 0, row: i, makeIfNecessary: false)! as NSView // cellForRowAtIndexPath( NSIndexPath(forRow: i, inSection: 0))
-				var sw = cell.viewWithTag(1) as! NSSegmentedControl
-				sw.selectedSegment = 0
-				i = getCmdIdx(NEB_CTRL_SUBSYS_STORAGE,  cmdId: FlashRecordStartStop)
-				cell = cmdView.view(atColumn: 0, row:i, makeIfNecessary: false)! as NSView // cellForRowAtIndexPath( NSIndexPath(forRow: i, inSection: 0))
-				sw = cell.viewWithTag(1) as! NSSegmentedControl
-				sw.selectedSegment = 1
-				break
-			default:
-				var i = getCmdIdx(NEB_CTRL_SUBSYS_STORAGE,  cmdId: FlashPlaybackStartStop)
-				var cell = cmdView.view(atColumn: 0, row: i, makeIfNecessary: false)! as NSView // cellForRowAtIndexPath( NSIndexPath(forRow: i, inSection: 0))
-				var sw = cell.viewWithTag(1) as! NSSegmentedControl
-				sw.selectedSegment = 0
-				i = getCmdIdx(NEB_CTRL_SUBSYS_STORAGE,  cmdId: FlashRecordStartStop)
-				cell = cmdView.view(atColumn: 0, row:i, makeIfNecessary: false)! as NSView // cellForRowAtIndexPath( NSIndexPath(forRow: i, inSection: 0))
-				sw = cell.viewWithTag(1) as! NSSegmentedControl
-				sw.selectedSegment = 0
-				break
+	//
+	// Power management data
+	//
+	func didReceivePmgntData(_ type : Int32, data : UnsafePointer<UInt8>, dataLen : Int, errFlag : Bool) {
+		let value = UInt16(data[0]) | (UInt16(data[1]) << 8)
+		if (type == NEBLINA_COMMAND_POWER_CHARGE_CURRENT)
+		{
+			//print("**V*** \(value) : \(data)")
+			let i = getCmdIdx(NEBLINA_SUBSYSTEM_POWER,  cmdId: NEBLINA_COMMAND_POWER_CHARGE_CURRENT)
+			if i >= 0 {
+				let cell = cmdView.view(atColumn: 0, row: i, makeIfNecessary: false)! as NSView
+				let control = cell.viewWithTag(3) as! NSTextField
+				control.stringValue = String(value)
 			}
-			var i = getCmdIdx(NEB_CTRL_SUBSYS_MOTION_ENG,  cmdId: Quaternion)
-			var cell = cmdView.view(atColumn: 0, row: i, makeIfNecessary: false)! as NSView // cellForRowAtIndexPath( NSIndexPath(forRow: i, inSection: 0))
-			var sw = cell.viewWithTag(1) as! NSSegmentedControl
-			sw.selectedSegment = Int(data[4] & 8) >> 3
-			
-			i = getCmdIdx(NEB_CTRL_SUBSYS_MOTION_ENG,  cmdId: MAG_Data)
-			cell = cmdView.view(atColumn: 0, row:i, makeIfNecessary: false)! as NSView // cellForRowAtIndexPath( NSIndexPath(forRow: i, inSection: 0))
-			sw = cell.viewWithTag(1) as! NSSegmentedControl
-			sw.selectedSegment = 1
-			sw.selectedSegment = Int(data[4] & 0x80) >> 7
-			
-			//				i = nebdev.getCmdIdx(NEB_CTRL_SUBSYS_MOTION_ENG,  cmdId: EulerAngle)
-			/*				cell = cmdView.cellForRowAtIndexPath( NSIndexPath(forRow: NebCmdList.count, inSection: 0))
-			sw = cell!.viewWithTag(2) as! UISegmentedControl
-			sw.selectedSegmentIndex = Int(data[4] & 0x4) >> 2*/
-			//print("\(d)")
-			nebdev.getFirmwareVersion()
-			
-			break
-		case DEBUG_CMD_GET_FW_VERSION:
-			versionLabel.stringValue = String(format: "API:%d, FEN:%d.%d.%d, BLE:%d.%d.%d", data[0], data[1], data[2], data[3], data[4], data[5], data[6])
-			//versionLabel.setNeedsDisplay()
-			//print("**")
-			print("\(versionLabel.stringValue)")
-
-			break
-		case DEBUG_CMD_DUMP_DATA:
-			dumpLabel.stringValue = String(format: "%02x %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x",
-			                        data[0], data[1], data[2], data[3], data[4], data[5], data[6], data[7], data[8], data[9],
-			                        data[10], data[11], data[12], data[13], data[14], data[15])
-						break
-		case DEBUG_CMD_GET_DATAPORT:
-			let i = getCmdIdx(NEB_CTRL_SUBSYS_DEBUG,  cmdId: DEBUG_CMD_SET_DATAPORT)
-			var cell = cmdView.view(atColumn: 0, row: i, makeIfNecessary: false)! as NSView // cellForRowAtIndexPath( NSIndexPath(forRow: i, inSection: 0))
-			var control = cell.viewWithTag(1) as! NSSegmentedControl
-			
-			control.selectedSegment = Int(data[0])
-			
-			cell = cmdView.view(atColumn: 0, row: i + 1, makeIfNecessary: false)! as NSView // cellForRowAtIndexPath( NSIndexPath(forRow: i, inSection: 0))
-			control = cell.viewWithTag(1) as! NSSegmentedControl
-			
-			control.selectedSegment = Int(data[1])
-			break
-		default:
-			break
 		}
-		
 		cmdView.setNeedsDisplay()
 	}
 	
-	func didReceiveStorageData(_ type : Int32, data : UnsafePointer<UInt8>, dataLen : Int, errFlag : Bool) {
-		switch (type) {
-		case FlashEraseAll:
-			flashLabel.stringValue = "Flash erased"
-			break
-		case FlashRecordStartStop:
-			let session = Int16(data[5]) | (Int16(data[6]) << 8)
-			if (data[4] != 0) {
-				flashLabel.stringValue = String(format: "Recording session %d", session)
-			}
-			else {
-				flashLabel.stringValue = String(format: "Recorded session %d", session)
-			}
-			break
-		case FlashPlaybackStartStop:
-			let session = Int16(data[5]) | (Int16(data[6]) << 8)
-			if (data[4] != 0) {
-				flashLabel.stringValue = String(format: "Playing session %d", session)
-			}
-			else {
-				flashLabel.stringValue = String(format: "End session %d, %u", session, nebdev.getPacketCount())
-				
-				let i = getCmdIdx(NEB_CTRL_SUBSYS_STORAGE,  cmdId: FlashPlaybackStartStop)
-				let cell = cmdView.view(atColumn: 0, row: i, makeIfNecessary: false)! as NSView // cellForRowAtIndexPath( NSIndexPath(forRow: i, inSection: 0))
-				let sw = cell.viewWithTag(1) as! NSSegmentedControl
-				
-				sw.selectedSegment = 0
-			}
-			break
-		case FlashSessionRead:
-			if (errFlag == false && dataLen > 0) {
-				nebdev.sessionRead(curSessionId, Len: 16, Offset: curSessionOffset)
-				curSessionOffset += 16
-				print("\(curSessionOffset), \(data)")
-			}
-			else {
-				let i = getCmdIdx(NEB_CTRL_SUBSYS_STORAGE,  cmdId: FlashSessionRead)
-				let cell = cmdView.view(atColumn: 0, row: i, makeIfNecessary: false)! as NSView // cellForRowAtIndexPath( NSIndexPath(forRow: i, inSection: 0))
-				let sw = cell.viewWithTag(1) as! NSSegmentedControl
-				
-				sw.selectedSegment = 0
-			}
-			break
-		case FlashGetNbSessions:
-			sessionCount = data[0]
-			break
-		default:
-			break
-		}
-	}
-	
-	func didReceiveEepromData(_ type : Int32, data : UnsafePointer<UInt8>, dataLen : Int, errFlag : Bool) {
-		switch (type) {
-		case EEPROM_Read:
-			let pageno = UInt16(data[0]) | (UInt16(data[1]) << 8)
-			dumpLabel.stringValue = String(format: "EEP page [%d] : %02x %02x %02x %02x %02x %02x %02x %02x",
-			                        pageno, data[2], data[3], data[4], data[5], data[6], data[7], data[8], data[9])
-			break
-		case EEPROM_Write:
-			break;
-		default:
-			break
-		}
-	}
+	//
+	// LED
+	//
 	func didReceiveLedData(_ type : Int32, data : UnsafePointer<UInt8>, dataLen : Int, errFlag : Bool) {
 		switch (type) {
-		case LED_CMD_GET_VALUE:
-			let i = getCmdIdx(NEB_CTRL_SUBSYS_LED,  cmdId: LED_CMD_SET_VALUE)
+		case NEBLINA_COMMAND_LED_STATUS:
+			let i = getCmdIdx(NEBLINA_SUBSYSTEM_LED,  cmdId: NEBLINA_COMMAND_LED_STATE)
+			if i < 0 {
+				break
+			}
 			var cell = cmdView.view(atColumn: 0, row: i, makeIfNecessary: false)
 			var tf = cell!.viewWithTag(3) as! NSTextField
 			tf.intValue = Int32(data[0])
@@ -1073,6 +1100,175 @@ class ViewController: NSViewController, NSTableViewDataSource, NSTableViewDelega
 		}
 		cmdView.setNeedsDisplay()
 	}
-
+	
+	//
+	// Debug
+	//
+	func didReceiveDebugData(_ type : Int32, data : UnsafePointer<UInt8>, dataLen : Int, errFlag : Bool)
+	{
+		//print("Debug \(type) data \(data)")
+		switch (type) {
+		case NEBLINA_COMMAND_DEBUG_DUMP_DATA:
+			dumpLabel.stringValue = String(format: "%02x %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x",
+			                        data[0], data[1], data[2], data[3], data[4], data[5], data[6], data[7], data[8], data[9],
+			                        data[10], data[11], data[12], data[13], data[14], data[15])
+						break
+		default:
+			break
+		}
+		
+		cmdView.setNeedsDisplay()
+	}
+	
+	//
+	// Storage
+	//
+	func didReceiveStorageData(_ type : Int32, data : UnsafePointer<UInt8>, dataLen : Int, errFlag : Bool) {
+		switch (type) {
+		case NEBLINA_COMMAND_STORAGE_ERASE_ALL:
+			flashLabel.stringValue = "Flash erased"
+			let i = getCmdIdx(NEB_CTRL_SUBSYS_STORAGE,  cmdId: FlashEraseAll)
+			if i < 0 {
+				break
+			}
+			let cell = cmdView.view(atColumn: 0, row: i, makeIfNecessary: false)! as NSView // cellForRowAtIndexPath( NSIndexPath(forRow: i, inSection: 0))
+			let sw = cell.viewWithTag(1) as! NSSegmentedControl
+			
+			sw.selectedSegment = 0
+			break
+		case NEBLINA_COMMAND_STORAGE_RECORD_STATE:
+			let session = Int16(data[1]) | (Int16(data[2]) << 8)
+			if (data[0] != 0) {
+				flashLabel.stringValue = String(format: "Recording session %d", session)
+			}
+			else {
+				flashLabel.stringValue = String(format: "Recorded session %d", session)
+			}
+			break
+		case NEBLINA_COMMAND_STORAGE_PLAYBACK_STATE:
+			print("FlashPlaybackStartStop : \(data[0]) \(data[1]) \(data[2])")
+			let session = Int16(data[1]) | (Int16(data[2]) << 8)
+			if (data[0] != 0) {
+				flashLabel.stringValue = String(format: "Playing session %d", session)
+			}
+			else {
+				flashLabel.stringValue = String(format: "End session %d, %u", session, nebdev.getPacketCount())
+				
+				let i = getCmdIdx(NEB_CTRL_SUBSYS_STORAGE,  cmdId: FlashPlaybackStartStop)
+				if i < 0 {
+					break
+				}
+				let cell = cmdView.view(atColumn: 0, row: i, makeIfNecessary: false)! as NSView // cellForRowAtIndexPath( NSIndexPath(forRow: i, inSection: 0))
+				let sw = cell.viewWithTag(1) as! NSSegmentedControl
+				
+				sw.selectedSegment = 0
+			}
+			break
+		case NEBLINA_COMMAND_STORAGE_SESSION_READ:
+			if (errFlag == false && dataLen > 0) {
+				nebdev.sessionRead(curSessionId, Len: 16, Offset: curSessionOffset)
+				curSessionOffset += 16
+				print("\(curSessionOffset), \(data)")
+			}
+			else {
+				let i = getCmdIdx(NEBLINA_SUBSYSTEM_RECORDER,  cmdId: NEBLINA_COMMAND_STORAGE_SESSION_READ)
+				if i < 0 {
+					break
+				}
+				let cell = cmdView.view(atColumn: 0, row: i, makeIfNecessary: false)! as NSView // cellForRowAtIndexPath( NSIndexPath(forRow: i, inSection: 0))
+				let sw = cell.viewWithTag(1) as! NSSegmentedControl
+				
+				sw.selectedSegment = 0
+			}
+			break
+		case NEBLINA_COMMAND_STORAGE_SESSION_COUNT:
+			sessionCount = data[0]
+			break
+		default:
+			break
+		}
+	}
+	
+	//
+	// Eeprom
+	//
+	func didReceiveEepromData(_ type : Int32, data : UnsafePointer<UInt8>, dataLen : Int, errFlag : Bool) {
+		switch (type) {
+		case NEBLINA_COMMAND_EEPROM_READ:
+			let pageno = UInt16(data[0]) | (UInt16(data[1]) << 8)
+			dumpLabel.stringValue = String(format: "EEP page [%d] : %02x %02x %02x %02x %02x %02x %02x %02x",
+			                        pageno, data[2], data[3], data[4], data[5], data[6], data[7], data[8], data[9])
+			break
+		case NEBLINA_COMMAND_EEPROM_WRITE:
+			break;
+		default:
+			break
+		}
+	}
+	
+	//
+	// Sensor data
+	//
+	func didReceiveSensorData(_ type : Int32, data : UnsafePointer<UInt8>, dataLen : Int, errFlag : Bool) {
+		switch (type) {
+		case NEBLINA_COMMAND_SENSOR_ACCELEROMETER:
+			let x = (Int16(data[4]) & 0xff) | (Int16(data[5]) << 8)
+			let xq = x
+			let y = (Int16(data[6]) & 0xff) | (Int16(data[7]) << 8)
+			let yq = y
+			let z = (Int16(data[8]) & 0xff) | (Int16(data[9]) << 8)
+			let zq = z
+			dataLabel.stringValue = String("Accel - x:\(xq), y:\(yq), z:\(zq)")
+			rxCount += 1
+			break
+		case NEBLINA_COMMAND_SENSOR_GYROSCOPE:
+			let x = (Int16(data[4]) & 0xff) | (Int16(data[5]) << 8)
+			let xq = x
+			let y = (Int16(data[6]) & 0xff) | (Int16(data[7]) << 8)
+			let yq = y
+			let z = (Int16(data[8]) & 0xff) | (Int16(data[9]) << 8)
+			let zq = z
+			dataLabel.stringValue = String("Gyro - x:\(xq), y:\(yq), z:\(zq)")
+			rxCount += 1
+			break
+		case NEBLINA_COMMAND_SENSOR_HUMIDITY:
+			break
+		case NEBLINA_COMMAND_SENSOR_MAGNETOMETER:
+			//
+			// Mag data
+			//
+			//let ship = scene.rootNode.childNodeWithName("ship", recursively: true)!
+			let x = (Int16(data[4]) & 0xff) | (Int16(data[5]) << 8)
+			let xq = x
+			let y = (Int16(data[6]) & 0xff) | (Int16(data[7]) << 8)
+			let yq = y
+			let z = (Int16(data[8]) & 0xff) | (Int16(data[9]) << 8)
+			let zq = z
+			dataLabel.stringValue = String("Mag - x:\(xq), y:\(yq), z:\(zq)")
+			rxCount += 1
+			//ship.rotation = SCNVector4(Float(xq), Float(yq), 0, GLKMathDegreesToRadians(90))
+			break
+		case NEBLINA_COMMAND_SENSOR_PRESSURE:
+			break
+		case NEBLINA_COMMAND_SENSOR_TEMPERATURE:
+			break
+		case NEBLINA_COMMAND_SENSOR_ACCELEROMETER_GYROSCOPE:
+			let x = (Int16(data[4]) & 0xff) | (Int16(data[5]) << 8)
+			let xq = x
+			let y = (Int16(data[6]) & 0xff) | (Int16(data[7]) << 8)
+			let yq = y
+			let z = (Int16(data[8]) & 0xff) | (Int16(data[9]) << 8)
+			let zq = z
+			dataLabel.stringValue = String("IMU - x:\(xq), y:\(yq), z:\(zq)")
+			rxCount += 1
+			break
+		case NEBLINA_COMMAND_SENSOR_ACCELEROMETER_MAGNETOMETER:
+			break
+		default:
+			break
+		}
+		cmdView.setNeedsDisplay()
+	}
+	
 }
 
