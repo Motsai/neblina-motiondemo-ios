@@ -378,7 +378,7 @@ class ViewController: NSViewController, NSTableViewDataSource, NSTableViewDelega
 					default:
 						break
 				}
-				break;
+				break
 			case 0xF:
 				switch (NebCmdList[row].CmdId) {
 					case Heading:	// Heading
@@ -1075,7 +1075,7 @@ class ViewController: NSViewController, NSTableViewDataSource, NSTableViewDelega
 	func didReceiveLedData(_ type : Int32, data : UnsafePointer<UInt8>, dataLen : Int, errFlag : Bool) {
 		switch (type) {
 		case NEBLINA_COMMAND_LED_STATUS:
-			let i = getCmdIdx(NEBLINA_SUBSYSTEM_LED,  cmdId: NEBLINA_COMMAND_LED_STATE)
+			let i = getCmdIdx(NEBLINA_SUBSYSTEM_LED,  cmdId: NEBLINA_COMMAND_LED_STATUS)
 			if i < 0 {
 				break
 			}
