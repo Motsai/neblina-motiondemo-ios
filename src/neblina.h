@@ -76,6 +76,10 @@
 
 /**********************************************************************************/
 
+#define     NEBLINA_UART_BAUDRATE                               1000000
+
+/**********************************************************************************/
+
 #define     NEBLINA_COMMAND_DEBUG_PRINTF                        0
 #define     NEBLINA_COMMAND_DEBUG_DUMP_DATA                     1
 
@@ -130,6 +134,7 @@
 #define     NEBLINA_COMMAND_GENERAL_SENSOR_STATUS               11
 #define     NEBLINA_COMMAND_GENERAL_DISABLE_STREAMING           12
 #define     NEBLINA_COMMAND_GENERAL_RESET_TIMESTAMP             13
+#define     NEBLINA_COMMAND_GENERAL_FIRMWARE_UPDATE             14
 
 /**********************************************************************************/
 
@@ -146,6 +151,7 @@
 
 #define     NEBLINA_COMMAND_SENSOR_DOWNSAMPLE                   0
 #define     NEBLINA_COMMAND_SENSOR_RANGE                        1
+#define     NEBLINA_COMMAND_SENSOR_RATE                         2
 #define     NEBLINA_COMMAND_SENSOR_ACCELEROMETER                10
 #define     NEBLINA_COMMAND_SENSOR_GYROSCOPE                    11
 #define     NEBLINA_COMMAND_SENSOR_HUMIDITY                     12
@@ -158,12 +164,12 @@
 
 /**********************************************************************************/
 
-#define     NEBLINA_COMMAND_STORAGE_ERASE_ALL                   1
-#define     NEBLINA_COMMAND_STORAGE_RECORD_STATE                2
-#define     NEBLINA_COMMAND_STORAGE_PLAYBACK_STATE              3
-#define     NEBLINA_COMMAND_STORAGE_SESSION_COUNT               4
-#define     NEBLINA_COMMAND_STORAGE_SESSION_INFO                5
-#define     NEBLINA_COMMAND_STORAGE_SESSION_READ                6
+#define     NEBLINA_COMMAND_RECORDER_ERASE_ALL                  1
+#define     NEBLINA_COMMAND_RECORDER_RECORD                     2
+#define     NEBLINA_COMMAND_RECORDER_PLAYBACK                   3
+#define     NEBLINA_COMMAND_RECORDER_SESSION_COUNT              4
+#define     NEBLINA_COMMAND_RECORDER_SESSION_INFO               5
+#define     NEBLINA_COMMAND_RECORDER_SESSION_READ               6
 
 /**********************************************************************************/
 
@@ -316,14 +322,6 @@ typedef struct
 
 typedef struct
 {
-    uint32_t reserved;
-    uint8_t state;
-} NeblinaFusionState_t;
-
-/**********************************************************************************/
-
-typedef struct
-{
     uint8_t distance:1;
     uint8_t force:1;
     uint8_t euler:1;
@@ -421,7 +419,7 @@ typedef struct
 {
     uint32_t length;
     uint16_t sessionId;
-} StorageSessionInfoData_t;
+} NeblinaSessionInfo_t;
 
 /**********************************************************************************/
 
@@ -429,7 +427,7 @@ typedef struct
 {
     uint8_t state;
     uint16_t sessionId;
-} StorageSessionStatusData_t;
+} NeblinaSessionStatus_t;
 
 /**********************************************************************************/
 
@@ -438,14 +436,14 @@ typedef struct
     uint16_t sessionId;
     uint32_t offset;
     uint16_t length;
-} StorageSessionReadCommand_t;
+} NeblinaSessionReadCommand_t;
 
 /**********************************************************************************/
 
 typedef struct
 {
     uint8_t data[NEBLINA_PACKET_LENGTH_MAX];
-} StorageSessionReadData_t;
+} NeblinaSessionReadData_t;
 
 /**********************************************************************************/
 
@@ -455,6 +453,16 @@ typedef struct
 } TemperatureData_t;
 
 /**********************************************************************************/
+
+typedef enum {
+    NEBLINA_RATE_1 = 1,
+    NEBLINA_RATE_50 = 50,
+    NEBLINA_RATE_100 = 100,
+    NEBLINA_RATE_200 = 200,
+    NEBLINA_RATE_400 = 400,
+    NEBLINA_RATE_800 = 800,
+    NEBLINA_RATE_1600 = 1600
+} NeblinaRate_t;
 
 typedef enum {
     NEBLINA_SENSOR_STREAM_ACCELEROMETER              = 0x00,
@@ -471,26 +479,26 @@ typedef enum {
 typedef enum {
     NEBLINA_SENSOR_ACCELEROMETER    = 0x00,
     NEBLINA_SENSOR_GYROSCOPE        = 0x01,
-    NEBLINA_SENSOR_HUMIDITY         = 0x02,
-    NEBLINA_SENSOR_MAGNETOMETER     = 0x03,
+    NEBLINA_SENSOR_MAGNETOMETER     = 0x02,
+    NEBLINA_SENSOR_HUMIDITY         = 0x03,
     NEBLINA_SENSOR_PRESSURE         = 0x04,
     NEBLINA_SENSOR_TEMPERATURE      = 0x05,
     NEBLINA_SENSOR_COUNT                    // Keep last
 } NeblinaSensorType_t;
 
 typedef struct {
-    uint16_t stream;
+    uint16_t  stream;
     uint16_t downsample;
 } NeblinaSensorDownsample_t;
 
 typedef struct {
     uint16_t type;
-    uint8_t  range;
+    uint16_t range;
 } NeblinaSensorRange_t;
 
 typedef struct {
     uint16_t type;
-    uint8_t  rate;
+    uint16_t rate;
 } NeblinaSensorRate_t;
 
 /**********************************************************************************/
