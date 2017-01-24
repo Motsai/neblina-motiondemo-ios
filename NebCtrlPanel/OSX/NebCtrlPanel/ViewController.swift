@@ -1213,7 +1213,7 @@ class ViewController: NSViewController, NSTableViewDataSource, NSTableViewDelega
 	//
 	// Storage
 	//
-	func didReceiveStorageData(_ type : Int32, data : UnsafePointer<UInt8>, dataLen : Int, errFlag : Bool) {
+	func didReceiveRecorderData(_ type : Int32, data : UnsafePointer<UInt8>, dataLen : Int, errFlag : Bool) {
 
 		switch (type) {
 		case NEBLINA_COMMAND_RECORDER_ERASE_ALL:

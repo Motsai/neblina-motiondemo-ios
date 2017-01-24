@@ -208,7 +208,7 @@ class Neblina : NSObject, CBPeripheralDelegate {
 					if (hdr.length > 0) {
 						characteristic.value?.copyBytes (to: &dd, from: Range(MemoryLayout<NeblinaPacketHeader_t>.size..<Int(hdr.length) + MemoryLayout<NeblinaPacketHeader_t>.size))
 					}
-					delegate.didReceiveStorageData(id, data: dd, dataLen: Int(hdr.length), errFlag: errflag)
+					delegate.didReceiveRecorderData(id, data: dd, dataLen: Int(hdr.length), errFlag: errflag)
 					break
 				case NEBLINA_SUBSYSTEM_EEPROM:
 					var dd = [UInt8](repeating: 0, count: 16)
@@ -1171,12 +1171,12 @@ class Neblina : NSObject, CBPeripheralDelegate {
 		// Command parameter
 		pkbuf[4] = UInt8(SessionId & 0xFF)
 		pkbuf[5] = UInt8((SessionId >> 8) & 0xFF)
-		pkbuf[6] = UInt8(Offset & 0xFF)
-		pkbuf[7] = UInt8((Offset >> 8) & 0xFF)
-		pkbuf[8] = UInt8((Offset >> 16) & 0xFF)
-		pkbuf[9] = UInt8((Offset >> 24) & 0xFF)
-		pkbuf[10] = UInt8(Len & 0xFF)
-		pkbuf[11] = UInt8((Len >> 8) & 0xFF)
+		pkbuf[6] = UInt8(Len & 0xFF)
+		pkbuf[7] = UInt8((Len >> 8) & 0xFF)
+		pkbuf[8] = UInt8(Offset & 0xFF)
+		pkbuf[9] = UInt8((Offset >> 8) & 0xFF)
+		pkbuf[10] = UInt8((Offset >> 16) & 0xFF)
+		pkbuf[11] = UInt8((Offset >> 24) & 0xFF)
 		
 		pkbuf[2] = crc8(pkbuf, Len: Int(pkbuf[1]) + 4)
 
@@ -1398,7 +1398,7 @@ protocol NeblinaDelegate {
 	func didReceivePmgntData(_ type : Int32, data : UnsafePointer<UInt8>, dataLen : Int, errFlag : Bool)
 	func didReceiveLedData(_ type : Int32, data : UnsafePointer<UInt8>, dataLen : Int, errFlag : Bool)
 	func didReceiveDebugData(_ type : Int32, data : UnsafePointer<UInt8>, dataLen : Int, errFlag : Bool)
-	func didReceiveStorageData(_ type : Int32, data : UnsafePointer<UInt8>, dataLen : Int, errFlag : Bool)
+	func didReceiveRecorderData(_ type : Int32, data : UnsafePointer<UInt8>, dataLen : Int, errFlag : Bool)
 	func didReceiveEepromData(_ type : Int32, data : UnsafePointer<UInt8>, dataLen : Int, errFlag : Bool)
 	func didReceiveSensorData(_ type : Int32, data : UnsafePointer<UInt8>, dataLen : Int, errFlag : Bool)
 }

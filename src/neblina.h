@@ -31,6 +31,9 @@
 #define     NEBLINA_FIRMWARE_VERSION_MINOR       0
 #define     NEBLINA_FIRMWARE_VERSION_BUILD       0
 
+//#define     NEBLINA_HARDWARE_V2A
+#define     NEBLINA_HARDWARE_V2B
+
 /**********************************************************************************/
 
 #if defined(NDEBUG)
@@ -434,8 +437,8 @@ typedef struct
 typedef struct
 {
     uint16_t sessionId;
-    uint32_t offset;
     uint16_t length;
+    uint32_t offset;
 } NeblinaSessionReadCommand_t;
 
 /**********************************************************************************/
