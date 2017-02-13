@@ -14,14 +14,6 @@ import SceneKit
 let MotionDataStream = Int32(1)
 let Heading = Int32(2)
 
-struct NebCmdItem {
-	let SubSysId : Int32
-	let	CmdId : Int32
-	let Name : String
-	let Actuator : Int
-	let Text : String
-}
-
 let NebCmdList = [NebCmdItem] (arrayLiteral:
 	/*
 	NebCmdItem(SubSysId: NEB_CTRL_SUBSYS_DEBUG, CmdId: DEBUG_CMD_SET_DATAPORT, Name: "BLE Data Port", Actuator : 1, Text:""),
@@ -42,30 +34,56 @@ let NebCmdList = [NebCmdItem] (arrayLiteral:
 	NebCmdItem(SubSysId: NEB_CTRL_SUBSYS_POWERMGMT, CmdId: POWERMGMT_CMD_SET_CHARGE_CURRENT, Name: "Charge Current in mA", Actuator : 3, Text:""),
 	NebCmdItem(SubSysId: NEB_CTRL_SUBSYS_STORAGE, CmdId: FlashEraseAll, Name: "Flash Erase All", Actuator : 1, Text:"")
 */
-	NebCmdItem(SubSysId: NEBLINA_SUBSYSTEM_GENERAL, CmdId: NEBLINA_COMMAND_GENERAL_INTERFACE_STATE, Name: "BLE Data Port", Actuator : 1, Text: ""),
-	NebCmdItem(SubSysId: NEBLINA_SUBSYSTEM_GENERAL, CmdId: NEBLINA_COMMAND_GENERAL_INTERFACE_STATE, Name: "UART Data Port", Actuator : 1, Text: ""),
-	NebCmdItem(SubSysId: NEBLINA_SUBSYSTEM_FUSION, CmdId: NEBLINA_COMMAND_FUSION_CALIBRATE_FORWARD_POSITION, Name: "Calibrate Forward Pos", Actuator : 2, Text: "Calib Fwrd"),
-	NebCmdItem(SubSysId: NEBLINA_SUBSYSTEM_FUSION, CmdId: NEBLINA_COMMAND_FUSION_CALIBRATE_DOWN_POSITION, Name: "Calibrate Down Pos", Actuator : 2, Text: "Calib Dwn"),
-	NebCmdItem(SubSysId: NEBLINA_SUBSYSTEM_FUSION, CmdId: NEBLINA_COMMAND_FUSION_FUSION_TYPE, Name: "Fusion 9 axis", Actuator : 1, Text:""),
-    NebCmdItem(SubSysId: NEBLINA_SUBSYSTEM_FUSION, CmdId: NEBLINA_COMMAND_FUSION_QUATERNION_STATE, Name: "Quaternion Stream", Actuator : 1, Text: ""),
-    NebCmdItem(SubSysId: NEBLINA_SUBSYSTEM_SENSOR, CmdId: NEBLINA_COMMAND_SENSOR_ACCELEROMETER, Name: "Accelerometer Sensor Stream", Actuator : 1, Text: ""),
-	NebCmdItem(SubSysId: NEBLINA_SUBSYSTEM_SENSOR, CmdId: NEBLINA_COMMAND_SENSOR_GYROSCOPE, Name: "Gyroscope Sensor Stream", Actuator : 1, Text: ""),
-	NebCmdItem(SubSysId: NEBLINA_SUBSYSTEM_SENSOR, CmdId: NEBLINA_COMMAND_SENSOR_MAGNETOMETER, Name: "Magnetometer Sensor Stream", Actuator : 1, Text: ""),
-	NebCmdItem(SubSysId: NEBLINA_SUBSYSTEM_SENSOR, CmdId: NEBLINA_COMMAND_SENSOR_ACCELEROMETER_GYROSCOPE, Name: "Accel & Gyro Stream", Actuator : 1, Text:""),
-	NebCmdItem(SubSysId: NEBLINA_SUBSYSTEM_SENSOR, CmdId: NEBLINA_COMMAND_SENSOR_HUMIDITY, Name: "Humidity Sensor Stream", Actuator : 1, Text: ""),
-	NebCmdItem(SubSysId: NEBLINA_SUBSYSTEM_FUSION, CmdId: NEBLINA_COMMAND_FUSION_LOCK_HEADING_REFERENCE, Name: "Lock Heading Ref.", Actuator : 1, Text: ""),
-	NebCmdItem(SubSysId: NEBLINA_SUBSYSTEM_RECORDER, CmdId: NEBLINA_COMMAND_RECORDER_RECORD, Name: "Flash Record", Actuator : 1, Text: ""),
-	NebCmdItem(SubSysId: NEBLINA_SUBSYSTEM_RECORDER, CmdId: NEBLINA_COMMAND_RECORDER_PLAYBACK, Name: "Flash Playback", Actuator : 1, Text: ""),
-	NebCmdItem(SubSysId: NEBLINA_SUBSYSTEM_RECORDER, CmdId: NEBLINA_COMMAND_RECORDER_SESSION_READ, Name: "Flash Download", Actuator : 1, Text: ""),
-	NebCmdItem(SubSysId: NEBLINA_SUBSYSTEM_LED, CmdId: NEBLINA_COMMAND_LED_STATE, Name: "Set LED0 level", Actuator : 3, Text: ""),
-	NebCmdItem(SubSysId: NEBLINA_SUBSYSTEM_LED, CmdId: NEBLINA_COMMAND_LED_STATE, Name: "Set LED1 level", Actuator : 3, Text: ""),
-	NebCmdItem(SubSysId: NEBLINA_SUBSYSTEM_LED, CmdId: NEBLINA_COMMAND_LED_STATE, Name: "Set LED2", Actuator : 1, Text: ""),
-	NebCmdItem(SubSysId: NEBLINA_SUBSYSTEM_EEPROM, CmdId: NEBLINA_COMMAND_EEPROM_READ, Name: "EEPROM Read", Actuator : 2, Text: "Read"),
-	NebCmdItem(SubSysId: NEBLINA_SUBSYSTEM_POWER, CmdId: NEBLINA_COMMAND_POWER_CHARGE_CURRENT, Name: "Charge Current in mA", Actuator : 3, Text: ""),
-	NebCmdItem(SubSysId: 0xf, CmdId: MotionDataStream, Name: "Motion data stream", Actuator : 1, Text: ""),
-	NebCmdItem(SubSysId: 0xf, CmdId: Heading, Name: "Heading", Actuator : 1, Text: ""),
-	NebCmdItem(SubSysId: NEBLINA_SUBSYSTEM_RECORDER, CmdId: NEBLINA_COMMAND_RECORDER_ERASE_ALL, Name: "Flash Erase All", Actuator : 1, Text: ""),
-	NebCmdItem(SubSysId: NEBLINA_SUBSYSTEM_GENERAL, CmdId: NEBLINA_COMMAND_GENERAL_FIRMWARE_UPDATE, Name: "Firmware Update", Actuator : 2, Text: "DFU")
+	NebCmdItem(SubSysId: NEBLINA_SUBSYSTEM_GENERAL, CmdId: NEBLINA_COMMAND_GENERAL_INTERFACE_STATE, ActiveStatus: NEBLINA_INTERFACE_STATUS_BLE.rawValue,
+	           Name: "BLE Data Port", Actuator : 1, Text: ""),
+	NebCmdItem(SubSysId: NEBLINA_SUBSYSTEM_GENERAL, CmdId: NEBLINA_COMMAND_GENERAL_INTERFACE_STATE, ActiveStatus: NEBLINA_INTERFACE_STATUS_UART.rawValue,
+	           Name: "UART Data Port", Actuator : 1, Text: ""),
+	NebCmdItem(SubSysId: NEBLINA_SUBSYSTEM_FUSION, CmdId: NEBLINA_COMMAND_FUSION_CALIBRATE_FORWARD_POSITION, ActiveStatus: 0,
+	           Name: "Calibrate Forward Pos", Actuator : 2, Text: "Calib Fwrd"),
+	NebCmdItem(SubSysId: NEBLINA_SUBSYSTEM_FUSION, CmdId: NEBLINA_COMMAND_FUSION_CALIBRATE_DOWN_POSITION, ActiveStatus: 0,
+	           Name: "Calibrate Down Pos", Actuator : 2, Text: "Calib Dwn"),
+	NebCmdItem(SubSysId: NEBLINA_SUBSYSTEM_FUSION, CmdId: NEBLINA_COMMAND_FUSION_FUSION_TYPE, ActiveStatus: 0,
+	           Name: "Fusion 9 axis", Actuator : 1, Text:""),
+    NebCmdItem(SubSysId: NEBLINA_SUBSYSTEM_FUSION, CmdId: NEBLINA_COMMAND_FUSION_QUATERNION_STATE, ActiveStatus: NEBLINA_FUSION_STATUS_QUATERNION.rawValue,
+               Name: "Quaternion Stream", Actuator : 1, Text: ""),
+    NebCmdItem(SubSysId: NEBLINA_SUBSYSTEM_SENSOR, CmdId: NEBLINA_COMMAND_SENSOR_ACCELEROMETER, ActiveStatus: NEBLINA_SENSOR_STATUS_ACCELEROMETER.rawValue,
+               Name: "Accelerometer Sensor Stream", Actuator : 1, Text: ""),
+	NebCmdItem(SubSysId: NEBLINA_SUBSYSTEM_SENSOR, CmdId: NEBLINA_COMMAND_SENSOR_GYROSCOPE, ActiveStatus: NEBLINA_SENSOR_STATUS_GYROSCOPE.rawValue,
+	           Name: "Gyroscope Sensor Stream", Actuator : 1, Text: ""),
+	NebCmdItem(SubSysId: NEBLINA_SUBSYSTEM_SENSOR, CmdId: NEBLINA_COMMAND_SENSOR_MAGNETOMETER, ActiveStatus: NEBLINA_SENSOR_STATUS_MAGNETOMETER.rawValue,
+	           Name: "Magnetometer Sensor Stream", Actuator : 1, Text: ""),
+	NebCmdItem(SubSysId: NEBLINA_SUBSYSTEM_SENSOR, CmdId: NEBLINA_COMMAND_SENSOR_ACCELEROMETER_GYROSCOPE, ActiveStatus: NEBLINA_SENSOR_STATUS_ACCELEROMETER_GYROSCOPE.rawValue,
+	           Name: "Accel & Gyro Stream", Actuator : 1, Text:""),
+	NebCmdItem(SubSysId: NEBLINA_SUBSYSTEM_SENSOR, CmdId: NEBLINA_COMMAND_SENSOR_HUMIDITY, ActiveStatus: NEBLINA_SENSOR_STATUS_HUMIDITY.rawValue,
+	           Name: "Humidity Sensor Stream", Actuator : 1, Text: ""),
+	NebCmdItem(SubSysId: NEBLINA_SUBSYSTEM_FUSION, CmdId: NEBLINA_COMMAND_FUSION_LOCK_HEADING_REFERENCE, ActiveStatus: 0,
+	           Name: "Lock Heading Ref.", Actuator : 1, Text: ""),
+	NebCmdItem(SubSysId: NEBLINA_SUBSYSTEM_RECORDER, CmdId: NEBLINA_COMMAND_RECORDER_RECORD, ActiveStatus: NEBLINA_RECORDER_STATUS_RECORD.rawValue,
+	           Name: "Flash Record", Actuator : 2, Text: "Start"),
+	NebCmdItem(SubSysId: NEBLINA_SUBSYSTEM_RECORDER, CmdId: NEBLINA_COMMAND_RECORDER_RECORD, ActiveStatus: 0,
+	           Name: "Flash Record", Actuator : 2, Text: "Stop"),
+	NebCmdItem(SubSysId: NEBLINA_SUBSYSTEM_RECORDER, CmdId: NEBLINA_COMMAND_RECORDER_PLAYBACK, ActiveStatus: 0,
+	           Name: "Flash Playback", Actuator : 1, Text: ""),
+//	NebCmdItem(SubSysId: NEBLINA_SUBSYSTEM_RECORDER, CmdId: NEBLINA_COMMAND_RECORDER_SESSION_DOWNLOAD, ActiveStatus: 0,
+//	           Name: "Flash Download", Actuator : 2, Text: "Start"),
+	NebCmdItem(SubSysId: NEBLINA_SUBSYSTEM_LED, CmdId: NEBLINA_COMMAND_LED_STATE, ActiveStatus: 0,
+	           Name: "Set LED0 level", Actuator : 3, Text: ""),
+	NebCmdItem(SubSysId: NEBLINA_SUBSYSTEM_LED, CmdId: NEBLINA_COMMAND_LED_STATE, ActiveStatus: 0,
+	           Name: "Set LED1 level", Actuator : 3, Text: ""),
+	NebCmdItem(SubSysId: NEBLINA_SUBSYSTEM_LED, CmdId: NEBLINA_COMMAND_LED_STATE, ActiveStatus: 0,
+	           Name: "Set LED2", Actuator : 1, Text: ""),
+	NebCmdItem(SubSysId: NEBLINA_SUBSYSTEM_EEPROM, CmdId: NEBLINA_COMMAND_EEPROM_READ, ActiveStatus: 0,
+	           Name: "EEPROM Read", Actuator : 2, Text: "Read"),
+	NebCmdItem(SubSysId: NEBLINA_SUBSYSTEM_POWER, CmdId: NEBLINA_COMMAND_POWER_CHARGE_CURRENT, ActiveStatus: 0,
+	           Name: "Charge Current in mA", Actuator : 3, Text: ""),
+	NebCmdItem(SubSysId: 0xf, CmdId: MotionDataStream, ActiveStatus: 0,
+	           Name: "Motion data stream", Actuator : 1, Text: ""),
+	NebCmdItem(SubSysId: 0xf, CmdId: Heading, ActiveStatus: 0,
+	           Name: "Heading", Actuator : 1, Text: ""),
+	NebCmdItem(SubSysId: NEBLINA_SUBSYSTEM_RECORDER, CmdId: NEBLINA_COMMAND_RECORDER_ERASE_ALL, ActiveStatus: 0,
+	           Name: "Flash Erase All", Actuator : 3, Text: "Erase"),
+	NebCmdItem(SubSysId: NEBLINA_SUBSYSTEM_GENERAL, CmdId: NEBLINA_COMMAND_GENERAL_FIRMWARE_UPDATE, ActiveStatus: 0,
+	           Name: "Firmware Update", Actuator : 2, Text: "DFU")
 	
 )
 
@@ -106,9 +124,16 @@ class DetailViewController: UIViewController, UITextFieldDelegate, CBPeripheralD
 	var flashEraseProgress = Bool(false)
 	var PaketCnt = UInt32(0)
 	var dropCnt = UInt32(0)
-	var curDownloadSession = UInt16(0xFFFF)
-	var curDownloadOffset = UInt32(0)
-	
+//	var curDownloadSession = UInt16(0xFFFF)
+//	var curDownloadOffset = UInt32(0)
+	var curSessionId = UInt16(0)
+	var curSessionOffset = UInt32(0)
+	var sessionCount = UInt8(0)
+	var startDownload = Bool(false)
+	var filepath = String()
+	var file : FileHandle?
+	var downloadRecovering = Bool(false)
+
 /*	var detailItem: Neblina? {
 		didSet {
 		    // Update the view.
@@ -331,13 +356,13 @@ class DetailViewController: UIViewController, UITextFieldDelegate, CBPeripheralD
 							break
 					}
 					break
-				case NEB_CTRL_SUBSYS_EEPROM:
+				case NEBLINA_SUBSYSTEM_EEPROM:
 					switch (NebCmdList[row].CmdId)
 					{
-						case EEPROM_Read:
+						case NEBLINA_COMMAND_EEPROM_READ:
 							nebdev!.eepromRead(0)
 							break
-						case EEPROM_Write:
+						case NEBLINA_COMMAND_EEPROM_WRITE:
 								//UInt8_t eepdata[8]
 								//nebdev.SendCmdEepromWrite(0, eepdata)
 							break
@@ -357,6 +382,52 @@ class DetailViewController: UIViewController, UITextFieldDelegate, CBPeripheralD
 						break
 					}
 					break
+				case NEBLINA_SUBSYSTEM_RECORDER:
+					switch (NebCmdList[row].CmdId) {
+						case NEBLINA_COMMAND_RECORDER_RECORD:
+							
+							if NebCmdList[row].ActiveStatus == 0 {
+								nebdev?.sessionRecord(false)
+							}
+							else {
+								nebdev!.sessionRecord(true)
+							}
+							break
+						case NEBLINA_COMMAND_RECORDER_SESSION_DOWNLOAD:
+							let cell = cmdView.cellForRow( at: IndexPath(row: row, section: 0))
+
+							if (cell != nil) {
+								//let control = cell!.viewWithTag(4) as! UITextField
+								//let but = cell!.viewWithTag(2) as! UIButton
+								
+								//but.isEnabled = false
+								curSessionId = 0//UInt16(control.text!)!
+								startDownload = true
+								curSessionOffset = 0
+								//let filename = String(format:"NeblinaRecord_%d.dat", curSessionId)
+								let dirPaths = NSSearchPathForDirectoriesInDomains(.documentDirectory,
+																				   .userDomainMask, true)
+								if dirPaths != nil {
+									filepath = dirPaths[0]// as! String
+									filepath.append(String(format:"/%@/", (nebdev?.device.name!)!))
+									do {
+										try FileManager.default.createDirectory(atPath: filepath, withIntermediateDirectories: false, attributes: nil)
+										
+									} catch let error as NSError {
+										print(error.localizedDescription);
+									}
+									filepath.append(String(format:"%@_%d.dat", (nebdev?.device.name!)!, curSessionId))
+									FileManager.default.createFile(atPath: filepath, contents: nil, attributes: nil)
+									do {
+										try file = FileHandle(forWritingAtPath: filepath)
+									} catch { print("file failed \(filepath)")}
+									nebdev?.sessionDownload(true, SessionId : curSessionId, Len: 16, Offset: 0)
+								}
+							}
+							break
+						default:
+							break
+					}
 				default:
 					break
 			}
@@ -468,9 +539,9 @@ class DetailViewController: UIViewController, UITextFieldDelegate, CBPeripheralD
 							}
 							break
 						case NEBLINA_COMMAND_RECORDER_SESSION_READ:
-							curDownloadSession = 0xFFFF
-							curDownloadOffset = 0
-							nebdev!.sessionRead(curDownloadSession, Len: 32, Offset: curDownloadOffset)
+//							curDownloadSession = 0xFFFF
+//							curDownloadOffset = 0
+//							nebdev!.sessionRead(curDownloadSession, Len: 32, Offset: curDownloadOffset)
 							break
 						default:
 							break
@@ -634,14 +705,59 @@ class DetailViewController: UIViewController, UITextFieldDelegate, CBPeripheralD
 //	func didReceiveFusionData(type : UInt8, data : FusionPacket) {
 //		print("\(data)")
 //	}
+	func updateUI(status : NeblinaSystemStatus_t) {
+		for idx in 0...NebCmdList.count - 1 {
+			switch (NebCmdList[idx].SubSysId) {
+			case NEBLINA_SUBSYSTEM_GENERAL:
+				switch (NebCmdList[idx].CmdId) {
+				case NEBLINA_COMMAND_GENERAL_INTERFACE_STATE:
+					//let cell = cmdView.view(atColumn: 0, row: idx, makeIfNecessary: false)! as NSView
+					let cell = cmdView.cellForRow( at: IndexPath(row: idx, section: 0))
+					let control = cell?.viewWithTag(1) as! UISegmentedControl
+
+					if NebCmdList[idx].ActiveStatus & UInt32(status.interface) == 0 {
+						control.selectedSegmentIndex = 0
+					}
+					else {
+						control.selectedSegmentIndex = 1
+					}
+				default:
+					break
+				}
+			case NEBLINA_SUBSYSTEM_FUSION:
+				//let cell = cmdView.view(atColumn: 0, row: idx, makeIfNecessary: false)! as NSView
+				let cell = cmdView.cellForRow( at: IndexPath(row: idx, section: 0))
+				let control = cell?.viewWithTag(1) as! UISegmentedControl
+				if NebCmdList[idx].ActiveStatus & status.fusion == 0 {
+					control.selectedSegmentIndex = 0
+				}
+				else {
+					control.selectedSegmentIndex = 1
+				}
+			case NEBLINA_SUBSYSTEM_SENSOR:
+				let cell = cmdView.cellForRow( at: IndexPath(row: idx, section: 0))
+				//let cell = cmdView.view(atColumn: 0, row: idx, makeIfNecessary: false)! as NSView
+				let control = cell?.viewWithTag(1) as! UISegmentedControl
+				if NebCmdList[idx].ActiveStatus & UInt32(status.sensor) == 0 {
+					control.selectedSegmentIndex = 0
+				}
+				else {
+					control.selectedSegmentIndex = 1
+				}
+			default:
+				break
+			}
+		}
+	}
 	// MARK : Neblina
 	func didConnectNeblina() {
 		// Switch to BLE interface
 		prevTimeStamp = 0;
+		nebdev?.getSystemStatus()
 		//nebdev.SendCmdControlInterface(0)
 		//nebdev!.getMotionStatus()
-		nebdev!.getDataPortState()
-		nebdev!.getLed ()
+		//nebdev!.getDataPortState()
+		//nebdev!.getLed ()
 		nebdev!.getFirmwareVersion()
 	}
 	
@@ -652,20 +768,27 @@ class DetailViewController: UIViewController, UITextFieldDelegate, CBPeripheralD
 	//
 	// General data
 	//
-	func didReceiveGeneralData(_ type : Int32, data : UnsafePointer<UInt8>, dataLen : Int, errFlag : Bool) {
+	func didReceiveGeneralData(_ type : Int32, data : UnsafeRawPointer, dataLen : Int, errFlag : Bool) {
 		switch (type) {
 		case NEBLINA_COMMAND_GENERAL_SYSTEM_STATUS:
+			var myStruct = NeblinaSystemStatus_t()
+			let status = withUnsafeMutablePointer(to: &myStruct) {_ in UnsafeMutableRawPointer(mutating: data)}
+			print("Status \(status)")
+			let d = data.load(as: NeblinaSystemStatus_t.self)// UnsafeBufferPointer<NeblinaSystemStatus_t>(data)
+			print(" \(d)")
+			updateUI(status: d)
 			break
+			/*
 		case NEBLINA_COMMAND_GENERAL_RECORDER_STATUS:
 			switch (data[8]) {
 			case 1:	// Playback
-				var i = getCmdIdx(NEBLINA_SUBSYSTEM_RECORDER,  cmdId: FlashRecordStartStop)
+				var i = getCmdIdx(NEBLINA_SUBSYSTEM_RECORDER,  cmdId: NEBLINA_COMMAND_RECORDER_RECORD)
 				var cell = cmdView.cellForRow( at: IndexPath(row: i, section: 0))
 				if (cell != nil) {
 					let sw = cell!.viewWithTag(1) as! UISegmentedControl
 					sw.selectedSegmentIndex = 0
 				}
-				i = getCmdIdx(NEBLINA_SUBSYSTEM_RECORDER,  cmdId: FlashPlaybackStartStop)
+				i = getCmdIdx(NEBLINA_SUBSYSTEM_RECORDER,  cmdId: NEBLINA_COMMAND_RECORDER_PLAYBACK)
 				cell = cmdView.cellForRow( at: IndexPath(row: i, section: 0))
 				if (cell != nil) {
 					let sw = cell!.viewWithTag(1) as! UISegmentedControl
@@ -673,13 +796,13 @@ class DetailViewController: UIViewController, UITextFieldDelegate, CBPeripheralD
 				}
 				break
 			case 2:	// Recording
-				var i = getCmdIdx(NEBLINA_SUBSYSTEM_RECORDER,  cmdId: FlashPlaybackStartStop)
+				var i = getCmdIdx(NEBLINA_SUBSYSTEM_RECORDER,  cmdId: NEBLINA_COMMAND_RECORDER_PLAYBACK)
 				var cell = cmdView.cellForRow( at: IndexPath(row: i, section: 0))
 				if (cell != nil) {
 					let sw = cell!.viewWithTag(1) as! UISegmentedControl
 					sw.selectedSegmentIndex = 0
 				}
-				i = getCmdIdx(NEBLINA_SUBSYSTEM_RECORDER,  cmdId: FlashRecordStartStop)
+				i = getCmdIdx(NEBLINA_SUBSYSTEM_RECORDER,  cmdId: NEBLINA_COMMAND_RECORDER_RECORD)
 				cell = cmdView.cellForRow( at: IndexPath(row: i, section: 0))
 				if (cell != nil) {
 					let sw = cell!.viewWithTag(1) as! UISegmentedControl
@@ -687,20 +810,20 @@ class DetailViewController: UIViewController, UITextFieldDelegate, CBPeripheralD
 				}
 				break
 			default:
-				var i = getCmdIdx(NEBLINA_SUBSYSTEM_RECORDER,  cmdId: FlashPlaybackStartStop)
+				var i = getCmdIdx(NEBLINA_SUBSYSTEM_RECORDER,  cmdId: NEBLINA_COMMAND_RECORDER_PLAYBACK)
 				var cell = cmdView.cellForRow( at: IndexPath(row: i, section: 0))
 				if (cell != nil) {
 					let sw = cell!.viewWithTag(1) as! UISegmentedControl
 					sw.selectedSegmentIndex = 0
 				}
-				i = getCmdIdx(NEBLINA_SUBSYSTEM_RECORDER,  cmdId: FlashRecordStartStop)
+				i = getCmdIdx(NEBLINA_SUBSYSTEM_RECORDER,  cmdId: NEBLINA_COMMAND_RECORDER_RECORD)
 				cell = cmdView.cellForRow( at: IndexPath(row: i, section: 0))
 				if (cell != nil) {
 					let sw = cell!.viewWithTag(1) as! UISegmentedControl
 					sw.selectedSegmentIndex = 0
 				}
 				break
-			}
+			}*/
 			/*				var i = getCmdIdx(NEB_CTRL_SUBSYS_MOTION_ENG,  cmdId: Quaternion)
 			var cell = cmdView.cellForRow( at: IndexPath(row: i, section: 0))
 			if (cell != nil) {
@@ -722,9 +845,12 @@ class DetailViewController: UIViewController, UITextFieldDelegate, CBPeripheralD
 			
 			break
 		case NEBLINA_COMMAND_GENERAL_FIRMWARE:
-			versionLabel.text = String(format: "API:%d, FEN:%d.%d.%d, BLE:%d.%d.%d", data[0], data[1], data[2], data[3], data[4], data[5], data[6])
+			let d = data.load(as: NeblinaFirmwareVersion_t.self)
+			versionLabel.text = String(format: "API:%d, FEN:%d.%d.%d, BLE:%d.%d.%d", d.apiVersion,
+			                           d.coreVersion.major, d.coreVersion.minor, d.coreVersion.build,
+			                           d.bleVersion.major, d.bleVersion.minor, d.bleVersion.build)
 			break
-		case NEBLINA_COMMAND_GENERAL_INTERFACE_STATUS:
+		/*case NEBLINA_COMMAND_GENERAL_INTERFACE_STATUS:
 			let i = getCmdIdx(NEBLINA_SUBSYSTEM_GENERAL,  cmdId: NEBLINA_COMMAND_GENERAL_INTERFACE_STATE)
 			var cell = cmdView.cellForRow( at: IndexPath(row: i, section: 0))
 			if (cell != nil) {
@@ -736,7 +862,7 @@ class DetailViewController: UIViewController, UITextFieldDelegate, CBPeripheralD
 				let sw = cell!.viewWithTag(1) as! UISegmentedControl
 				sw.selectedSegmentIndex = Int(data[1])
 			}
-			break
+			break*/
 		default:
 			break
 		}
@@ -933,7 +1059,7 @@ class DetailViewController: UIViewController, UITextFieldDelegate, CBPeripheralD
 		}
 	}
 		
-	func didReceiveStorageData(_ type : Int32, data : UnsafePointer<UInt8>, dataLen: Int, errFlag : Bool) {
+	func didReceiveRecorderData(_ type : Int32, data : UnsafePointer<UInt8>, dataLen: Int, errFlag : Bool) {
 		switch (type) {
 			case NEBLINA_COMMAND_RECORDER_ERASE_ALL:
 				flashLabel.text = "Flash erased"
@@ -955,12 +1081,64 @@ class DetailViewController: UIViewController, UITextFieldDelegate, CBPeripheralD
 				else {
 					flashLabel.text = String(format: "End session %d, %u", session, nebdev!.getPacketCount())
 					
-					let i = getCmdIdx(NEB_CTRL_SUBSYS_STORAGE,  cmdId: FlashPlaybackStartStop)
+					let i = getCmdIdx(NEBLINA_SUBSYSTEM_RECORDER,  cmdId: NEBLINA_COMMAND_RECORDER_PLAYBACK)
 					let cell = cmdView.cellForRow( at: IndexPath(row: i, section: 0))
 					if (cell != nil) {
 						let sw = cell!.viewWithTag(1) as! UISegmentedControl
 						sw.selectedSegmentIndex = 0
 					}
+				}
+				break
+			case NEBLINA_COMMAND_RECORDER_SESSION_DOWNLOAD:
+				if (errFlag == false && dataLen > 0) {
+					
+					if dataLen < 4 {
+						break
+					}
+					
+					let offset = UInt32(UInt32(data[0]) | (UInt32(data[1]) << 8) | (UInt32(data[2]) << 16) | (UInt32(data[3]) << 24))
+					if curSessionOffset != offset {
+						// packet loss
+						print("SessionDownload \(curSessionOffset), \(offset), \(data) \(dataLen)")
+						if downloadRecovering == false {
+							nebdev?.sessionDownload(false, SessionId: curSessionId, Len: 12, Offset: curSessionOffset)
+							downloadRecovering = true
+						}
+					}
+					else {
+						downloadRecovering = false
+						let d = NSData(bytes: data + 4, length: dataLen - 4)
+						//writing
+						if file != nil {
+							
+							file?.write(d as Data)
+						}
+						curSessionOffset += UInt32(dataLen-4)
+						flashLabel.text = String(format: "Downloading session %d : %u", curSessionId, curSessionOffset)
+					}
+					//print("\(curSessionOffset), \(data)")
+				}
+				else {
+					print("End session \(filepath)")
+					print(" Download End session errflag")
+					flashLabel.text = String(format: "Downloaded session %d : %u", curSessionId, curSessionOffset)
+					
+					if (dataLen > 0) {
+						let d = NSData(bytes: data, length: dataLen)
+						//writing
+						if file != nil {
+							file?.write(d as Data)
+						}
+					}
+					file?.closeFile()
+					let i = getCmdIdx(NEBLINA_SUBSYSTEM_RECORDER,  cmdId: NEBLINA_COMMAND_RECORDER_SESSION_DOWNLOAD)
+					if i < 0 {
+						break
+					}
+//					let cell = cmdView.view(atColumn: 0, row: i, makeIfNecessary: false)! as NSView // cellForRowAtIndexPath( NSIndexPath(forRow: i, inSection: 0))
+//					let sw = cell.viewWithTag(2) as! NSButton
+					
+//					sw.isEnabled = true
 				}
 				break
 			default:

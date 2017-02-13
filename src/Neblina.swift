@@ -17,6 +17,7 @@ let NEB_CTRLCHAR_UUID = CBUUID (string:"0df9f023-1532-11e5-8960-0002a5d5c51b")
 struct NebCmdItem {
 	let SubSysId : Int32
 	let	CmdId : Int32
+	let ActiveStatus : UInt32
 	let Name : String
 	let Actuator : Int
 	let Text : String
@@ -122,7 +123,7 @@ class Neblina : NSObject, CBPeripheralDelegate {
 			var ch = [UInt8](repeating: 0, count: 20)
 			characteristic.value?.copyBytes(to: &ch, count: MemoryLayout<NeblinaPacketHeader_t>.size)
 			hdr = (characteristic.value?.withUnsafeBytes{ (ptr: UnsafePointer<NeblinaPacketHeader_t>) -> NeblinaPacketHeader_t in return ptr.pointee })!
-
+//print("packet : \(ch)")
 			let id = Int32(hdr.command)
 			var errflag = Bool(false)
 			
@@ -157,9 +158,10 @@ class Neblina : NSObject, CBPeripheralDelegate {
 				}
 			}
 			var pkdata = [UInt8](repeating: 0, count: 20)
+			//print("\(characteristic.value) ")
 			//(characteristic.value as Data).copyBytes(to: &dd, from:4)
 			if (hdr.length > 0) {
-				characteristic.value?.copyBytes (to: &pkdata, from: Range(MemoryLayout<NeblinaPacketHeader_t>.size..<Int(hdr.length) + MemoryLayout<NeblinaPacketHeader_t>.size))
+				characteristic.value?.copyBytes (to: &pkdata, from: Range(MemoryLayout<NeblinaPacketHeader_t>.size..<(Int(hdr.length) + MemoryLayout<NeblinaPacketHeader_t>.size)))
 			}
 			//print("Receive : \(hdr) : \(pkdata) : \(ch)")
 			switch (Int32(hdr.subSystem))
@@ -479,10 +481,10 @@ class Neblina : NSObject, CBPeripheralDelegate {
 		
 		var pkbuf = [UInt8](repeating: 0, count: 20)
 		
-		pkbuf[0] = UInt8((NEBLINA_PACKET_TYPE_COMMAND << 5) | NEB_CTRL_SUBSYS_EEPROM)
+		pkbuf[0] = UInt8((NEBLINA_PACKET_TYPE_COMMAND << 5) | NEBLINA_SUBSYSTEM_EEPROM)
 		pkbuf[1] = 2
 		pkbuf[2] = 0xFF
-		pkbuf[3] = UInt8(EEPROM_Read) // Cmd
+		pkbuf[3] = UInt8(NEBLINA_COMMAND_EEPROM_READ) // Cmd
 		
 		pkbuf[4] = UInt8(pageNo & 0xff)
 		pkbuf[5] = UInt8((pageNo >> 8) & 0xff)
@@ -499,10 +501,10 @@ class Neblina : NSObject, CBPeripheralDelegate {
 		
 		var pkbuf = [UInt8](repeating: 0, count: 20)
 		
-		pkbuf[0] = UInt8((NEBLINA_PACKET_TYPE_COMMAND << 5) | NEB_CTRL_SUBSYS_EEPROM)
+		pkbuf[0] = UInt8((NEBLINA_PACKET_TYPE_COMMAND << 5) | NEBLINA_SUBSYSTEM_EEPROM)
 		pkbuf[1] = 8
 		pkbuf[2] = 0xFF
-		pkbuf[3] = UInt8(EEPROM_Write) // Cmd
+		pkbuf[3] = UInt8(NEBLINA_COMMAND_EEPROM_WRITE) // Cmd
 		
 		pkbuf[4] = UInt8(pageNo & 0xff)
 		pkbuf[5] = UInt8((pageNo >> 8) & 0xff)
@@ -1049,7 +1051,7 @@ class Neblina : NSObject, CBPeripheralDelegate {
 		pkbuf[0] = UInt8((NEBLINA_PACKET_TYPE_COMMAND << 5) | NEBLINA_SUBSYSTEM_RECORDER)
 		pkbuf[1] = 16
 		pkbuf[2] = 0xFF
-		pkbuf[3] = UInt8(FlashGetNbSessions) // Cmd
+		pkbuf[3] = UInt8(NEBLINA_COMMAND_RECORDER_SESSION_COUNT) // Cmd
 		
 		pkbuf[2] = crc8(pkbuf, Len: Int(pkbuf[1]) + 4)
 
@@ -1066,7 +1068,7 @@ class Neblina : NSObject, CBPeripheralDelegate {
 		pkbuf[0] = UInt8((NEBLINA_PACKET_TYPE_COMMAND << 5) | NEBLINA_SUBSYSTEM_RECORDER)
 		pkbuf[1] = 16
 		pkbuf[2] = 0xFF
-		pkbuf[3] = UInt8(FlashGetSessionInfo) // Cmd
+		pkbuf[3] = UInt8(NEBLINA_COMMAND_RECORDER_SESSION_INFO) // Cmd
 		
 		pkbuf[8] = UInt8(sessionId & 0xff)
 		pkbuf[9] = UInt8((sessionId >> 8) & 0xff)
@@ -1084,17 +1086,17 @@ class Neblina : NSObject, CBPeripheralDelegate {
 		var pkbuf = [UInt8](repeating: 0, count: 20)
 		
 		pkbuf[0] = UInt8((NEBLINA_PACKET_TYPE_COMMAND << 5) | NEBLINA_SUBSYSTEM_RECORDER) //0x41
-		pkbuf[1] = 16
+		pkbuf[1] = 1
 		pkbuf[2] = 0xFF
-		pkbuf[3] = UInt8(FlashEraseAll) // Cmd
+		pkbuf[3] = UInt8(NEBLINA_COMMAND_RECORDER_ERASE_ALL) // Cmd
 		
 		if Enable == true
 		{
-			pkbuf[8] = 1
+			pkbuf[4] = 1
 		}
 		else
 		{
-			pkbuf[8] = 0
+			pkbuf[4] = 0
 		}
 		pkbuf[2] = crc8(pkbuf, Len: Int(pkbuf[1]) + 4)
 
@@ -1112,7 +1114,7 @@ class Neblina : NSObject, CBPeripheralDelegate {
 		pkbuf[0] = UInt8((NEBLINA_PACKET_TYPE_COMMAND << 5) | NEBLINA_SUBSYSTEM_RECORDER)
 		pkbuf[1] = 3
 		pkbuf[2] = 0xFF
-		pkbuf[3] = UInt8(FlashPlaybackStartStop) // Cmd
+		pkbuf[3] = UInt8(NEBLINA_COMMAND_RECORDER_PLAYBACK) // Cmd
 		
 		if Enable == true
 		{
@@ -1141,7 +1143,7 @@ class Neblina : NSObject, CBPeripheralDelegate {
 		pkbuf[0] = UInt8((NEBLINA_PACKET_TYPE_COMMAND << 5) | NEBLINA_SUBSYSTEM_RECORDER) //0x41
 		pkbuf[1] = 1
 		pkbuf[2] = 0xFF
-		pkbuf[3] = UInt8(FlashRecordStartStop)	// Cmd
+		pkbuf[3] = UInt8(NEBLINA_COMMAND_RECORDER_RECORD)	// Cmd
 		
 		if Enable == true
 		{
@@ -1166,7 +1168,7 @@ class Neblina : NSObject, CBPeripheralDelegate {
 		pkbuf[0] = UInt8((NEBLINA_PACKET_TYPE_COMMAND << 5) | NEBLINA_SUBSYSTEM_RECORDER) //0x41
 		pkbuf[1] = 16
 		pkbuf[2] = 0xFF
-		pkbuf[3] = UInt8(FlashSessionRead)	// Cmd
+		pkbuf[3] = UInt8(NEBLINA_COMMAND_RECORDER_SESSION_READ)	// Cmd
 
 		// Command parameter
 		pkbuf[4] = UInt8(SessionId & 0xFF)
@@ -1180,6 +1182,38 @@ class Neblina : NSObject, CBPeripheralDelegate {
 		
 		pkbuf[2] = crc8(pkbuf, Len: Int(pkbuf[1]) + 4)
 
+		device.writeValue(Data(bytes: pkbuf, count: 4 + Int(pkbuf[1])), for: ctrlChar, type: CBCharacteristicWriteType.withoutResponse)
+	}
+	
+	func sessionDownload(_ Start : Bool, SessionId:UInt16, Len:UInt16, Offset:UInt32) {
+		if (isDeviceReady() == false) {
+			return
+		}
+		
+		var pkbuf = [UInt8](repeating: 0, count: 20)
+		
+		pkbuf[0] = UInt8((NEBLINA_PACKET_TYPE_COMMAND << 5) | NEBLINA_SUBSYSTEM_RECORDER) //0x41
+		if Start == true {
+			pkbuf[1] = 12
+		}
+		else {
+			pkbuf[1] = 0;
+		}
+		pkbuf[2] = 0xFF
+		pkbuf[3] = UInt8(NEBLINA_COMMAND_RECORDER_SESSION_DOWNLOAD)	// Cmd
+		
+		// Command parameter
+		pkbuf[4] = UInt8(SessionId & 0xFF)
+		pkbuf[5] = UInt8((SessionId >> 8) & 0xFF)
+		pkbuf[6] = UInt8(Len & 0xFF)
+		pkbuf[7] = UInt8((Len >> 8) & 0xFF)
+		pkbuf[8] = UInt8(Offset & 0xFF)
+		pkbuf[9] = UInt8((Offset >> 8) & 0xFF)
+		pkbuf[10] = UInt8((Offset >> 16) & 0xFF)
+		pkbuf[11] = UInt8((Offset >> 24) & 0xFF)
+		
+		pkbuf[2] = crc8(pkbuf, Len: Int(pkbuf[1]) + 4)
+		
 		device.writeValue(Data(bytes: pkbuf, count: 4 + Int(pkbuf[1])), for: ctrlChar, type: CBCharacteristicWriteType.withoutResponse)
 	}
 	
@@ -1393,7 +1427,8 @@ protocol NeblinaDelegate {
 	
 	func didConnectNeblina()
 	func didReceiveRSSI(_ rssi : NSNumber)
-	func didReceiveGeneralData(_ type : Int32, data : UnsafePointer<UInt8>, dataLen : Int, errFlag : Bool)
+	func didReceiveGeneralData(_ type : Int32, data : UnsafeRawPointer, dataLen : Int, errFlag : Bool)
+//	func didReceiveGeneralData(_ type : Int32, data : UnsafePointer<UInt8>, dataLen : Int, errFlag : Bool)
 	func didReceiveFusionData(_ type : Int32, data : NeblinaFusionPacket, errFlag : Bool)
 	func didReceivePmgntData(_ type : Int32, data : UnsafePointer<UInt8>, dataLen : Int, errFlag : Bool)
 	func didReceiveLedData(_ type : Int32, data : UnsafePointer<UInt8>, dataLen : Int, errFlag : Bool)

@@ -52,7 +52,6 @@
 		C9D8CAE41CEFA0E700F9359B /* Neblina-Bridging-Header.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "Neblina-Bridging-Header.h"; path = "../../../src/Neblina-Bridging-Header.h"; sourceTree = "<group>"; };
 		C9D8CAE51CEFA0E700F9359B /* neblina.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = neblina.h; path = ../../../src/neblina.h; sourceTree = "<group>"; };
 		C9D8CAE61CEFA0E700F9359B /* Neblina.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Neblina.swift; path = ../../../src/Neblina.swift; sourceTree = "<group>"; };
-		C9D8CAE71CEFA0E700F9359B /* ProMotion.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ProMotion.h; path = ../../../src/ProMotion.h; sourceTree = "<group>"; };
 		C9D8CAEC1CEFA29600F9359B /* art.scnassets */ = {isa = PBXFileReference; lastKnownFileType = wrapper.scnassets; name = art.scnassets; path = ../../../art.scnassets; sourceTree = "<group>"; };
 		C9E62C541D9ED68B0040D053 /* CoreBluetooth.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreBluetooth.framework; path = System/Library/Frameworks/CoreBluetooth.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
@@ -112,7 +111,6 @@
 				C9D8CAE41CEFA0E700F9359B /* Neblina-Bridging-Header.h */,
 				C9D8CAE51CEFA0E700F9359B /* neblina.h */,
 				C9D8CAE61CEFA0E700F9359B /* Neblina.swift */,
-				C9D8CAE71CEFA0E700F9359B /* ProMotion.h */,
 				C9D8CAB61CEF9F9400F9359B /* AppDelegate.swift */,
 				C9D8CAB81CEF9F9400F9359B /* ViewController.swift */,
 				C9D8CABA1CEF9F9400F9359B /* Assets.xcassets */,
@@ -421,7 +419,7 @@
 				COMBINE_HIDPI_IMAGES = YES;
 				INFOPLIST_FILE = NebCtrlPanel/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
-				MACOSX_DEPLOYMENT_TARGET = 10.10;
+				MACOSX_DEPLOYMENT_TARGET = 10.9;
 				PRODUCT_BUNDLE_IDENTIFIER = com.motsai.NebCtrlPanel;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
@@ -439,7 +437,7 @@
 				COMBINE_HIDPI_IMAGES = YES;
 				INFOPLIST_FILE = NebCtrlPanel/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
-				MACOSX_DEPLOYMENT_TARGET = 10.10;
+				MACOSX_DEPLOYMENT_TARGET = 10.9;
 				PRODUCT_BUNDLE_IDENTIFIER = com.motsai.NebCtrlPanel;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;

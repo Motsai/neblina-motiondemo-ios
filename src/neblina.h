@@ -173,6 +173,7 @@
 #define     NEBLINA_COMMAND_RECORDER_SESSION_COUNT              4
 #define     NEBLINA_COMMAND_RECORDER_SESSION_INFO               5
 #define     NEBLINA_COMMAND_RECORDER_SESSION_READ               6
+#define     NEBLINA_COMMAND_RECORDER_SESSION_DOWNLOAD           7
 
 /**********************************************************************************/
 
@@ -217,24 +218,16 @@
 
 /**********************************************************************************/
 
-#define     NEBLINA_INTERFACE_BLE                       0   // Bluetooth LE interface
-#define     NEBLINA_INTERFACE_UART                      1   // UART interface
-#define     NEBLINA_INTERFACE_COUNT                     2   // Max number of interface
+#define     NEBLINA_EEPROM_READ                         0
+#define     NEBLINA_EEPROM_WRITE                        1
 
 #define     NEBLINA_INTERFACE_CLOSE                     0   // Close streaming for interface
 #define     NEBLINA_INTERFACE_OPEN                      1   // Open streaming for interface
-
-#define     NEBLINA_RECORDER_IDLE                       0   // Recorder is in idle state
-#define     NEBLINA_RECORDER_PLAYING                    1   // Recorder is playing back a previous record
-#define     NEBLINA_RECORDER_RECORDING                  2   // Recorder is recording a session
-#define     NEBLINA_RECORDER_ERASE                      3   // Recorder is currently being erased.
 
 #define     NEBLINA_SESSION_CLOSE                       0
 #define     NEBLINA_SESSION_CREATE                      1
 #define     NEBLINA_SESSION_OPEN                        2
 #define     NEBLINA_SESSION_INVALID                     0xFF
-
-#define     NEBLINA_LED_MAX_COUNT                       4
 
 /**********************************************************************************/
 
@@ -287,11 +280,23 @@ typedef struct
 
 typedef struct
 {
+    uint16_t type;
     uint16_t pageId;
     uint8_t  content[8];
-} EEPROMData_t;
+} NeblinaEEPROMData_t;
 
 /**********************************************************************************/
+
+typedef enum {
+    NEBLINA_INTERFACE_BLE  = 0x00,
+    NEBLINA_INTERFACE_UART = 0x01,
+    NEBLINA_INTERFACE_COUNT     // Keep last
+} NeblinaInterface_t;
+
+typedef enum {
+    NEBLINA_INTERFACE_STATUS_BLE  = ( 1 << NEBLINA_INTERFACE_BLE ),
+    NEBLINA_INTERFACE_STATUS_UART = ( 1<< NEBLINA_INTERFACE_UART )
+} NeblinaInterfaceStatusMask_t;
 
 typedef struct
 {
@@ -301,12 +306,12 @@ typedef struct
 
 /**********************************************************************************/
 
-typedef struct
-{
-    uint8_t state[NEBLINA_INTERFACE_COUNT];    // Interface status (OPEN/CLOSE)
-} NeblinaInterfaceStatus_t;
-
-/**********************************************************************************/
+typedef enum {
+    NEBLINA_LED_RED   = 0x00,
+    NEBLINA_LED_GREEN = 0x01,
+    NEBLINA_LED_BLUE  = 0x02,
+    NEBLINA_LED_COUNT       // Keep last
+} NeblinaLED_t;
 
 typedef struct
 {
@@ -314,62 +319,27 @@ typedef struct
     uint8_t state;
 } NeblinaLEDState_t;
 
-/**********************************************************************************/
-
 typedef struct
 {
-    uint8_t state[NEBLINA_LED_MAX_COUNT];
+    uint8_t status[NEBLINA_LED_COUNT];
 } NeblinaLEDStatus_t;
 
 /**********************************************************************************/
 
-typedef struct
-{
-    uint8_t distance:1;
-    uint8_t force:1;
-    uint8_t euler:1;
-    uint8_t quaternion:1;
-    uint8_t imu:1;
-    uint8_t motion:1;
-    uint8_t pedometer:1;
-    uint8_t mag:1;
-    uint8_t sittingStanding:1;
-    uint8_t fingerGesture:1;
-    uint8_t rotation:1;
-} NeblinaFusionStatus_t;
+typedef uint32_t NeblinaFusionStatus_t;
+typedef uint8_t NeblinaInterfaceStatus_t;
+typedef uint16_t NeblinaSensorStatus_t;
 
 /**********************************************************************************/
 
 typedef struct
 {
-    uint32_t status;
-} NeblinaSensorStatus_t;
-
-/**********************************************************************************/
-
-typedef struct
-{
-    uint8_t status;
-} NeblinaPowerStatus_t;
-
-/**********************************************************************************/
-
-typedef struct
-{
-    uint8_t state;
-} NeblinaRecorderStatus_t;
-
-/**********************************************************************************/
-
-// Neblina System status
-// mostly used to update UI with current system state
-typedef struct
-{
-    uint32_t FusionStatus;      // Flag bits indicating fusion data streaming states
-    uint16_t SensorStatus;      // Flag bits indicating sensor data streaming states
-    uint8_t  PowerStatus;       // Flag bits indicating power states
-    uint8_t  RecorderStatus;    // Flag bits indicating recorder states
-    uint8_t  LEDStatus[NEBLINA_LED_MAX_COUNT];  // LED levels
+    uint32_t fusion;      // Flag bits indicating fusion data streaming states
+    uint16_t sensor;      // Flag bits indicating sensor data streaming states
+    uint8_t  power;       // Flag bits indicating power states
+    uint8_t  recorder;    // Flag bits indicating recorder states
+    uint8_t  interface;
+    uint8_t  led[NEBLINA_LED_COUNT];  // LED levels
 } NeblinaSystemStatus_t;
 
 /**********************************************************************************/
@@ -445,7 +415,8 @@ typedef struct
 
 typedef struct
 {
-    uint8_t data[NEBLINA_PACKET_LENGTH_MAX];
+    uint32_t offset;
+    uint8_t data[NEBLINA_PACKET_LENGTH_MAX-sizeof(uint32_t)];
 } NeblinaSessionReadData_t;
 
 /**********************************************************************************/
@@ -454,6 +425,48 @@ typedef struct
 {
     uint16_t temperature;
 } TemperatureData_t;
+
+/**********************************************************************************/
+
+typedef enum {
+    NEBLINA_FUSION_STREAM_EULER            = 0x00,
+    NEBLINA_FUSION_STREAM_EXTERNAL_FORCE   = 0x01,
+    NEBLINA_FUSION_STREAM_FINGER_GESTURE   = 0x02,
+    NEBLINA_FUSION_STREAM_MOTION_ANALYSIS  = 0x03,
+    NEBLINA_FUSION_STREAM_MOTION_STATE     = 0x04,
+    NEBLINA_FUSION_STREAM_PEDOMETER        = 0x05,
+    NEBLINA_FUSION_STREAM_QUATERNION       = 0x06,
+    NEBLINA_FUSION_STREAM_ROTATION_INFO    = 0x07,
+    NEBLINA_FUSION_STREAM_SITTING_STANDING = 0x08,
+    NEBLINA_FUSION_STREAM_TRAJECTORY_INFO  = 0x09,
+    NEBLINA_FUSION_STREAM_COUNT            // Keep last
+} NeblinaFusionStream_t;
+
+typedef enum {
+    NEBLINA_FUSION_STATUS_EULER            = ( 1 << NEBLINA_FUSION_STREAM_EULER ),
+    NEBLINA_FUSION_STATUS_EXTERNAL_FORCE   = ( 1 << NEBLINA_FUSION_STREAM_EXTERNAL_FORCE ),
+    NEBLINA_FUSION_STATUS_FINGER_GESTURE   = ( 1 << NEBLINA_FUSION_STREAM_FINGER_GESTURE ),
+    NEBLINA_FUSION_STATUS_MOTION_ANALYSIS  = ( 1 << NEBLINA_FUSION_STREAM_MOTION_ANALYSIS ),
+    NEBLINA_FUSION_STATUS_MOTION_STATE     = ( 1 << NEBLINA_FUSION_STREAM_MOTION_STATE ),
+    NEBLINA_FUSION_STATUS_PEDOMETER        = ( 1 << NEBLINA_FUSION_STREAM_PEDOMETER ),
+    NEBLINA_FUSION_STATUS_QUATERNION       = ( 1 << NEBLINA_FUSION_STREAM_QUATERNION ),
+    NEBLINA_FUSION_STATUS_ROTATION_INFO    = ( 1 << NEBLINA_FUSION_STREAM_ROTATION_INFO ),
+    NEBLINA_FUSION_STATUS_SITTING_STANDING = ( 1 << NEBLINA_FUSION_STREAM_SITTING_STANDING ),
+    NEBLINA_FUSION_STATUS_TRAJECTORY_INFO  = ( 1 << NEBLINA_FUSION_STREAM_TRAJECTORY_INFO ),
+} NeblinaFusionStatusMask_t;
+
+/**********************************************************************************/
+
+typedef enum {
+    NEBLINA_POWER_STATUS_NO_BATTERY     = 0x00,
+    NEBLINA_POWER_STATUS_CHARGE_TRICKLE = 0x01,
+    NEBLINA_POWER_STATUS_CHARGE_CC      = 0x02,
+    NEBLINA_POWER_STATUS_CHARGE_CV      = 0x03,
+    NEBLINA_POWER_STATUS_EOC            = 0x04,
+    NEBLINA_POWER_STATUS_FAULT_HOT      = 0x05,
+    NEBLINA_POWER_STATUS_FAULT_COLD     = 0x06,
+    NEBLINA_POWER_STATUS_UNKNOWN        = 0xFF
+} NeblinaPowerStatus_t;
 
 /**********************************************************************************/
 
@@ -476,8 +489,19 @@ typedef enum {
     NEBLINA_SENSOR_STREAM_MAGNETOMETER               = 0x05,
     NEBLINA_SENSOR_STREAM_PRESSURE                   = 0x06,
     NEBLINA_SENSOR_STREAM_TEMPERATURE                = 0x07,
-    NEBLINA_SENSOR_STREAM_COUNT                     // Keep last
+    NEBLINA_SENSOR_STREAM_COUNT                      // Keep last
 } NeblinaSensorStream_t;
+
+typedef enum {
+    NEBLINA_SENSOR_STATUS_ACCELEROMETER              = ( 1 << NEBLINA_SENSOR_STREAM_ACCELEROMETER ),
+    NEBLINA_SENSOR_STATUS_ACCELEROMETER_GYROSCOPE    = ( 1 << NEBLINA_SENSOR_STREAM_ACCELEROMETER_GYROSCOPE ),
+    NEBLINA_SENSOR_STATUS_ACCELEROMETER_MAGNETOMETER = ( 1 << NEBLINA_SENSOR_STREAM_ACCELEROMETER_MAGNETOMETER ),
+    NEBLINA_SENSOR_STATUS_GYROSCOPE                  = ( 1 << NEBLINA_SENSOR_STREAM_GYROSCOPE ),
+    NEBLINA_SENSOR_STATUS_HUMIDITY                   = ( 1 << NEBLINA_SENSOR_STREAM_HUMIDITY ),
+    NEBLINA_SENSOR_STATUS_MAGNETOMETER               = ( 1 << NEBLINA_SENSOR_STREAM_MAGNETOMETER ),
+    NEBLINA_SENSOR_STATUS_PRESSURE                   = ( 1 << NEBLINA_SENSOR_STREAM_PRESSURE ),
+    NEBLINA_SENSOR_STATUS_TEMPERATURE                = ( 1 << NEBLINA_SENSOR_STREAM_TEMPERATURE ),
+} NeblinaSensorStatusMask_t;
 
 typedef enum {
     NEBLINA_SENSOR_ACCELEROMETER    = 0x00,
@@ -503,6 +527,16 @@ typedef struct {
     uint16_t type;
     uint16_t rate;
 } NeblinaSensorRate_t;
+
+/**********************************************************************************/
+
+typedef enum {
+    NEBLINA_RECORDER_STATUS_IDLE     = 0x0,
+    NEBLINA_RECORDER_STATUS_READBACK = 0x01,
+    NEBLINA_RECORDER_STATUS_RECORD   = 0x02,
+    NEBLINA_RECORDER_STATUS_ERASE    = 0x03,
+    NEBLINA_RECORDER_STATUS_UNKNOWN  = 0xFF
+} NeblinaRecorderStatus_t;
 
 /**********************************************************************************/
 
