@@ -45,12 +45,12 @@ let NebCmdList = [NebCmdItem] (arrayLiteral:
 	           Name: "Humidity Sensor Stream", Actuator : 1, Text: ""),
 	NebCmdItem(SubSysId: NEBLINA_SUBSYSTEM_FUSION, CmdId: NEBLINA_COMMAND_FUSION_LOCK_HEADING_REFERENCE, ActiveStatus: 0,
 	           Name: "Lock Heading Ref.", Actuator : 1, Text: ""),
-	NebCmdItem(SubSysId: NEBLINA_SUBSYSTEM_RECORDER, CmdId: NEBLINA_COMMAND_RECORDER_RECORD, ActiveStatus: 0,
+	NebCmdItem(SubSysId: NEBLINA_SUBSYSTEM_RECORDER, CmdId: NEBLINA_COMMAND_RECORDER_RECORD, ActiveStatus: NEBLINA_RECORDER_STATUS_RECORD.rawValue,
 	           Name: "Flash Record", Actuator : 2, Text: "ON"),
 	NebCmdItem(SubSysId: NEBLINA_SUBSYSTEM_RECORDER, CmdId: NEBLINA_COMMAND_RECORDER_RECORD, ActiveStatus: 0,
 	           Name: "Flash Record", Actuator : 2, Text: "OFF"),
 	NebCmdItem(SubSysId: NEBLINA_SUBSYSTEM_RECORDER, CmdId: NEBLINA_COMMAND_RECORDER_PLAYBACK, ActiveStatus: NEBLINA_RECORDER_STATUS_READBACK.rawValue,
-	           Name: "Flash Playback", Actuator : 1, Text: ""),
+	           Name: "Flash Playback", Actuator : 4, Text: "Play"),
 	NebCmdItem(SubSysId: NEBLINA_SUBSYSTEM_RECORDER, CmdId: NEBLINA_COMMAND_RECORDER_SESSION_DOWNLOAD, ActiveStatus: 0,
 	           Name: "Flash Download Session ", Actuator : 4, Text: "Start"),
 //	NebCmdItem(SubSysId: NEBLINA_SUBSYSTEM_LED, CmdId: NEBLINA_COMMAND_LED_STATE, Name: "Set LED0 level", Actuator : 3, Text: ""),
@@ -93,6 +93,7 @@ class ViewController: NSViewController, NSTableViewDataSource, NSTableViewDelega
 	var file : FileHandle?
 	var downloadRecovering = Bool(false)
 	var sysStatusReceived = Bool(false)
+	var playback = Bool(false)
 	
 	@IBOutlet weak var devListView : NSTableView!
 	@IBOutlet weak var cmdView : NSTableView!
@@ -245,6 +246,7 @@ class ViewController: NSViewController, NSTableViewDataSource, NSTableViewDelega
 								let control = cell!.viewWithTag(4) as! NSTextField
 								let but = cell!.viewWithTag(2) as! NSButton
 								but.isEnabled = false
+								
 								curSessionId = UInt16(control.integerValue)
 								startDownload = true
 								curSessionOffset = 0
@@ -280,30 +282,59 @@ class ViewController: NSViewController, NSTableViewDataSource, NSTableViewDelega
 						if (cell != nil) {
 							let control = cell!.viewWithTag(4) as! NSTextField
 							let but = cell!.viewWithTag(2) as! NSButton
-							but.isEnabled = false
-							curSessionId = UInt16(control.integerValue)
-							startDownload = true
-							curSessionOffset = 0
-							//let filename = String(format:"NeblinaRecord_%d.dat", curSessionId)
-							let dirPaths = NSSearchPathForDirectoriesInDomains(.documentDirectory,
-							                                                   .userDomainMask, true)
-							if dirPaths != nil {
-								filepath = dirPaths[0]// as! String
-								filepath.append(String(format:"/%@/", nebdev.device.name!))
-								do {
-									try FileManager.default.createDirectory(atPath: filepath, withIntermediateDirectories: false, attributes: nil)
-									
-								} catch let error as NSError {
-									print(error.localizedDescription);
+							if nebdev.isDeviceReady() {
+								but.isEnabled = false
+			
+								curSessionId = UInt16(control.integerValue)
+								startDownload = true
+								curSessionOffset = 0
+								//let filename = String(format:"NeblinaRecord_%d.dat", curSessionId)
+								let dirPaths = NSSearchPathForDirectoriesInDomains(.documentDirectory,
+																				   .userDomainMask, true)
+								if dirPaths != nil {
+									filepath = dirPaths[0]// as! String
+									filepath.append(String(format:"/%@/", nebdev.device.name!))
+									do {
+										try FileManager.default.createDirectory(atPath: filepath, withIntermediateDirectories: false, attributes: nil)
+										
+									} catch let error as NSError {
+										print(error.localizedDescription);
+									}
+									filepath.append(String(format:"%@_%d.dat", nebdev.device.name!, curSessionId))
+									FileManager.default.createFile(atPath: filepath, contents: nil, attributes: nil)
+									do {
+										try file = FileHandle(forWritingAtPath: filepath)
+									} catch { print("file failed \(filepath)")}
+									nebdev.sessionDownload(true, SessionId : curSessionId, Len: 16, Offset: 0)
 								}
-								filepath.append(String(format:"%@_%d.dat", nebdev.device.name!, curSessionId))
-								FileManager.default.createFile(atPath: filepath, contents: nil, attributes: nil)
-								do {
-									try file = FileHandle(forWritingAtPath: filepath)
-								} catch { print("file failed \(filepath)")}
-								nebdev.sessionDownload(true, SessionId : curSessionId, Len: 16, Offset: 0)
 							}
-							//}
+						}
+					}
+					
+					
+					break
+				case NEBLINA_COMMAND_RECORDER_PLAYBACK:
+					let i = getCmdIdx(NEBLINA_SUBSYSTEM_RECORDER,  cmdId: NEBLINA_COMMAND_RECORDER_PLAYBACK)
+					if i >= 0 {
+						let cell = cmdView.rowView(atRow: i, makeIfNecessary: false)
+						if (cell != nil) {
+							let control = cell!.viewWithTag(4) as! NSTextField
+							let but = cell!.viewWithTag(2) as! NSButton
+							if playback {
+								nebdev.sessionPlayback(false, sessionId : UInt16(control.integerValue))
+								playback = false
+								but.title = "Play"
+							}
+							else {
+								if nebdev.isDeviceReady() {
+									//but.isEnabled = false
+									but.title = "Stop"
+									nebdev.sessionPlayback(true, sessionId : UInt16(control.integerValue))
+									PaketCnt = 0
+									prevTimeStamp = 0;
+									playback = true
+								}
+							}
 						}
 					}
 					
@@ -777,19 +808,16 @@ class ViewController: NSViewController, NSTableViewDataSource, NSTableViewDelega
 						control.selectedSegment = 1
 				}
 				case NEBLINA_SUBSYSTEM_RECORDER:
-					//switch (NebCmdList[idx].CmdId) {
-					//case NEBLINA_COMMAND_GENERAL_INTERFACE_STATE:
+					if NebCmdList[idx].CmdId == NEBLINA_COMMAND_RECORDER_PLAYBACK {
 						let cell = cmdView.view(atColumn: 0, row: idx, makeIfNecessary: false)! as NSView
 						let control = cell.viewWithTag(1) as! NSSegmentedControl
-						if NebCmdList[idx].ActiveStatus & UInt32(status.recorder) == 0 {
-							control.selectedSegment = 0
-						}
-						else {
+						if UInt32(status.recorder) == NEBLINA_RECORDER_STATUS_READBACK.rawValue {
 							control.selectedSegment = 1
 						}
-					//default:
-					//	break
-					//}
+						else {
+							control.selectedSegment = 0
+						}
+					}
 				default:
 					break
 			}
@@ -1320,9 +1348,11 @@ class ViewController: NSViewController, NSTableViewDataSource, NSTableViewDelega
 					break
 				}
 				let cell = cmdView.view(atColumn: 0, row: i, makeIfNecessary: false)! as NSView // cellForRowAtIndexPath( NSIndexPath(forRow: i, inSection: 0))
-				let sw = cell.viewWithTag(1) as! NSSegmentedControl
+				let sw = cell.viewWithTag(2) as! NSButton
 				
-				sw.selectedSegment = 0
+				//sw.isEnabled = true
+				sw.title = "Play"
+				playback = false
 			}
 			break
 		case NEBLINA_COMMAND_RECORDER_SESSION_READ:

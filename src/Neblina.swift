@@ -121,7 +121,8 @@ class Neblina : NSObject, CBPeripheralDelegate {
 		if (characteristic.uuid .isEqual(NEB_DATACHAR_UUID) && characteristic.value != nil)
 		{
 			var ch = [UInt8](repeating: 0, count: 20)
-			characteristic.value?.copyBytes(to: &ch, count: MemoryLayout<NeblinaPacketHeader_t>.size)
+			
+			characteristic.value?.copyBytes(to: &ch, count: min(MemoryLayout<NeblinaPacketHeader_t>.size, (characteristic.value?.count)!))
 			hdr = (characteristic.value?.withUnsafeBytes{ (ptr: UnsafePointer<NeblinaPacketHeader_t>) -> NeblinaPacketHeader_t in return ptr.pointee })!
 //print("packet : \(ch)")
 			let id = Int32(hdr.command)

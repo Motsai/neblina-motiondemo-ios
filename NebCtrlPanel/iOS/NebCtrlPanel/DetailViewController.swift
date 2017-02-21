@@ -63,7 +63,7 @@ let NebCmdList = [NebCmdItem] (arrayLiteral:
 	NebCmdItem(SubSysId: NEBLINA_SUBSYSTEM_RECORDER, CmdId: NEBLINA_COMMAND_RECORDER_RECORD, ActiveStatus: 0,
 	           Name: "Flash Record", Actuator : 2, Text: "Stop"),
 	NebCmdItem(SubSysId: NEBLINA_SUBSYSTEM_RECORDER, CmdId: NEBLINA_COMMAND_RECORDER_PLAYBACK, ActiveStatus: 0,
-	           Name: "Flash Playback", Actuator : 1, Text: ""),
+	           Name: "Flash Playback", Actuator : 4, Text: "Play"),
 //	NebCmdItem(SubSysId: NEBLINA_SUBSYSTEM_RECORDER, CmdId: NEBLINA_COMMAND_RECORDER_SESSION_DOWNLOAD, ActiveStatus: 0,
 //	           Name: "Flash Download", Actuator : 2, Text: "Start"),
 	NebCmdItem(SubSysId: NEBLINA_SUBSYSTEM_LED, CmdId: NEBLINA_COMMAND_LED_STATE, ActiveStatus: 0,
@@ -133,6 +133,7 @@ class DetailViewController: UIViewController, UITextFieldDelegate, CBPeripheralD
 	var filepath = String()
 	var file : FileHandle?
 	var downloadRecovering = Bool(false)
+	var playback = Bool(false)
 
 /*	var detailItem: Neblina? {
 		didSet {
@@ -422,6 +423,27 @@ class DetailViewController: UIViewController, UITextFieldDelegate, CBPeripheralD
 										try file = FileHandle(forWritingAtPath: filepath)
 									} catch { print("file failed \(filepath)")}
 									nebdev?.sessionDownload(true, SessionId : curSessionId, Len: 16, Offset: 0)
+								}
+							}
+							break
+						case NEBLINA_COMMAND_RECORDER_PLAYBACK:
+							let cell = cmdView.cellForRow( at: IndexPath(row: row, section: 0))
+							if cell != nil {
+								let tf = cell?.viewWithTag(4) as! UITextField
+								let bt = cell?.viewWithTag(2) as! UIButton
+								if playback == true {
+									bt.setTitle("Play", for: .normal)
+									playback = false
+								}
+								else {
+									bt.setTitle("Stop", for: .normal)
+									var n = UInt16(0)
+									if UInt16(tf.text!)! != nil {
+										n = UInt16(tf.text!)!
+									}
+									nebdev?.sessionPlayback(true, sessionId : n)
+									PaketCnt = 0
+									playback = true
 								}
 							}
 							break
@@ -753,7 +775,7 @@ class DetailViewController: UIViewController, UITextFieldDelegate, CBPeripheralD
 	func didConnectNeblina() {
 		// Switch to BLE interface
 		prevTimeStamp = 0;
-		nebdev?.getSystemStatus()
+		nebdev!.getSystemStatus()
 		//nebdev.SendCmdControlInterface(0)
 		//nebdev!.getMotionStatus()
 		//nebdev!.getDataPortState()
@@ -1074,18 +1096,19 @@ class DetailViewController: UIViewController, UITextFieldDelegate, CBPeripheralD
 				}
 				break
 			case NEBLINA_COMMAND_RECORDER_PLAYBACK:
-				let session = Int16(data[5]) | (Int16(data[6]) << 8)
-				if (data[4] != 0) {
+				let session = Int16(data[1]) | (Int16(data[2]) << 8)
+				if (data[0] != 0) {
 					flashLabel.text = String(format: "Playing session %d", session)
 				}
 				else {
 					flashLabel.text = String(format: "End session %d, %u", session, nebdev!.getPacketCount())
 					
+					playback = false
 					let i = getCmdIdx(NEBLINA_SUBSYSTEM_RECORDER,  cmdId: NEBLINA_COMMAND_RECORDER_PLAYBACK)
 					let cell = cmdView.cellForRow( at: IndexPath(row: i, section: 0))
 					if (cell != nil) {
-						let sw = cell!.viewWithTag(1) as! UISegmentedControl
-						sw.selectedSegmentIndex = 0
+						let sw = cell!.viewWithTag(2) as! UIButton
+						sw.setTitle("Play", for: .normal)
 					}
 				}
 				break
@@ -1280,6 +1303,24 @@ class DetailViewController: UIViewController, UITextFieldDelegate, CBPeripheralD
 					s.isHidden = true
 					let b = cellView.viewWithTag(2) as! UIButton
 					b.isHidden = true
+					break
+				case 4:
+					let tfcontrol = cellView.viewWithTag(NebCmdList[(indexPath! as NSIndexPath).row].Actuator) as! UITextField
+					tfcontrol.isHidden = false
+/*					if !NebCmdList[(indexPath! as NSIndexPath).row].Text.isEmpty
+					{
+						tfcontrol.text = NebCmdList[(indexPath! as NSIndexPath).row].Text
+					}*/
+					let bucontrol = cellView.viewWithTag(2) as! UIButton
+					bucontrol.isHidden = false
+					if !NebCmdList[(indexPath! as NSIndexPath).row].Text.isEmpty
+					{
+						bucontrol.setTitle(NebCmdList[(indexPath! as NSIndexPath).row].Text, for: UIControlState())
+					}
+					let s = cellView.viewWithTag(1) as! UISegmentedControl
+					s.isHidden = true
+					let t = cellView.viewWithTag(3) as! UITextField
+					t.isHidden = true
 					break
 				default:
 					//switchCtrl.enabled = false
