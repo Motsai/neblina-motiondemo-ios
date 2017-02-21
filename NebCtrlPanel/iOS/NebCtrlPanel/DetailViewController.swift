@@ -440,6 +440,7 @@ class DetailViewController: UIViewController, UITextFieldDelegate, CBPeripheralD
 									var n = UInt16(0)
 									if UInt16(tf.text!)! != nil {
 										n = UInt16(tf.text!)!
+										
 									}
 									nebdev?.sessionPlayback(true, sessionId : n)
 									PaketCnt = 0
@@ -749,23 +750,28 @@ class DetailViewController: UIViewController, UITextFieldDelegate, CBPeripheralD
 			case NEBLINA_SUBSYSTEM_FUSION:
 				//let cell = cmdView.view(atColumn: 0, row: idx, makeIfNecessary: false)! as NSView
 				let cell = cmdView.cellForRow( at: IndexPath(row: idx, section: 0))
-				let control = cell?.viewWithTag(1) as! UISegmentedControl
-				if NebCmdList[idx].ActiveStatus & status.fusion == 0 {
-					control.selectedSegmentIndex = 0
-				}
-				else {
-					control.selectedSegmentIndex = 1
+				if cell != nil {
+					let control = cell?.viewWithTag(1) as! UISegmentedControl
+					if NebCmdList[idx].ActiveStatus & status.fusion == 0 {
+						control.selectedSegmentIndex = 0
+					}
+					else {
+						control.selectedSegmentIndex = 1
+					}
 				}
 			case NEBLINA_SUBSYSTEM_SENSOR:
 				let cell = cmdView.cellForRow( at: IndexPath(row: idx, section: 0))
-				//let cell = cmdView.view(atColumn: 0, row: idx, makeIfNecessary: false)! as NSView
-				let control = cell?.viewWithTag(1) as! UISegmentedControl
-				if NebCmdList[idx].ActiveStatus & UInt32(status.sensor) == 0 {
-					control.selectedSegmentIndex = 0
+				if cell != nil {
+					//let cell = cmdView.view(atColumn: 0, row: idx, makeIfNecessary: false)! as NSView
+					let control = cell?.viewWithTag(1) as! UISegmentedControl
+					if NebCmdList[idx].ActiveStatus & UInt32(status.sensor) == 0 {
+						control.selectedSegmentIndex = 0
+					}
+					else {
+						control.selectedSegmentIndex = 1
+						}
 				}
-				else {
-					control.selectedSegmentIndex = 1
-				}
+
 			default:
 				break
 			}
