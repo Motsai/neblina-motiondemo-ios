@@ -64,7 +64,7 @@
 #define NEBLINA_IMPORT
 #endif
 
-#ifdef NEBLINA_CFG_DLL
+#if defined(NEBLINA_DLL)
 #define NEBLINA_EXTERN NEBLINA_EXPORT
 #else
 #define NEBLINA_EXTERN NEBLINA_IMPORT
@@ -121,7 +121,8 @@
 #define     NEBLINA_COMMAND_FUSION_CALIBRATE_FORWARD_POSITION  27
 #define     NEBLINA_COMMAND_FUSION_CALIBRATE_DOWN_POSITION     28
 #define     NEBLINA_COMMAND_FUSION_GYROSCOPE_RANGE             29
-#define     NEBLINA_COMMAND_FUSION_COUNT                       30       // Keep last
+#define     NEBLINA_COMMAND_FUSION_MOTION_DIRECTION            30
+#define     NEBLINA_COMMAND_FUSION_COUNT                       31       // Keep last
 
 /**********************************************************************************/
 
@@ -174,6 +175,9 @@
 #define     NEBLINA_COMMAND_RECORDER_SESSION_INFO               5
 #define     NEBLINA_COMMAND_RECORDER_SESSION_READ               6
 #define     NEBLINA_COMMAND_RECORDER_SESSION_DOWNLOAD           7
+#define     NEBLINA_COMMAND_RECORDER_SESSION_OPEN               8
+#define     NEBLINA_COMMAND_RECORDER_SESSION_CLOSE              9
+
 
 /**********************************************************************************/
 
@@ -193,7 +197,7 @@
 #define     NEBLINA_PACKET_TYPE_RESPONSE                        0
 #define     NEBLINA_PACKET_TYPE_ACK                             1
 #define     NEBLINA_PACKET_TYPE_COMMAND                         2
-#define     NEBLINA_PACKET_TYPE_RESERVE_1                       3
+#define     NEBLINA_PACKET_TYPE_DATA                            3
 #define     NEBLINA_PACKET_TYPE_ERROR                           4
 #define     NEBLINA_PACKET_TYPE_RESERVE_2                       5
 #define     NEBLINA_PACKET_TYPE_REQUEST_LOG                     6
@@ -307,9 +311,9 @@ typedef struct
 /**********************************************************************************/
 
 typedef enum {
-    NEBLINA_LED_RED   = 0x00,
-    NEBLINA_LED_GREEN = 0x01,
-    NEBLINA_LED_BLUE  = 0x02,
+    NEBLINA_LED_BLUE  = 0x00,
+    NEBLINA_LED_RED   = 0x01,
+    NEBLINA_LED_GREEN = 0x02,
     NEBLINA_LED_COUNT       // Keep last
 } NeblinaLED_t;
 
@@ -390,6 +394,23 @@ typedef struct {
 
 typedef struct
 {
+    uint8_t state;
+    uint16_t sessionId;
+    uint16_t length;
+    uint32_t offset;
+} NeblinaSessionDownload_t;
+
+/**********************************************************************************/
+
+typedef struct {
+    uint32_t offset;
+    uint8_t data[NEBLINA_PACKET_LENGTH_MAX - sizeof( uint32_t )];
+} NeblinaSessionDownloadData_t;
+
+/**********************************************************************************/
+
+typedef struct
+{
     uint32_t length;
     uint16_t sessionId;
 } NeblinaSessionInfo_t;
@@ -415,8 +436,7 @@ typedef struct
 
 typedef struct
 {
-    uint32_t offset;
-    uint8_t data[NEBLINA_PACKET_LENGTH_MAX-sizeof(uint32_t)];
+    uint8_t data[NEBLINA_PACKET_LENGTH_MAX];
 } NeblinaSessionReadData_t;
 
 /**********************************************************************************/
@@ -532,9 +552,10 @@ typedef struct {
 
 typedef enum {
     NEBLINA_RECORDER_STATUS_IDLE     = 0x0,
-    NEBLINA_RECORDER_STATUS_READBACK = 0x01,
+    NEBLINA_RECORDER_STATUS_READ     = 0x01,
     NEBLINA_RECORDER_STATUS_RECORD   = 0x02,
     NEBLINA_RECORDER_STATUS_ERASE    = 0x03,
+    NEBLINA_RECORDER_STATUS_DOWNLOAD = 0x04,
     NEBLINA_RECORDER_STATUS_UNKNOWN  = 0xFF
 } NeblinaRecorderStatus_t;
 

@@ -44,6 +44,8 @@ let NebCmdList = [NebCmdItem] (arrayLiteral:
 	           Name: "Calibrate Down Pos", Actuator : 2, Text: "Calib Dwn"),
 	NebCmdItem(SubSysId: NEBLINA_SUBSYSTEM_FUSION, CmdId: NEBLINA_COMMAND_FUSION_FUSION_TYPE, ActiveStatus: 0,
 	           Name: "Fusion 9 axis", Actuator : 1, Text:""),
+	NebCmdItem(SubSysId: NEBLINA_SUBSYSTEM_GENERAL, CmdId: NEBLINA_COMMAND_GENERAL_RESET_TIMESTAMP, ActiveStatus: 0,
+	           Name: "Reset timestamp", Actuator : 2, Text: "Reset"),
     NebCmdItem(SubSysId: NEBLINA_SUBSYSTEM_FUSION, CmdId: NEBLINA_COMMAND_FUSION_QUATERNION_STATE, ActiveStatus: NEBLINA_FUSION_STATUS_QUATERNION.rawValue,
                Name: "Quaternion Stream", Actuator : 1, Text: ""),
     NebCmdItem(SubSysId: NEBLINA_SUBSYSTEM_SENSOR, CmdId: NEBLINA_COMMAND_SENSOR_ACCELEROMETER, ActiveStatus: NEBLINA_SENSOR_STATUS_ACCELEROMETER.rawValue,
@@ -353,6 +355,9 @@ class DetailViewController: UIViewController, UITextFieldDelegate, CBPeripheralD
 							nebdev!.firmwareUpdate()
 							print("DFU Command")
 							break
+						case NEBLINA_COMMAND_GENERAL_RESET_TIMESTAMP:
+							nebdev!.resetTimeStamp(Delayed: true)
+							print("Reset timestamp")
 						default:
 							break
 					}

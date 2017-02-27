@@ -143,6 +143,7 @@ class Neblina : NSObject, CBPeripheralDelegate {
 			if (Int32(hdr.packetType) == NEBLINA_PACKET_TYPE_ERROR)
 			{
 				errflag = true;
+				//print("Error returned")
 			}
 			
 			packetCnt += 1
@@ -440,7 +441,7 @@ class Neblina : NSObject, CBPeripheralDelegate {
 		device.writeValue(Data(bytes: pkbuf, count: 4 + Int(pkbuf[1])), for: ctrlChar, type: CBCharacteristicWriteType.withoutResponse)
 	}
 
-	func resetTimeStamp() {
+	func resetTimeStamp( Delayed : Bool) {
 		if (isDeviceReady() == false) {
 			return
 		}
@@ -448,10 +449,17 @@ class Neblina : NSObject, CBPeripheralDelegate {
 		var pkbuf = [UInt8](repeating: 0, count: 20)
 		
 		pkbuf[0] = UInt8((NEBLINA_PACKET_TYPE_COMMAND << 5) | NEBLINA_SUBSYSTEM_GENERAL)
-		pkbuf[1] = 0
+		pkbuf[1] = 1
 		pkbuf[2] = 0xFF
 		pkbuf[3] = UInt8(NEBLINA_COMMAND_GENERAL_RESET_TIMESTAMP)	// Cmd
 		
+		if Delayed == true {
+			pkbuf[4] = 1
+		}
+		else {
+			pkbuf[4] = 0
+		}
+
 		pkbuf[2] = crc8(pkbuf, Len: Int(pkbuf[1]) + 4)
 		
 		device.writeValue(Data(bytes: pkbuf, count: 4 + Int(pkbuf[1])), for: ctrlChar, type: CBCharacteristicWriteType.withoutResponse)
@@ -1194,24 +1202,25 @@ class Neblina : NSObject, CBPeripheralDelegate {
 		var pkbuf = [UInt8](repeating: 0, count: 20)
 		
 		pkbuf[0] = UInt8((NEBLINA_PACKET_TYPE_COMMAND << 5) | NEBLINA_SUBSYSTEM_RECORDER) //0x41
-		if Start == true {
-			pkbuf[1] = 12
-		}
-		else {
-			pkbuf[1] = 0;
-		}
+		pkbuf[1] = 13
 		pkbuf[2] = 0xFF
 		pkbuf[3] = UInt8(NEBLINA_COMMAND_RECORDER_SESSION_DOWNLOAD)	// Cmd
 		
 		// Command parameter
-		pkbuf[4] = UInt8(SessionId & 0xFF)
-		pkbuf[5] = UInt8((SessionId >> 8) & 0xFF)
-		pkbuf[6] = UInt8(Len & 0xFF)
-		pkbuf[7] = UInt8((Len >> 8) & 0xFF)
-		pkbuf[8] = UInt8(Offset & 0xFF)
-		pkbuf[9] = UInt8((Offset >> 8) & 0xFF)
-		pkbuf[10] = UInt8((Offset >> 16) & 0xFF)
-		pkbuf[11] = UInt8((Offset >> 24) & 0xFF)
+		if Start == true {
+			pkbuf[4] = 1
+		}
+		else {
+			pkbuf[4] = 0
+		}
+		pkbuf[5] = UInt8(SessionId & 0xFF)
+		pkbuf[6] = UInt8((SessionId >> 8) & 0xFF)
+		pkbuf[7] = UInt8(Len & 0xFF)
+		pkbuf[8] = UInt8((Len >> 8) & 0xFF)
+		pkbuf[9] = UInt8(Offset & 0xFF)
+		pkbuf[10] = UInt8((Offset >> 8) & 0xFF)
+		pkbuf[11] = UInt8((Offset >> 16) & 0xFF)
+		pkbuf[12] = UInt8((Offset >> 24) & 0xFF)
 		
 		pkbuf[2] = crc8(pkbuf, Len: Int(pkbuf[1]) + 4)
 		

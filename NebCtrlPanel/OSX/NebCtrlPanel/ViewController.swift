@@ -49,15 +49,10 @@ let NebCmdList = [NebCmdItem] (arrayLiteral:
 	           Name: "Flash Record", Actuator : 2, Text: "ON"),
 	NebCmdItem(SubSysId: NEBLINA_SUBSYSTEM_RECORDER, CmdId: NEBLINA_COMMAND_RECORDER_RECORD, ActiveStatus: 0,
 	           Name: "Flash Record", Actuator : 2, Text: "OFF"),
-	NebCmdItem(SubSysId: NEBLINA_SUBSYSTEM_RECORDER, CmdId: NEBLINA_COMMAND_RECORDER_PLAYBACK, ActiveStatus: NEBLINA_RECORDER_STATUS_READBACK.rawValue,
+	NebCmdItem(SubSysId: NEBLINA_SUBSYSTEM_RECORDER, CmdId: NEBLINA_COMMAND_RECORDER_PLAYBACK, ActiveStatus: NEBLINA_RECORDER_STATUS_READ.rawValue,
 	           Name: "Flash Playback", Actuator : 4, Text: "Play"),
 	NebCmdItem(SubSysId: NEBLINA_SUBSYSTEM_RECORDER, CmdId: NEBLINA_COMMAND_RECORDER_SESSION_DOWNLOAD, ActiveStatus: 0,
 	           Name: "Flash Download Session ", Actuator : 4, Text: "Start"),
-//	NebCmdItem(SubSysId: NEBLINA_SUBSYSTEM_LED, CmdId: NEBLINA_COMMAND_LED_STATE, Name: "Set LED0 level", Actuator : 3, Text: ""),
-//	NebCmdItem(SubSysId: NEBLINA_SUBSYSTEM_LED, CmdId: NEBLINA_COMMAND_LED_STATE, Name: "Set LED1 level", Actuator : 3, Text: ""),
-//	NebCmdItem(SubSysId: NEBLINA_SUBSYSTEM_LED, CmdId: NEBLINA_COMMAND_LED_STATE, Name: "Set LED2", Actuator : 1, Text: ""),
-//	NebCmdItem(SubSysId: NEBLINA_SUBSYSTEM_EEPROM, CmdId: NEBLINA_COMMAND_EEPROM_READ, Name: "EEPROM Read", Actuator : 2, Text: "Read"),
-//	NebCmdItem(SubSysId: NEBLINA_SUBSYSTEM_POWER, CmdId: NEBLINA_COMMAND_POWER_CHARGE_CURRENT, Name: "Charge Current in mA", Actuator : 3, Text: ""),
 	NebCmdItem(SubSysId: 0xf, CmdId: MotionDataStream, ActiveStatus: 0, Name: "Motion data stream", Actuator : 1, Text: ""),
 	NebCmdItem(SubSysId: 0xf, CmdId: Heading, ActiveStatus: 0, Name: "Heading", Actuator : 1, Text: ""),
 	NebCmdItem(SubSysId: NEBLINA_SUBSYSTEM_GENERAL, CmdId: NEBLINA_COMMAND_GENERAL_FIRMWARE_UPDATE, ActiveStatus: 0,
@@ -119,7 +114,7 @@ class ViewController: NSViewController, NSTableViewDataSource, NSTableViewDelega
 		} else {
 			// Fallback on earlier versions
 		}
-
+				
 		bleCentralManager = CBCentralManager(delegate: self, queue: DispatchQueue.main)
 
 		// Do any additional setup after loading the view.
@@ -707,6 +702,9 @@ class ViewController: NSViewController, NSTableViewDataSource, NSTableViewDelega
 						{
 							ctrl.title = NebCmdList[row].Text
 						}
+						let ctrl1 = cellView.viewWithTag(1) as! NSSegmentedControl
+						ctrl1.isHidden = true
+						
 						break
 						
 					case 2:
@@ -716,6 +714,8 @@ class ViewController: NSViewController, NSTableViewDataSource, NSTableViewDelega
 						{
 							ctrl.title = NebCmdList[row].Text
 						}
+						let ctrl1 = cellView.viewWithTag(1) as! NSSegmentedControl
+						ctrl1.isHidden = true
 						break
 					default:
 						let ctrl = cellView.viewWithTag(NebCmdList[row].Actuator) as! NSControl
@@ -733,31 +733,6 @@ class ViewController: NSViewController, NSTableViewDataSource, NSTableViewDelega
 		
 		return nil;
 	}
-	
-	/*func tableView(tableView: NSTableView, objectValueForTableColumn tableColumn: NSTableColumn?, row: Int) -> AnyObject?
-	{
-	//        var string:String = "row " + String(row) + ", Col" + String(tableColumn.identifier)
-	//        return string
-	//let newString = getDataArray().objectAtIndex(row).objectForKey(tableColumn!.identifier)
-	if (row < devices.count)
-	{
-	//let peripheral = devices[row];
-	//let newString = peripheral.name;
-	
-	return devices[row];
-	}
-	return nil;
-	}*/
-	
-	/*	func getDataArray () -> NSArray{
-	let dataArray:[NSDictionary] = [["FirstName": "Debasis", "LastName": "Das"],
-	["FirstName": "Nishant", "LastName": "Singh"],
-	["FirstName": "John", "LastName": "Doe"],
-	["FirstName": "Jane", "LastName": "Doe"],
-	["FirstName": "Mary", "LastName": "Jane"]];
-	print(dataArray);
-	return dataArray;
-	}*/
 	
 	func tableViewSelectionDidChange(_ notification: Notification)
 	{
@@ -811,7 +786,7 @@ class ViewController: NSViewController, NSTableViewDataSource, NSTableViewDelega
 					if NebCmdList[idx].CmdId == NEBLINA_COMMAND_RECORDER_PLAYBACK {
 						let cell = cmdView.view(atColumn: 0, row: idx, makeIfNecessary: false)! as NSView
 						let control = cell.viewWithTag(1) as! NSSegmentedControl
-						if UInt32(status.recorder) == NEBLINA_RECORDER_STATUS_READBACK.rawValue {
+						if UInt32(status.recorder) == NEBLINA_RECORDER_STATUS_READ.rawValue {
 							control.selectedSegment = 1
 						}
 						else {
@@ -1402,6 +1377,7 @@ class ViewController: NSViewController, NSTableViewDataSource, NSTableViewDelega
 			if (errFlag == false && dataLen > 0) {
 
 				if dataLen < 4 {
+					//print("\(data)")
 					break
 				}
 				
