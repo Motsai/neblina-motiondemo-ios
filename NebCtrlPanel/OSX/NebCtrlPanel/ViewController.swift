@@ -938,7 +938,7 @@ class ViewController: NSViewController, NSTableViewDataSource, NSTableViewDelega
 
 	// MARK : Neblina
 	
-	func didConnectNeblina() {
+	func didConnectNeblina(sender : Neblina) {
 		prevTimeStamp = 0;
 		nebdev.getSystemStatus()
 		nebdev.getFirmwareVersion()
@@ -947,16 +947,16 @@ class ViewController: NSViewController, NSTableViewDataSource, NSTableViewDelega
 		//nebdev.getLed ()
 	}
 	
-	func didReceiveRSSI(_ rssi : NSNumber) {
+	func didReceiveRSSI(sender : Neblina, rssi : NSNumber) {
 		
 	}
 
 	//
 	// General data
 	//
-	func didReceiveGeneralData(_ type : Int32, data : UnsafeRawPointer, dataLen : Int, errFlag : Bool) {
+	func didReceiveGeneralData(sender : Neblina, cmdRspId : Int32, data : UnsafeRawPointer, dataLen : Int, errFlag : Bool) {
 		//UnsafePointer<UInt8>, dataLen : Int, errFlag : Bool) {
-		switch (type) {
+		switch (cmdRspId) {
 			case NEBLINA_COMMAND_GENERAL_SYSTEM_STATUS:
 				sysStatusReceived = true;
 				var myStruct = NeblinaSystemStatus_t()
@@ -985,7 +985,7 @@ class ViewController: NSViewController, NSTableViewDataSource, NSTableViewDelega
 	//
 	// Fusion data
 	//
-	func didReceiveFusionData(_ type : Int32, data : NeblinaFusionPacket, errFlag : Bool) {
+	func didReceiveFusionData(sender : Neblina, cmdRspId : Int32, data : NeblinaFusionPacket, errFlag : Bool) {
 		
 		if sysStatusReceived == false {
 			nebdev.getSystemStatus()
@@ -995,7 +995,7 @@ class ViewController: NSViewController, NSTableViewDataSource, NSTableViewDelega
 		//let id = FusionId(rawValue: type.rawValue & 0x7F)! as FusionId
 //		flashLabel.text = String(format: "Total packet %u @ %0.2f pps", nebdev.getPacketCount(), nebdev.getDataRate())
 		
-		switch (type) {
+		switch (cmdRspId) {
 			
 		case NEBLINA_COMMAND_FUSION_MOTION_STATE:
 			break
@@ -1217,9 +1217,9 @@ class ViewController: NSViewController, NSTableViewDataSource, NSTableViewDelega
 	//
 	// Power management data
 	//
-	func didReceivePmgntData(_ type : Int32, data : UnsafePointer<UInt8>, dataLen : Int, errFlag : Bool) {
+	func didReceivePmgntData(sender : Neblina, cmdRspId : Int32, data : UnsafePointer<UInt8>, dataLen : Int, errFlag : Bool) {
 		let value = UInt16(data[0]) | (UInt16(data[1]) << 8)
-		if (type == NEBLINA_COMMAND_POWER_CHARGE_CURRENT)
+		if (cmdRspId == NEBLINA_COMMAND_POWER_CHARGE_CURRENT)
 		{
 			//print("**V*** \(value) : \(data)")
 			let i = getCmdIdx(NEBLINA_SUBSYSTEM_POWER,  cmdId: NEBLINA_COMMAND_POWER_CHARGE_CURRENT)
@@ -1235,8 +1235,8 @@ class ViewController: NSViewController, NSTableViewDataSource, NSTableViewDelega
 	//
 	// LED
 	//
-	func didReceiveLedData(_ type : Int32, data : UnsafePointer<UInt8>, dataLen : Int, errFlag : Bool) {
-		switch (type) {
+	func didReceiveLedData(sender : Neblina, cmdRspId : Int32, data : UnsafePointer<UInt8>, dataLen : Int, errFlag : Bool) {
+		switch (cmdRspId) {
 		case NEBLINA_COMMAND_LED_STATUS:
 			let i = getCmdIdx(NEBLINA_SUBSYSTEM_LED,  cmdId: NEBLINA_COMMAND_LED_STATUS)
 			if i < 0 {
@@ -1267,10 +1267,10 @@ class ViewController: NSViewController, NSTableViewDataSource, NSTableViewDelega
 	//
 	// Debug
 	//
-	func didReceiveDebugData(_ type : Int32, data : UnsafePointer<UInt8>, dataLen : Int, errFlag : Bool)
+	func didReceiveDebugData(sender : Neblina, cmdRspId : Int32, data : UnsafePointer<UInt8>, dataLen : Int, errFlag : Bool)
 	{
 		//print("Debug \(type) data \(data)")
-		switch (type) {
+		switch (cmdRspId) {
 		case NEBLINA_COMMAND_DEBUG_DUMP_DATA:
 			dumpLabel.stringValue = String(format: "%02x %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x",
 			                        data[0], data[1], data[2], data[3], data[4], data[5], data[6], data[7], data[8], data[9],
@@ -1286,9 +1286,9 @@ class ViewController: NSViewController, NSTableViewDataSource, NSTableViewDelega
 	//
 	// Storage
 	//
-	func didReceiveRecorderData(_ type : Int32, data : UnsafePointer<UInt8>, dataLen : Int, errFlag : Bool) {
+	func didReceiveRecorderData(sender : Neblina, cmdRspId : Int32, data : UnsafePointer<UInt8>, dataLen : Int, errFlag : Bool) {
 
-		switch (type) {
+		switch (cmdRspId) {
 		case NEBLINA_COMMAND_RECORDER_ERASE_ALL:
 			flashLabel.stringValue = "Flash erased"
 			let i = getCmdIdx(NEBLINA_SUBSYSTEM_RECORDER,  cmdId: NEBLINA_COMMAND_RECORDER_ERASE_ALL)
@@ -1345,7 +1345,7 @@ class ViewController: NSViewController, NSTableViewDataSource, NSTableViewDelega
 				}
 				curSessionOffset += UInt32(dataLen)
 				flashLabel.stringValue = String(format: "Downloading session %d : %u", curSessionId, curSessionOffset)
-				if type == NEBLINA_COMMAND_RECORDER_SESSION_READ {
+				if cmdRspId == NEBLINA_COMMAND_RECORDER_SESSION_READ {
 					nebdev.sessionRead(curSessionId, Len: 16, Offset: curSessionOffset)
 				}
 				//print("\(curSessionOffset), \(data)")
@@ -1437,8 +1437,8 @@ class ViewController: NSViewController, NSTableViewDataSource, NSTableViewDelega
 	//
 	// Eeprom
 	//
-	func didReceiveEepromData(_ type : Int32, data : UnsafePointer<UInt8>, dataLen : Int, errFlag : Bool) {
-		switch (type) {
+	func didReceiveEepromData(sender : Neblina, cmdRspId : Int32, data : UnsafePointer<UInt8>, dataLen : Int, errFlag : Bool) {
+		switch (cmdRspId) {
 		case NEBLINA_COMMAND_EEPROM_READ:
 			let pageno = UInt16(data[0]) | (UInt16(data[1]) << 8)
 			dumpLabel.stringValue = String(format: "EEP page [%d] : %02x %02x %02x %02x %02x %02x %02x %02x",
@@ -1454,11 +1454,11 @@ class ViewController: NSViewController, NSTableViewDataSource, NSTableViewDelega
 	//
 	// Sensor data
 	//
-	func didReceiveSensorData(_ type : Int32, data : UnsafePointer<UInt8>, dataLen : Int, errFlag : Bool) {
+	func didReceiveSensorData(sender : Neblina, cmdRspId : Int32, data : UnsafePointer<UInt8>, dataLen : Int, errFlag : Bool) {
 		if sysStatusReceived == false {
 			nebdev.getSystemStatus()
 		}
-		switch (type) {
+		switch (cmdRspId) {
 		case NEBLINA_COMMAND_SENSOR_ACCELEROMETER:
 			let x = (Int16(data[4]) & 0xff) | (Int16(data[5]) << 8)
 			let xq = x

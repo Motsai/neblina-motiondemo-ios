@@ -69,7 +69,7 @@ class Neblina : NSObject, CBPeripheralDelegate {
 	
 	func peripheralDidUpdateRSSI(_ peripheral: CBPeripheral, error: Error?) {
 		if (device.rssi != nil) {
-			delegate.didReceiveRSSI(device.rssi!)
+			delegate.didReceiveRSSI(sender: self, rssi: device.rssi!)
 		}
 	}
 	
@@ -111,26 +111,26 @@ class Neblina : NSObject, CBPeripheralDelegate {
 	func peripheral(_ peripheral: CBPeripheral, didUpdateNotificationStateFor characteristic: CBCharacteristic, error: Error?)
 	{
 		if (delegate != nil) {
-			delegate.didConnectNeblina()
+			delegate.didConnectNeblina(sender: self)
 		}
 	}
 	
 	func peripheral(_ peripheral: CBPeripheral, didUpdateValueFor characteristic: CBCharacteristic, error: Error?)
 	{
 		var hdr = NeblinaPacketHeader_t()
-		if (characteristic.uuid .isEqual(NEB_DATACHAR_UUID) && characteristic.value != nil)
+		if (characteristic.uuid .isEqual(NEB_DATACHAR_UUID) && characteristic.value != nil && (characteristic.value?.count)! > 0)
 		{
 			var ch = [UInt8](repeating: 0, count: 20)
-			
+//print("Charact : \(characteristic.value)")
 			characteristic.value?.copyBytes(to: &ch, count: min(MemoryLayout<NeblinaPacketHeader_t>.size, (characteristic.value?.count)!))
 			hdr = (characteristic.value?.withUnsafeBytes{ (ptr: UnsafePointer<NeblinaPacketHeader_t>) -> NeblinaPacketHeader_t in return ptr.pointee })!
 //print("packet : \(ch)")
-			let id = Int32(hdr.command)
+			let respId = Int32(hdr.command)
 			var errflag = Bool(false)
 			
 
 			if (Int32(hdr.packetType) == NEBLINA_PACKET_TYPE_ACK) {
-				//print("ACK : \(characteristic.value)")
+				print("ACK : \(characteristic.value) \(hdr)")
 				return
 			}
 			
@@ -143,7 +143,7 @@ class Neblina : NSObject, CBPeripheralDelegate {
 			if (Int32(hdr.packetType) == NEBLINA_PACKET_TYPE_ERROR)
 			{
 				errflag = true;
-				//print("Error returned")
+				print("Error returned  \(hdr)")
 			}
 			
 			packetCnt += 1
@@ -165,7 +165,12 @@ class Neblina : NSObject, CBPeripheralDelegate {
 			if (hdr.length > 0) {
 				characteristic.value?.copyBytes (to: &pkdata, from: Range(MemoryLayout<NeblinaPacketHeader_t>.size..<(Int(hdr.length) + MemoryLayout<NeblinaPacketHeader_t>.size)))
 			}
-			//print("Receive : \(hdr) : \(pkdata) : \(ch)")
+			//print("\(self) Receive : \(hdr) : \(pkdata) : \(ch)")
+			
+			if delegate == nil {
+				return
+			}
+			
 			switch (Int32(hdr.subSystem))
 			{
 				case NEBLINA_SUBSYSTEM_GENERAL:
@@ -176,26 +181,27 @@ class Neblina : NSObject, CBPeripheralDelegate {
 						characteristic.value?.copyBytes (to: &dd, from: Range(MemoryLayout<NeblinaPacketHeader_t>.size..<Int(hdr.length) + MemoryLayout<NeblinaPacketHeader_t>.size))
 					}
 
-					delegate.didReceiveGeneralData(id, data: dd, dataLen: Int(hdr.length), errFlag: errflag)
+					delegate.didReceiveGeneralData(sender: self, cmdRspId: respId, data: dd, dataLen: Int(hdr.length), errFlag: errflag)
 					break
 				case NEBLINA_SUBSYSTEM_FUSION:	// Motion Engine
 					let dd = (characteristic.value?.subdata(in: Range(4..<Int(hdr.length)+MemoryLayout<NeblinaPacketHeader_t>.size)))!
 					fp = (dd.withUnsafeBytes{ (ptr: UnsafePointer<NeblinaFusionPacket>) -> NeblinaFusionPacket in return ptr.pointee })
-					delegate.didReceiveFusionData(id, data: fp, errFlag: errflag)
+					delegate.didReceiveFusionData(sender: self, cmdRspId: respId
+						, data: fp, errFlag: errflag)
 					break
 				case NEBLINA_SUBSYSTEM_POWER:
 					var dd = [UInt8](repeating: 0, count: 16)
 					if (hdr.length > 0) {
 						characteristic.value?.copyBytes (to: &dd, from: Range(MemoryLayout<NeblinaPacketHeader_t>.size..<Int(hdr.length) + MemoryLayout<NeblinaPacketHeader_t>.size))
 					}
-					delegate.didReceivePmgntData(id, data: dd, dataLen: Int(hdr.length), errFlag: errflag)
+					delegate.didReceivePmgntData(sender: self, cmdRspId: respId, data: dd, dataLen: Int(hdr.length), errFlag: errflag)
 					break
 				case NEBLINA_SUBSYSTEM_LED:
 					var dd = [UInt8](repeating: 0, count: 16)
 					if (hdr.length > 0) {
 						characteristic.value?.copyBytes (to: &dd, from: Range(MemoryLayout<NeblinaPacketHeader_t>.size..<Int(hdr.length) + MemoryLayout<NeblinaPacketHeader_t>.size))
 					}
-					delegate.didReceiveLedData(id, data: dd, dataLen: Int(hdr.length), errFlag: errflag)
+					delegate.didReceiveLedData(sender: self, cmdRspId: respId, data: dd, dataLen: Int(hdr.length), errFlag: errflag)
 					break
 				case NEBLINA_SUBSYSTEM_DEBUG:
 					var dd = [UInt8](repeating: 0, count: 16)
@@ -205,28 +211,28 @@ class Neblina : NSObject, CBPeripheralDelegate {
 						characteristic.value?.copyBytes (to: &dd, from: Range(MemoryLayout<NeblinaPacketHeader_t>.size..<Int(hdr.length) + MemoryLayout<NeblinaPacketHeader_t>.size))
 					}
 				
-					delegate.didReceiveDebugData(id, data: dd, dataLen: Int(hdr.length), errFlag: errflag)
+					delegate.didReceiveDebugData(sender: self, cmdRspId: respId, data: dd, dataLen: Int(hdr.length), errFlag: errflag)
 					break
 				case NEBLINA_SUBSYSTEM_RECORDER:
 					var dd = [UInt8](repeating: 0, count: 16)
 					if (hdr.length > 0) {
 						characteristic.value?.copyBytes (to: &dd, from: Range(MemoryLayout<NeblinaPacketHeader_t>.size..<Int(hdr.length) + MemoryLayout<NeblinaPacketHeader_t>.size))
 					}
-					delegate.didReceiveRecorderData(id, data: dd, dataLen: Int(hdr.length), errFlag: errflag)
+					delegate.didReceiveRecorderData(sender: self, cmdRspId: respId, data: dd, dataLen: Int(hdr.length), errFlag: errflag)
 					break
 				case NEBLINA_SUBSYSTEM_EEPROM:
 					var dd = [UInt8](repeating: 0, count: 16)
 					if (hdr.length > 0) {
 						characteristic.value?.copyBytes (to: &dd, from: Range(MemoryLayout<NeblinaPacketHeader_t>.size..<Int(hdr.length) + MemoryLayout<NeblinaPacketHeader_t>.size))
 					}
-					delegate.didReceiveEepromData(id, data: dd, dataLen: Int(hdr.length), errFlag: errflag)
+					delegate.didReceiveEepromData(sender: self, cmdRspId: respId, data: dd, dataLen: Int(hdr.length), errFlag: errflag)
 					break
 				case NEBLINA_SUBSYSTEM_SENSOR:
 					var dd = [UInt8](repeating: 0, count: 16)
 					if (hdr.length > 0) {
 						characteristic.value?.copyBytes (to: &dd, from: Range(MemoryLayout<NeblinaPacketHeader_t>.size..<Int(hdr.length) + MemoryLayout<NeblinaPacketHeader_t>.size))
 					}
-					delegate.didReceiveSensorData(id, data: dd, dataLen: Int(hdr.length), errFlag: errflag)
+					delegate.didReceiveSensorData(sender: self, cmdRspId: respId, data: dd, dataLen: Int(hdr.length), errFlag: errflag)
 					break
 				default:
 					break
@@ -555,14 +561,13 @@ class Neblina : NSObject, CBPeripheralDelegate {
 		var pkbuf = [UInt8](repeating: 0, count: 20)
 		
 		pkbuf[0] = UInt8((NEBLINA_PACKET_TYPE_COMMAND << 5) | NEBLINA_SUBSYSTEM_LED)
-		pkbuf[1] = 16 //UInt8(sizeof(Fusion_DataPacket_t))
+		pkbuf[1] = 2 //UInt8(sizeof(Fusion_DataPacket_t))
 		pkbuf[2] = 0xFF
 		pkbuf[3] = UInt8(NEBLINA_COMMAND_LED_STATE)	// Cmd
 		
 		// Nb of LED to set
-		pkbuf[4] = 1
-		pkbuf[5] = LedNo
-		pkbuf[6] = Value
+		pkbuf[4] = LedNo
+		pkbuf[5] = Value
 		
 		pkbuf[2] = crc8(pkbuf, Len: Int(pkbuf[1]) + 4)
 
@@ -1087,7 +1092,7 @@ class Neblina : NSObject, CBPeripheralDelegate {
 		device.writeValue(Data(bytes: pkbuf, count: 4 + Int(pkbuf[1])), for: ctrlChar, type: CBCharacteristicWriteType.withoutResponse)
 	}
 	
-	func eraseStorage(_ Enable:Bool) {
+	func eraseStorage(_ quickErase:Bool) {
 		if (isDeviceReady() == false) {
 			return
 		}
@@ -1099,7 +1104,7 @@ class Neblina : NSObject, CBPeripheralDelegate {
 		pkbuf[2] = 0xFF
 		pkbuf[3] = UInt8(NEBLINA_COMMAND_RECORDER_ERASE_ALL) // Cmd
 		
-		if Enable == true
+		if quickErase == true
 		{
 			pkbuf[4] = 1
 		}
@@ -1108,7 +1113,7 @@ class Neblina : NSObject, CBPeripheralDelegate {
 			pkbuf[4] = 0
 		}
 		pkbuf[2] = crc8(pkbuf, Len: Int(pkbuf[1]) + 4)
-
+print("erase storage sent")
 		device.writeValue(Data(bytes: pkbuf, count: 4 + Int(pkbuf[1])), for: ctrlChar, type: CBCharacteristicWriteType.withoutResponse)
 		
 	}
@@ -1435,15 +1440,14 @@ class Neblina : NSObject, CBPeripheralDelegate {
 
 protocol NeblinaDelegate {
 	
-	func didConnectNeblina()
-	func didReceiveRSSI(_ rssi : NSNumber)
-	func didReceiveGeneralData(_ type : Int32, data : UnsafeRawPointer, dataLen : Int, errFlag : Bool)
-//	func didReceiveGeneralData(_ type : Int32, data : UnsafePointer<UInt8>, dataLen : Int, errFlag : Bool)
-	func didReceiveFusionData(_ type : Int32, data : NeblinaFusionPacket, errFlag : Bool)
-	func didReceivePmgntData(_ type : Int32, data : UnsafePointer<UInt8>, dataLen : Int, errFlag : Bool)
-	func didReceiveLedData(_ type : Int32, data : UnsafePointer<UInt8>, dataLen : Int, errFlag : Bool)
-	func didReceiveDebugData(_ type : Int32, data : UnsafePointer<UInt8>, dataLen : Int, errFlag : Bool)
-	func didReceiveRecorderData(_ type : Int32, data : UnsafePointer<UInt8>, dataLen : Int, errFlag : Bool)
-	func didReceiveEepromData(_ type : Int32, data : UnsafePointer<UInt8>, dataLen : Int, errFlag : Bool)
-	func didReceiveSensorData(_ type : Int32, data : UnsafePointer<UInt8>, dataLen : Int, errFlag : Bool)
+	func didConnectNeblina(sender : Neblina )
+	func didReceiveRSSI(sender : Neblina , rssi : NSNumber)
+	func didReceiveGeneralData(sender : Neblina, cmdRspId : Int32, data : UnsafeRawPointer, dataLen : Int, errFlag : Bool)
+	func didReceiveFusionData(sender : Neblina, cmdRspId : Int32, data : NeblinaFusionPacket, errFlag : Bool)
+	func didReceivePmgntData(sender : Neblina, cmdRspId : Int32, data : UnsafePointer<UInt8>, dataLen : Int, errFlag : Bool)
+	func didReceiveLedData(sender : Neblina, cmdRspId : Int32, data : UnsafePointer<UInt8>, dataLen : Int, errFlag : Bool)
+	func didReceiveDebugData(sender : Neblina, cmdRspId : Int32, data : UnsafePointer<UInt8>, dataLen : Int, errFlag : Bool)
+	func didReceiveRecorderData(sender : Neblina, cmdRspId : Int32, data : UnsafePointer<UInt8>, dataLen : Int, errFlag : Bool)
+	func didReceiveEepromData(sender : Neblina, cmdRspId : Int32, data : UnsafePointer<UInt8>, dataLen : Int, errFlag : Bool)
+	func didReceiveSensorData(sender : Neblina, cmdRspId : Int32, data : UnsafePointer<UInt8>, dataLen : Int, errFlag : Bool)
 }

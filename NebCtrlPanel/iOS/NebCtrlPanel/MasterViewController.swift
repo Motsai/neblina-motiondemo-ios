@@ -179,7 +179,7 @@ class MasterViewController: UITableViewController, CBCentralManagerDelegate {
 	func centralManager(_ central: CBCentralManager,
 	                      didDisconnectPeripheral peripheral: CBPeripheral,
 	                                              error: Error?) {
-		print("disconnected from peripheral")
+		print("disconnected from peripheral \(error)")
 	}
 
 	func centralManager(_ central: CBCentralManager, didFailToConnect peripheral: CBPeripheral, error: Error?) {

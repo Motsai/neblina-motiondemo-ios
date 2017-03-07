@@ -83,7 +83,7 @@ let NebCmdList = [NebCmdItem] (arrayLiteral:
 	NebCmdItem(SubSysId: 0xf, CmdId: Heading, ActiveStatus: 0,
 	           Name: "Heading", Actuator : 1, Text: ""),
 	NebCmdItem(SubSysId: NEBLINA_SUBSYSTEM_RECORDER, CmdId: NEBLINA_COMMAND_RECORDER_ERASE_ALL, ActiveStatus: 0,
-	           Name: "Flash Erase All", Actuator : 3, Text: "Erase"),
+	           Name: "Flash Erase All", Actuator : 2, Text: "Erase"),
 	NebCmdItem(SubSysId: NEBLINA_SUBSYSTEM_GENERAL, CmdId: NEBLINA_COMMAND_GENERAL_FIRMWARE_UPDATE, ActiveStatus: 0,
 	           Name: "Firmware Update", Actuator : 2, Text: "DFU")
 	
@@ -390,6 +390,12 @@ class DetailViewController: UIViewController, UITextFieldDelegate, CBPeripheralD
 					break
 				case NEBLINA_SUBSYSTEM_RECORDER:
 					switch (NebCmdList[row].CmdId) {
+						case NEBLINA_COMMAND_RECORDER_ERASE_ALL:
+							if flashEraseProgress == false {
+								print("Send Command erase")
+								flashEraseProgress = true;
+								nebdev!.eraseStorage(false)
+							}
 						case NEBLINA_COMMAND_RECORDER_RECORD:
 							
 							if NebCmdList[row].ActiveStatus == 0 {
@@ -741,13 +747,15 @@ class DetailViewController: UIViewController, UITextFieldDelegate, CBPeripheralD
 				case NEBLINA_COMMAND_GENERAL_INTERFACE_STATE:
 					//let cell = cmdView.view(atColumn: 0, row: idx, makeIfNecessary: false)! as NSView
 					let cell = cmdView.cellForRow( at: IndexPath(row: idx, section: 0))
-					let control = cell?.viewWithTag(1) as! UISegmentedControl
+					if cell != nil {
+						let control = cell?.viewWithTag(1) as! UISegmentedControl
 
-					if NebCmdList[idx].ActiveStatus & UInt32(status.interface) == 0 {
-						control.selectedSegmentIndex = 0
-					}
-					else {
-						control.selectedSegmentIndex = 1
+						if NebCmdList[idx].ActiveStatus & UInt32(status.interface) == 0 {
+							control.selectedSegmentIndex = 0
+						}
+						else {
+							control.selectedSegmentIndex = 1
+						}
 					}
 				default:
 					break
@@ -783,7 +791,7 @@ class DetailViewController: UIViewController, UITextFieldDelegate, CBPeripheralD
 		}
 	}
 	// MARK : Neblina
-	func didConnectNeblina() {
+	func didConnectNeblina(sender : Neblina) {
 		// Switch to BLE interface
 		prevTimeStamp = 0;
 		nebdev!.getSystemStatus()
@@ -794,15 +802,15 @@ class DetailViewController: UIViewController, UITextFieldDelegate, CBPeripheralD
 		nebdev!.getFirmwareVersion()
 	}
 	
-	func didReceiveRSSI(_ rssi : NSNumber) {
+	func didReceiveRSSI(sender : Neblina, rssi : NSNumber) {
 		
 	}
 
 	//
 	// General data
 	//
-	func didReceiveGeneralData(_ type : Int32, data : UnsafeRawPointer, dataLen : Int, errFlag : Bool) {
-		switch (type) {
+	func didReceiveGeneralData(sender : Neblina, cmdRspId : Int32, data : UnsafeRawPointer, dataLen : Int, errFlag : Bool) {
+		switch (cmdRspId) {
 		case NEBLINA_COMMAND_GENERAL_SYSTEM_STATUS:
 			var myStruct = NeblinaSystemStatus_t()
 			let status = withUnsafeMutablePointer(to: &myStruct) {_ in UnsafeMutableRawPointer(mutating: data)}
@@ -901,14 +909,14 @@ class DetailViewController: UIViewController, UITextFieldDelegate, CBPeripheralD
 		}
 	}
 	
-	func didReceiveFusionData(_ type : Int32, data : NeblinaFusionPacket, errFlag : Bool) {
+	func didReceiveFusionData(sender : Neblina, cmdRspId : Int32, data : NeblinaFusionPacket, errFlag : Bool) {
 
 		//let errflag = Bool(type.rawValue & 0x80 == 0x80)
 
 		//let id = FusionId(rawValue: type.rawValue & 0x7F)! as FusionId
-		flashLabel.text = String(format: "Total packet %u @ %0.2f pps", nebdev!.getPacketCount(), nebdev!.getDataRate())
+		dumpLabel.text = String(format: "Total packet %u @ %0.2f pps", nebdev!.getPacketCount(), nebdev!.getDataRate())
 	
-		switch (type) {
+		switch (cmdRspId) {
 			
 		case NEBLINA_COMMAND_FUSION_MOTION_STATE:
 			break
@@ -1032,9 +1040,9 @@ class DetailViewController: UIViewController, UITextFieldDelegate, CBPeripheralD
 		
 	}
 	
-	func didReceivePmgntData(_ type : Int32, data : UnsafePointer<UInt8>, dataLen: Int, errFlag : Bool) {
+	func didReceivePmgntData(sender : Neblina, cmdRspId : Int32, data : UnsafePointer<UInt8>, dataLen: Int, errFlag : Bool) {
 		let value = UInt16(data[0]) | (UInt16(data[1]) << 8)
-		if (type == NEBLINA_COMMAND_POWER_CHARGE_CURRENT)
+		if (cmdRspId == NEBLINA_COMMAND_POWER_CHARGE_CURRENT)
 		{
 			let i = getCmdIdx(NEBLINA_SUBSYSTEM_POWER,  cmdId: NEBLINA_COMMAND_POWER_CHARGE_CURRENT)
 			let cell = cmdView.cellForRow( at: IndexPath(row: i, section: 0))
@@ -1045,8 +1053,8 @@ class DetailViewController: UIViewController, UITextFieldDelegate, CBPeripheralD
 		}
 	}
 	
-	func didReceiveLedData(_ type : Int32, data : UnsafePointer<UInt8>, dataLen: Int, errFlag : Bool) {
-		switch (type) {
+	func didReceiveLedData(sender : Neblina, cmdRspId : Int32, data : UnsafePointer<UInt8>, dataLen: Int, errFlag : Bool) {
+		switch (cmdRspId) {
 		case NEBLINA_COMMAND_LED_STATUS:
 			let i = getCmdIdx(NEBLINA_SUBSYSTEM_LED,  cmdId: NEBLINA_COMMAND_LED_STATUS)
 			var cell = cmdView.cellForRow( at: IndexPath(row: i, section: 0))
@@ -1078,10 +1086,10 @@ class DetailViewController: UIViewController, UITextFieldDelegate, CBPeripheralD
 	//
 	// Debug
 	//
-	func didReceiveDebugData(_ type : Int32, data : UnsafePointer<UInt8>, dataLen : Int, errFlag : Bool)
+	func didReceiveDebugData(sender : Neblina, cmdRspId : Int32, data : UnsafePointer<UInt8>, dataLen : Int, errFlag : Bool)
 	{
 		//print("Debug \(type) data \(data)")
-		switch (type) {
+		switch (cmdRspId) {
 		case NEBLINA_COMMAND_DEBUG_DUMP_DATA:
 			dumpLabel.text = String(format: "%02x %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x",
 			                        data[0], data[1], data[2], data[3], data[4], data[5], data[6], data[7], data[8], data[9],
@@ -1092,14 +1100,14 @@ class DetailViewController: UIViewController, UITextFieldDelegate, CBPeripheralD
 		}
 	}
 		
-	func didReceiveRecorderData(_ type : Int32, data : UnsafePointer<UInt8>, dataLen: Int, errFlag : Bool) {
-		switch (type) {
+	func didReceiveRecorderData(sender : Neblina, cmdRspId : Int32, data : UnsafePointer<UInt8>, dataLen: Int, errFlag : Bool) {
+		switch (cmdRspId) {
 			case NEBLINA_COMMAND_RECORDER_ERASE_ALL:
 				flashLabel.text = "Flash erased"
 				break
 			case NEBLINA_COMMAND_RECORDER_RECORD:
-				let session = Int16(data[5]) | (Int16(data[6]) << 8)
-				if (data[4] != 0) {
+				let session = Int16(data[1]) | (Int16(data[2]) << 8)
+				if (data[0] != 0) {
 					flashLabel.text = String(format: "Recording session %d", session)
 				}
 				else {
@@ -1180,8 +1188,8 @@ class DetailViewController: UIViewController, UITextFieldDelegate, CBPeripheralD
 		}
 	}
 	
-	func didReceiveEepromData(_ type : Int32, data : UnsafePointer<UInt8>, dataLen: Int, errFlag : Bool) {
-		switch (type) {
+	func didReceiveEepromData(sender : Neblina, cmdRspId : Int32, data : UnsafePointer<UInt8>, dataLen: Int, errFlag : Bool) {
+		switch (cmdRspId) {
 			case NEBLINA_COMMAND_EEPROM_READ:
 				let pageno = UInt16(data[0]) | (UInt16(data[1]) << 8)
 				dumpLabel.text = String(format: "EEP page [%d] : %02x %02x %02x %02x %02x %02x %02x %02x",
@@ -1197,8 +1205,8 @@ class DetailViewController: UIViewController, UITextFieldDelegate, CBPeripheralD
 	//
 	// Sensor data
 	//
-	func didReceiveSensorData(_ type : Int32, data : UnsafePointer<UInt8>, dataLen : Int, errFlag : Bool) {
-		switch (type) {
+	func didReceiveSensorData(sender : Neblina, cmdRspId : Int32, data : UnsafePointer<UInt8>, dataLen : Int, errFlag : Bool) {
+		switch (cmdRspId) {
 		case NEBLINA_COMMAND_SENSOR_ACCELEROMETER:
 			let x = (Int16(data[4]) & 0xff) | (Int16(data[5]) << 8)
 			let xq = x
