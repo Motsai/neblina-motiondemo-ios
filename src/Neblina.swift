@@ -121,25 +121,17 @@ class Neblina : NSObject, CBPeripheralDelegate {
 		if (characteristic.uuid .isEqual(NEB_DATACHAR_UUID) && characteristic.value != nil && (characteristic.value?.count)! > 0)
 		{
 			var ch = [UInt8](repeating: 0, count: 20)
-//print("Charact : \(characteristic.value)")
 			characteristic.value?.copyBytes(to: &ch, count: min(MemoryLayout<NeblinaPacketHeader_t>.size, (characteristic.value?.count)!))
 			hdr = (characteristic.value?.withUnsafeBytes{ (ptr: UnsafePointer<NeblinaPacketHeader_t>) -> NeblinaPacketHeader_t in return ptr.pointee })!
-//print("packet : \(ch)")
 			let respId = Int32(hdr.command)
 			var errflag = Bool(false)
 			
 
 			if (Int32(hdr.packetType) == NEBLINA_PACKET_TYPE_ACK) {
-				print("ACK : \(characteristic.value) \(hdr)")
+				//print("ACK : \(characteristic.value) \(hdr)")
 				return
 			}
 			
-/*			if ((hdr.SubSys  & 0x80) == 0x80)
-			{
-				print("ERR falg")
-				errflag = true;
-				hdr.SubSys &= 0x7F;
-			}*/
 			if (Int32(hdr.packetType) == NEBLINA_PACKET_TYPE_ERROR)
 			{
 				errflag = true;
@@ -186,8 +178,7 @@ class Neblina : NSObject, CBPeripheralDelegate {
 				case NEBLINA_SUBSYSTEM_FUSION:	// Motion Engine
 					let dd = (characteristic.value?.subdata(in: Range(4..<Int(hdr.length)+MemoryLayout<NeblinaPacketHeader_t>.size)))!
 					fp = (dd.withUnsafeBytes{ (ptr: UnsafePointer<NeblinaFusionPacket>) -> NeblinaFusionPacket in return ptr.pointee })
-					delegate.didReceiveFusionData(sender: self, cmdRspId: respId
-						, data: fp, errFlag: errflag)
+					delegate.didReceiveFusionData(sender: self, cmdRspId: respId, data: fp, errFlag: errflag)
 					break
 				case NEBLINA_SUBSYSTEM_POWER:
 					var dd = [UInt8](repeating: 0, count: 16)
@@ -240,6 +231,7 @@ class Neblina : NSObject, CBPeripheralDelegate {
 			
 		}
 	}
+	
 	func isDeviceReady()-> Bool {
 		if (device == nil || ctrlChar == nil) {
 			return false
@@ -259,6 +251,7 @@ class Neblina : NSObject, CBPeripheralDelegate {
 	func getDataRate()->Float {
 		return dataRate
 	}
+	
 	//
 	// MARK : **** API
 	//
@@ -280,1162 +273,719 @@ class Neblina : NSObject, CBPeripheralDelegate {
 		return crc;
 	}
 
+	func sendCommand(subSys : Int32, cmd : Int32, paramLen : Int, paramData : [UInt8] ) {
+		if (isDeviceReady() == false) {
+			return
+		}
+		
+		var pkbuf = [UInt8](repeating: 0, count: 20)
+		
+		pkbuf[0] = UInt8((NEBLINA_PACKET_TYPE_COMMAND << 5) | subSys)
+		pkbuf[1] = UInt8(paramLen)		// Data length
+		pkbuf[2] = 0xFF			// CRC
+		pkbuf[3] = UInt8(cmd)	// Cmd
+		
+		for i in 0..<paramLen {
+			pkbuf[4 + i] = paramData[i]
+		}
+		pkbuf[2] = crc8(pkbuf, Len: Int(pkbuf[1]) + 4)
+		
+		device.writeValue(Data(bytes: pkbuf, count: 4 + Int(pkbuf[1])), for: ctrlChar, type: CBCharacteristicWriteType.withoutResponse)
+	}
+	
+	// ********************************
+	// * Neblina Command API
+	// ********************************
+	//
 	// ***
 	// *** Subsystem General
 	// ***
 	func getSystemStatus() {
-		if (isDeviceReady() == false) {
-			return
-		}
-		
-		var pkbuf = [UInt8](repeating: 0, count: 20)
-		
-		pkbuf[0] = UInt8((NEBLINA_PACKET_TYPE_COMMAND << 5) | NEBLINA_SUBSYSTEM_GENERAL)
-		pkbuf[1] = 0
-		pkbuf[2] = 0xFF
-		pkbuf[3] = UInt8(NEBLINA_COMMAND_GENERAL_SYSTEM_STATUS)	// Cmd
-		
-		pkbuf[2] = crc8(pkbuf, Len: Int(pkbuf[1]) + 4)
-		
-		device.writeValue(Data(bytes: pkbuf, count: 4 + Int(pkbuf[1])), for: ctrlChar, type: CBCharacteristicWriteType.withoutResponse)
+		sendCommand(subSys: NEBLINA_SUBSYSTEM_GENERAL, cmd: NEBLINA_COMMAND_GENERAL_SYSTEM_STATUS, paramLen: 0, paramData: [0])
 	}
 
 	func getFusionStatus() {
-		if (isDeviceReady() == false) {
-			return
-		}
-		
-		var pkbuf = [UInt8](repeating: 0, count: 20)
-		
-		pkbuf[0] = UInt8((NEBLINA_PACKET_TYPE_COMMAND << 5) | NEBLINA_SUBSYSTEM_GENERAL)
-		pkbuf[1] = 0
-		pkbuf[2] = 0xFF
-		pkbuf[3] = UInt8(NEBLINA_COMMAND_GENERAL_FUSION_STATUS)	// Cmd
-		
-		pkbuf[2] = crc8(pkbuf, Len: Int(pkbuf[1]) + 4)
-
-		device.writeValue(Data(bytes: pkbuf, count: 4 + Int(pkbuf[1])), for: ctrlChar, type: CBCharacteristicWriteType.withoutResponse)
+		sendCommand(subSys: NEBLINA_SUBSYSTEM_GENERAL, cmd: NEBLINA_COMMAND_GENERAL_FUSION_STATUS, paramLen: 0, paramData: [0])
 	}
 	
 	func getRecorderStatus() {
-		if (isDeviceReady() == false) {
-			return
-		}
-		
-		var pkbuf = [UInt8](repeating: 0, count: 20)
-		
-		pkbuf[0] = UInt8((NEBLINA_PACKET_TYPE_COMMAND << 5) | NEBLINA_SUBSYSTEM_GENERAL)
-		pkbuf[1] = 0
-		pkbuf[2] = 0xFF
-		pkbuf[3] = UInt8(NEBLINA_COMMAND_GENERAL_RECORDER_STATUS)	// Cmd
-		
-		pkbuf[2] = crc8(pkbuf, Len: Int(pkbuf[1]) + 4)
-
-		device.writeValue(Data(bytes: pkbuf, count: 4 + Int(pkbuf[1])), for: ctrlChar, type: CBCharacteristicWriteType.withoutResponse)
+		sendCommand(subSys: NEBLINA_SUBSYSTEM_GENERAL, cmd: NEBLINA_COMMAND_GENERAL_RECORDER_STATUS, paramLen: 0, paramData: [0])
 	}
 	
 	func getFirmwareVersion() {
-		if (isDeviceReady() == false) {
-			return
-		}
-		
-		var pkbuf = [UInt8](repeating: 0, count: 20)
-		
-		pkbuf[0] = UInt8((NEBLINA_PACKET_TYPE_COMMAND << 5) | NEBLINA_SUBSYSTEM_GENERAL)
-		pkbuf[1] = 0
-		pkbuf[2] = 0xFF
-		pkbuf[3] = UInt8(NEBLINA_COMMAND_GENERAL_FIRMWARE)	// Cmd
-		
-		pkbuf[2] = crc8(pkbuf, Len: Int(pkbuf[1]) + 4)
-		
-		device.writeValue(Data(bytes: pkbuf, count: 4 + Int(pkbuf[1])), for: ctrlChar, type: CBCharacteristicWriteType.withoutResponse)
+		sendCommand(subSys: NEBLINA_SUBSYSTEM_GENERAL, cmd: NEBLINA_COMMAND_GENERAL_FIRMWARE, paramLen: 0, paramData: [0])
 	}
 	
 	func getDataPortState() {
-		if (isDeviceReady() == false) {
-			return
-		}
-		
-		var pkbuf = [UInt8](repeating: 0, count: 20)
-		
-		pkbuf[0] = UInt8((NEBLINA_PACKET_TYPE_COMMAND << 5) | NEBLINA_SUBSYSTEM_GENERAL) // 0x40
-		pkbuf[1] = 0	// Data len
-		pkbuf[2] = 0xFF
-		pkbuf[3] = UInt8(NEBLINA_COMMAND_GENERAL_INTERFACE_STATUS)	// Cmd
-		
-		pkbuf[2] = crc8(pkbuf, Len: Int(pkbuf[1]) + 4)
-		
-		device.writeValue(Data(bytes: pkbuf, count: 4 + Int(pkbuf[1])), for: ctrlChar, type: CBCharacteristicWriteType.withoutResponse)
+		sendCommand(subSys: NEBLINA_SUBSYSTEM_GENERAL, cmd: NEBLINA_COMMAND_GENERAL_INTERFACE_STATUS, paramLen: 0, paramData: [0])
 	}
 	
 	func setDataPort(_ PortIdx : Int, Ctrl : UInt8) {
-		if (isDeviceReady() == false) {
-			return
-		}
-		
-		var pkbuf = [UInt8](repeating: 0, count: 20)
-		
-		pkbuf[0] = UInt8((NEBLINA_PACKET_TYPE_COMMAND << 5) | NEBLINA_SUBSYSTEM_GENERAL) // 0x40
-		pkbuf[1] = 2
-		pkbuf[2] = 0xFF
-		pkbuf[3] = UInt8(NEBLINA_COMMAND_GENERAL_INTERFACE_STATE)	// Cmd
-		
-		// Port = 0 : BLE
-		// Port = 1 : UART
-		pkbuf[4] = UInt8(PortIdx)
-		pkbuf[5] = Ctrl		// 1 - Open, 0 - Close
-		
-		pkbuf[2] = crc8(pkbuf, Len: Int(pkbuf[1]) + 4)
+		var param = [UInt8](repeating: 0, count: 2)
 
-		device.writeValue(Data(bytes: pkbuf, count: 4 + Int(pkbuf[1])), for: ctrlChar, type: CBCharacteristicWriteType.withoutResponse)
+		param[0] = UInt8(PortIdx)
+		param[1] = Ctrl		// 1 - Open, 0 - Close
+		
+		sendCommand(subSys: NEBLINA_SUBSYSTEM_GENERAL, cmd: NEBLINA_COMMAND_GENERAL_INTERFACE_STATE, paramLen: 2, paramData: param)
 	}
-/*
-	func setInterface(_ Interf : Int) {
-		if (isDeviceReady() == false) {
-			return
-		}
-		
-		var pkbuf = [UInt8](repeating: 0, count: 20)
-		
-		pkbuf[0] = UInt8((NEBLINA_PACKET_TYPE_COMMAND << 5) | NEBLINA_SUBSYSTEM_GENERAL) // 0x40
-		pkbuf[1] = 16
-		pkbuf[2] = 0xFF
-		pkbuf[3] = UInt8(NEBLINA_COMMAND_GENERAL_INTERFACE_STATE)	// Cmd
-		
-		// Interf = 0 : BLE
-		// Interf = 1 : UART
-		pkbuf[4] = UInt8(Interf)
-		pkbuf[8] = 0
-		
-		pkbuf[2] = crc8(pkbuf, Len: Int(pkbuf[1]) + 4)
-
-		device.writeValue(Data(bytes: pkbuf, count: 4 + Int(pkbuf[1])), for: ctrlChar, type: CBCharacteristicWriteType.withoutResponse)
-	}
-	*/
 	
 	func getPowerStatus() {
-		if (isDeviceReady() == false) {
-			return
-		}
-		
-		var pkbuf = [UInt8](repeating: 0, count: 20)
-		
-		pkbuf[0] = UInt8((NEBLINA_PACKET_TYPE_COMMAND << 5) | NEBLINA_SUBSYSTEM_GENERAL)
-		pkbuf[1] = 0
-		pkbuf[2] = 0xFF
-		pkbuf[3] = UInt8(NEBLINA_COMMAND_GENERAL_POWER_STATUS)	// Cmd
-		
-		pkbuf[2] = crc8(pkbuf, Len: Int(pkbuf[1]) + 4)
-		
-		device.writeValue(Data(bytes: pkbuf, count: 4 + Int(pkbuf[1])), for: ctrlChar, type: CBCharacteristicWriteType.withoutResponse)
+		sendCommand(subSys: NEBLINA_SUBSYSTEM_GENERAL, cmd: NEBLINA_COMMAND_GENERAL_POWER_STATUS, paramLen: 0, paramData: [0])
 	}
 
+	func getSensorStatus() {
+		sendCommand(subSys: NEBLINA_SUBSYSTEM_GENERAL, cmd: NEBLINA_COMMAND_GENERAL_SENSOR_STATUS, paramLen: 0, paramData: [0])
+	}
+	
 	func disableStreaming() {
-		if (isDeviceReady() == false) {
-			return
-		}
-		
-		var pkbuf = [UInt8](repeating: 0, count: 20)
-		
-		pkbuf[0] = UInt8((NEBLINA_PACKET_TYPE_COMMAND << 5) | NEBLINA_SUBSYSTEM_GENERAL)
-		pkbuf[1] = 0
-		pkbuf[2] = 0xFF
-		pkbuf[3] = UInt8(NEBLINA_COMMAND_GENERAL_DISABLE_STREAMING)	// Cmd
-		
-		pkbuf[2] = crc8(pkbuf, Len: Int(pkbuf[1]) + 4)
-		
-		device.writeValue(Data(bytes: pkbuf, count: 4 + Int(pkbuf[1])), for: ctrlChar, type: CBCharacteristicWriteType.withoutResponse)
+		sendCommand(subSys: NEBLINA_SUBSYSTEM_GENERAL, cmd: NEBLINA_COMMAND_GENERAL_DISABLE_STREAMING, paramLen: 0, paramData: [0])
 	}
 
 	func resetTimeStamp( Delayed : Bool) {
-		if (isDeviceReady() == false) {
-			return
-		}
-		
-		var pkbuf = [UInt8](repeating: 0, count: 20)
-		
-		pkbuf[0] = UInt8((NEBLINA_PACKET_TYPE_COMMAND << 5) | NEBLINA_SUBSYSTEM_GENERAL)
-		pkbuf[1] = 1
-		pkbuf[2] = 0xFF
-		pkbuf[3] = UInt8(NEBLINA_COMMAND_GENERAL_RESET_TIMESTAMP)	// Cmd
+		var param = [UInt8](repeating: 0, count: 1)
 		
 		if Delayed == true {
-			pkbuf[4] = 1
+			param[0] = 1
 		}
 		else {
-			pkbuf[4] = 0
+			param[0] = 0
 		}
-
-		pkbuf[2] = crc8(pkbuf, Len: Int(pkbuf[1]) + 4)
 		
-		device.writeValue(Data(bytes: pkbuf, count: 4 + Int(pkbuf[1])), for: ctrlChar, type: CBCharacteristicWriteType.withoutResponse)
+		sendCommand(subSys: NEBLINA_SUBSYSTEM_GENERAL, cmd: NEBLINA_COMMAND_GENERAL_RESET_TIMESTAMP, paramLen: 1, paramData: param)
 	}
 	
 	func firmwareUpdate() {
-		if (isDeviceReady() == false) {
-			return
-		}
-		
-		var pkbuf = [UInt8](repeating: 0, count: 20)
-		
-		pkbuf[0] = UInt8((NEBLINA_PACKET_TYPE_COMMAND << 5) | NEBLINA_SUBSYSTEM_GENERAL)
-		pkbuf[1] = 0
-		pkbuf[2] = 0xFF
-		pkbuf[3] = UInt8(NEBLINA_COMMAND_GENERAL_FIRMWARE_UPDATE)	// Cmd
-		
-		pkbuf[2] = crc8(pkbuf, Len: Int(pkbuf[1]) + 4)
-		
-		device.writeValue(Data(bytes: pkbuf, count: 4 + Int(pkbuf[1])), for: ctrlChar, type: CBCharacteristicWriteType.withoutResponse)
+		sendCommand(subSys: NEBLINA_SUBSYSTEM_GENERAL, cmd: NEBLINA_COMMAND_GENERAL_FIRMWARE_UPDATE, paramLen: 0, paramData: [0])
 	}
 	
-	// *** EEPROM
-	func eepromRead(_ pageNo : UInt16) {
-		if (isDeviceReady() == false) {
-			return
+	func getDeviceName() {
+		sendCommand(subSys: NEBLINA_SUBSYSTEM_GENERAL, cmd: NEBLINA_COMMAND_GENERAL_DEVICE_NAME_GET, paramLen: 0, paramData: [0])
+	}
+	
+	func setDeviceName(name : String) {
+		let param = [UInt8](name.utf8)
+		
+		var len = param.count
+		if len > Int(NEBLINA_NAME_LENGTH_MAX) {
+			len = Int(NEBLINA_NAME_LENGTH_MAX)
 		}
 		
-		var pkbuf = [UInt8](repeating: 0, count: 20)
-		
-		pkbuf[0] = UInt8((NEBLINA_PACKET_TYPE_COMMAND << 5) | NEBLINA_SUBSYSTEM_EEPROM)
-		pkbuf[1] = 2
-		pkbuf[2] = 0xFF
-		pkbuf[3] = UInt8(NEBLINA_COMMAND_EEPROM_READ) // Cmd
-		
-		pkbuf[4] = UInt8(pageNo & 0xff)
-		pkbuf[5] = UInt8((pageNo >> 8) & 0xff)
-		
-		pkbuf[2] = crc8(pkbuf, Len: Int(pkbuf[1]) + 4)
+		sendCommand(subSys: NEBLINA_SUBSYSTEM_GENERAL, cmd: NEBLINA_COMMAND_GENERAL_DEVICE_NAME_GET, paramLen: len, paramData: param)
+	}
+	
+	// ***
+	// *** EEPROM
+	// ***
+	func eepromRead(_ pageNo : UInt16) {
+		var param = [UInt8](repeating: 0, count: 2)
 
-		device.writeValue(Data(bytes: pkbuf, count: 4 + Int(pkbuf[1])), for: ctrlChar, type: CBCharacteristicWriteType.withoutResponse)
+		param[0] = UInt8(pageNo & 0xff)
+		param[1] = UInt8((pageNo >> 8) & 0xff)
+		
+		sendCommand(subSys: NEBLINA_SUBSYSTEM_EEPROM, cmd: NEBLINA_COMMAND_EEPROM_READ, paramLen: param.count, paramData: param)
 	}
 	
 	func eepromWrite(_ pageNo : UInt16, data : UnsafePointer<UInt8>) {
-		if (isDeviceReady() == false) {
-			return
-		}
+		var param = [UInt8](repeating: 0, count: 10)
 		
-		var pkbuf = [UInt8](repeating: 0, count: 20)
-		
-		pkbuf[0] = UInt8((NEBLINA_PACKET_TYPE_COMMAND << 5) | NEBLINA_SUBSYSTEM_EEPROM)
-		pkbuf[1] = 8
-		pkbuf[2] = 0xFF
-		pkbuf[3] = UInt8(NEBLINA_COMMAND_EEPROM_WRITE) // Cmd
-		
-		pkbuf[4] = UInt8(pageNo & 0xff)
-		pkbuf[5] = UInt8((pageNo >> 8) & 0xff)
-		
-		//for (i, 0 ..< 8, i++) {
-		//	pkbuf[i + 6] = data[i]
-		//}
+		param[0] = UInt8(pageNo & 0xff)
+		param[1] = UInt8((pageNo >> 8) & 0xff)
 		for i in 0..<8 {
-			pkbuf[i + 6] = data[i]
+			param[i + 2] = data[i]
 		}
 		
-		pkbuf[2] = crc8(pkbuf, Len: Int(pkbuf[1]) + 4)
-		device.writeValue(Data(bytes: pkbuf, count: 4 + Int(pkbuf[1])), for: ctrlChar, type: CBCharacteristicWriteType.withoutResponse)
+		sendCommand(subSys: NEBLINA_SUBSYSTEM_EEPROM, cmd: NEBLINA_COMMAND_EEPROM_WRITE, paramLen: param.count, paramData: param)
 	}
 	
 	// *** LED subsystem commands
 	func getLed() {
-		if (isDeviceReady() == false) {
-			return
-		}
-		
-		var pkbuf = [UInt8](repeating: 0, count: 20)
-		
-		pkbuf[0] = UInt8((NEBLINA_PACKET_TYPE_COMMAND << 5) | NEBLINA_SUBSYSTEM_LED)
-		pkbuf[1] = 0	// Data length
-		pkbuf[2] = 0xFF
-		pkbuf[3] = UInt8(NEBLINA_COMMAND_LED_STATUS)	// Cmd
-		
-		pkbuf[2] = crc8(pkbuf, Len: Int(pkbuf[1]) + 4)
-
-		device.writeValue(Data(bytes: pkbuf, count: 4 + Int(pkbuf[1])), for: ctrlChar, type: CBCharacteristicWriteType.withoutResponse)
+		sendCommand(subSys: NEBLINA_SUBSYSTEM_LED, cmd: NEBLINA_COMMAND_LED_STATUS, paramLen: 0, paramData: [0])
 	}
 	
 	func setLed(_ LedNo : UInt8, Value:UInt8) {
-		if (isDeviceReady() == false) {
-			return
-		}
+		var param = [UInt8](repeating: 0, count: 2)
 		
-		var pkbuf = [UInt8](repeating: 0, count: 20)
+		param[0] = LedNo
+		param[1] = Value
 		
-		pkbuf[0] = UInt8((NEBLINA_PACKET_TYPE_COMMAND << 5) | NEBLINA_SUBSYSTEM_LED)
-		pkbuf[1] = 2 //UInt8(sizeof(Fusion_DataPacket_t))
-		pkbuf[2] = 0xFF
-		pkbuf[3] = UInt8(NEBLINA_COMMAND_LED_STATE)	// Cmd
-		
-		// Nb of LED to set
-		pkbuf[4] = LedNo
-		pkbuf[5] = Value
-		
-		pkbuf[2] = crc8(pkbuf, Len: Int(pkbuf[1]) + 4)
-
-		device.writeValue(Data(bytes: pkbuf, count: 4 + Int(pkbuf[1])), for: ctrlChar, type: CBCharacteristicWriteType.withoutResponse)
+		sendCommand(subSys: NEBLINA_SUBSYSTEM_LED, cmd: NEBLINA_COMMAND_LED_STATE, paramLen: param.count, paramData: param)
 	}
 	
 	// *** Power management sybsystem commands
 	func getTemperature() {
-		if (isDeviceReady() == false) {
-			return
-		}
-		
-		var pkbuf = [UInt8](repeating: 0, count: 20)
-		
-		pkbuf[0] = UInt8((NEBLINA_PACKET_TYPE_COMMAND << 5) | NEBLINA_SUBSYSTEM_POWER)
-		pkbuf[1] = 0	// Data length
-		pkbuf[2] = 0xFF
-		pkbuf[3] = UInt8(NEBLINA_COMMAND_POWER_TEMPERATURE)	// Cmd
-		
-		pkbuf[2] = crc8(pkbuf, Len: Int(pkbuf[1]) + 4)
-
-		device.writeValue(Data(bytes: pkbuf, count: 4 + Int(pkbuf[1])), for: ctrlChar, type: CBCharacteristicWriteType.withoutResponse)
+		sendCommand(subSys: NEBLINA_SUBSYSTEM_POWER, cmd: NEBLINA_COMMAND_POWER_TEMPERATURE, paramLen: 0, paramData: [0])
 	}
 	
 	func setBatteryChargeCurrent(_ Current: UInt16) {
-		if (isDeviceReady() == false) {
-			return
-		}
+		var param = [UInt8](repeating: 0, count: 2)
 		
-		var pkbuf = [UInt8](repeating: 0, count: 20)
+		param[0] = UInt8(Current & 0xFF)
+		param[1] = UInt8((Current >> 8) & 0xFF)
 		
-		pkbuf[0] = UInt8((NEBLINA_PACKET_TYPE_COMMAND << 5) | NEBLINA_SUBSYSTEM_POWER)
-		pkbuf[1] = 2	// Data length
-		pkbuf[2] = 0xFF
-		pkbuf[3] = UInt8(NEBLINA_COMMAND_POWER_CHARGE_CURRENT)	// Cmd
-		
-		// Data
-		pkbuf[4] = UInt8(Current & 0xFF)
-		pkbuf[5] = UInt8((Current >> 8) & 0xFF)
-		
-		pkbuf[2] = crc8(pkbuf, Len: Int(pkbuf[1]) + 4)
-
-		device.writeValue(Data(bytes: pkbuf, count: 4 + Int(pkbuf[1])), for: ctrlChar, type: CBCharacteristicWriteType.withoutResponse)
+		sendCommand(subSys: NEBLINA_SUBSYSTEM_POWER, cmd: NEBLINA_COMMAND_POWER_CHARGE_CURRENT, paramLen: param.count, paramData: param)
 	}
 
 	// ***
 	// *** Fusion subsystem commands
 	// ***
-	func setFusionSamplingRate(_ Rate: UInt8) {
-		if (isDeviceReady() == false) {
-			return
-		}
+	func setFusionRate(_ Rate: NeblinaRate_t) {
+		var param = [UInt8](repeating: 0, count: 2)
 		
-		var pkbuf = [UInt8](repeating: 0, count: 20)
+		param[0] = UInt8(Rate.rawValue & 0xFF)
+		param[1] = UInt8((Rate.rawValue >> 8) & 0xFF)
 		
-		pkbuf[0] = UInt8((NEBLINA_PACKET_TYPE_COMMAND << 5) | NEBLINA_SUBSYSTEM_FUSION) //0x41
-		pkbuf[1] = 1 //UInt8(MemoryLayout<NeblinaFusionPacket>.size)
-		pkbuf[2] = 0xFF
-		pkbuf[3] = UInt8(NEBLINA_COMMAND_FUSION_SAMPLING_RATE)	// Cmd
-		pkbuf[4] = Rate
-		
-		pkbuf[2] = crc8(pkbuf, Len: Int(pkbuf[1]) + 4)
-		
-		device.writeValue(Data(bytes: pkbuf, count: 4 + Int(pkbuf[1])), for: ctrlChar, type: CBCharacteristicWriteType.withoutResponse)
+		sendCommand(subSys: NEBLINA_SUBSYSTEM_FUSION, cmd: NEBLINA_COMMAND_FUSION_RATE, paramLen: param.count, paramData: param)
 	}
-	
+
 	func setFusionDownSample(_ Rate: UInt16) {
-		if (isDeviceReady() == false) {
-			return
-		}
+		var param = [UInt8](repeating: 0, count: 2)
 		
-		var pkbuf = [UInt8](repeating: 0, count: 20)
+		param[0] = UInt8(Rate & 0xFF)
+		param[1] = UInt8((Rate >> 8) & 0xFF)
 		
-		pkbuf[0] = UInt8((NEBLINA_PACKET_TYPE_COMMAND << 5) | NEBLINA_SUBSYSTEM_FUSION) //0x41
-		pkbuf[1] = 2 //UInt8(MemoryLayout<NeblinaFusionPacket>.size)
-		pkbuf[2] = 0xFF
-		pkbuf[3] = UInt8(NEBLINA_COMMAND_FUSION_DOWNSAMPLE)	// Cmd
-		pkbuf[4] = UInt8(Rate)
-		pkbuf[5] = UInt8(Rate >> 8)
-		
-		
-		pkbuf[2] = crc8(pkbuf, Len: Int(pkbuf[1]) + 4)
-		
-		device.writeValue(Data(bytes: pkbuf, count: 4 + Int(pkbuf[1])), for: ctrlChar, type: CBCharacteristicWriteType.withoutResponse)
+		sendCommand(subSys: NEBLINA_SUBSYSTEM_FUSION, cmd: NEBLINA_COMMAND_FUSION_DOWNSAMPLE, paramLen: param.count, paramData: param)
 	}
 	
 	func streamMotionState(_ Enable:Bool)
 	{
-		if (isDeviceReady() == false) {
-			return
-		}
-		
-		var pkbuf = [UInt8](repeating: 0, count: 20)
-		
-		pkbuf[0] = UInt8((NEBLINA_PACKET_TYPE_COMMAND << 5) | NEBLINA_SUBSYSTEM_FUSION) //0x41
-		pkbuf[1] = 1//UInt8(MemoryLayout<NeblinaFusionPacket>.size)
-		pkbuf[2] = 0xFF
-		pkbuf[3] = UInt8(NEBLINA_COMMAND_FUSION_MOTION_STATE)	// Cmd
+		var param = [UInt8](repeating: 0, count: 1)
 		
 		if Enable == true
 		{
-			pkbuf[4] = 1
+			param[0] = 1
 		}
 		else
 		{
-			pkbuf[4] = 0
-		}
-		pkbuf[2] = crc8(pkbuf, Len: Int(pkbuf[1]) + 4)
-		
-		device.writeValue(Data(bytes: pkbuf, count: 4 + Int(pkbuf[1])), for: ctrlChar, type: CBCharacteristicWriteType.withoutResponse)
-	}
-	
-	func streamIMUState(_ Enable:Bool)
-	{
-		if (isDeviceReady() == false) {
-			return
+			param[0] = 0
 		}
 		
-		var pkbuf = [UInt8](repeating: 0, count: 20)
-		
-		pkbuf[0] = UInt8((NEBLINA_PACKET_TYPE_COMMAND << 5) | NEBLINA_SUBSYSTEM_FUSION) //0x41
-		pkbuf[1] = 1//UInt8(MemoryLayout<NeblinaFusionPacket>.size)
-		pkbuf[2] = 0xFF
-		pkbuf[3] = UInt8(NEBLINA_COMMAND_FUSION_IMU_STATE)	// Cmd
-		
-		if Enable == true
-		{
-			pkbuf[4] = 1
-		}
-		else
-		{
-			pkbuf[4] = 0
-		}
-		pkbuf[2] = crc8(pkbuf, Len: Int(pkbuf[1]) + 4)
-		
-		device.writeValue(Data(bytes: pkbuf, count: 4 + Int(pkbuf[1])), for: ctrlChar, type: CBCharacteristicWriteType.withoutResponse)
+		sendCommand(subSys: NEBLINA_SUBSYSTEM_FUSION, cmd: NEBLINA_COMMAND_FUSION_MOTION_STATE_STREAM, paramLen: param.count, paramData: param)
 	}
 	
 	func streamQuaternion(_ Enable:Bool)
 	{
-		if (isDeviceReady() == false) {
-			return
-		}
+		var param = [UInt8](repeating: 0, count: 1)
 		
-		var pkbuf = [UInt8](repeating: 0, count: 20)
-		
-		pkbuf[0] = UInt8((NEBLINA_PACKET_TYPE_COMMAND << 5) | NEBLINA_SUBSYSTEM_FUSION) //0x41
-		pkbuf[1] = 1//UInt8(MemoryLayout<NeblinaFusionPacket>.size)
-		pkbuf[2] = 0xFF
-		pkbuf[3] = UInt8(NEBLINA_COMMAND_FUSION_QUATERNION_STATE)	// Cmd
-		
-		if (Enable == true)
+		if Enable == true
 		{
-			pkbuf[4] = 1
+			param[0] = 1
 		}
 		else
 		{
-			pkbuf[4] = 0
+			param[0] = 0
 		}
 		
-		pkbuf[2] = crc8(pkbuf, Len: Int(pkbuf[1]) + 4)
-		
-		device.writeValue(Data(bytes: pkbuf, count: 4 + Int(pkbuf[1])), for: ctrlChar, type: CBCharacteristicWriteType.withoutResponse)
+		sendCommand(subSys: NEBLINA_SUBSYSTEM_FUSION, cmd: NEBLINA_COMMAND_FUSION_QUATERNION_STREAM, paramLen: param.count, paramData: param)
 	}
 	
 	func streamEulerAngle(_ Enable:Bool)
 	{
-		if (isDeviceReady() == false) {
-			return
-		}
+		var param = [UInt8](repeating: 0, count: 1)
 		
-		var pkbuf = [UInt8](repeating: 0, count: 20)
-		
-		pkbuf[0] = UInt8((NEBLINA_PACKET_TYPE_COMMAND << 5) | NEBLINA_SUBSYSTEM_FUSION) //0x41
-		pkbuf[1] = 1 //UInt8(MemoryLayout<NeblinaFusionPacket>.size)
-		pkbuf[2] = 0xFF
-		pkbuf[3] = UInt8(NEBLINA_COMMAND_FUSION_EULER_ANGLE_STATE)// Cmd
-		
-		if (Enable == true)
+		if Enable == true
 		{
-			pkbuf[4] = 1
+			param[0] = 1
 		}
 		else
 		{
-			pkbuf[4] = 0
+			param[0] = 0
 		}
 		
-		pkbuf[2] = crc8(pkbuf, Len: Int(pkbuf[1]) + 4)
-		
-		device.writeValue(Data(bytes: pkbuf, count: 4 + Int(pkbuf[1])), for: ctrlChar, type: CBCharacteristicWriteType.withoutResponse)
+		sendCommand(subSys: NEBLINA_SUBSYSTEM_FUSION, cmd: NEBLINA_COMMAND_FUSION_EULER_ANGLE_STREAM, paramLen: param.count, paramData: param)
 	}
 	
 	func streamExternalForce(_ Enable:Bool)
 	{
-		if (isDeviceReady() == false) {
-			return
-		}
+		var param = [UInt8](repeating: 0, count: 1)
 		
-		var pkbuf = [UInt8](repeating: 0, count: 20)
-		
-		pkbuf[0] = UInt8((NEBLINA_PACKET_TYPE_COMMAND << 5) | NEBLINA_SUBSYSTEM_FUSION) //0x41
-		pkbuf[1] = 1 //UInt8(MemoryLayout<NeblinaFusionPacket>.size)
-		pkbuf[2] = 0xFF
-		pkbuf[3] = UInt8(NEBLINA_COMMAND_FUSION_EXTERNAL_FORCE_STATE)	// Cmd
-		
-		if (Enable == true)
+		if Enable == true
 		{
-			pkbuf[4] = 1
+			param[0] = 1
 		}
 		else
 		{
-			pkbuf[4] = 0
+			param[0] = 0
 		}
-		pkbuf[2] = crc8(pkbuf, Len: Int(pkbuf[1]) + 4)
 		
-		device.writeValue(Data(bytes: pkbuf, count: 4 + Int(pkbuf[1])), for: ctrlChar, type: CBCharacteristicWriteType.withoutResponse)
+		sendCommand(subSys: NEBLINA_SUBSYSTEM_FUSION, cmd: NEBLINA_COMMAND_FUSION_EXTERNAL_FORCE_STREAM, paramLen: param.count, paramData: param)
 	}
 
 	func setFusionType(_ Mode:UInt8) {
-		if (isDeviceReady() == false) {
-			return
-		}
+		var param = [UInt8](repeating: 0, count: 1)
 		
-		var pkbuf = [UInt8](repeating: 0, count: 20)
+		param[0] = Mode
 		
-		pkbuf[0] = UInt8((NEBLINA_PACKET_TYPE_COMMAND << 5) | NEBLINA_SUBSYSTEM_FUSION) //0x41
-		pkbuf[1] = 1 //UInt8(MemoryLayout<NeblinaFusionPacket>.size)
-		pkbuf[2] = 0xFF
-		pkbuf[3] = UInt8(NEBLINA_COMMAND_FUSION_FUSION_TYPE)	// Cmd
-		
-		// Data
-		pkbuf[4] = Mode
-		
-		pkbuf[2] = crc8(pkbuf, Len: Int(pkbuf[1]) + 4)
-
-		device.writeValue(Data(bytes: pkbuf, count: 4 + Int(pkbuf[1])), for: ctrlChar, type: CBCharacteristicWriteType.withoutResponse)
+		sendCommand(subSys: NEBLINA_SUBSYSTEM_FUSION, cmd: NEBLINA_COMMAND_FUSION_FUSION_TYPE, paramLen: param.count, paramData: param)
 	}
 	
 	func recordTrajectory(_ Enable:Bool)
 	{
-		if (isDeviceReady() == false) {
-			return
-		}
-		
-		var pkbuf = [UInt8](repeating: 0, count: 20)
-		
-		pkbuf[0] = UInt8((NEBLINA_PACKET_TYPE_COMMAND << 5) | NEBLINA_SUBSYSTEM_FUSION) //0x41
-		pkbuf[1] = 1 //UInt8(MemoryLayout<NeblinaFusionPacket>.size)
-		pkbuf[2] = 0xFF
-		pkbuf[3] = UInt8(NEBLINA_COMMAND_FUSION_TRAJECTORY_RECORD)	// Cmd
+		var param = [UInt8](repeating: 0, count: 1)
 		
 		if Enable == true
 		{
-			pkbuf[4] = 1
+			param[0] = 1
 		}
 		else
 		{
-			pkbuf[4] = 0
+			param[0] = 0
 		}
-		pkbuf[2] = crc8(pkbuf, Len: Int(pkbuf[1]) + 4)
 		
-		device.writeValue(Data(bytes: pkbuf, count: 4 + Int(pkbuf[1])), for: ctrlChar, type: CBCharacteristicWriteType.withoutResponse)
+		sendCommand(subSys: NEBLINA_SUBSYSTEM_FUSION, cmd: NEBLINA_COMMAND_FUSION_TRAJECTORY_RECORD, paramLen: param.count, paramData: param)
 	}
 	
 	func streamTrajectoryInfo(_ Enable:Bool)
 	{
-		if (isDeviceReady() == false) {
-			return
-		}
-		
-		var pkbuf = [UInt8](repeating: 0, count: 20)
-		
-		pkbuf[0] = UInt8((NEBLINA_PACKET_TYPE_COMMAND << 5) | NEBLINA_SUBSYSTEM_FUSION) //0x41
-		pkbuf[1] = 1 //UInt8(MemoryLayout<NeblinaFusionPacket>.size)
-		pkbuf[2] = 0xFF
-		pkbuf[3] = UInt8(NEBLINA_COMMAND_FUSION_TRAJECTORY_INFO_STATE)	// Cmd
+		var param = [UInt8](repeating: 0, count: 1)
 		
 		if Enable == true
 		{
-			pkbuf[4] = 1
+			param[0] = 1
 		}
 		else
 		{
-			pkbuf[4] = 0
+			param[0] = 0
 		}
-		pkbuf[2] = crc8(pkbuf, Len: Int(pkbuf[1]) + 4)
 		
-		device.writeValue(Data(bytes: pkbuf, count: 4 + Int(pkbuf[1])), for: ctrlChar, type: CBCharacteristicWriteType.withoutResponse)
+		sendCommand(subSys: NEBLINA_SUBSYSTEM_FUSION, cmd: NEBLINA_COMMAND_FUSION_TRAJECTORY_INFO_STREAM, paramLen: param.count, paramData: param)
 	}
 	
 	func streamPedometer(_ Enable:Bool)
 	{
-		if (isDeviceReady() == false) {
-			return
-		}
-		
-		var pkbuf = [UInt8](repeating: 0, count: 20)
-		
-		pkbuf[0] = UInt8((NEBLINA_PACKET_TYPE_COMMAND << 5) | NEBLINA_SUBSYSTEM_FUSION) //0x41
-		pkbuf[1] = 1 //UInt8(MemoryLayout<NeblinaFusionPacket>.size)
-		pkbuf[2] = 0xFF
-		pkbuf[3] = UInt8(NEBLINA_COMMAND_FUSION_PEDOMETER_STATE)// Cmd
+		var param = [UInt8](repeating: 0, count: 1)
 		
 		if Enable == true
 		{
-			pkbuf[4] = 1
+			param[0] = 1
 		}
 		else
 		{
-			pkbuf[4] = 0
+			param[0] = 0
 		}
-		pkbuf[2] = crc8(pkbuf, Len: Int(pkbuf[1]) + 4)
 		
-		device.writeValue(Data(bytes: pkbuf, count: 4 + Int(pkbuf[1])), for: ctrlChar, type: CBCharacteristicWriteType.withoutResponse)
+		sendCommand(subSys: NEBLINA_SUBSYSTEM_FUSION, cmd: NEBLINA_COMMAND_FUSION_PEDOMETER_STREAM, paramLen: param.count, paramData: param)
 	}
-	
-	func streamMAG(_ Enable:Bool)
-	{
-		if (isDeviceReady() == false) {
-			return
-		}
-		
-		var pkbuf = [UInt8](repeating: 0, count: 20)
-		
-		pkbuf[0] = UInt8((NEBLINA_PACKET_TYPE_COMMAND << 5) | NEBLINA_SUBSYSTEM_FUSION) //0x41
-		pkbuf[1] = 1 //UInt8(MemoryLayout<NeblinaFusionPacket>.size)
-		pkbuf[2] = 0xFF
-		pkbuf[3] = UInt8(NEBLINA_COMMAND_FUSION_MAG_STATE)	// Cmd
-		
-		if Enable == true
-		{
-			pkbuf[4] = 1
-		}
-		else
-		{
-			pkbuf[4] = 0
-		}
-		pkbuf[2] = crc8(pkbuf, Len: Int(pkbuf[1]) + 4)
-		
-		device.writeValue(Data(bytes: pkbuf, count: 4 + Int(pkbuf[1])), for: ctrlChar, type: CBCharacteristicWriteType.withoutResponse)
-	}
-	
+
 	func streamSittingStanding(_ Enable:Bool) {
-		if (isDeviceReady() == false) {
-			return
-		}
-		
-		var pkbuf = [UInt8](repeating: 0, count: 20)
-		
-		pkbuf[0] = UInt8((NEBLINA_PACKET_TYPE_COMMAND << 5) | NEBLINA_SUBSYSTEM_FUSION) //0x41
-		pkbuf[1] = 1 //UInt8(MemoryLayout<NeblinaFusionPacket>.size)
-		pkbuf[2] = 0xFF
-		pkbuf[3] = UInt8(NEBLINA_COMMAND_FUSION_SITTING_STANDING_STATE)	// Cmd
+		var param = [UInt8](repeating: 0, count: 1)
 		
 		if Enable == true
 		{
-			pkbuf[4] = 1
+			param[0] = 1
 		}
 		else
 		{
-			pkbuf[4] = 0
+			param[0] = 0
 		}
-		pkbuf[2] = crc8(pkbuf, Len: Int(pkbuf[1]) + 4)
 		
-		device.writeValue(Data(bytes: pkbuf, count: 4 + Int(pkbuf[1])), for: ctrlChar, type: CBCharacteristicWriteType.withoutResponse)
+		sendCommand(subSys: NEBLINA_SUBSYSTEM_FUSION, cmd: NEBLINA_COMMAND_FUSION_SITTING_STANDING_STREAM, paramLen: param.count, paramData: param)
 	}
 	
 	func setLockHeadingReference(_ Enable:Bool) {
-		if (isDeviceReady() == false) {
-			return
-		}
-		
-		var pkbuf = [UInt8](repeating: 0, count: 20)
-		
-		pkbuf[0] = UInt8((NEBLINA_PACKET_TYPE_COMMAND << 5) | NEBLINA_SUBSYSTEM_FUSION) //0x41
-		pkbuf[1] = 0//UInt8(MemoryLayout<NeblinaFusionPacket>.size)
-		pkbuf[2] = 0xFF
-		pkbuf[3] = UInt8(NEBLINA_COMMAND_FUSION_LOCK_HEADING_REFERENCE)	// Cmd
-		
-		pkbuf[2] = crc8(pkbuf, Len: Int(pkbuf[1]) + 4)
-
-		device.writeValue(Data(bytes: pkbuf, count: 4 + Int(pkbuf[1])), for: ctrlChar, type: CBCharacteristicWriteType.withoutResponse)
-	}
-	
-	func setAccelerometerRange(_ Mode: UInt8) {
-		if (isDeviceReady() == false) {
-			return
-		}
-		
-		var pkbuf = [UInt8](repeating: 0, count: 20)
-		
-		pkbuf[0] = UInt8((NEBLINA_PACKET_TYPE_COMMAND << 5) | NEBLINA_SUBSYSTEM_FUSION) //0x41
-		pkbuf[1] = 1 //UInt8(MemoryLayout<NeblinaFusionPacket>.size)
-		pkbuf[2] = 0xFF
-		pkbuf[3] = UInt8(NEBLINA_COMMAND_FUSION_ACCELEROMETER_RANGE)	// Cmd
-		pkbuf[4] = Mode
-		
-		pkbuf[2] = crc8(pkbuf, Len: Int(pkbuf[1]) + 4)
-		
-		device.writeValue(Data(bytes: pkbuf, count: 4 + Int(pkbuf[1])), for: ctrlChar, type: CBCharacteristicWriteType.withoutResponse)
+		sendCommand(subSys: NEBLINA_SUBSYSTEM_FUSION, cmd: NEBLINA_COMMAND_FUSION_LOCK_HEADING_REFERENCE, paramLen: 0, paramData: [0])
 	}
 	
 	func streamFingerGesture(_ Enable:Bool) {
-		if (isDeviceReady() == false) {
-			return
-		}
-		
-		var pkbuf = [UInt8](repeating: 0, count: 20)
-		
-		pkbuf[0] = UInt8((NEBLINA_PACKET_TYPE_COMMAND << 5) | NEBLINA_SUBSYSTEM_FUSION) //0x41
-		pkbuf[1] = 1 //UInt8(MemoryLayout<NeblinaFusionPacket>.size)
-		pkbuf[2] = 0xFF
-		pkbuf[3] = UInt8(NEBLINA_COMMAND_FUSION_FINGER_GESTURE_STATE)	// Cmd
+		var param = [UInt8](repeating: 0, count: 1)
 		
 		if Enable == true
 		{
-			pkbuf[4] = 1
+			param[0] = 1
 		}
 		else
 		{
-			pkbuf[4] = 0
+			param[0] = 0
 		}
-		pkbuf[2] = crc8(pkbuf, Len: Int(pkbuf[1]) + 4)
 		
-		device.writeValue(Data(bytes: pkbuf, count: 4 + Int(pkbuf[1])), for: ctrlChar, type: CBCharacteristicWriteType.withoutResponse)
+		sendCommand(subSys: NEBLINA_SUBSYSTEM_FUSION, cmd: NEBLINA_COMMAND_FUSION_FINGER_GESTURE_STREAM, paramLen: param.count, paramData: param)
 	}
 	
 	func streamRotationInfo(_ Enable:Bool) {
-		if (isDeviceReady() == false) {
-			return
-		}
-		
-		var pkbuf = [UInt8](repeating: 0, count: 20)
-		
-		pkbuf[0] = UInt8((NEBLINA_PACKET_TYPE_COMMAND << 5) | NEBLINA_SUBSYSTEM_FUSION) //0x41
-		pkbuf[1] = 1//UInt8(MemoryLayout<NeblinaFusionPacket>.size)
-		pkbuf[2] = 0xFF
-		pkbuf[3] = UInt8(NEBLINA_COMMAND_FUSION_ROTATION_STATE)	// Cmd
+		var param = [UInt8](repeating: 0, count: 1)
 		
 		if Enable == true
 		{
-			pkbuf[4] = 1
+			param[0] = 1
 		}
 		else
 		{
-			pkbuf[4] = 0
+			param[0] = 0
 		}
-		pkbuf[2] = crc8(pkbuf, Len: Int(pkbuf[1]) + 4)
 		
-		device.writeValue(Data(bytes: pkbuf, count: 4 + Int(pkbuf[1])), for: ctrlChar, type: CBCharacteristicWriteType.withoutResponse)
+		sendCommand(subSys: NEBLINA_SUBSYSTEM_FUSION, cmd: NEBLINA_COMMAND_FUSION_ROTATION_INFO_STREAM, paramLen: param.count, paramData: param)
 	}
 	
-	func calibrateForwardPosition() {
-		if (isDeviceReady() == false) {
-			return
+	func externalHeadingCorrection(yaw : Int16, error : UInt16 ) {
+		var param = [UInt8](repeating: 0, count: 4)
+		
+		param[0] = UInt8(yaw & 0xFF)
+		param[1] = UInt8((yaw >> 8) & 0xFF)
+		param[2] = UInt8(error & 0xFF)
+		param[3] = UInt8((error >> 8) & 0xFF)
+		
+		sendCommand(subSys: NEBLINA_SUBSYSTEM_FUSION, cmd: NEBLINA_COMMAND_FUSION_EXTERNAL_HEADING_CORRECTION, paramLen: param.count, paramData: param)
+	}
+	
+	func resetAnalysis() {
+		sendCommand(subSys: NEBLINA_SUBSYSTEM_FUSION, cmd: NEBLINA_COMMAND_FUSION_ANALYSIS_RESET, paramLen: 0, paramData: [0])
+	}
+
+	func calibrateAnalysis() {
+		sendCommand(subSys: NEBLINA_SUBSYSTEM_FUSION, cmd: NEBLINA_COMMAND_FUSION_ANALYSIS_CALIBRATE, paramLen: 0, paramData: [0])
+	}
+	
+	func createPoseAnalysis(id : UInt8, qtf : [Int16]) {
+		var param = [UInt8](repeating: 0, count: 2 + 8)
+		
+		param[0] = UInt8(id & 0xFF)
+		
+		for i in 0..<4 {
+			param[1 + (i << 1)] = UInt8(qtf[i] & 0xFF)
+			param[2 + (i << 1)] = UInt8((qtf[i] >> 8) & 0xFF)
 		}
 		
-		var pkbuf = [UInt8](repeating: 0, count: 20)
+		sendCommand(subSys: NEBLINA_SUBSYSTEM_FUSION, cmd: NEBLINA_COMMAND_FUSION_ANALYSIS_CREATE_POSE, paramLen: param.count, paramData: param)
+	}
+	
+	func setActivePoseAnalysis(id : UInt8) {
+		var param = [UInt8](repeating: 0, count: 1)
 		
-		pkbuf[0] = UInt8((NEBLINA_PACKET_TYPE_COMMAND << 5) | NEBLINA_SUBSYSTEM_FUSION) //0x41
-		pkbuf[1] = 0
-		pkbuf[2] = 0xFF
-		pkbuf[3] = UInt8(NEBLINA_COMMAND_FUSION_CALIBRATE_FORWARD_POSITION)	// Cmd
+		param[0] = id
 		
-		pkbuf[2] = crc8(pkbuf, Len: Int(pkbuf[1]) + 4)
+		sendCommand(subSys: NEBLINA_SUBSYSTEM_FUSION, cmd: NEBLINA_COMMAND_FUSION_ANALYSIS_SET_ACTIVE_POSE, paramLen: param.count, paramData: param)
+	}
+
+	func getActivePoseAnalysis() {
+		sendCommand(subSys: NEBLINA_SUBSYSTEM_FUSION, cmd: NEBLINA_COMMAND_FUSION_ANALYSIS_GET_ACTIVE_POSE, paramLen: 0, paramData: [0])
+	}
+
+	func streamAnalysis(_ Enable:Bool) {
+		var param = [UInt8](repeating: 0, count: 1)
 		
-		device.writeValue(Data(bytes: pkbuf, count: 4 + Int(pkbuf[1])), for: ctrlChar, type: CBCharacteristicWriteType.withoutResponse)
+		if Enable == true
+		{
+			param[0] = 1
+		}
+		else
+		{
+			param[0] = 0
+		}
+		
+		sendCommand(subSys: NEBLINA_SUBSYSTEM_FUSION, cmd: NEBLINA_COMMAND_FUSION_ANALYSIS_STREAM, paramLen: param.count, paramData: param)
+	}
+	
+	func getPoseAnalysisInfo(_ id: UInt8) {
+		var param = [UInt8](repeating: 0, count: 1)
+		
+		param[0] = id
+		
+		sendCommand(subSys: NEBLINA_SUBSYSTEM_FUSION, cmd: NEBLINA_COMMAND_FUSION_ANALYSIS_POSE_INFO, paramLen: param.count, paramData: param)
+	}
+
+	func calibrateForwardPosition() {
+		sendCommand(subSys: NEBLINA_SUBSYSTEM_FUSION, cmd: NEBLINA_COMMAND_FUSION_CALIBRATE_FORWARD_POSITION, paramLen: 0, paramData: [0])
 	}
 	
 	func calibrateDownPosition() {
-		if (isDeviceReady() == false) {
-			return
-		}
-		
-		var pkbuf = [UInt8](repeating: 0, count: 20)
-		
-		pkbuf[0] = UInt8((NEBLINA_PACKET_TYPE_COMMAND << 5) | NEBLINA_SUBSYSTEM_FUSION) //0x41
-		pkbuf[1] = 0
-		pkbuf[2] = 0xFF
-		pkbuf[3] = UInt8(NEBLINA_COMMAND_FUSION_CALIBRATE_DOWN_POSITION)	// Cmd
-		
-		pkbuf[2] = crc8(pkbuf, Len: Int(pkbuf[1]) + 4)
-		
-		device.writeValue(Data(bytes: pkbuf, count: 4 + Int(pkbuf[1])), for: ctrlChar, type: CBCharacteristicWriteType.withoutResponse)
+		sendCommand(subSys: NEBLINA_SUBSYSTEM_FUSION, cmd: NEBLINA_COMMAND_FUSION_CALIBRATE_DOWN_POSITION, paramLen: 0, paramData: [0])
 	}
 	
-	// *** Storage subsystem commands
-	func getSessionCount() {
-		if (isDeviceReady() == false) {
-			return
+	func streamMotionDirection(_ Enable:Bool) {
+		var param = [UInt8](repeating: 0, count: 1)
+		
+		if Enable == true
+		{
+			param[0] = 1
+		}
+		else
+		{
+			param[0] = 0
 		}
 		
-		var pkbuf = [UInt8](repeating: 0, count: 20)
-		
-		pkbuf[0] = UInt8((NEBLINA_PACKET_TYPE_COMMAND << 5) | NEBLINA_SUBSYSTEM_RECORDER)
-		pkbuf[1] = 16
-		pkbuf[2] = 0xFF
-		pkbuf[3] = UInt8(NEBLINA_COMMAND_RECORDER_SESSION_COUNT) // Cmd
-		
-		pkbuf[2] = crc8(pkbuf, Len: Int(pkbuf[1]) + 4)
+		sendCommand(subSys: NEBLINA_SUBSYSTEM_FUSION, cmd: NEBLINA_COMMAND_FUSION_MOTION_DIRECTION_STREAM, paramLen: param.count, paramData: param)
+	}
 
-		device.writeValue(Data(bytes: pkbuf, count: 4 + Int(pkbuf[1])), for: ctrlChar, type: CBCharacteristicWriteType.withoutResponse)
+	// ***
+	// *** Storage subsystem commands
+	// ***
+	func getSessionCount() {
+		sendCommand(subSys: NEBLINA_SUBSYSTEM_RECORDER, cmd: NEBLINA_COMMAND_RECORDER_SESSION_COUNT, paramLen: 0, paramData: [0])
 	}
 	
 	func getSessionInfo(_ sessionId : UInt16) {
-		if (isDeviceReady() == false) {
-			return
-		}
+		var param = [UInt8](repeating: 0, count: 2)
 		
-		var pkbuf = [UInt8](repeating: 0, count: 20)
+		param[0] = UInt8(sessionId & 0xFF)
+		param[1] = UInt8((sessionId >> 8) & 0xFF)
 		
-		pkbuf[0] = UInt8((NEBLINA_PACKET_TYPE_COMMAND << 5) | NEBLINA_SUBSYSTEM_RECORDER)
-		pkbuf[1] = 16
-		pkbuf[2] = 0xFF
-		pkbuf[3] = UInt8(NEBLINA_COMMAND_RECORDER_SESSION_INFO) // Cmd
-		
-		pkbuf[8] = UInt8(sessionId & 0xff)
-		pkbuf[9] = UInt8((sessionId >> 8) & 0xff)
-		
-		pkbuf[2] = crc8(pkbuf, Len: Int(pkbuf[1]) + 4)
-
-		device.writeValue(Data(bytes: pkbuf, count: 4 + Int(pkbuf[1])), for: ctrlChar, type: CBCharacteristicWriteType.withoutResponse)
+		sendCommand(subSys: NEBLINA_SUBSYSTEM_RECORDER, cmd: NEBLINA_COMMAND_RECORDER_SESSION_INFO, paramLen: param.count, paramData: param)
 	}
 	
 	func eraseStorage(_ quickErase:Bool) {
-		if (isDeviceReady() == false) {
-			return
-		}
-		
-		var pkbuf = [UInt8](repeating: 0, count: 20)
-		
-		pkbuf[0] = UInt8((NEBLINA_PACKET_TYPE_COMMAND << 5) | NEBLINA_SUBSYSTEM_RECORDER) //0x41
-		pkbuf[1] = 1
-		pkbuf[2] = 0xFF
-		pkbuf[3] = UInt8(NEBLINA_COMMAND_RECORDER_ERASE_ALL) // Cmd
+		var param = [UInt8](repeating: 0, count: 1)
 		
 		if quickErase == true
 		{
-			pkbuf[4] = 1
+			param[0] = 1
 		}
 		else
 		{
-			pkbuf[4] = 0
+			param[0] = 0
 		}
-		pkbuf[2] = crc8(pkbuf, Len: Int(pkbuf[1]) + 4)
-print("erase storage sent")
-		device.writeValue(Data(bytes: pkbuf, count: 4 + Int(pkbuf[1])), for: ctrlChar, type: CBCharacteristicWriteType.withoutResponse)
-		
+		sendCommand(subSys: NEBLINA_SUBSYSTEM_RECORDER, cmd: NEBLINA_COMMAND_RECORDER_ERASE_ALL, paramLen: param.count, paramData: param)
+
 	}
 	
 	func sessionPlayback(_ Enable:Bool, sessionId : UInt16) {
-		if (isDeviceReady() == false) {
-			return
-		}
-		
-		var pkbuf = [UInt8](repeating: 0, count: 20)
-		
-		pkbuf[0] = UInt8((NEBLINA_PACKET_TYPE_COMMAND << 5) | NEBLINA_SUBSYSTEM_RECORDER)
-		pkbuf[1] = 3
-		pkbuf[2] = 0xFF
-		pkbuf[3] = UInt8(NEBLINA_COMMAND_RECORDER_PLAYBACK) // Cmd
+		var param = [UInt8](repeating: 0, count: 3)
 		
 		if Enable == true
 		{
-			pkbuf[4] = 1
+			param[0] = 1
 		}
 		else
 		{
-			pkbuf[4] = 0
+			param[0] = 0
 		}
 		
-		pkbuf[5] = UInt8(sessionId & 0xff)
-		pkbuf[6] = UInt8((sessionId >> 8) & 0xff)
-		
-		pkbuf[2] = crc8(pkbuf, Len: Int(pkbuf[1]) + 4)
+		param[1] = UInt8(sessionId & 0xff)
+		param[2] = UInt8((sessionId >> 8) & 0xff)
 
-		device.writeValue(Data(bytes: pkbuf, count: 4 + Int(pkbuf[1])), for: ctrlChar, type: CBCharacteristicWriteType.withoutResponse)
+		sendCommand(subSys: NEBLINA_SUBSYSTEM_RECORDER, cmd: NEBLINA_COMMAND_RECORDER_PLAYBACK, paramLen: param.count, paramData: param)
 	}
 	
 	func sessionRecord(_ Enable:Bool) {
-		if (isDeviceReady() == false) {
-			return
-		}
-		
-		var pkbuf = [UInt8](repeating: 0, count: 20)
-		
-		pkbuf[0] = UInt8((NEBLINA_PACKET_TYPE_COMMAND << 5) | NEBLINA_SUBSYSTEM_RECORDER) //0x41
-		pkbuf[1] = 1
-		pkbuf[2] = 0xFF
-		pkbuf[3] = UInt8(NEBLINA_COMMAND_RECORDER_RECORD)	// Cmd
+		var param = [UInt8](repeating: 0, count: 1)
 		
 		if Enable == true
 		{
-			pkbuf[4] = 1
+			param[0] = 1
 		}
 		else
 		{
-			pkbuf[4] = 0
+			param[0] = 0
 		}
-		pkbuf[2] = crc8(pkbuf, Len: Int(pkbuf[1]) + 4)
-
-		device.writeValue(Data(bytes: pkbuf, count: 4 + Int(pkbuf[1])), for: ctrlChar, type: CBCharacteristicWriteType.withoutResponse)
+		
+		sendCommand(subSys: NEBLINA_SUBSYSTEM_RECORDER, cmd: NEBLINA_COMMAND_RECORDER_RECORD, paramLen: param.count, paramData: param)
 	}
 	
 	func sessionRead(_ SessionId:UInt16, Len:UInt16, Offset:UInt32) {
-		if (isDeviceReady() == false) {
-			return
-		}
-		
-		var pkbuf = [UInt8](repeating: 0, count: 20)
-		
-		pkbuf[0] = UInt8((NEBLINA_PACKET_TYPE_COMMAND << 5) | NEBLINA_SUBSYSTEM_RECORDER) //0x41
-		pkbuf[1] = 16
-		pkbuf[2] = 0xFF
-		pkbuf[3] = UInt8(NEBLINA_COMMAND_RECORDER_SESSION_READ)	// Cmd
+		var param = [UInt8](repeating: 0, count: 8)
 
 		// Command parameter
-		pkbuf[4] = UInt8(SessionId & 0xFF)
-		pkbuf[5] = UInt8((SessionId >> 8) & 0xFF)
-		pkbuf[6] = UInt8(Len & 0xFF)
-		pkbuf[7] = UInt8((Len >> 8) & 0xFF)
-		pkbuf[8] = UInt8(Offset & 0xFF)
-		pkbuf[9] = UInt8((Offset >> 8) & 0xFF)
-		pkbuf[10] = UInt8((Offset >> 16) & 0xFF)
-		pkbuf[11] = UInt8((Offset >> 24) & 0xFF)
+		param[0] = UInt8(SessionId & 0xFF)
+		param[1] = UInt8((SessionId >> 8) & 0xFF)
+		param[2] = UInt8(Len & 0xFF)
+		param[3] = UInt8((Len >> 8) & 0xFF)
+		param[4] = UInt8(Offset & 0xFF)
+		param[5] = UInt8((Offset >> 8) & 0xFF)
+		param[6] = UInt8((Offset >> 16) & 0xFF)
+		param[7] = UInt8((Offset >> 24) & 0xFF)
 		
-		pkbuf[2] = crc8(pkbuf, Len: Int(pkbuf[1]) + 4)
-
-		device.writeValue(Data(bytes: pkbuf, count: 4 + Int(pkbuf[1])), for: ctrlChar, type: CBCharacteristicWriteType.withoutResponse)
+		sendCommand(subSys: NEBLINA_SUBSYSTEM_RECORDER, cmd: NEBLINA_COMMAND_RECORDER_SESSION_READ, paramLen: param.count, paramData: param)
 	}
 	
 	func sessionDownload(_ Start : Bool, SessionId:UInt16, Len:UInt16, Offset:UInt32) {
-		if (isDeviceReady() == false) {
-			return
-		}
-		
-		var pkbuf = [UInt8](repeating: 0, count: 20)
-		
-		pkbuf[0] = UInt8((NEBLINA_PACKET_TYPE_COMMAND << 5) | NEBLINA_SUBSYSTEM_RECORDER) //0x41
-		pkbuf[1] = 13
-		pkbuf[2] = 0xFF
-		pkbuf[3] = UInt8(NEBLINA_COMMAND_RECORDER_SESSION_DOWNLOAD)	// Cmd
-		
+		var param = [UInt8](repeating: 0, count: 9)
+
 		// Command parameter
 		if Start == true {
-			pkbuf[4] = 1
+			param[0] = 1
 		}
 		else {
-			pkbuf[4] = 0
+			param[0] = 0
 		}
-		pkbuf[5] = UInt8(SessionId & 0xFF)
-		pkbuf[6] = UInt8((SessionId >> 8) & 0xFF)
-		pkbuf[7] = UInt8(Len & 0xFF)
-		pkbuf[8] = UInt8((Len >> 8) & 0xFF)
-		pkbuf[9] = UInt8(Offset & 0xFF)
-		pkbuf[10] = UInt8((Offset >> 8) & 0xFF)
-		pkbuf[11] = UInt8((Offset >> 16) & 0xFF)
-		pkbuf[12] = UInt8((Offset >> 24) & 0xFF)
+		param[1] = UInt8(SessionId & 0xFF)
+		param[2] = UInt8((SessionId >> 8) & 0xFF)
+		param[3] = UInt8(Len & 0xFF)
+		param[4] = UInt8((Len >> 8) & 0xFF)
+		param[5] = UInt8(Offset & 0xFF)
+		param[6] = UInt8((Offset >> 8) & 0xFF)
+		param[7] = UInt8((Offset >> 16) & 0xFF)
+		param[8] = UInt8((Offset >> 24) & 0xFF)
 		
-		pkbuf[2] = crc8(pkbuf, Len: Int(pkbuf[1]) + 4)
-		
-		device.writeValue(Data(bytes: pkbuf, count: 4 + Int(pkbuf[1])), for: ctrlChar, type: CBCharacteristicWriteType.withoutResponse)
+		sendCommand(subSys: NEBLINA_SUBSYSTEM_RECORDER, cmd: NEBLINA_COMMAND_RECORDER_SESSION_DOWNLOAD, paramLen: param.count, paramData: param)
 	}
 	
 	// ***
 	// *** Sensor subsystem commands
 	// ***
-	func streamAccelSensorData(_ Enable: Bool) {
-		if (isDeviceReady() == false) {
-			return
-		}
+	func sensorSetDownsample(stream : UInt16, factor : UInt16) {
+		var param = [UInt8](repeating: 0, count: 4)
 		
-		var pkbuf = [UInt8](repeating: 0, count: 20)
+		param[0] = UInt8(stream & 0xFF)
+		param[1] = UInt8(stream >> 8)
+		param[2] = UInt8(factor & 0xFF)
+		param[3] = UInt8(factor >> 8)
 		
-		pkbuf[0] = UInt8((NEBLINA_PACKET_TYPE_COMMAND << 5) | NEBLINA_SUBSYSTEM_SENSOR)
-		pkbuf[1] = 1	// Length
-		pkbuf[2] = 0xFF
-		pkbuf[3] = UInt8(NEBLINA_COMMAND_SENSOR_ACCELEROMETER)	// Cmd
-		if (Enable == true)
-		{
-			pkbuf[4] = 1
-		}
-		else
-		{
-			pkbuf[4] = 0
-		}
-		
-		pkbuf[2] = crc8(pkbuf, Len: Int(pkbuf[1]) + 4)
-		
-		device.writeValue(Data(bytes: pkbuf, count: 4 + Int(pkbuf[1])), for: ctrlChar, type: CBCharacteristicWriteType.withoutResponse)
+		sendCommand(subSys: NEBLINA_SUBSYSTEM_SENSOR, cmd: NEBLINA_COMMAND_SENSOR_SET_DOWNSAMPLE, paramLen: param.count, paramData: param)
 	}
 	
-	func streamGyroSensorData(_ Enable: Bool) {
-		if (isDeviceReady() == false) {
-			return
-		}
+	func sensorSetRange(type : UInt16, range: UInt16) {
+		var param = [UInt8](repeating: 0, count: 4)
 		
-		var pkbuf = [UInt8](repeating: 0, count: 20)
+		param[0] = UInt8(type & 0xFF)
+		param[1] = UInt8(type >> 8)
+		param[2] = UInt8(range & 0xFF)
+		param[3] = UInt8(range >> 8)
 		
-		pkbuf[0] = UInt8((NEBLINA_PACKET_TYPE_COMMAND << 5) | NEBLINA_SUBSYSTEM_SENSOR)
-		pkbuf[1] = 1	// Length
-		pkbuf[2] = 0xFF
-		pkbuf[3] = UInt8(NEBLINA_COMMAND_SENSOR_GYROSCOPE)	// Cmd
-		if (Enable == true)
-		{
-			pkbuf[4] = 1
-		}
-		else
-		{
-			pkbuf[4] = 0
-		}
-		
-		pkbuf[2] = crc8(pkbuf, Len: Int(pkbuf[1]) + 4)
-		
-		device.writeValue(Data(bytes: pkbuf, count: 4 + Int(pkbuf[1])), for: ctrlChar, type: CBCharacteristicWriteType.withoutResponse)
+		sendCommand(subSys: NEBLINA_SUBSYSTEM_SENSOR, cmd: NEBLINA_COMMAND_SENSOR_SET_RANGE, paramLen: param.count, paramData: param)
 	}
 	
-	func streamHumiditySensorData(_ Enable: Bool) {
-		if (isDeviceReady() == false) {
-			return
-		}
+	func sensorSetRate(type : UInt16, rate: UInt16) {
+		var param = [UInt8](repeating: 0, count: 4)
 		
-		var pkbuf = [UInt8](repeating: 0, count: 20)
+		param[0] = UInt8(type & 0xFF)
+		param[1] = UInt8(type >> 8)
+		param[2] = UInt8(rate & 0xFF)
+		param[3] = UInt8(rate >> 8)
 		
-		pkbuf[0] = UInt8((NEBLINA_PACKET_TYPE_COMMAND << 5) | NEBLINA_SUBSYSTEM_SENSOR)
-		pkbuf[1] = 1	// Length
-		pkbuf[2] = 0xFF
-		pkbuf[3] = UInt8(NEBLINA_COMMAND_SENSOR_HUMIDITY)	// Cmd
-		if (Enable == true)
-		{
-			pkbuf[4] = 1
-		}
-		else
-		{
-			pkbuf[4] = 0
-		}
-		
-		pkbuf[2] = crc8(pkbuf, Len: Int(pkbuf[1]) + 4)
-		
-		device.writeValue(Data(bytes: pkbuf, count: 4 + Int(pkbuf[1])), for: ctrlChar, type: CBCharacteristicWriteType.withoutResponse)
+		sendCommand(subSys: NEBLINA_SUBSYSTEM_SENSOR, cmd: NEBLINA_COMMAND_SENSOR_SET_RATE, paramLen: param.count, paramData: param)
 	}
 	
-	func streamMagSensorData(_ Enable: Bool) {
-		if (isDeviceReady() == false) {
-			return
-		}
+	func sensorGetDownsample(stream : NeblinaSensorStream_t) {
+		var param = [UInt8](repeating: 0, count: 1)
 		
-		var pkbuf = [UInt8](repeating: 0, count: 20)
+		param[0] = stream.rawValue
 		
-		pkbuf[0] = UInt8((NEBLINA_PACKET_TYPE_COMMAND << 5) | NEBLINA_SUBSYSTEM_SENSOR)
-		pkbuf[1] = 1	// Length
-		pkbuf[2] = 0xFF
-		pkbuf[3] = UInt8(NEBLINA_COMMAND_SENSOR_MAGNETOMETER)	// Cmd
-		if (Enable == true)
-		{
-			pkbuf[4] = 1
-		}
-		else
-		{
-			pkbuf[4] = 0
-		}
-		
-		pkbuf[2] = crc8(pkbuf, Len: Int(pkbuf[1]) + 4)
-		
-		device.writeValue(Data(bytes: pkbuf, count: 4 + Int(pkbuf[1])), for: ctrlChar, type: CBCharacteristicWriteType.withoutResponse)
-	}
-	
-	func streamPressureSensorData(_ Enable: Bool) {
-		if (isDeviceReady() == false) {
-			return
-		}
-		
-		var pkbuf = [UInt8](repeating: 0, count: 20)
-		
-		pkbuf[0] = UInt8((NEBLINA_PACKET_TYPE_COMMAND << 5) | NEBLINA_SUBSYSTEM_SENSOR)
-		pkbuf[1] = 1	// Length
-		pkbuf[2] = 0xFF
-		pkbuf[3] = UInt8(NEBLINA_COMMAND_SENSOR_PRESSURE)	// Cmd
-		if (Enable == true)
-		{
-			pkbuf[4] = 1
-		}
-		else
-		{
-			pkbuf[4] = 0
-		}
-		
-		pkbuf[2] = crc8(pkbuf, Len: Int(pkbuf[1]) + 4)
-		
-		device.writeValue(Data(bytes: pkbuf, count: 4 + Int(pkbuf[1])), for: ctrlChar, type: CBCharacteristicWriteType.withoutResponse)
-	}
-	
-	func streamTempSensorData(_ Enable: Bool) {
-		if (isDeviceReady() == false) {
-			return
-		}
-		
-		var pkbuf = [UInt8](repeating: 0, count: 20)
-		
-		pkbuf[0] = UInt8((NEBLINA_PACKET_TYPE_COMMAND << 5) | NEBLINA_SUBSYSTEM_SENSOR)
-		pkbuf[1] = 1	// Length
-		pkbuf[2] = 0xFF
-		pkbuf[3] = UInt8(NEBLINA_COMMAND_SENSOR_TEMPERATURE)	// Cmd
-		if (Enable == true)
-		{
-			pkbuf[4] = 1
-		}
-		else
-		{
-			pkbuf[4] = 0
-		}
-		
-		pkbuf[2] = crc8(pkbuf, Len: Int(pkbuf[1]) + 4)
-		
-		device.writeValue(Data(bytes: pkbuf, count: 4 + Int(pkbuf[1])), for: ctrlChar, type: CBCharacteristicWriteType.withoutResponse)
-	}
-	
-	func streamAccelGyroSensorData(_ Enable: Bool) {
-		if (isDeviceReady() == false) {
-			return
-		}
-		
-		var pkbuf = [UInt8](repeating: 0, count: 20)
-		
-		pkbuf[0] = UInt8((NEBLINA_PACKET_TYPE_COMMAND << 5) | NEBLINA_SUBSYSTEM_SENSOR)
-		pkbuf[1] = 1	// Length
-		pkbuf[2] = 0xFF
-		pkbuf[3] = UInt8(NEBLINA_COMMAND_SENSOR_ACCELEROMETER_GYROSCOPE)	// Cmd
-		if (Enable == true)
-		{
-			pkbuf[4] = 1
-		}
-		else
-		{
-			pkbuf[4] = 0
-		}
-		
-		pkbuf[2] = crc8(pkbuf, Len: Int(pkbuf[1]) + 4)
-		
-		device.writeValue(Data(bytes: pkbuf, count: 4 + Int(pkbuf[1])), for: ctrlChar, type: CBCharacteristicWriteType.withoutResponse)
+		sendCommand(subSys: NEBLINA_SUBSYSTEM_SENSOR, cmd: NEBLINA_COMMAND_SENSOR_GET_DOWNSAMPLE, paramLen: param.count, paramData: param)
 	}
 
-	func streamAccelMagSensorData(_ Enable: Bool) {
-		if (isDeviceReady() == false) {
-			return
-		}
+	func sensorGetRange(type : NeblinaSensorType_t) {
+		var param = [UInt8](repeating: 0, count: 1)
 		
-		var pkbuf = [UInt8](repeating: 0, count: 20)
+		param[0] = type.rawValue
 		
-		pkbuf[0] = UInt8((NEBLINA_PACKET_TYPE_COMMAND << 5) | NEBLINA_SUBSYSTEM_SENSOR)
-		pkbuf[1] = 1	// Length
-		pkbuf[2] = 0xFF
-		pkbuf[3] = UInt8(NEBLINA_COMMAND_SENSOR_ACCELEROMETER_MAGNETOMETER)	// Cmd
-		if (Enable == true)
+		sendCommand(subSys: NEBLINA_SUBSYSTEM_SENSOR, cmd: NEBLINA_COMMAND_SENSOR_GET_RANGE, paramLen: param.count, paramData: param)
+	}
+
+	func sensorGetRate(type : NeblinaSensorType_t) {
+		var param = [UInt8](repeating: 0, count: 1)
+		
+		param[0] = type.rawValue
+		
+		sendCommand(subSys: NEBLINA_SUBSYSTEM_SENSOR, cmd: NEBLINA_COMMAND_SENSOR_GET_RATE, paramLen: param.count, paramData: param)
+	}
+
+	func sensorStreamAccelData(_ Enable: Bool) {
+		var param = [UInt8](repeating: 0, count: 1)
+		
+		if Enable == true
 		{
-			pkbuf[4] = 1
+			param[0] = 1
 		}
 		else
 		{
-			pkbuf[4] = 0
+			param[0] = 0
 		}
 		
-		pkbuf[2] = crc8(pkbuf, Len: Int(pkbuf[1]) + 4)
-		
-		device.writeValue(Data(bytes: pkbuf, count: 4 + Int(pkbuf[1])), for: ctrlChar, type: CBCharacteristicWriteType.withoutResponse)
+		sendCommand(subSys: NEBLINA_SUBSYSTEM_SENSOR, cmd: NEBLINA_COMMAND_SENSOR_ACCELEROMETER_STREAM, paramLen: param.count, paramData: param)
 	}
 	
+	func sensorStreamGyroData(_ Enable: Bool) {
+		var param = [UInt8](repeating: 0, count: 1)
+		
+		if Enable == true
+		{
+			param[0] = 1
+		}
+		else
+		{
+			param[0] = 0
+		}
+		
+		sendCommand(subSys: NEBLINA_SUBSYSTEM_SENSOR, cmd: NEBLINA_COMMAND_SENSOR_GYROSCOPE_STREAM, paramLen: param.count, paramData: param)
+	}
 	
+	func sensorStreamHumidityData(_ Enable: Bool) {
+		var param = [UInt8](repeating: 0, count: 1)
+		
+		if Enable == true
+		{
+			param[0] = 1
+		}
+		else
+		{
+			param[0] = 0
+		}
+		
+		sendCommand(subSys: NEBLINA_SUBSYSTEM_SENSOR, cmd: NEBLINA_COMMAND_SENSOR_HUMIDITY_STREAM, paramLen: param.count, paramData: param)
+	}
+	
+	func sensorStreamMagData(_ Enable: Bool) {
+		var param = [UInt8](repeating: 0, count: 1)
+		
+		if Enable == true
+		{
+			param[0] = 1
+		}
+		else
+		{
+			param[0] = 0
+		}
+		
+		sendCommand(subSys: NEBLINA_SUBSYSTEM_SENSOR, cmd: NEBLINA_COMMAND_SENSOR_MAGNETOMETER_STREAM, paramLen: param.count, paramData: param)
+	}
+	
+	func sensorStreamPressureData(_ Enable: Bool) {
+		var param = [UInt8](repeating: 0, count: 1)
+		
+		if Enable == true
+		{
+			param[0] = 1
+		}
+		else
+		{
+			param[0] = 0
+		}
+		
+		sendCommand(subSys: NEBLINA_SUBSYSTEM_SENSOR, cmd: NEBLINA_COMMAND_SENSOR_PRESSURE_STREAM, paramLen: param.count, paramData: param)
+	}
+	
+	func sensorStreamTemperatureData(_ Enable: Bool) {
+		var param = [UInt8](repeating: 0, count: 1)
+		
+		if Enable == true
+		{
+			param[0] = 1
+		}
+		else
+		{
+			param[0] = 0
+		}
+		
+		sendCommand(subSys: NEBLINA_SUBSYSTEM_SENSOR, cmd: NEBLINA_COMMAND_SENSOR_TEMPERATURE_STREAM, paramLen: param.count, paramData: param)
+	}
+	
+	func sensorStreamAccelGyroData(_ Enable: Bool) {
+		var param = [UInt8](repeating: 0, count: 1)
+		
+		if Enable == true
+		{
+			param[0] = 1
+		}
+		else
+		{
+			param[0] = 0
+		}
+		
+		sendCommand(subSys: NEBLINA_SUBSYSTEM_SENSOR, cmd: NEBLINA_COMMAND_SENSOR_ACCELEROMETER_GYROSCOPE_STREAM, paramLen: param.count, paramData: param)
+	}
+
+	func sensorStreamAccelMagData(_ Enable: Bool) {
+		var param = [UInt8](repeating: 0, count: 1)
+		
+		if Enable == true
+		{
+			param[0] = 1
+		}
+		else
+		{
+			param[0] = 0
+		}
+		
+		sendCommand(subSys: NEBLINA_SUBSYSTEM_SENSOR, cmd: NEBLINA_COMMAND_SENSOR_ACCELEROMETER_MAGNETOMETER_STREAM, paramLen: param.count, paramData: param)
+	}
 }
 
 protocol NeblinaDelegate {

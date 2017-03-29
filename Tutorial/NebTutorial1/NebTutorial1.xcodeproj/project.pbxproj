@@ -49,11 +49,9 @@
 		C9DEDB771D0734F300A76BA3 /* NebTutorial1UITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = NebTutorial1UITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		C9DEDB7B1D0734F300A76BA3 /* NebTutorial1UITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NebTutorial1UITests.swift; sourceTree = "<group>"; };
 		C9DEDB7D1D0734F300A76BA3 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		C9DEDB891D0735A700A76BA3 /* FusionEngineDataTypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FusionEngineDataTypes.h; path = ../../../src/FusionEngineDataTypes.h; sourceTree = "<group>"; };
 		C9DEDB8A1D0735A700A76BA3 /* Neblina-Bridging-Header.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "Neblina-Bridging-Header.h"; path = "../../../src/Neblina-Bridging-Header.h"; sourceTree = "<group>"; };
 		C9DEDB8B1D0735A700A76BA3 /* neblina.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = neblina.h; path = ../../../src/neblina.h; sourceTree = "<group>"; };
 		C9DEDB8C1D0735A700A76BA3 /* Neblina.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Neblina.swift; path = ../../../src/Neblina.swift; sourceTree = "<group>"; };
-		C9DEDB8D1D0735A700A76BA3 /* ProMotion.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ProMotion.h; path = ../../../src/ProMotion.h; sourceTree = "<group>"; };
 		C9DEDB911D0763CF00A76BA3 /* Logo_motsai_CMYK_Final.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Logo_motsai_CMYK_Final.png; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -106,11 +104,9 @@
 			isa = PBXGroup;
 			children = (
 				C9DEDB911D0763CF00A76BA3 /* Logo_motsai_CMYK_Final.png */,
-				C9DEDB891D0735A700A76BA3 /* FusionEngineDataTypes.h */,
 				C9DEDB8A1D0735A700A76BA3 /* Neblina-Bridging-Header.h */,
 				C9DEDB8B1D0735A700A76BA3 /* neblina.h */,
 				C9DEDB8C1D0735A700A76BA3 /* Neblina.swift */,
-				C9DEDB8D1D0735A700A76BA3 /* ProMotion.h */,
 				C9DEDB5B1D0734F200A76BA3 /* AppDelegate.swift */,
 				C9DEDB5D1D0734F200A76BA3 /* ViewController.swift */,
 				C9DEDB5F1D0734F200A76BA3 /* Main.storyboard */,

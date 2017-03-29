@@ -167,16 +167,19 @@ class ViewController: UIViewController, CBCentralManagerDelegate, NeblinaDelegat
 		}
 	}
 	
-	// MARK : Neblina
-	func didConnectNeblina() {
-		nebdev.getMotionStatus()
+	// MARK : Neblina Delegate
+	func didConnectNeblina(sender : Neblina) {
+		nebdev.getSystemStatus()
 	}
 	
-	func didReceiveRSSI(_ rssi : NSNumber) {}
-	func didReceiveFusionData(_ type : Int32, data : Fusion_DataPacket_t, errFlag : Bool) {
-		
-		switch (type) {
-/*		case Quaternion:
+	func didReceiveRSSI(sender : Neblina, rssi : NSNumber) {}
+	
+	func didReceiveGeneralData(sender : Neblina, cmdRspId : Int32, data : UnsafeRawPointer, dataLen : Int, errFlag : Bool) {}
+	
+	func didReceiveFusionData(sender : Neblina, cmdRspId : Int32, data : NeblinaFusionPacket, errFlag : Bool) {
+	
+		switch (cmdRspId) {
+/*		case NEBLINA_COMMAND_FUSION_QUATERNION_STREAM:
 			
 			//
 			// Process Quaternion
@@ -192,7 +195,7 @@ class ViewController: UIViewController, CBCentralManagerDelegate, NeblinaDelegat
 			label.text = String("Quat - x:\(xq), y:\(yq), z:\(zq), w:\(wq)")
 			
 			break*/
-		case EulerAngle:
+		case NEBLINA_COMMAND_FUSION_EULER_ANGLE_STREAM:
 			//
 			// Process Euler Angle
 			//
@@ -210,22 +213,12 @@ class ViewController: UIViewController, CBCentralManagerDelegate, NeblinaDelegat
 			break
 		}
 	}
-	func didReceiveDebugData(_ type : Int32, data : UnsafePointer<UInt8>, dataLen: Int, errFlag : Bool) {
-		switch (type) {
-		case DEBUG_CMD_MOTENGINE_RECORDER_STATUS:
-			switchButton.isOn = (Int(data[4] & 8) >> 3 != 0)
-			
-			break
-		default:
-			break
-		}
-	}
-	func didReceivePmgntData(_ type : Int32, data : UnsafePointer<UInt8>, dataLen: Int, errFlag : Bool) {}
-	func didReceiveStorageData(_ type : Int32, data : UnsafePointer<UInt8>, dataLen: Int, errFlag : Bool) {}
-	func didReceiveEepromData(_ type : Int32, data : UnsafePointer<UInt8>, dataLen: Int, errFlag : Bool) {}
-	func didReceiveLedData(_ type : Int32, data : UnsafePointer<UInt8>, dataLen: Int, errFlag : Bool) {}
-
-
+	func didReceivePmgntData(sender : Neblina, cmdRspId : Int32, data : UnsafePointer<UInt8>, dataLen : Int, errFlag : Bool) {}
+	func didReceiveLedData(sender : Neblina, cmdRspId : Int32, data : UnsafePointer<UInt8>, dataLen : Int, errFlag : Bool) {}
+	func didReceiveDebugData(sender : Neblina, cmdRspId : Int32, data : UnsafePointer<UInt8>, dataLen : Int, errFlag : Bool) {}
+	func didReceiveRecorderData(sender : Neblina, cmdRspId : Int32, data : UnsafePointer<UInt8>, dataLen : Int, errFlag : Bool) {}
+	func didReceiveEepromData(sender : Neblina, cmdRspId : Int32, data : UnsafePointer<UInt8>, dataLen : Int, errFlag : Bool) {}
+	func didReceiveSensorData(sender : Neblina, cmdRspId : Int32, data : UnsafePointer<UInt8>, dataLen : Int, errFlag : Bool) {}
 }
 
 
