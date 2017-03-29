@@ -50,6 +50,25 @@ class Neblina : NSObject, CBPeripheralDelegate {
 			device = nil
 		}
 	}
+
+	func crc8(_ data : [UInt8], Len : Int) -> UInt8
+	{
+		var i = Int(0)
+		var e = UInt8(0)
+		var f = UInt8(0)
+		var crc = UInt8(0)
+		
+		//for (i = 0; i < Len; i += 1)
+		while i < Len {
+			e = crc ^ data[i];
+			f = e ^ (e >> 4) ^ (e >> 7);
+			crc = (f << 1) ^ (f << 4);
+			i += 1
+		}
+		
+		return crc;
+	}
+	
 	func setPeripheral(_ devid : UInt64, peripheral : CBPeripheral) {
 		device = peripheral
 		id = devid
@@ -121,12 +140,19 @@ class Neblina : NSObject, CBPeripheralDelegate {
 		if (characteristic.uuid .isEqual(NEB_DATACHAR_UUID) && characteristic.value != nil && (characteristic.value?.count)! > 0)
 		{
 			var ch = [UInt8](repeating: 0, count: 20)
-			characteristic.value?.copyBytes(to: &ch, count: min(MemoryLayout<NeblinaPacketHeader_t>.size, (characteristic.value?.count)!))
+			characteristic.value?.copyBytes(to: &ch, count: (characteristic.value?.count)!)//min(MemoryLayout<NeblinaPacketHeader_t>.size, (characteristic.value?.count)!))
 			hdr = (characteristic.value?.withUnsafeBytes{ (ptr: UnsafePointer<NeblinaPacketHeader_t>) -> NeblinaPacketHeader_t in return ptr.pointee })!
 			let respId = Int32(hdr.command)
 			var errflag = Bool(false)
 			
-
+			let crc = ch[2]
+			ch[2] = 0xFF
+			if crc != crc8(ch, Len: Int(ch[1]) + 4) {
+				print("\(crc) CRC ERROR!!!  \(characteristic.value)")
+				print("\(ch) ")
+				return
+			}
+			
 			if (Int32(hdr.packetType) == NEBLINA_PACKET_TYPE_ACK) {
 				//print("ACK : \(characteristic.value) \(hdr)")
 				return
@@ -255,24 +281,6 @@ class Neblina : NSObject, CBPeripheralDelegate {
 	//
 	// MARK : **** API
 	//
-	func crc8(_ data : [UInt8], Len : Int) -> UInt8
-	{
-		var i = Int(0)
-		var e = UInt8(0)
-		var f = UInt8(0)
-		var crc = UInt8(0)
-		
-		//for (i = 0; i < Len; i += 1)
-		while i < Len {
-			e = crc ^ data[i];
-			f = e ^ (e >> 4) ^ (e >> 7);
-			crc = (f << 1) ^ (f << 4);
-			i += 1
-		}
-	
-		return crc;
-	}
-
 	func sendCommand(subSys : Int32, cmd : Int32, paramLen : Int, paramData : [UInt8] ) {
 		if (isDeviceReady() == false) {
 			return
