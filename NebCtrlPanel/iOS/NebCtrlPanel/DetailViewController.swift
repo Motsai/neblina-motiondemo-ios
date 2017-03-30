@@ -15,77 +15,58 @@ let MotionDataStream = Int32(1)
 let Heading = Int32(2)
 
 let NebCmdList = [NebCmdItem] (arrayLiteral:
-	/*
-	NebCmdItem(SubSysId: NEB_CTRL_SUBSYS_DEBUG, CmdId: DEBUG_CMD_SET_DATAPORT, Name: "BLE Data Port", Actuator : 1, Text:""),
-    NebCmdItem(SubSysId: NEB_CTRL_SUBSYS_DEBUG, CmdId: DEBUG_CMD_SET_DATAPORT, Name: "UART Data Port", Actuator : 1, Text:""),
-    NebCmdItem(SubSysId: NEB_CTRL_SUBSYS_MOTION_ENG, CmdId: SetFusionType, Name: "Fusion 9 axis", Actuator : 1, Text:""),
-    NebCmdItem(SubSysId: NEB_CTRL_SUBSYS_MOTION_ENG, CmdId: Quaternion, Name: "Quaternion Stream", Actuator : 1, Text:""),
-    NebCmdItem(SubSysId: NEB_CTRL_SUBSYS_MOTION_ENG, CmdId: MAG_Data, Name: "Mag Stream", Actuator : 1, Text:""),
-    NebCmdItem(SubSysId: NEB_CTRL_SUBSYS_MOTION_ENG, CmdId: IMU_Data, Name: "IMU Stream", Actuator : 1, Text:""),
-    NebCmdItem(SubSysId: 0xf, CmdId: MotionDataStream, Name: "Motion data stream", Actuator : 1, Text:""),
-    NebCmdItem(SubSysId: 0xf, CmdId: Heading, Name: "Heading", Actuator : 1, Text:""),
-	NebCmdItem(SubSysId: NEB_CTRL_SUBSYS_MOTION_ENG, CmdId: LockHeadingRef, Name: "Lock Heading Ref.", Actuator : 1, Text:""),
-	NebCmdItem(SubSysId: NEB_CTRL_SUBSYS_STORAGE, CmdId: FlashRecordStartStop, Name: "Flash Record", Actuator : 1, Text:""),
-	NebCmdItem(SubSysId: NEB_CTRL_SUBSYS_STORAGE, CmdId: FlashPlaybackStartStop, Name: "Flash Playback", Actuator : 1, Text:""),
-	NebCmdItem(SubSysId: NEB_CTRL_SUBSYS_LED, CmdId: LED_CMD_SET_VALUE, Name: "Set LED0 level", Actuator : 3, Text:""),
-	NebCmdItem(SubSysId: NEB_CTRL_SUBSYS_LED, CmdId: LED_CMD_SET_VALUE, Name: "Set LED1 level", Actuator : 3, Text:""),
-	NebCmdItem(SubSysId: NEB_CTRL_SUBSYS_LED, CmdId: LED_CMD_SET_VALUE, Name: "Set LED2", Actuator : 1, Text:""),
-	NebCmdItem(SubSysId: NEB_CTRL_SUBSYS_EEPROM, CmdId: EEPROM_Read, Name: "EEPROM Read", Actuator : 2, Text:"Read"),
-	NebCmdItem(SubSysId: NEB_CTRL_SUBSYS_POWERMGMT, CmdId: POWERMGMT_CMD_SET_CHARGE_CURRENT, Name: "Charge Current in mA", Actuator : 3, Text:""),
-	NebCmdItem(SubSysId: NEB_CTRL_SUBSYS_STORAGE, CmdId: FlashEraseAll, Name: "Flash Erase All", Actuator : 1, Text:"")
-*/
-	NebCmdItem(SubSysId: NEBLINA_SUBSYSTEM_GENERAL, CmdId: NEBLINA_COMMAND_GENERAL_INTERFACE_STATE, ActiveStatus: NEBLINA_INTERFACE_STATUS_BLE.rawValue,
-	           Name: "BLE Data Port", Actuator : 1, Text: ""),
-	NebCmdItem(SubSysId: NEBLINA_SUBSYSTEM_GENERAL, CmdId: NEBLINA_COMMAND_GENERAL_INTERFACE_STATE, ActiveStatus: NEBLINA_INTERFACE_STATUS_UART.rawValue,
-	           Name: "UART Data Port", Actuator : 1, Text: ""),
+	NebCmdItem(SubSysId: NEBLINA_SUBSYSTEM_GENERAL, CmdId: NEBLINA_COMMAND_GENERAL_INTERFACE_STATE, ActiveStatus: UInt32(NEBLINA_INTERFACE_STATUS_BLE.rawValue),
+	           Name: "BLE Data Port", Actuator : ACTUATOR_TYPE_SWITCH, Text: ""),
+	NebCmdItem(SubSysId: NEBLINA_SUBSYSTEM_GENERAL, CmdId: NEBLINA_COMMAND_GENERAL_INTERFACE_STATE, ActiveStatus: UInt32(NEBLINA_INTERFACE_STATUS_UART.rawValue),
+	           Name: "UART Data Port", Actuator : ACTUATOR_TYPE_SWITCH, Text: ""),
 	NebCmdItem(SubSysId: NEBLINA_SUBSYSTEM_FUSION, CmdId: NEBLINA_COMMAND_FUSION_CALIBRATE_FORWARD_POSITION, ActiveStatus: 0,
-	           Name: "Calibrate Forward Pos", Actuator : 2, Text: "Calib Fwrd"),
+	           Name: "Calibrate Forward Pos", Actuator : ACTUATOR_TYPE_BUTTON, Text: "Calib Fwrd"),
 	NebCmdItem(SubSysId: NEBLINA_SUBSYSTEM_FUSION, CmdId: NEBLINA_COMMAND_FUSION_CALIBRATE_DOWN_POSITION, ActiveStatus: 0,
-	           Name: "Calibrate Down Pos", Actuator : 2, Text: "Calib Dwn"),
+	           Name: "Calibrate Down Pos", Actuator : ACTUATOR_TYPE_BUTTON, Text: "Calib Dwn"),
 	NebCmdItem(SubSysId: NEBLINA_SUBSYSTEM_FUSION, CmdId: NEBLINA_COMMAND_FUSION_FUSION_TYPE, ActiveStatus: 0,
-	           Name: "Fusion 9 axis", Actuator : 1, Text:""),
+	           Name: "Fusion 9 axis", Actuator : ACTUATOR_TYPE_SWITCH, Text:""),
 	NebCmdItem(SubSysId: NEBLINA_SUBSYSTEM_GENERAL, CmdId: NEBLINA_COMMAND_GENERAL_RESET_TIMESTAMP, ActiveStatus: 0,
-	           Name: "Reset timestamp", Actuator : 2, Text: "Reset"),
-    NebCmdItem(SubSysId: NEBLINA_SUBSYSTEM_FUSION, CmdId: NEBLINA_COMMAND_FUSION_QUATERNION_STATE, ActiveStatus: NEBLINA_FUSION_STATUS_QUATERNION.rawValue,
-               Name: "Quaternion Stream", Actuator : 1, Text: ""),
-    NebCmdItem(SubSysId: NEBLINA_SUBSYSTEM_SENSOR, CmdId: NEBLINA_COMMAND_SENSOR_ACCELEROMETER, ActiveStatus: NEBLINA_SENSOR_STATUS_ACCELEROMETER.rawValue,
-               Name: "Accelerometer Sensor Stream", Actuator : 1, Text: ""),
-	NebCmdItem(SubSysId: NEBLINA_SUBSYSTEM_SENSOR, CmdId: NEBLINA_COMMAND_SENSOR_GYROSCOPE, ActiveStatus: NEBLINA_SENSOR_STATUS_GYROSCOPE.rawValue,
-	           Name: "Gyroscope Sensor Stream", Actuator : 1, Text: ""),
-	NebCmdItem(SubSysId: NEBLINA_SUBSYSTEM_SENSOR, CmdId: NEBLINA_COMMAND_SENSOR_MAGNETOMETER, ActiveStatus: NEBLINA_SENSOR_STATUS_MAGNETOMETER.rawValue,
-	           Name: "Magnetometer Sensor Stream", Actuator : 1, Text: ""),
-	NebCmdItem(SubSysId: NEBLINA_SUBSYSTEM_SENSOR, CmdId: NEBLINA_COMMAND_SENSOR_ACCELEROMETER_GYROSCOPE, ActiveStatus: NEBLINA_SENSOR_STATUS_ACCELEROMETER_GYROSCOPE.rawValue,
-	           Name: "Accel & Gyro Stream", Actuator : 1, Text:""),
-	NebCmdItem(SubSysId: NEBLINA_SUBSYSTEM_SENSOR, CmdId: NEBLINA_COMMAND_SENSOR_HUMIDITY, ActiveStatus: NEBLINA_SENSOR_STATUS_HUMIDITY.rawValue,
-	           Name: "Humidity Sensor Stream", Actuator : 1, Text: ""),
+	           Name: "Reset timestamp", Actuator : ACTUATOR_TYPE_BUTTON, Text: "Reset"),
+    NebCmdItem(SubSysId: NEBLINA_SUBSYSTEM_FUSION, CmdId: NEBLINA_COMMAND_FUSION_QUATERNION_STREAM, ActiveStatus: UInt32(NEBLINA_FUSION_STATUS_QUATERNION.rawValue),
+               Name: "Quaternion Stream", Actuator : ACTUATOR_TYPE_SWITCH, Text: ""),
+    NebCmdItem(SubSysId: NEBLINA_SUBSYSTEM_SENSOR, CmdId: NEBLINA_COMMAND_SENSOR_ACCELEROMETER_STREAM, ActiveStatus: UInt32(NEBLINA_SENSOR_STATUS_ACCELEROMETER.rawValue),
+               Name: "Accelerometer Sensor Stream", Actuator : ACTUATOR_TYPE_SWITCH, Text: ""),
+	NebCmdItem(SubSysId: NEBLINA_SUBSYSTEM_SENSOR, CmdId: NEBLINA_COMMAND_SENSOR_GYROSCOPE_STREAM, ActiveStatus: UInt32(NEBLINA_SENSOR_STATUS_GYROSCOPE.rawValue),
+	           Name: "Gyroscope Sensor Stream", Actuator : ACTUATOR_TYPE_SWITCH, Text: ""),
+	NebCmdItem(SubSysId: NEBLINA_SUBSYSTEM_SENSOR, CmdId: NEBLINA_COMMAND_SENSOR_MAGNETOMETER_STREAM, ActiveStatus: UInt32(NEBLINA_SENSOR_STATUS_MAGNETOMETER.rawValue),
+	           Name: "Magnetometer Sensor Stream", Actuator : ACTUATOR_TYPE_SWITCH, Text: ""),
+	NebCmdItem(SubSysId: NEBLINA_SUBSYSTEM_SENSOR, CmdId: NEBLINA_COMMAND_SENSOR_ACCELEROMETER_GYROSCOPE_STREAM, ActiveStatus: UInt32(NEBLINA_SENSOR_STATUS_ACCELEROMETER_GYROSCOPE.rawValue),
+	           Name: "Accel & Gyro Stream", Actuator : ACTUATOR_TYPE_SWITCH, Text:""),
+	NebCmdItem(SubSysId: NEBLINA_SUBSYSTEM_SENSOR, CmdId: NEBLINA_COMMAND_SENSOR_HUMIDITY_STREAM, ActiveStatus: UInt32(NEBLINA_SENSOR_STATUS_HUMIDITY.rawValue),
+	           Name: "Humidity Sensor Stream", Actuator : ACTUATOR_TYPE_SWITCH, Text: ""),
 	NebCmdItem(SubSysId: NEBLINA_SUBSYSTEM_FUSION, CmdId: NEBLINA_COMMAND_FUSION_LOCK_HEADING_REFERENCE, ActiveStatus: 0,
-	           Name: "Lock Heading Ref.", Actuator : 1, Text: ""),
-	NebCmdItem(SubSysId: NEBLINA_SUBSYSTEM_RECORDER, CmdId: NEBLINA_COMMAND_RECORDER_RECORD, ActiveStatus: NEBLINA_RECORDER_STATUS_RECORD.rawValue,
-	           Name: "Flash Record", Actuator : 2, Text: "Start"),
+	           Name: "Lock Heading Ref.", Actuator : ACTUATOR_TYPE_SWITCH, Text: ""),
+	NebCmdItem(SubSysId: NEBLINA_SUBSYSTEM_RECORDER, CmdId: NEBLINA_COMMAND_RECORDER_RECORD, ActiveStatus: UInt32(NEBLINA_RECORDER_STATUS_RECORD.rawValue),
+	           Name: "Flash Record", Actuator : ACTUATOR_TYPE_BUTTON, Text: "Start"),
 	NebCmdItem(SubSysId: NEBLINA_SUBSYSTEM_RECORDER, CmdId: NEBLINA_COMMAND_RECORDER_RECORD, ActiveStatus: 0,
-	           Name: "Flash Record", Actuator : 2, Text: "Stop"),
+	           Name: "Flash Record", Actuator : ACTUATOR_TYPE_BUTTON, Text: "Stop"),
 	NebCmdItem(SubSysId: NEBLINA_SUBSYSTEM_RECORDER, CmdId: NEBLINA_COMMAND_RECORDER_PLAYBACK, ActiveStatus: 0,
-	           Name: "Flash Playback", Actuator : 4, Text: "Play"),
+	           Name: "Flash Playback", Actuator : ACTUATOR_TYPE_TEXT_FILED_BUTTON, Text: "Play"),
 //	NebCmdItem(SubSysId: NEBLINA_SUBSYSTEM_RECORDER, CmdId: NEBLINA_COMMAND_RECORDER_SESSION_DOWNLOAD, ActiveStatus: 0,
-//	           Name: "Flash Download", Actuator : 2, Text: "Start"),
+//	           Name: "Flash Download", Actuator : ACTUATOR_TYPE_BUTTON, Text: "Start"),
 	NebCmdItem(SubSysId: NEBLINA_SUBSYSTEM_LED, CmdId: NEBLINA_COMMAND_LED_STATE, ActiveStatus: 0,
-	           Name: "Set LED0 level", Actuator : 3, Text: ""),
+	           Name: "Set LED0 level", Actuator : ACTUATOR_TYPE_TEXT_FIELD, Text: ""),
 	NebCmdItem(SubSysId: NEBLINA_SUBSYSTEM_LED, CmdId: NEBLINA_COMMAND_LED_STATE, ActiveStatus: 0,
-	           Name: "Set LED1 level", Actuator : 3, Text: ""),
+	           Name: "Set LED1 level", Actuator : ACTUATOR_TYPE_TEXT_FIELD, Text: ""),
 	NebCmdItem(SubSysId: NEBLINA_SUBSYSTEM_LED, CmdId: NEBLINA_COMMAND_LED_STATE, ActiveStatus: 0,
-	           Name: "Set LED2", Actuator : 1, Text: ""),
+	           Name: "Set LED2", Actuator : ACTUATOR_TYPE_SWITCH, Text: ""),
 	NebCmdItem(SubSysId: NEBLINA_SUBSYSTEM_EEPROM, CmdId: NEBLINA_COMMAND_EEPROM_READ, ActiveStatus: 0,
-	           Name: "EEPROM Read", Actuator : 2, Text: "Read"),
+	           Name: "EEPROM Read", Actuator : ACTUATOR_TYPE_BUTTON, Text: "Read"),
 	NebCmdItem(SubSysId: NEBLINA_SUBSYSTEM_POWER, CmdId: NEBLINA_COMMAND_POWER_CHARGE_CURRENT, ActiveStatus: 0,
-	           Name: "Charge Current in mA", Actuator : 3, Text: ""),
+	           Name: "Charge Current in mA", Actuator : ACTUATOR_TYPE_TEXT_FIELD, Text: ""),
 	NebCmdItem(SubSysId: 0xf, CmdId: MotionDataStream, ActiveStatus: 0,
-	           Name: "Motion data stream", Actuator : 1, Text: ""),
+	           Name: "Motion data stream", Actuator : ACTUATOR_TYPE_SWITCH, Text: ""),
 	NebCmdItem(SubSysId: 0xf, CmdId: Heading, ActiveStatus: 0,
-	           Name: "Heading", Actuator : 1, Text: ""),
+	           Name: "Heading", Actuator : ACTUATOR_TYPE_SWITCH, Text: ""),
 	NebCmdItem(SubSysId: NEBLINA_SUBSYSTEM_RECORDER, CmdId: NEBLINA_COMMAND_RECORDER_ERASE_ALL, ActiveStatus: 0,
-	           Name: "Flash Erase All", Actuator : 2, Text: "Erase"),
+	           Name: "Flash Erase All", Actuator : ACTUATOR_TYPE_BUTTON, Text: "Erase"),
 	NebCmdItem(SubSysId: NEBLINA_SUBSYSTEM_GENERAL, CmdId: NEBLINA_COMMAND_GENERAL_FIRMWARE_UPDATE, ActiveStatus: 0,
-	           Name: "Firmware Update", Actuator : 2, Text: "DFU")
+	           Name: "Firmware Update", Actuator : ACTUATOR_TYPE_BUTTON, Text: "DFU")
 	
 )
 
@@ -100,8 +81,9 @@ class DetailViewController: UIViewController, UITextFieldDelegate, CBPeripheralD
 		}
 	}
 	//let scene = SCNScene(named: "art.scnassets/Millennium_Falcon/Millennium_Falcon.dae") as SCNScene!
-	//let scene = SCNScene(named: "art.scnassets/Arc-170_ship/Obj_Shaded/Arc170.dae")!
+	//let scene = SCNScene(named: "art.scnassets/SchoolBus/schoolBus.obj")!
 	let scene = SCNScene(named: "art.scnassets/ship.scn")!
+	//let scene = SCNScene(named: "art.scnassets/AstonMartinRapide/rapide.scn")!
 	//let scene = SCNScene(named: "art.scnassets/E-TIE-I/E-TIE-I.3ds.obj")!
 	//var textview = UITextView()
 
@@ -209,7 +191,7 @@ class DetailViewController: UIViewController, UITextFieldDelegate, CBPeripheralD
 //		ship = scene.rootNode.childNodeWithName("MillenniumFalconTop", recursively: true)!
 //		ship = scene.rootNode.childNodeWithName("ARC_170_LEE_RAY_polySurface1394376_2_2", recursively: true)!
 		ship = scene.rootNode.childNode(withName: "ship", recursively: true)!
-//		ship = scene.rootNode.childNodeWithName("MDL Obj", recursively: true)!
+		//ship = scene.rootNode.childNode(withName: "Mesh258_SCHOOL_BUS2_Group2_Group1_Model", recursively: true)!
 		ship.eulerAngles = SCNVector3Make(GLKMathDegreesToRadians(90), 0, GLKMathDegreesToRadians(180))
 		//ship.rotation = SCNVector4(1, 0, 0, GLKMathDegreesToRadians(90))
 		//print("1 - \(ship)")
@@ -498,7 +480,7 @@ class DetailViewController: UIViewController, UITextFieldDelegate, CBPeripheralD
 				case NEBLINA_SUBSYSTEM_FUSION:
 					switch (NebCmdList[row].CmdId)
 					{
-						case NEBLINA_COMMAND_FUSION_MOTION_STATE:
+						case NEBLINA_COMMAND_FUSION_MOTION_STATE_STREAM:
 							nebdev!.streamMotionState(sender.selectedSegmentIndex == 1)
 							break
 						case NEBLINA_COMMAND_FUSION_FUSION_TYPE:
@@ -507,7 +489,7 @@ class DetailViewController: UIViewController, UITextFieldDelegate, CBPeripheralD
 						//case IMU_Data:
 						//	nebdev!.streamIMU(sender.selectedSegmentIndex == 1)
 					//		break
-						case NEBLINA_COMMAND_FUSION_QUATERNION_STATE:
+						case NEBLINA_COMMAND_FUSION_QUATERNION_STREAM:
 							nebdev!.streamEulerAngle(false)
 							heading = false
 							prevTimeStamp = 0
@@ -519,25 +501,25 @@ class DetailViewController: UIViewController, UITextFieldDelegate, CBPeripheralD
 								sw.selectedSegmentIndex = 0
 							}
 							break
-						case NEBLINA_COMMAND_FUSION_EULER_ANGLE_STATE:
+						case NEBLINA_COMMAND_FUSION_EULER_ANGLE_STREAM:
 							nebdev!.streamQuaternion(false)
 							nebdev!.streamEulerAngle(sender.selectedSegmentIndex == 1)
 							break
-						case NEBLINA_COMMAND_FUSION_EXTERNAL_FORCE_STATE:
+						case NEBLINA_COMMAND_FUSION_EXTERNAL_FORCE_STREAM:
 							nebdev!.streamExternalForce(sender.selectedSegmentIndex == 1)
 							break
-						case NEBLINA_COMMAND_FUSION_PEDOMETER_STATE:
+						case NEBLINA_COMMAND_FUSION_PEDOMETER_STREAM:
 							nebdev!.streamPedometer(sender.selectedSegmentIndex == 1)
 							break;
 						case NEBLINA_COMMAND_FUSION_TRAJECTORY_RECORD:
 							nebdev!.recordTrajectory(sender.selectedSegmentIndex == 1)
 							break;
-						case NEBLINA_COMMAND_FUSION_TRAJECTORY_INFO_STATE:
+						case NEBLINA_COMMAND_FUSION_TRAJECTORY_INFO_STREAM:
 							nebdev!.streamTrajectoryInfo(sender.selectedSegmentIndex == 1)
 							break;
-						case NEBLINA_COMMAND_FUSION_MAG_STATE:
-							nebdev!.streamMAG(sender.selectedSegmentIndex == 1)
-							break;
+//						case NEBLINA_COMMAND_FUSION_MAG_STATE:
+//							nebdev!.streamMAG(sender.selectedSegmentIndex == 1)
+//							break;
 						case NEBLINA_COMMAND_FUSION_LOCK_HEADING_REFERENCE:
 							nebdev!.setLockHeadingReference(sender.selectedSegmentIndex == 1)
 							let cell = cmdView.cellForRow( at: IndexPath(row: row, section: 0))
@@ -598,29 +580,29 @@ class DetailViewController: UIViewController, UITextFieldDelegate, CBPeripheralD
 				case NEBLINA_SUBSYSTEM_SENSOR:
 					switch (NebCmdList[row].CmdId)
 					{
-					case NEBLINA_COMMAND_SENSOR_ACCELEROMETER:
-						nebdev!.streamAccelSensorData(sender.selectedSegmentIndex == 1)
+					case NEBLINA_COMMAND_SENSOR_ACCELEROMETER_STREAM:
+						nebdev!.sensorStreamAccelData(sender.selectedSegmentIndex == 1)
 						break
-					case NEBLINA_COMMAND_SENSOR_GYROSCOPE:
-						nebdev?.streamGyroSensorData(sender.selectedSegmentIndex == 1)
+					case NEBLINA_COMMAND_SENSOR_GYROSCOPE_STREAM:
+						nebdev?.sensorStreamGyroData(sender.selectedSegmentIndex == 1)
 						break
-					case NEBLINA_COMMAND_SENSOR_HUMIDITY:
-						nebdev?.streamHumiditySensorData(sender.selectedSegmentIndex == 1)
+					case NEBLINA_COMMAND_SENSOR_HUMIDITY_STREAM:
+						nebdev?.sensorStreamHumidityData(sender.selectedSegmentIndex == 1)
 						break
-					case NEBLINA_COMMAND_SENSOR_MAGNETOMETER:
-						nebdev?.streamMagSensorData(sender.selectedSegmentIndex == 1)
+					case NEBLINA_COMMAND_SENSOR_MAGNETOMETER_STREAM:
+						nebdev?.sensorStreamMagData(sender.selectedSegmentIndex == 1)
 						break
-					case NEBLINA_COMMAND_SENSOR_PRESSURE:
-						nebdev?.streamPressureSensorData(sender.selectedSegmentIndex == 1)
+					case NEBLINA_COMMAND_SENSOR_PRESSURE_STREAM:
+						nebdev?.sensorStreamPressureData(sender.selectedSegmentIndex == 1)
 						break
-					case NEBLINA_COMMAND_SENSOR_TEMPERATURE:
-						nebdev?.streamTempSensorData(sender.selectedSegmentIndex == 1)
+					case NEBLINA_COMMAND_SENSOR_TEMPERATURE_STREAM:
+						nebdev?.sensorStreamTemperatureData(sender.selectedSegmentIndex == 1)
 						break
-					case NEBLINA_COMMAND_SENSOR_ACCELEROMETER_GYROSCOPE:
-						nebdev?.streamAccelGyroSensorData(sender.selectedSegmentIndex == 1)
+					case NEBLINA_COMMAND_SENSOR_ACCELEROMETER_GYROSCOPE_STREAM:
+						nebdev?.sensorStreamAccelGyroData(sender.selectedSegmentIndex == 1)
 						break
-					case NEBLINA_COMMAND_SENSOR_ACCELEROMETER_MAGNETOMETER:
-						nebdev?.streamAccelMagSensorData(sender.selectedSegmentIndex == 1)
+					case NEBLINA_COMMAND_SENSOR_ACCELEROMETER_MAGNETOMETER_STREAM:
+						nebdev?.sensorStreamAccelMagData(sender.selectedSegmentIndex == 1)
 						break
 					default:
 						break
@@ -633,7 +615,7 @@ class DetailViewController: UIViewController, UITextFieldDelegate, CBPeripheralD
 							nebdev!.streamQuaternion(false)
 							nebdev!.streamEulerAngle(sender.selectedSegmentIndex == 1)
 							heading = sender.selectedSegmentIndex == 1
-							var i = getCmdIdx(NEBLINA_SUBSYSTEM_FUSION,  cmdId: NEBLINA_COMMAND_FUSION_QUATERNION_STATE)
+							var i = getCmdIdx(NEBLINA_SUBSYSTEM_FUSION,  cmdId: NEBLINA_COMMAND_FUSION_QUATERNION_STREAM)
 							var cell = cmdView.cellForRow( at: IndexPath(row: i, section: 0))
 							if (cell != nil) {
 								let control = cell!.viewWithTag(1) as! UISegmentedControl
@@ -653,7 +635,7 @@ class DetailViewController: UIViewController, UITextFieldDelegate, CBPeripheralD
 							}
 							
 							nebdev!.streamQuaternion(sender.selectedSegmentIndex == 1)
-							var i = getCmdIdx(NEBLINA_SUBSYSTEM_FUSION,  cmdId: NEBLINA_COMMAND_FUSION_QUATERNION_STATE)
+							var i = getCmdIdx(NEBLINA_SUBSYSTEM_FUSION,  cmdId: NEBLINA_COMMAND_FUSION_QUATERNION_STREAM)
 							var cell = cmdView.cellForRow( at: IndexPath(row: i, section: 0))
 							if (cell != nil) {
 								let control = cell!.viewWithTag(1) as! UISegmentedControl
@@ -666,29 +648,29 @@ class DetailViewController: UIViewController, UITextFieldDelegate, CBPeripheralD
 //								let control = cell!.viewWithTag(1) as! UISegmentedControl
 //								control.selectedSegmentIndex = sender.selectedSegmentIndex
 //							}
-							nebdev!.streamMAG(sender.selectedSegmentIndex == 1)
-							i = getCmdIdx(NEBLINA_SUBSYSTEM_FUSION,  cmdId: NEBLINA_COMMAND_FUSION_MAG_STATE)
+							nebdev!.sensorStreamMagData(sender.selectedSegmentIndex == 1)
+							i = getCmdIdx(NEBLINA_SUBSYSTEM_FUSION,  cmdId: NEBLINA_COMMAND_SENSOR_MAGNETOMETER_STREAM)
 							cell = cmdView.cellForRow( at: IndexPath(row: i, section: 0))
 							if (cell != nil) {
 								let control = cell!.viewWithTag(1) as! UISegmentedControl
 								control.selectedSegmentIndex = sender.selectedSegmentIndex
 							}
 							nebdev!.streamExternalForce(sender.selectedSegmentIndex == 1)
-							i = getCmdIdx(NEBLINA_SUBSYSTEM_FUSION,  cmdId: NEBLINA_COMMAND_FUSION_EXTERNAL_FORCE_STATE)
+							i = getCmdIdx(NEBLINA_SUBSYSTEM_FUSION,  cmdId: NEBLINA_COMMAND_FUSION_EXTERNAL_FORCE_STREAM)
 							cell = cmdView.cellForRow( at: IndexPath(row: i, section: 0))
 							if (cell != nil) {
 								let control = cell!.viewWithTag(1) as! UISegmentedControl
 								control.selectedSegmentIndex = sender.selectedSegmentIndex
 							}
 							nebdev!.streamPedometer(sender.selectedSegmentIndex == 1)
-							i = getCmdIdx(NEBLINA_SUBSYSTEM_FUSION,  cmdId: NEBLINA_COMMAND_FUSION_PEDOMETER_STATE)
+							i = getCmdIdx(NEBLINA_SUBSYSTEM_FUSION,  cmdId: NEBLINA_COMMAND_FUSION_PEDOMETER_STREAM)
 							cell = cmdView.cellForRow( at: IndexPath(row: i, section: 0))
 							if (cell != nil) {
 								let control = cell!.viewWithTag(1) as! UISegmentedControl
 								control.selectedSegmentIndex = sender.selectedSegmentIndex
 							}
 							nebdev!.streamRotationInfo(sender.selectedSegmentIndex == 1)
-							i = getCmdIdx(NEBLINA_SUBSYSTEM_FUSION,  cmdId: NEBLINA_COMMAND_FUSION_ROTATION_STATE)
+							i = getCmdIdx(NEBLINA_SUBSYSTEM_FUSION,  cmdId: NEBLINA_COMMAND_FUSION_ROTATION_INFO_STREAM)
 							cell = cmdView.cellForRow( at: IndexPath(row: i, section: 0))
 							if (cell != nil) {
 								let control = cell!.viewWithTag(1) as! UISegmentedControl
@@ -918,11 +900,11 @@ class DetailViewController: UIViewController, UITextFieldDelegate, CBPeripheralD
 	
 		switch (cmdRspId) {
 			
-		case NEBLINA_COMMAND_FUSION_MOTION_STATE:
+		case NEBLINA_COMMAND_FUSION_MOTION_STATE_STREAM:
 			break
-		case NEBLINA_COMMAND_FUSION_IMU_STATE:
-			break
-		case NEBLINA_COMMAND_FUSION_EULER_ANGLE_STATE:
+//		case NEBLINA_COMMAND_FUSION_IMU_STATE:
+//			break
+		case NEBLINA_COMMAND_FUSION_EULER_ANGLE_STREAM:
 			//
 			// Process Euler Angle
 			//
@@ -945,7 +927,7 @@ class DetailViewController: UIViewController, UITextFieldDelegate, CBPeripheralD
 			
 		
 			break
-		case NEBLINA_COMMAND_FUSION_QUATERNION_STATE:
+		case NEBLINA_COMMAND_FUSION_QUATERNION_STREAM:
 		
 			//
 			// Process Quaternion
@@ -977,7 +959,7 @@ class DetailViewController: UIViewController, UITextFieldDelegate, CBPeripheralD
 			}
 			
 			break
-		case NEBLINA_COMMAND_FUSION_EXTERNAL_FORCE_STATE:
+		case NEBLINA_COMMAND_FUSION_EXTERNAL_FORCE_STREAM:
 			//
 			// Process External Force
 			//
@@ -1017,7 +999,7 @@ class DetailViewController: UIViewController, UITextFieldDelegate, CBPeripheralD
 			label.text = String("Extrn Force - x:\(xq), y:\(yq), z:\(zq)")
 			//print("Extrn Force - x:\(xq), y:\(yq), z:\(zq)")
 			break
-		case NEBLINA_COMMAND_FUSION_MAG_STATE:
+/*		case NEBLINA_COMMAND_FUSION_MAG_STATE:
 			//
 			// Mag data
 			//
@@ -1032,7 +1014,7 @@ class DetailViewController: UIViewController, UITextFieldDelegate, CBPeripheralD
 			
 			//ship.rotation = SCNVector4(Float(xq), Float(yq), 0, GLKMathDegreesToRadians(90))
 			break
-			
+			*/
 		default:
 			break
 		}
@@ -1207,7 +1189,7 @@ class DetailViewController: UIViewController, UITextFieldDelegate, CBPeripheralD
 	//
 	func didReceiveSensorData(sender : Neblina, cmdRspId : Int32, data : UnsafePointer<UInt8>, dataLen : Int, errFlag : Bool) {
 		switch (cmdRspId) {
-		case NEBLINA_COMMAND_SENSOR_ACCELEROMETER:
+		case NEBLINA_COMMAND_SENSOR_ACCELEROMETER_STREAM:
 			let x = (Int16(data[4]) & 0xff) | (Int16(data[5]) << 8)
 			let xq = x
 			let y = (Int16(data[6]) & 0xff) | (Int16(data[7]) << 8)
@@ -1217,7 +1199,7 @@ class DetailViewController: UIViewController, UITextFieldDelegate, CBPeripheralD
 			label.text = String("Accel - x:\(xq), y:\(yq), z:\(zq)")
 //			rxCount += 1
 			break
-		case NEBLINA_COMMAND_SENSOR_GYROSCOPE:
+		case NEBLINA_COMMAND_SENSOR_GYROSCOPE_STREAM:
 			let x = (Int16(data[4]) & 0xff) | (Int16(data[5]) << 8)
 			let xq = x
 			let y = (Int16(data[6]) & 0xff) | (Int16(data[7]) << 8)
@@ -1227,9 +1209,9 @@ class DetailViewController: UIViewController, UITextFieldDelegate, CBPeripheralD
 			label.text = String("Gyro - x:\(xq), y:\(yq), z:\(zq)")
 			//rxCount += 1
 			break
-		case NEBLINA_COMMAND_SENSOR_HUMIDITY:
+		case NEBLINA_COMMAND_SENSOR_HUMIDITY_STREAM:
 			break
-		case NEBLINA_COMMAND_SENSOR_MAGNETOMETER:
+		case NEBLINA_COMMAND_SENSOR_MAGNETOMETER_STREAM:
 			//
 			// Mag data
 			//
@@ -1244,11 +1226,11 @@ class DetailViewController: UIViewController, UITextFieldDelegate, CBPeripheralD
 			//rxCount += 1
 			//ship.rotation = SCNVector4(Float(xq), Float(yq), 0, GLKMathDegreesToRadians(90))
 			break
-		case NEBLINA_COMMAND_SENSOR_PRESSURE:
+		case NEBLINA_COMMAND_SENSOR_PRESSURE_STREAM:
 			break
-		case NEBLINA_COMMAND_SENSOR_TEMPERATURE:
+		case NEBLINA_COMMAND_SENSOR_TEMPERATURE_STREAM:
 			break
-		case NEBLINA_COMMAND_SENSOR_ACCELEROMETER_GYROSCOPE:
+		case NEBLINA_COMMAND_SENSOR_ACCELEROMETER_GYROSCOPE_STREAM:
 			let x = (Int16(data[4]) & 0xff) | (Int16(data[5]) << 8)
 			let xq = x
 			let y = (Int16(data[6]) & 0xff) | (Int16(data[7]) << 8)
@@ -1258,7 +1240,7 @@ class DetailViewController: UIViewController, UITextFieldDelegate, CBPeripheralD
 			label.text = String("IMU - x:\(xq), y:\(yq), z:\(zq)")
 			//rxCount += 1
 			break
-		case NEBLINA_COMMAND_SENSOR_ACCELEROMETER_MAGNETOMETER:
+		case NEBLINA_COMMAND_SENSOR_ACCELEROMETER_MAGNETOMETER_STREAM:
 			break
 		default:
 			break

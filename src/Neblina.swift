@@ -14,13 +14,18 @@ let NEB_SERVICE_UUID = CBUUID (string:"0df9f021-1532-11e5-8960-0002a5d5c51b")
 let NEB_DATACHAR_UUID = CBUUID (string:"0df9f022-1532-11e5-8960-0002a5d5c51b")
 let NEB_CTRLCHAR_UUID = CBUUID (string:"0df9f023-1532-11e5-8960-0002a5d5c51b")
 
+let ACTUATOR_TYPE_SWITCH			= 1
+let ACTUATOR_TYPE_BUTTON			= 2
+let ACTUATOR_TYPE_TEXT_FIELD		= 3
+let ACTUATOR_TYPE_TEXT_FILED_BUTTON	= 4
+
 struct NebCmdItem {
-	let SubSysId : Int32
-	let	CmdId : Int32
-	let ActiveStatus : UInt32
-	let Name : String
-	let Actuator : Int
-	let Text : String
+	let SubSysId : Int32		// Neblina subsystem
+	let	CmdId : Int32			// Neblina command ID
+	let ActiveStatus : UInt32	// Match value to indicate on state
+	let Name : String			// Command item name string
+	let Actuator : Int			// ACTUATOR_TYPE
+	let Text : String			// Text to display on actuator if avail
 }
 
 class Neblina : NSObject, CBPeripheralDelegate {
