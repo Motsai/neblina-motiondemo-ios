@@ -19,6 +19,8 @@ let NebCmdList = [NebCmdItem] (arrayLiteral:
 	           Name: "BLE Data Port", Actuator : ACTUATOR_TYPE_SWITCH, Text: ""),
 	NebCmdItem(SubSysId: NEBLINA_SUBSYSTEM_GENERAL, CmdId: NEBLINA_COMMAND_GENERAL_INTERFACE_STATE, ActiveStatus: UInt32(NEBLINA_INTERFACE_STATUS_UART.rawValue),
 	           Name: "UART Data Port", Actuator : ACTUATOR_TYPE_SWITCH, Text: ""),
+	NebCmdItem(SubSysId: NEBLINA_SUBSYSTEM_GENERAL, CmdId: NEBLINA_COMMAND_GENERAL_DEVICE_NAME_SET, ActiveStatus: 0,
+	           Name: "Change Device Name", Actuator : ACTUATOR_TYPE_TEXT_FILED_BUTTON, Text: "Change"),
 	NebCmdItem(SubSysId: NEBLINA_SUBSYSTEM_FUSION, CmdId: NEBLINA_COMMAND_FUSION_CALIBRATE_FORWARD_POSITION, ActiveStatus: 0,
 	           Name: "Calibrate Forward Pos", Actuator : ACTUATOR_TYPE_BUTTON, Text: "Calib Fwrd"),
 	NebCmdItem(SubSysId: NEBLINA_SUBSYSTEM_FUSION, CmdId: NEBLINA_COMMAND_FUSION_CALIBRATE_DOWN_POSITION, ActiveStatus: 0,
@@ -73,7 +75,7 @@ let NebCmdList = [NebCmdItem] (arrayLiteral:
 
 //let CtrlName = [String](arrayLiteral:"Heading")//, "Test1", "Test2")
 
-class DetailViewController: UIViewController, UITextFieldDelegate, CBPeripheralDelegate, NeblinaDelegate, SCNSceneRendererDelegate {
+class DetailViewController: UIViewController, UITextFieldDelegate, NeblinaDelegate, SCNSceneRendererDelegate {
 
 	var nebdev : Neblina? {
 		didSet {
@@ -340,6 +342,16 @@ class DetailViewController: UIViewController, UITextFieldDelegate, CBPeripheralD
 						case NEBLINA_COMMAND_GENERAL_RESET_TIMESTAMP:
 							nebdev!.resetTimeStamp(Delayed: true)
 							print("Reset timestamp")
+					case NEBLINA_COMMAND_GENERAL_DEVICE_NAME_SET:
+						let cell = cmdView.cellForRow( at: IndexPath(row: row, section: 0))
+						if (cell != nil) {
+							let control = cell!.viewWithTag(4) as! UITextField
+							nebdev!.setDeviceName(name: control.text!);
+							
+//							nebdev?.device = nil
+						}
+						
+						break
 						default:
 							break
 					}
@@ -374,8 +386,9 @@ class DetailViewController: UIViewController, UITextFieldDelegate, CBPeripheralD
 					switch (NebCmdList[row].CmdId) {
 						case NEBLINA_COMMAND_RECORDER_ERASE_ALL:
 							if flashEraseProgress == false {
-								print("Send Command erase")
+								//print("Send Command erase")
 								flashEraseProgress = true;
+								flashLabel.text = "Erasing ..."
 								nebdev!.eraseStorage(false)
 							}
 						case NEBLINA_COMMAND_RECORDER_RECORD:
@@ -521,7 +534,7 @@ class DetailViewController: UIViewController, UITextFieldDelegate, CBPeripheralD
 //							nebdev!.streamMAG(sender.selectedSegmentIndex == 1)
 //							break;
 						case NEBLINA_COMMAND_FUSION_LOCK_HEADING_REFERENCE:
-							nebdev!.setLockHeadingReference(sender.selectedSegmentIndex == 1)
+							nebdev!.lockHeadingReference()
 							let cell = cmdView.cellForRow( at: IndexPath(row: row, section: 0))
 							if (cell != nil) {
 								let sw = cell!.viewWithTag(1) as! UISegmentedControl
@@ -867,7 +880,7 @@ class DetailViewController: UIViewController, UITextFieldDelegate, CBPeripheralD
 			//print("\(d)")
 			
 			break
-		case NEBLINA_COMMAND_GENERAL_FIRMWARE:
+		case NEBLINA_COMMAND_GENERAL_FIRMWARE_VERSION:
 			let d = data.load(as: NeblinaFirmwareVersion_t.self)
 			versionLabel.text = String(format: "API:%d, FEN:%d.%d.%d, BLE:%d.%d.%d", d.apiVersion,
 			                           d.coreVersion.major, d.coreVersion.minor, d.coreVersion.build,
@@ -1086,6 +1099,7 @@ class DetailViewController: UIViewController, UITextFieldDelegate, CBPeripheralD
 		switch (cmdRspId) {
 			case NEBLINA_COMMAND_RECORDER_ERASE_ALL:
 				flashLabel.text = "Flash erased"
+				flashEraseProgress = false
 				break
 			case NEBLINA_COMMAND_RECORDER_RECORD:
 				let session = Int16(data[1]) | (Int16(data[2]) << 8)

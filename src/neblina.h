@@ -141,7 +141,7 @@
 #define     NEBLINA_COMMAND_GENERAL_SYSTEM_STATUS               1
 #define     NEBLINA_COMMAND_GENERAL_FUSION_STATUS               2
 #define     NEBLINA_COMMAND_GENERAL_RECORDER_STATUS             3
-#define     NEBLINA_COMMAND_GENERAL_FIRMWARE                    5
+#define     NEBLINA_COMMAND_GENERAL_FIRMWARE_VERSION            5
 #define     NEBLINA_COMMAND_GENERAL_RSSI                        7
 #define     NEBLINA_COMMAND_GENERAL_INTERFACE_STATUS            8
 #define     NEBLINA_COMMAND_GENERAL_INTERFACE_STATE             9

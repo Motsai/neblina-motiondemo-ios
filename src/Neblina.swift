@@ -326,7 +326,7 @@ class Neblina : NSObject, CBPeripheralDelegate {
 	}
 	
 	func getFirmwareVersion() {
-		sendCommand(subSys: NEBLINA_SUBSYSTEM_GENERAL, cmd: NEBLINA_COMMAND_GENERAL_FIRMWARE, paramLen: 0, paramData: [0])
+		sendCommand(subSys: NEBLINA_SUBSYSTEM_GENERAL, cmd: NEBLINA_COMMAND_GENERAL_FIRMWARE_VERSION, paramLen: 0, paramData: [0])
 	}
 	
 	func getDataPortState() {
@@ -383,7 +383,7 @@ class Neblina : NSObject, CBPeripheralDelegate {
 			len = Int(NEBLINA_NAME_LENGTH_MAX)
 		}
 		
-		sendCommand(subSys: NEBLINA_SUBSYSTEM_GENERAL, cmd: NEBLINA_COMMAND_GENERAL_DEVICE_NAME_GET, paramLen: len, paramData: param)
+		sendCommand(subSys: NEBLINA_SUBSYSTEM_GENERAL, cmd: NEBLINA_COMMAND_GENERAL_DEVICE_NAME_SET, paramLen: len, paramData: param)
 	}
 	
 	// ***
@@ -594,7 +594,7 @@ class Neblina : NSObject, CBPeripheralDelegate {
 		sendCommand(subSys: NEBLINA_SUBSYSTEM_FUSION, cmd: NEBLINA_COMMAND_FUSION_SITTING_STANDING_STREAM, paramLen: param.count, paramData: param)
 	}
 	
-	func setLockHeadingReference(_ Enable:Bool) {
+	func lockHeadingReference() {
 		sendCommand(subSys: NEBLINA_SUBSYSTEM_FUSION, cmd: NEBLINA_COMMAND_FUSION_LOCK_HEADING_REFERENCE, paramLen: 0, paramData: [0])
 	}
 	
