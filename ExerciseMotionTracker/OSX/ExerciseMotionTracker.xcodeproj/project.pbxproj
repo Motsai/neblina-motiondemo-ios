@@ -49,7 +49,6 @@
 		C91C6F591C03786200FC1681 /* ExerciseMotionTrackerUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExerciseMotionTrackerUITests.swift; sourceTree = "<group>"; };
 		C91C6F5B1C03786200FC1681 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		C91C6F671C037B5E00FC1681 /* CoreBluetooth.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreBluetooth.framework; path = System/Library/Frameworks/CoreBluetooth.framework; sourceTree = SDKROOT; };
-		C91C6F6E1C038A8B00FC1681 /* FusionEngineDataTypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FusionEngineDataTypes.h; path = ../../../src/FusionEngineDataTypes.h; sourceTree = "<group>"; };
 		C91C6F6F1C038A8B00FC1681 /* Neblina-Bridging-Header.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "Neblina-Bridging-Header.h"; path = "../../../src/Neblina-Bridging-Header.h"; sourceTree = "<group>"; };
 		C91C6F701C038A8B00FC1681 /* neblina.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = neblina.h; path = ../../../src/neblina.h; sourceTree = "<group>"; };
 		C91C6F711C038A8B00FC1681 /* Neblina.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Neblina.swift; path = ../../../src/Neblina.swift; sourceTree = "<group>"; };
@@ -107,7 +106,6 @@
 			isa = PBXGroup;
 			children = (
 				C9DF6B321C08AEE2007DB407 /* art.scnassets */,
-				C91C6F6E1C038A8B00FC1681 /* FusionEngineDataTypes.h */,
 				C91C6F6F1C038A8B00FC1681 /* Neblina-Bridging-Header.h */,
 				C91C6F701C038A8B00FC1681 /* neblina.h */,
 				C91C6F711C038A8B00FC1681 /* Neblina.swift */,

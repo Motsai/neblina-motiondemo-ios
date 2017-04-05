@@ -65,12 +65,12 @@ class ViewController: UIViewController, UITextFieldDelegate, CBCentralManagerDel
 		if (recState == true) {
 			// Start recording
 			sender.setTitle("Stop", for: UIControlState())
-			nebdev.streamMAG(true)
-			nebdev.streamIMU(true)
+			nebdev.sensorStreamMagData(true)
+			nebdev.sensorStreamAccelGyroData(true)
 		}
 		else {
-			nebdev.streamMAG(false)
-			nebdev.streamIMU(false)
+			nebdev.sensorStreamMagData(false)
+			nebdev.sensorStreamAccelGyroData(false)
 			sender.setTitle("Start", for: UIControlState())
 		}
 		nebdev.sessionRecord(recState)
@@ -171,6 +171,9 @@ class ViewController: UIViewController, UITextFieldDelegate, CBCentralManagerDel
 			
 			print("IDENTIFIER: \(peripheral.identifier)\n")
 			
+			if advertisementData[CBAdvertisementDataManufacturerDataKey] == nil {
+				return
+			}
 			//sensorData.text = sensorData.text + "FOUND PERIPHERALS: \(peripheral) AdvertisementData: \(advertisementData) RSSI: \(RSSI)\n"
 			var id = UInt64(0)
 			(advertisementData[CBAdvertisementDataManufacturerDataKey] as AnyObject).getBytes(&id, range: NSMakeRange(2, 8))
@@ -188,17 +191,9 @@ class ViewController: UIViewController, UITextFieldDelegate, CBCentralManagerDel
 				}
 			}
 			
-			//print("Peri : \(peripheral)\n");
-			//devices.addObject(peripheral)
-			print("DEVICES: \(device)\n")
-			//		peripheral.name = String("\(peripheral.name)_")
-			
 			objects.insert(device, at: 0)
 			
 			deviceView.reloadData();
-			// stop scanning, saves the battery
-			//central.stopScan()
-			
 	}
 	
 	func centralManager(_ central: CBCentralManager, didConnect peripheral: CBPeripheral) {
@@ -268,42 +263,43 @@ class ViewController: UIViewController, UITextFieldDelegate, CBCentralManagerDel
 		}
 	}
 	
+	// *****
 	// MARK : Neblina
-	func didConnectNeblina() {
+	// *****
+	//
+	func didConnectNeblina(sender : Neblina) {
 		// Switch to BLE interface
 		//nebdev.SendCmdControlInterface(0)
 		//nebdev.SendCmdRotationInfo(false);
-		nebdev.getMotionStatus()
+		nebdev.getSystemStatus()
 		nebdev.getFirmwareVersion()
-		nebdev.device.readRSSI()
+//		nebdev.device.readRSSI()
 		nebdev.streamRotationInfo(true);
 	}
 	
-	func didReceiveRSSI(_ rssi : NSNumber) {
+	func didReceiveRSSI(sender : Neblina, rssi : NSNumber) {
 		rssiLabel.text = String(describing: rssi) + String(" db")
 	}
 	
-	func didReceivePmgntData(_ type : Int32, data : UnsafePointer<UInt8>, dataLen: Int, errFlag : Bool) {
-		if (type == POWERMGMT_CMD_GET_TEMPERATURE)
+	func didReceivePmgntData(sender : Neblina, respType : Int32, cmdRspId : Int32, data : UnsafePointer<UInt8>, dataLen: Int, errFlag : Bool) {
+		if (cmdRspId == NEBLINA_COMMAND_POWER_TEMPERATURE)
 		{
 			let t = Float((Int16(data[4]) & 0xff) | (Int16(data[5]) << 8)) / 100.0
 			tempLabel.text = String(format:"%0.1f C", t)
 		}
 	}
 
-	func didReceiveFusionData(_ type : Int32, data : Fusion_DataPacket_t, errFlag : Bool) {
+	func didReceiveFusionData(sender : Neblina, respType : Int32, cmdRspId : Int32, data : NeblinaFusionPacket, errFlag : Bool) {
 		
 		//let errflag = Bool(type.rawValue & 0x80 == 0x80)
 		
 		//let id = FusionId(rawValue: type.rawValue & 0x7F)! as FusionId
 		
-		switch (type) {
+		switch (cmdRspId) {
 			
-		case MotionState:
+		case NEBLINA_COMMAND_FUSION_MOTION_STATE_STREAM:
 			break
-		case IMU_Data:
-			break
-		case EulerAngle:
+		case NEBLINA_COMMAND_FUSION_EULER_ANGLE_STREAM:
 			//
 			// Process Euler Angle
 			//
@@ -315,20 +311,9 @@ class ViewController: UIViewController, UITextFieldDelegate, CBCentralManagerDel
 			let z = (Int16(data.data.4) & 0xff) | (Int16(data.data.5) << 8)
 			let zrot = Float(z) / 10.0
 			
-/*			if (heading) {
-				ship.eulerAngles = SCNVector3Make(GLKMathDegreesToRadians(90), 0, GLKMathDegreesToRadians(180) - GLKMathDegreesToRadians(xrot))
-			}
-			else {
-				//				ship.eulerAngles = SCNVector3Make(GLKMathDegreesToRadians(90) - GLKMathDegreesToRadians(yrot), GLKMathDegreesToRadians(zrot), GLKMathDegreesToRadians(180) - GLKMathDegreesToRadians(xrot))
-				
-				ship.eulerAngles = SCNVector3Make(GLKMathDegreesToRadians(180) - GLKMathDegreesToRadians(yrot), GLKMathDegreesToRadians(xrot), GLKMathDegreesToRadians(180) - GLKMathDegreesToRadians(zrot))
-			}*/
-			
-//			label.text = String("Euler - Yaw:\(xrot), Pitch:\(yrot), Roll:\(zrot)")
-			
 			
 			break
-		case Quaternion:
+		case NEBLINA_COMMAND_FUSION_QUATERNION_STREAM:
 			
 			//
 			// Process Quaternion
@@ -342,74 +327,11 @@ class ViewController: UIViewController, UITextFieldDelegate, CBCentralManagerDel
 			let zq = Float(z) / 32768.0
 			let w = (Int16(data.data.6) & 0xff) | (Int16(data.data.7) << 8)
 			let wq = Float(w) / 32768.0
-//			ship.orientation = SCNQuaternion(yq, xq, zq, wq)
-//			label.text = String("Quat - x:\(xq), y:\(yq), z:\(zq), w:\(wq)")
 			
 			
 			break
-		case ExtForce:
-			//
-			// Process External Force
-			//
-
-			break
-			/*		case FlashEraseAll:
-			//let session = (Int16(data.data.0) & 0xff) | (Int16(data.data.1) << 8)
-			flashrec.text = String("Flash Erased")
-			flashEraseProgress = false
-			let i = NebDevice.getCmdIdx(NEB_CTRL_SUBSYS_MOTION_ENG, cmdId : FlashEraseAll)
-			let cell = cmdView.cellForRowAtIndexPath( NSIndexPath(forRow: i, inSection: 0))
-			let sw = cell!.viewWithTag(2) as! UISegmentedControl
-			sw.selectedSegmentIndex = 0
-			break;
-			case FlashRecordStartStop:
-			if (errFlag) {
-			flashrec.text = String("Unable to start recording")
-			let i = NebDevice.getCmdIdx(NEB_CTRL_SUBSYS_MOTION_ENG, cmdId : FlashRecordStartStop)
-			let cell = cmdView.cellForRowAtIndexPath( NSIndexPath(forRow: i, inSection: 0))
-			let sw = cell!.viewWithTag(2) as! UISegmentedControl
-			sw.selectedSegmentIndex = 0
-			}
-			else {
-			let onoff = Int8(data.data.0)
-			let session = (Int16(data.data.1) & 0xff) | (Int16(data.data.2) << 8)
-			if (onoff == 0) {
-			flashrec.text = String("Flash Recording Finished \(session)")
-			let i = NebDevice.getCmdIdx(NEB_CTRL_SUBSYS_MOTION_ENG, cmdId : FlashRecordStartStop)
-			let cell = cmdView.cellForRowAtIndexPath( NSIndexPath(forRow: i, inSection: 0))
-			let sw = cell!.viewWithTag(2) as! UISegmentedControl
-			sw.selectedSegmentIndex = 0
-			}
-			else {
-			flashrec.text = String("Flash Recording Session \(session)")
 			
-			}
-			}
-			break;
-			case FlashPlaybackStartStop:
-			if (errFlag) {
-			flashrec.text = String("Flash record session not found")
-			let i = NebDevice.getCmdIdx(NEB_CTRL_SUBSYS_MOTION_ENG, cmdId : FlashPlaybackStartStop)
-			let cell = cmdView.cellForRowAtIndexPath( NSIndexPath(forRow: i, inSection: 0))
-			let sw = cell!.viewWithTag(2) as! UISegmentedControl
-			sw.selectedSegmentIndex = 0
-			}
-			else {
-			let onoff = Int8(data.data.0)
-			let session = (Int16(data.data.1) & 0xff) | (Int16(data.data.2) << 8)
-			if (onoff == 0) {
-			flashrec.text = String("Flash Playback Finished")
-			let i = NebDevice.getCmdIdx(NEB_CTRL_SUBSYS_MOTION_ENG, cmdId : FlashPlaybackStartStop)
-			let cell = cmdView.cellForRowAtIndexPath( NSIndexPath(forRow: i, inSection: 0))
-			let sw = cell!.viewWithTag(2) as! UISegmentedControl
-			sw.selectedSegmentIndex = 0
-			}
-			else {
-			flashrec.text = String("Flash Playback Session \(session)")
-			}
-			}
-			break*/
-		case RotationInfo:
+		case NEBLINA_COMMAND_FUSION_ROTATION_INFO_STREAM:
 			let rpm = Float(Int16(data.data.4) | (Int16(data.data.5) << 8)) / 10.0
 			let rotcnt = Int32(data.data.0) | (Int32(data.data.1) << 8) | (Int32(data.data.2) << 16) | (Int32(data.data.3) << 24)
 			let diam = (rimDiam.text! as NSString).floatValue
@@ -429,11 +351,13 @@ class ViewController: UIViewController, UITextFieldDelegate, CBCentralManagerDel
 		
 	}
 	
-	func didReceiveDebugData(_ type : Int32, data : UnsafePointer<UInt8>, dataLen: Int, errFlag : Bool)
+	func didReceiveGeneralData(sender : Neblina, respType : Int32, cmdRspId : Int32, data : UnsafeRawPointer, dataLen : Int, errFlag : Bool)
 	{
-		switch (type) {
-		case DEBUG_CMD_MOTENGINE_RECORDER_STATUS:
-			switch (data[8]) {
+		switch (cmdRspId) {
+		case NEBLINA_COMMAND_GENERAL_SYSTEM_STATUS:
+			let d = data.load(as: NeblinaSystemStatus_t.self)
+			
+			switch (d.recorder) {
 			case 1:	// Playback
 				recState = false
 				recordButton.titleLabel?.text = "Start"
@@ -489,28 +413,39 @@ class ViewController: UIViewController, UITextFieldDelegate, CBCentralManagerDel
 			//print("\(d)")
 			
 			break
-		case DEBUG_CMD_GET_FW_VERSION:
-			versLabel.text = String(format: "API: %d, FE: %d.%d, BLE: %d.%d", data[0], data[1], data[2], data[4], data[5])
+		case NEBLINA_COMMAND_GENERAL_FIRMWARE_VERSION:
+			let d = data.load(as: NeblinaFirmwareVersion_t.self)
+			versLabel.text = String(format: "API:%d, FEN:%d.%d.%d, BLE:%d.%d.%d", d.apiVersion,
+			                        d.coreVersion.major, d.coreVersion.minor, d.coreVersion.build,
+			                        d.bleVersion.major, d.bleVersion.minor, d.bleVersion.build)
 		default:
 			break
 		}
-	}
 	
-	func didReceiveStorageData(_ type : Int32, data : UnsafePointer<UInt8>, dataLen: Int, errFlag : Bool)
+	}
+	func didReceiveDebugData(sender : Neblina, respType : Int32, cmdRspId : Int32, data : UnsafePointer<UInt8>, dataLen: Int, errFlag : Bool)
 	{
 		
 	}
 	
-	func didReceiveEepromData(_ type : Int32, data : UnsafePointer<UInt8>, dataLen: Int, errFlag : Bool)
+	func didReceiveRecorderData(sender : Neblina, respType : Int32, cmdRspId : Int32, data : UnsafePointer<UInt8>, dataLen: Int, errFlag : Bool)
 	{
 		
 	}
 	
-	func didReceiveLedData(_ type : Int32, data : UnsafePointer<UInt8>, dataLen : Int, errFlag : Bool)
+	func didReceiveEepromData(sender : Neblina, respType : Int32, cmdRspId : Int32, data : UnsafePointer<UInt8>, dataLen: Int, errFlag : Bool)
 	{
 		
 	}
 	
-
+	func didReceiveLedData(sender : Neblina, respType : Int32, cmdRspId : Int32, data : UnsafePointer<UInt8>, dataLen : Int, errFlag : Bool)
+	{
+		
+	}
+	
+	func didReceiveSensorData(sender : Neblina, respType : Int32, cmdRspId : Int32, data : UnsafePointer<UInt8>, dataLen : Int, errFlag : Bool)
+	{
+		
+	}
 }
 

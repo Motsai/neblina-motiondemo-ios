@@ -768,16 +768,22 @@ class DetailViewController: UIViewController, UITextFieldDelegate, NeblinaDelega
 					}
 				}
 			case NEBLINA_SUBSYSTEM_SENSOR:
+				//print("\(NebCmdList[idx])")
 				let cell = cmdView.cellForRow( at: IndexPath(row: idx, section: 0))
 				if cell != nil {
 					//let cell = cmdView.view(atColumn: 0, row: idx, makeIfNecessary: false)! as NSView
 					let control = cell?.viewWithTag(1) as! UISegmentedControl
-					if NebCmdList[idx].ActiveStatus & UInt32(status.sensor) == 0 {
+					if NebCmdList[idx].CmdId == NEBLINA_COMMAND_SENSOR_ACCELEROMETER_GYROSCOPE_STREAM {
+						if NebCmdList[idx].ActiveStatus == UInt32(NEBLINA_SENSOR_STATUS_ACCELEROMETER_GYROSCOPE.rawValue) {
+							print("Accel_Gyro button \(status.sensor) ")
+						}
+					}
+					if (NebCmdList[idx].ActiveStatus & UInt32(status.sensor)) == 0 {
 						control.selectedSegmentIndex = 0
 					}
 					else {
 						control.selectedSegmentIndex = 1
-						}
+					}
 				}
 
 			default:
@@ -804,7 +810,7 @@ class DetailViewController: UIViewController, UITextFieldDelegate, NeblinaDelega
 	//
 	// General data
 	//
-	func didReceiveGeneralData(sender : Neblina, cmdRspId : Int32, data : UnsafeRawPointer, dataLen : Int, errFlag : Bool) {
+	func didReceiveGeneralData(sender : Neblina, respType: Int32, cmdRspId : Int32, data : UnsafeRawPointer, dataLen : Int, errFlag : Bool) {
 		switch (cmdRspId) {
 		case NEBLINA_COMMAND_GENERAL_SYSTEM_STATUS:
 			var myStruct = NeblinaSystemStatus_t()
@@ -904,7 +910,7 @@ class DetailViewController: UIViewController, UITextFieldDelegate, NeblinaDelega
 		}
 	}
 	
-	func didReceiveFusionData(sender : Neblina, cmdRspId : Int32, data : NeblinaFusionPacket, errFlag : Bool) {
+	func didReceiveFusionData(sender : Neblina, respType : Int32, cmdRspId : Int32, data : NeblinaFusionPacket, errFlag : Bool) {
 
 		//let errflag = Bool(type.rawValue & 0x80 == 0x80)
 
@@ -915,8 +921,6 @@ class DetailViewController: UIViewController, UITextFieldDelegate, NeblinaDelega
 			
 		case NEBLINA_COMMAND_FUSION_MOTION_STATE_STREAM:
 			break
-//		case NEBLINA_COMMAND_FUSION_IMU_STATE:
-//			break
 		case NEBLINA_COMMAND_FUSION_EULER_ANGLE_STREAM:
 			//
 			// Process Euler Angle
@@ -1035,7 +1039,7 @@ class DetailViewController: UIViewController, UITextFieldDelegate, NeblinaDelega
 		
 	}
 	
-	func didReceivePmgntData(sender : Neblina, cmdRspId : Int32, data : UnsafePointer<UInt8>, dataLen: Int, errFlag : Bool) {
+	func didReceivePmgntData(sender : Neblina, respType : Int32, cmdRspId : Int32, data : UnsafePointer<UInt8>, dataLen: Int, errFlag : Bool) {
 		let value = UInt16(data[0]) | (UInt16(data[1]) << 8)
 		if (cmdRspId == NEBLINA_COMMAND_POWER_CHARGE_CURRENT)
 		{
@@ -1048,7 +1052,7 @@ class DetailViewController: UIViewController, UITextFieldDelegate, NeblinaDelega
 		}
 	}
 	
-	func didReceiveLedData(sender : Neblina, cmdRspId : Int32, data : UnsafePointer<UInt8>, dataLen: Int, errFlag : Bool) {
+	func didReceiveLedData(sender : Neblina, respType : Int32, cmdRspId : Int32, data : UnsafePointer<UInt8>, dataLen: Int, errFlag : Bool) {
 		switch (cmdRspId) {
 		case NEBLINA_COMMAND_LED_STATUS:
 			let i = getCmdIdx(NEBLINA_SUBSYSTEM_LED,  cmdId: NEBLINA_COMMAND_LED_STATUS)
@@ -1081,7 +1085,7 @@ class DetailViewController: UIViewController, UITextFieldDelegate, NeblinaDelega
 	//
 	// Debug
 	//
-	func didReceiveDebugData(sender : Neblina, cmdRspId : Int32, data : UnsafePointer<UInt8>, dataLen : Int, errFlag : Bool)
+	func didReceiveDebugData(sender : Neblina, respType : Int32, cmdRspId : Int32, data : UnsafePointer<UInt8>, dataLen : Int, errFlag : Bool)
 	{
 		//print("Debug \(type) data \(data)")
 		switch (cmdRspId) {
@@ -1095,7 +1099,7 @@ class DetailViewController: UIViewController, UITextFieldDelegate, NeblinaDelega
 		}
 	}
 		
-	func didReceiveRecorderData(sender : Neblina, cmdRspId : Int32, data : UnsafePointer<UInt8>, dataLen: Int, errFlag : Bool) {
+	func didReceiveRecorderData(sender : Neblina, respType : Int32, cmdRspId : Int32, data : UnsafePointer<UInt8>, dataLen: Int, errFlag : Bool) {
 		switch (cmdRspId) {
 			case NEBLINA_COMMAND_RECORDER_ERASE_ALL:
 				flashLabel.text = "Flash erased"
@@ -1184,7 +1188,7 @@ class DetailViewController: UIViewController, UITextFieldDelegate, NeblinaDelega
 		}
 	}
 	
-	func didReceiveEepromData(sender : Neblina, cmdRspId : Int32, data : UnsafePointer<UInt8>, dataLen: Int, errFlag : Bool) {
+	func didReceiveEepromData(sender : Neblina, respType : Int32, cmdRspId : Int32, data : UnsafePointer<UInt8>, dataLen: Int, errFlag : Bool) {
 		switch (cmdRspId) {
 			case NEBLINA_COMMAND_EEPROM_READ:
 				let pageno = UInt16(data[0]) | (UInt16(data[1]) << 8)
@@ -1201,7 +1205,7 @@ class DetailViewController: UIViewController, UITextFieldDelegate, NeblinaDelega
 	//
 	// Sensor data
 	//
-	func didReceiveSensorData(sender : Neblina, cmdRspId : Int32, data : UnsafePointer<UInt8>, dataLen : Int, errFlag : Bool) {
+	func didReceiveSensorData(sender : Neblina, respType : Int32, cmdRspId : Int32, data : UnsafePointer<UInt8>, dataLen : Int, errFlag : Bool) {
 		switch (cmdRspId) {
 		case NEBLINA_COMMAND_SENSOR_ACCELEROMETER_STREAM:
 			let x = (Int16(data[4]) & 0xff) | (Int16(data[5]) << 8)
@@ -1224,6 +1228,9 @@ class DetailViewController: UIViewController, UITextFieldDelegate, NeblinaDelega
 			//rxCount += 1
 			break
 		case NEBLINA_COMMAND_SENSOR_HUMIDITY_STREAM:
+			let x = (Int32(data[4]) & 0xff) | (Int32(data[5]) << 8) | (Int32(data[6]) << 16) | (Int32(data[7]) << 24)
+			let xf = Float(x) / 100.0;
+			label.text = String("Humidity : \(xf)")
 			break
 		case NEBLINA_COMMAND_SENSOR_MAGNETOMETER_STREAM:
 			//
@@ -1364,9 +1371,7 @@ class DetailViewController: UIViewController, UITextFieldDelegate, NeblinaDelega
 			return
 		}
 		
-		nebdev!.getFusionStatus()
-		nebdev!.getDataPortState()
-		nebdev!.getLed()
+		nebdev!.getSystemStatus()
 	}
 }
 

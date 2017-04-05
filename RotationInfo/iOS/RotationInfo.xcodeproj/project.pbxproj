@@ -50,11 +50,9 @@
 		C938D7D61D3D12A5004DE681 /* RotationInfoUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = RotationInfoUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		C938D7DA1D3D12A5004DE681 /* RotationInfoUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RotationInfoUITests.swift; sourceTree = "<group>"; };
 		C938D7DC1D3D12A5004DE681 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		C938D7E81D3D13D9004DE681 /* FusionEngineDataTypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FusionEngineDataTypes.h; path = ../../../src/FusionEngineDataTypes.h; sourceTree = "<group>"; };
 		C938D7E91D3D13D9004DE681 /* Neblina-Bridging-Header.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "Neblina-Bridging-Header.h"; path = "../../../src/Neblina-Bridging-Header.h"; sourceTree = "<group>"; };
 		C938D7EA1D3D13D9004DE681 /* neblina.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = neblina.h; path = ../../../src/neblina.h; sourceTree = "<group>"; };
 		C938D7EB1D3D13D9004DE681 /* Neblina.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Neblina.swift; path = ../../../src/Neblina.swift; sourceTree = "<group>"; };
-		C938D7EC1D3D13D9004DE681 /* ProMotion.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ProMotion.h; path = ../../../src/ProMotion.h; sourceTree = "<group>"; };
 		C938D7EE1D3D1533004DE681 /* Logo_motsai_CMYK_Final.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = Logo_motsai_CMYK_Final.png; path = ../../../art.scnassets/Logo_motsai_CMYK_Final.png; sourceTree = "<group>"; };
 		C938D7F01D3D176E004DE681 /* CoreBluetooth.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreBluetooth.framework; path = System/Library/Frameworks/CoreBluetooth.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
@@ -109,11 +107,9 @@
 		C938D7B91D3D12A5004DE681 /* RotationInfo */ = {
 			isa = PBXGroup;
 			children = (
-				C938D7E81D3D13D9004DE681 /* FusionEngineDataTypes.h */,
 				C938D7E91D3D13D9004DE681 /* Neblina-Bridging-Header.h */,
 				C938D7EA1D3D13D9004DE681 /* neblina.h */,
 				C938D7EB1D3D13D9004DE681 /* Neblina.swift */,
-				C938D7EC1D3D13D9004DE681 /* ProMotion.h */,
 				C938D7BA1D3D12A5004DE681 /* AppDelegate.swift */,
 				C938D7BC1D3D12A5004DE681 /* ViewController.swift */,
 				C938D7BE1D3D12A5004DE681 /* Main.storyboard */,
@@ -211,6 +207,7 @@
 				TargetAttributes = {
 					C938D7B61D3D12A5004DE681 = {
 						CreatedOnToolsVersion = 7.3.1;
+						DevelopmentTeam = 4D2Y57Q3GL;
 						LastSwiftMigration = 0800;
 					};
 					C938D7CA1D3D12A5004DE681 = {
@@ -424,6 +421,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				DEVELOPMENT_TEAM = 4D2Y57Q3GL;
 				INFOPLIST_FILE = RotationInfo/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 8.4;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
@@ -439,6 +437,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				DEVELOPMENT_TEAM = 4D2Y57Q3GL;
 				INFOPLIST_FILE = RotationInfo/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 8.4;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";

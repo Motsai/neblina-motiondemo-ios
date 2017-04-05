@@ -69,31 +69,6 @@ class ViewController: NSViewController, NSTableViewDataSource, NSTableViewDelega
 		return nil;
 	}
 	
-	/*func tableView(tableView: NSTableView, objectValueForTableColumn tableColumn: NSTableColumn?, row: Int) -> AnyObject?
-	{
-	//        var string:String = "row " + String(row) + ", Col" + String(tableColumn.identifier)
-	//        return string
-	//let newString = getDataArray().objectAtIndex(row).objectForKey(tableColumn!.identifier)
-	if (row < devices.count)
-	{
-	//let peripheral = devices[row];
-	//let newString = peripheral.name;
-	
-	return devices[row];
-	}
-	return nil;
-	}*/
-	
-	/*	func getDataArray () -> NSArray{
-	let dataArray:[NSDictionary] = [["FirstName": "Debasis", "LastName": "Das"],
-	["FirstName": "Nishant", "LastName": "Singh"],
-	["FirstName": "John", "LastName": "Doe"],
-	["FirstName": "Jane", "LastName": "Doe"],
-	["FirstName": "Mary", "LastName": "Jane"]];
-	print(dataArray);
-	return dataArray;
-	}*/
-	
 	func tableViewSelectionDidChange(_ notification: Notification)
 	{
 		if (self.tableView.numberOfSelectedRows > 0)
@@ -136,14 +111,14 @@ class ViewController: NSViewController, NSTableViewDataSource, NSTableViewDelega
 			
 			print("IDENTIFIER: \(peripheral.identifier)\n")
 
-		if advertisementData[CBAdvertisementDataManufacturerDataKey] == nil {
-			return
-		}
+			if advertisementData[CBAdvertisementDataManufacturerDataKey] == nil {
+				return
+			}
 		
 			//sensorData.text = sensorData.text + "FOUND PERIPHERALS: \(peripheral) AdvertisementData: \(advertisementData) RSSI: \(RSSI)\n"
 			
 			var id : UInt64 = 0
-		(advertisementData[CBAdvertisementDataManufacturerDataKey] as! NSData).getBytes(&id, range: NSMakeRange(2, 8))
+			(advertisementData[CBAdvertisementDataManufacturerDataKey] as! NSData).getBytes(&id, range: NSMakeRange(2, 8))
 			if (id == 0) {
 				return
 			}
@@ -239,161 +214,30 @@ class ViewController: NSViewController, NSTableViewDataSource, NSTableViewDelega
 
 	// MARK : Neblina
 	
-	func didConnectNeblina() {
-		nebdev.streamDisableAll()
+	func didConnectNeblina(sender : Neblina) {
+		nebdev.disableStreaming()
 		nebdev.streamSittingStanding(false)	// Reset counts
 		nebdev.streamPedometer(false)
 		nebdev.streamSittingStanding(true)
 		nebdev.streamPedometer(true)
 	}
-	func didReceiveRSSI(_ rssi : NSNumber) {
+	func didReceiveRSSI(sender : Neblina, rssi : NSNumber) {
 		
 	}
 	
-	func didReceiveDebugData(_ type : Int32, data : UnsafePointer<UInt8>, dataLen: Int, errFlag : Bool) {
-		
-	}
-	func didReceivePmgntData(_ type : Int32, data : UnsafePointer<UInt8>, dataLen: Int, errFlag : Bool) {
-		
-	}
-	func didReceiveStorageData(_ type : Int32, data : UnsafePointer<UInt8>, dataLen: Int, errFlag : Bool) {
-		
-	}
-	func didReceiveEepromData(_ type : Int32, data : UnsafePointer<UInt8>, dataLen: Int, errFlag : Bool) {
-		
-	}
-	func didReceiveLedData(_ type : Int32, data : UnsafePointer<UInt8>, dataLen: Int, errFlag : Bool) {
+	func didReceiveGeneralData(sender : Neblina, respType : Int32, cmdRspId : Int32, data : UnsafeRawPointer, dataLen : Int, errFlag : Bool) {
 		
 	}
 
-	func didReceiveFusionData(_ type : Int32, data : Fusion_DataPacket_t, errFlag : Bool) {
+	func didReceiveFusionData(sender : Neblina, respType : Int32, cmdRspId : Int32, data : NeblinaFusionPacket, errFlag : Bool) {
 	//	let textview = self.view.viewWithTag(3) as! UITextView
 		
-		switch (type) {
-			
-		case MotionState:
-			break
-		case IMU_Data:
-			break
-		case EulerAngle:
-			//
-			// Process Euler Angle
-			//
-/*			let ship = scene.rootNode.childNodeWithName("ship", recursively: true)!
-			let x = (Int16(data.data.0) & 0xff) | (Int16(data.data.1) << 8)
-			let xrot = Float(x) / 10.0
-			let y = (Int16(data.data.2) & 0xff) | (Int16(data.data.3) << 8)
-			let yrot = Float(y) / 10.0
-			let z = (Int16(data.data.4) & 0xff) | (Int16(data.data.5) << 8)
-			let zrot = Float(z) / 10.0
-			
-			if (heading) {
-				ship.eulerAngles = SCNVector3Make(GLKMathDegreesToRadians(90), 0, GLKMathDegreesToRadians(180) - GLKMathDegreesToRadians(xrot))
-			}
-			else {
-				//				ship.eulerAngles = SCNVector3Make(GLKMathDegreesToRadians(90) - GLKMathDegreesToRadians(yrot), GLKMathDegreesToRadians(zrot), GLKMathDegreesToRadians(180) - GLKMathDegreesToRadians(xrot))
-				ship.eulerAngles = SCNVector3Make(GLKMathDegreesToRadians(180) - GLKMathDegreesToRadians(yrot), GLKMathDegreesToRadians(xrot), GLKMathDegreesToRadians(180) - GLKMathDegreesToRadians(zrot))
-			}
-			
-			textview.text = String("Euler - Yaw:\(xrot), Pitch:\(yrot), Roll:\(zrot)")
-			*/
-			
-			break
-		case Quaternion:
-			
-			//
-			// Process Quaternion
-			//
-/*			let ship = scene.rootNode.childNodeWithName("ship", recursively: true)!
-			let x = (Int16(data.data.0) & 0xff) | (Int16(data.data.1) << 8)
-			let xq = Float(x) / 32768.0
-			let y = (Int16(data.data.2) & 0xff) | (Int16(data.data.3) << 8)
-			let yq = Float(y) / 32768.0
-			let z = (Int16(data.data.4) & 0xff) | (Int16(data.data.5) << 8)
-			let zq = Float(z) / 32768.0
-			let w = (Int16(data.data.6) & 0xff) | (Int16(data.data.7) << 8)
-			let wq = Float(w) / 32768.0
-			ship.orientation = SCNQuaternion(yq, xq, zq, wq)
-			textview.text = String("Quat - x:\(xq), y:\(yq), z:\(zq), w:\(wq)")
-			
-			*/
-			break
-		case ExtForce:
-			//
-			// Process External Force
-			//
-/*			let ship = scene.rootNode.childNodeWithName("ship", recursively: true)!
-			let x = (Int16(data.data.0) & 0xff) | (Int16(data.data.1) << 8)
-			let xq = x / 1600
-			let y = (Int16(data.data.2) & 0xff) | (Int16(data.data.3) << 8)
-			let yq = y / 1600
-			let z = (Int16(data.data.4) & 0xff) | (Int16(data.data.5) << 8)
-			let zq = z / 1600
-			
-			cnt -= 1
-			if (cnt <= 0) {
-				cnt = max_count
-				//if (xf != xq || yf != yq || zf != zq) {
-				let pos = SCNVector3(CGFloat(xf/cnt), CGFloat(yf/cnt), CGFloat(zf/cnt))
-				//let pos = SCNVector3(CGFloat(yf), CGFloat(xf), CGFloat(zf))
-				//SCNTransaction.flush()
-				//SCNTransaction.begin()
-				//SCNTransaction.setAnimationDuration(0.1)
-				//let action = SCNAction.moveTo(pos, duration: 0.1)
-				ship.position = pos
-				//SCNTransaction.commit()
-				//ship.runAction(action)
-				
-				xf = xq
-				yf = yq
-				zf = zq
-				//}
-			}
-			else {
-				//if (abs(xf) <= abs(xq)) {
-				xf += xq
-				//}
-				//if (abs(yf) <= abs(yq)) {
-				yf += yq
-				//}
-				//if (abs(xf) <= abs(xq)) {
-				zf += zq
-				//}
-				/*	if (xq == 0 && yq == 0 && zq == 0) {
-				//cnt = 1
-				xf = 0
-				yf = 0
-				zf = 0
-				//if (cnt <= 1) {
-				//ship.removeAllActions()
-				//	ship.position = SCNVector3(CGFloat(yf), CGFloat(xf), CGFloat(zf))
-				//}
-				
-				}*/
-			}
-			
-			textview.text = String("Extrn Force - x:\(xq), y:\(yq), z:\(zq)")
-			//print("Extrn Force - x:\(xq), y:\(yq), z:\(zq)")*/
-			break
-		case MAG_Data:
-			//
-			// Mag data
-			//
-/*			let ship = scene.rootNode.childNodeWithName("ship", recursively: true)!
-			let x = (Int16(data.data.0) & 0xff) | (Int16(data.data.1) << 8)
-			let xq = x / 10
-			let y = (Int16(data.data.2) & 0xff) | (Int16(data.data.3) << 8)
-			let yq = y / 10
-			let z = (Int16(data.data.4) & 0xff) | (Int16(data.data.5) << 8)
-			let zq = z / 10
-			textview.text = String("Mag - x:\(xq), y:\(yq), z:\(zq)")
-			//ship.rotation = SCNVector4(Float(xq), Float(yq), 0, GLKMathDegreesToRadians(90))*/
-			break
-		case Pedometer:
+		switch (cmdRspId) {
+		case NEBLINA_COMMAND_FUSION_PEDOMETER_STREAM:
 			stepcnt = (UInt16(data.data.0) & 0xff) | (UInt16(data.data.1) << 8)
 			cadence = data.data.2
 			break
-		case SittingStanding:
+		case NEBLINA_COMMAND_FUSION_SITTING_STANDING_STREAM:
 			let state = data.data.0
 			let sitTime = (UInt32(data.data.1) & 0xff) | (UInt32(data.data.2) << 8)  | (UInt32(data.data.3) << 16) | (UInt32(data.data.4) << 24)
 			let standTime = (UInt32(data.data.5) & 0xff) | (UInt32(data.data.6) << 8)  | (UInt32(data.data.7) << 16) | (UInt32(data.data.8) << 24)
@@ -432,7 +276,24 @@ class ViewController: NSViewController, NSTableViewDataSource, NSTableViewDelega
 			break;
 		default: break
 		}
+	}
+	
+	func didReceivePmgntData(sender : Neblina, respType : Int32, cmdRspId : Int32, data : UnsafePointer<UInt8>, dataLen : Int, errFlag : Bool) {
 		
+	}
+	func didReceiveLedData(sender : Neblina, respType : Int32, cmdRspId : Int32, data : UnsafePointer<UInt8>, dataLen : Int, errFlag : Bool) {
+		
+	}
+	func didReceiveDebugData(sender : Neblina, respType : Int32, cmdRspId : Int32, data : UnsafePointer<UInt8>, dataLen : Int, errFlag : Bool) {
+		
+	}
+	func didReceiveRecorderData(sender : Neblina, respType : Int32, cmdRspId : Int32, data : UnsafePointer<UInt8>, dataLen : Int, errFlag : Bool) {
+		
+	}
+	func didReceiveEepromData(sender : Neblina, respType : Int32, cmdRspId : Int32, data : UnsafePointer<UInt8>, dataLen : Int, errFlag : Bool) {
+		
+	}
+	func didReceiveSensorData(sender : Neblina, respType : Int32, cmdRspId : Int32, data : UnsafePointer<UInt8>, dataLen : Int, errFlag : Bool) {
 		
 	}
 

@@ -52,7 +52,6 @@
 		C9EDE8931BFCC9B40039E9F1 /* SitStandUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SitStandUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		C9EDE8971BFCC9B40039E9F1 /* SitStandUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SitStandUITests.swift; sourceTree = "<group>"; };
 		C9EDE8991BFCC9B40039E9F1 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		C9EDE8A81BFCCA330039E9F1 /* FusionEngineDataTypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FusionEngineDataTypes.h; path = ../../../src/FusionEngineDataTypes.h; sourceTree = "<group>"; };
 		C9EDE8A91BFCCA330039E9F1 /* Neblina-Bridging-Header.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "Neblina-Bridging-Header.h"; path = "../../../src/Neblina-Bridging-Header.h"; sourceTree = "<group>"; };
 		C9EDE8AA1BFCCA330039E9F1 /* neblina.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = neblina.h; path = ../../../src/neblina.h; sourceTree = "<group>"; };
 		C9EDE8AB1BFCCA330039E9F1 /* Neblina.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Neblina.swift; path = ../../../src/Neblina.swift; sourceTree = "<group>"; };
@@ -107,7 +106,6 @@
 			isa = PBXGroup;
 			children = (
 				C9DEDB4D1D0723A200A76BA3 /* art.scnassets */,
-				C9EDE8A81BFCCA330039E9F1 /* FusionEngineDataTypes.h */,
 				C9EDE8A91BFCCA330039E9F1 /* Neblina-Bridging-Header.h */,
 				C9EDE8AA1BFCCA330039E9F1 /* neblina.h */,
 				C9EDE8AB1BFCCA330039E9F1 /* Neblina.swift */,
