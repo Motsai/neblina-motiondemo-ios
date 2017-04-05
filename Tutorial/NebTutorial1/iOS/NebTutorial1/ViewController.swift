@@ -174,9 +174,24 @@ class ViewController: UIViewController, CBCentralManagerDelegate, NeblinaDelegat
 	
 	func didReceiveRSSI(sender : Neblina, rssi : NSNumber) {}
 	
-	func didReceiveGeneralData(sender : Neblina, cmdRspId : Int32, data : UnsafeRawPointer, dataLen : Int, errFlag : Bool) {}
+	func didReceiveGeneralData(sender : Neblina, respType : Int32, cmdRspId : Int32, data : UnsafeRawPointer, dataLen : Int, errFlag : Bool) {
+		switch cmdRspId {
+			case NEBLINA_COMMAND_GENERAL_SYSTEM_STATUS:
+				let d = data.load(as: NeblinaSystemStatus_t.self)
+				
+				// Update button state
+				if (d.fusion & UInt32(NEBLINA_FUSION_STATUS_EULER.rawValue)) == 0 {
+					switchButton.setOn(false, animated: false)
+				}
+				else {
+					switchButton.setOn(true, animated: true)
+				}
+				break
+			default: break
+		}
+	}
 	
-	func didReceiveFusionData(sender : Neblina, cmdRspId : Int32, data : NeblinaFusionPacket, errFlag : Bool) {
+	func didReceiveFusionData(sender : Neblina, respType : Int32, cmdRspId : Int32, data : NeblinaFusionPacket, errFlag : Bool) {
 	
 		switch (cmdRspId) {
 /*		case NEBLINA_COMMAND_FUSION_QUATERNION_STREAM:
@@ -213,12 +228,12 @@ class ViewController: UIViewController, CBCentralManagerDelegate, NeblinaDelegat
 			break
 		}
 	}
-	func didReceivePmgntData(sender : Neblina, cmdRspId : Int32, data : UnsafePointer<UInt8>, dataLen : Int, errFlag : Bool) {}
-	func didReceiveLedData(sender : Neblina, cmdRspId : Int32, data : UnsafePointer<UInt8>, dataLen : Int, errFlag : Bool) {}
-	func didReceiveDebugData(sender : Neblina, cmdRspId : Int32, data : UnsafePointer<UInt8>, dataLen : Int, errFlag : Bool) {}
-	func didReceiveRecorderData(sender : Neblina, cmdRspId : Int32, data : UnsafePointer<UInt8>, dataLen : Int, errFlag : Bool) {}
-	func didReceiveEepromData(sender : Neblina, cmdRspId : Int32, data : UnsafePointer<UInt8>, dataLen : Int, errFlag : Bool) {}
-	func didReceiveSensorData(sender : Neblina, cmdRspId : Int32, data : UnsafePointer<UInt8>, dataLen : Int, errFlag : Bool) {}
+	func didReceivePmgntData(sender : Neblina, respType : Int32, cmdRspId : Int32, data : UnsafePointer<UInt8>, dataLen : Int, errFlag : Bool) {}
+	func didReceiveLedData(sender : Neblina, respType : Int32, cmdRspId : Int32, data : UnsafePointer<UInt8>, dataLen : Int, errFlag : Bool) {}
+	func didReceiveDebugData(sender : Neblina, respType : Int32, cmdRspId : Int32, data : UnsafePointer<UInt8>, dataLen : Int, errFlag : Bool) {}
+	func didReceiveRecorderData(sender : Neblina, respType : Int32, cmdRspId : Int32, data : UnsafePointer<UInt8>, dataLen : Int, errFlag : Bool) {}
+	func didReceiveEepromData(sender : Neblina, respType : Int32, cmdRspId : Int32, data : UnsafePointer<UInt8>, dataLen : Int, errFlag : Bool) {}
+	func didReceiveSensorData(sender : Neblina, respType : Int32, cmdRspId : Int32, data : UnsafePointer<UInt8>, dataLen : Int, errFlag : Bool) {}
 }
 
 

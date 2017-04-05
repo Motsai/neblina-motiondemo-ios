@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		C9549DE51E95389E0020674F /* Neblina.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9549DE31E95389E0020674F /* Neblina.swift */; };
 		C9DEDB5C1D0734F200A76BA3 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9DEDB5B1D0734F200A76BA3 /* AppDelegate.swift */; };
 		C9DEDB5E1D0734F200A76BA3 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9DEDB5D1D0734F200A76BA3 /* ViewController.swift */; };
 		C9DEDB611D0734F200A76BA3 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = C9DEDB5F1D0734F200A76BA3 /* Main.storyboard */; };
@@ -14,7 +15,6 @@
 		C9DEDB661D0734F200A76BA3 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = C9DEDB641D0734F200A76BA3 /* LaunchScreen.storyboard */; };
 		C9DEDB711D0734F300A76BA3 /* NebTutorial1Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9DEDB701D0734F300A76BA3 /* NebTutorial1Tests.swift */; };
 		C9DEDB7C1D0734F300A76BA3 /* NebTutorial1UITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9DEDB7B1D0734F300A76BA3 /* NebTutorial1UITests.swift */; };
-		C9DEDB8E1D0735A700A76BA3 /* Neblina.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9DEDB8C1D0735A700A76BA3 /* Neblina.swift */; };
 		C9DEDB921D0763CF00A76BA3 /* Logo_motsai_CMYK_Final.png in Resources */ = {isa = PBXBuildFile; fileRef = C9DEDB911D0763CF00A76BA3 /* Logo_motsai_CMYK_Final.png */; };
 /* End PBXBuildFile section */
 
@@ -36,6 +36,10 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		C9549DE11E95389E0020674F /* Neblina-Bridging-Header.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "Neblina-Bridging-Header.h"; path = "../../../../src/Neblina-Bridging-Header.h"; sourceTree = "<group>"; };
+		C9549DE21E95389E0020674F /* neblina.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = neblina.h; path = ../../../../src/neblina.h; sourceTree = "<group>"; };
+		C9549DE31E95389E0020674F /* Neblina.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Neblina.swift; path = ../../../../src/Neblina.swift; sourceTree = "<group>"; };
+		C9549DE41E95389E0020674F /* neblinaFusion.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = neblinaFusion.h; path = ../../../../src/neblinaFusion.h; sourceTree = "<group>"; };
 		C9DEDB581D0734F200A76BA3 /* NebTutorial1.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = NebTutorial1.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		C9DEDB5B1D0734F200A76BA3 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		C9DEDB5D1D0734F200A76BA3 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -49,9 +53,6 @@
 		C9DEDB771D0734F300A76BA3 /* NebTutorial1UITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = NebTutorial1UITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		C9DEDB7B1D0734F300A76BA3 /* NebTutorial1UITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NebTutorial1UITests.swift; sourceTree = "<group>"; };
 		C9DEDB7D1D0734F300A76BA3 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		C9DEDB8A1D0735A700A76BA3 /* Neblina-Bridging-Header.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "Neblina-Bridging-Header.h"; path = "../../../src/Neblina-Bridging-Header.h"; sourceTree = "<group>"; };
-		C9DEDB8B1D0735A700A76BA3 /* neblina.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = neblina.h; path = ../../../src/neblina.h; sourceTree = "<group>"; };
-		C9DEDB8C1D0735A700A76BA3 /* Neblina.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Neblina.swift; path = ../../../src/Neblina.swift; sourceTree = "<group>"; };
 		C9DEDB911D0763CF00A76BA3 /* Logo_motsai_CMYK_Final.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Logo_motsai_CMYK_Final.png; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -103,10 +104,11 @@
 		C9DEDB5A1D0734F200A76BA3 /* NebTutorial1 */ = {
 			isa = PBXGroup;
 			children = (
+				C9549DE11E95389E0020674F /* Neblina-Bridging-Header.h */,
+				C9549DE21E95389E0020674F /* neblina.h */,
+				C9549DE31E95389E0020674F /* Neblina.swift */,
+				C9549DE41E95389E0020674F /* neblinaFusion.h */,
 				C9DEDB911D0763CF00A76BA3 /* Logo_motsai_CMYK_Final.png */,
-				C9DEDB8A1D0735A700A76BA3 /* Neblina-Bridging-Header.h */,
-				C9DEDB8B1D0735A700A76BA3 /* neblina.h */,
-				C9DEDB8C1D0735A700A76BA3 /* Neblina.swift */,
 				C9DEDB5B1D0734F200A76BA3 /* AppDelegate.swift */,
 				C9DEDB5D1D0734F200A76BA3 /* ViewController.swift */,
 				C9DEDB5F1D0734F200A76BA3 /* Main.storyboard */,
@@ -273,7 +275,7 @@
 			files = (
 				C9DEDB5E1D0734F200A76BA3 /* ViewController.swift in Sources */,
 				C9DEDB5C1D0734F200A76BA3 /* AppDelegate.swift in Sources */,
-				C9DEDB8E1D0735A700A76BA3 /* Neblina.swift in Sources */,
+				C9549DE51E95389E0020674F /* Neblina.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -423,7 +425,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.motsai.NebTutorial1;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_OBJC_BRIDGING_HEADER = "../../src/Neblina-Bridging-Header.h";
+				SWIFT_OBJC_BRIDGING_HEADER = "../../../src/Neblina-Bridging-Header.h";
 				SWIFT_VERSION = 3.0;
 			};
 			name = Debug;
@@ -438,7 +440,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.motsai.NebTutorial1;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_OBJC_BRIDGING_HEADER = "../../src/Neblina-Bridging-Header.h";
+				SWIFT_OBJC_BRIDGING_HEADER = "../../../src/Neblina-Bridging-Header.h";
 				SWIFT_VERSION = 3.0;
 			};
 			name = Release;
