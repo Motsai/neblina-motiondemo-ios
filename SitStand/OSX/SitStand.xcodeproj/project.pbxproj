@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		C9BB997F1E9FC7460022D9CD /* NeblinaControl.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9BB997D1E9FC7460022D9CD /* NeblinaControl.swift */; };
 		C9EDE8FB1BFE242F0039E9F1 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9EDE8FA1BFE242F0039E9F1 /* AppDelegate.swift */; };
 		C9EDE8FD1BFE242F0039E9F1 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9EDE8FC1BFE242F0039E9F1 /* ViewController.swift */; };
 		C9EDE8FF1BFE242F0039E9F1 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C9EDE8FE1BFE242F0039E9F1 /* Assets.xcassets */; };
@@ -35,6 +36,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		C9BB997D1E9FC7460022D9CD /* NeblinaControl.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = NeblinaControl.swift; path = ../../../src/NeblinaControl.swift; sourceTree = "<group>"; };
+		C9BB997E1E9FC7460022D9CD /* neblinaFusion.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = neblinaFusion.h; path = ../../../src/neblinaFusion.h; sourceTree = "<group>"; };
 		C9EDE8F71BFE242F0039E9F1 /* SitStand.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SitStand.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		C9EDE8FA1BFE242F0039E9F1 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		C9EDE8FC1BFE242F0039E9F1 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -103,6 +106,8 @@
 		C9EDE8F91BFE242F0039E9F1 /* SitStand */ = {
 			isa = PBXGroup;
 			children = (
+				C9BB997D1E9FC7460022D9CD /* NeblinaControl.swift */,
+				C9BB997E1E9FC7460022D9CD /* neblinaFusion.h */,
 				C9EDE9351BFF9F650039E9F1 /* Neblina.swift */,
 				C9EDE9331BFF7F1C0039E9F1 /* Neblina-Bridging-Header.h */,
 				C9EDE9341BFF7F1C0039E9F1 /* neblina.h */,
@@ -267,6 +272,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				C9EDE8FD1BFE242F0039E9F1 /* ViewController.swift in Sources */,
+				C9BB997F1E9FC7460022D9CD /* NeblinaControl.swift in Sources */,
 				C9EDE8FB1BFE242F0039E9F1 /* AppDelegate.swift in Sources */,
 				C9EDE9361BFF9F650039E9F1 /* Neblina.swift in Sources */,
 			);

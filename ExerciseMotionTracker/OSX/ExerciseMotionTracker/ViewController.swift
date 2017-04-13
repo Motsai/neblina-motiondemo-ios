@@ -190,7 +190,7 @@ class ViewController: NSViewController, NSTableViewDataSource, NSTableViewDelega
 			if advertisementData[CBAdvertisementDataManufacturerDataKey] == nil {
 				return
 			}
-			//sensorData.text = sensorData.text + "FOUND PERIPHERALS: \(peripheral) AdvertisementData: \(advertisementData) RSSI: \(RSSI)\n"
+
 			var id : UInt64 = 0
 			(advertisementData[CBAdvertisementDataManufacturerDataKey] as! NSData).getBytes(&id, range: NSMakeRange(2, 8))
 			if (id == 0) {
@@ -205,7 +205,15 @@ class ViewController: NSViewController, NSTableViewDataSource, NSTableViewDelega
 				}
 			}
 			
-		let device = Neblina(devid: id, peripheral: peripheral)
+			var name : String? = nil
+			if advertisementData[CBAdvertisementDataLocalNameKey] == nil {
+				print("bad, no name")
+				name = peripheral.name
+			}
+			else {
+				name = advertisementData[CBAdvertisementDataLocalNameKey] as! String
+			}
+			let device = Neblina(devName: name!, devid: id, peripheral: peripheral)
 			//print("Peri : \(peripheral)\n");
 			//devices.addObject(peripheral)
 			print("DEVICES: \(device)\n")
@@ -286,12 +294,18 @@ class ViewController: NSViewController, NSTableViewDataSource, NSTableViewDelega
 		}
 	}
 	
-	// MARK : Neblina
+	// MARK: Neblina
 	
 	func didConnectNeblina(sender : Neblina) {
 		nebdev.streamQuaternion(true)
 		nebdev.streamTrajectoryInfo(true)
 	}
+
+	func didReceiveResponsePacket(sender : Neblina, subsystem : Int32, cmdRspId : Int32, data : UnsafeRawPointer, dataLen : Int)
+	{
+		
+	}
+	
 	func didReceiveRSSI(sender : Neblina , rssi : NSNumber) {
 		
 	}

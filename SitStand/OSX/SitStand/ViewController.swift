@@ -133,7 +133,15 @@ class ViewController: NSViewController, NSTableViewDataSource, NSTableViewDelega
 				}
 			}
 		
-			let device = Neblina(devid: id, peripheral: peripheral)
+			var name : String? = nil
+			if advertisementData[CBAdvertisementDataLocalNameKey] == nil {
+				print("bad, no name")
+				name = peripheral.name
+			}
+			else {
+				name = advertisementData[CBAdvertisementDataLocalNameKey] as! String
+			}
+			let device = Neblina(devName: name!, devid: id, peripheral: peripheral)
 		
 			objects.insert(device, at: 0)
 
@@ -212,7 +220,7 @@ class ViewController: NSViewController, NSTableViewDataSource, NSTableViewDelega
 		}
 	}
 
-	// MARK : Neblina
+	// MARK: Neblina
 	
 	func didConnectNeblina(sender : Neblina) {
 		nebdev.disableStreaming()
@@ -221,6 +229,12 @@ class ViewController: NSViewController, NSTableViewDataSource, NSTableViewDelega
 		nebdev.streamSittingStanding(true)
 		nebdev.streamPedometer(true)
 	}
+
+	func didReceiveResponsePacket(sender : Neblina, subsystem : Int32, cmdRspId : Int32, data : UnsafeRawPointer, dataLen : Int)
+	{
+		
+	}
+	
 	func didReceiveRSSI(sender : Neblina, rssi : NSNumber) {
 		
 	}

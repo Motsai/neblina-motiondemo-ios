@@ -146,8 +146,16 @@ class MasterViewController: UITableViewController, CBCentralManagerDelegate {
 				return
 			}
 			
-			let device = Neblina(devid: id, peripheral: peripheral)
-			
+			var name : String? = nil
+			if advertisementData[CBAdvertisementDataLocalNameKey] == nil {
+				print("bad, no name")
+				name = peripheral.name
+			}
+			else {
+				name = advertisementData[CBAdvertisementDataLocalNameKey] as! String
+			}
+			let device = Neblina(devName: name!, devid: id, peripheral: peripheral)
+
 			/*for dev in objects
 			{
 			if (dev.id == id)

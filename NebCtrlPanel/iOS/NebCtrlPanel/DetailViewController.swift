@@ -791,16 +791,28 @@ class DetailViewController: UIViewController, UITextFieldDelegate, NeblinaDelega
 			}
 		}
 	}
-	// MARK : Neblina
+	// MARK: Neblina
 	func didConnectNeblina(sender : Neblina) {
 		// Switch to BLE interface
 		prevTimeStamp = 0;
 		nebdev!.getSystemStatus()
-		//nebdev.SendCmdControlInterface(0)
-		//nebdev!.getMotionStatus()
-		//nebdev!.getDataPortState()
-		//nebdev!.getLed ()
 		nebdev!.getFirmwareVersion()
+	}
+	
+	func didReceiveResponsePacket(sender : Neblina, subsystem : Int32, cmdRspId : Int32, data : UnsafeRawPointer, dataLen : Int)
+	{
+		switch subsystem {
+			case NEBLINA_SUBSYSTEM_FUSION:
+				switch cmdRspId {
+					case NEBLINA_COMMAND_FUSION_QUATERNION_STREAM:
+						break
+					default:
+						break
+				}
+				break
+			default:
+				break
+		}
 	}
 	
 	func didReceiveRSSI(sender : Neblina, rssi : NSNumber) {
@@ -820,91 +832,12 @@ class DetailViewController: UIViewController, UITextFieldDelegate, NeblinaDelega
 			print(" \(d)")
 			updateUI(status: d)
 			break
-			/*
-		case NEBLINA_COMMAND_GENERAL_RECORDER_STATUS:
-			switch (data[8]) {
-			case 1:	// Playback
-				var i = getCmdIdx(NEBLINA_SUBSYSTEM_RECORDER,  cmdId: NEBLINA_COMMAND_RECORDER_RECORD)
-				var cell = cmdView.cellForRow( at: IndexPath(row: i, section: 0))
-				if (cell != nil) {
-					let sw = cell!.viewWithTag(1) as! UISegmentedControl
-					sw.selectedSegmentIndex = 0
-				}
-				i = getCmdIdx(NEBLINA_SUBSYSTEM_RECORDER,  cmdId: NEBLINA_COMMAND_RECORDER_PLAYBACK)
-				cell = cmdView.cellForRow( at: IndexPath(row: i, section: 0))
-				if (cell != nil) {
-					let sw = cell!.viewWithTag(1) as! UISegmentedControl
-					sw.selectedSegmentIndex = 1
-				}
-				break
-			case 2:	// Recording
-				var i = getCmdIdx(NEBLINA_SUBSYSTEM_RECORDER,  cmdId: NEBLINA_COMMAND_RECORDER_PLAYBACK)
-				var cell = cmdView.cellForRow( at: IndexPath(row: i, section: 0))
-				if (cell != nil) {
-					let sw = cell!.viewWithTag(1) as! UISegmentedControl
-					sw.selectedSegmentIndex = 0
-				}
-				i = getCmdIdx(NEBLINA_SUBSYSTEM_RECORDER,  cmdId: NEBLINA_COMMAND_RECORDER_RECORD)
-				cell = cmdView.cellForRow( at: IndexPath(row: i, section: 0))
-				if (cell != nil) {
-					let sw = cell!.viewWithTag(1) as! UISegmentedControl
-					sw.selectedSegmentIndex = 1
-				}
-				break
-			default:
-				var i = getCmdIdx(NEBLINA_SUBSYSTEM_RECORDER,  cmdId: NEBLINA_COMMAND_RECORDER_PLAYBACK)
-				var cell = cmdView.cellForRow( at: IndexPath(row: i, section: 0))
-				if (cell != nil) {
-					let sw = cell!.viewWithTag(1) as! UISegmentedControl
-					sw.selectedSegmentIndex = 0
-				}
-				i = getCmdIdx(NEBLINA_SUBSYSTEM_RECORDER,  cmdId: NEBLINA_COMMAND_RECORDER_RECORD)
-				cell = cmdView.cellForRow( at: IndexPath(row: i, section: 0))
-				if (cell != nil) {
-					let sw = cell!.viewWithTag(1) as! UISegmentedControl
-					sw.selectedSegmentIndex = 0
-				}
-				break
-			}*/
-			/*				var i = getCmdIdx(NEB_CTRL_SUBSYS_MOTION_ENG,  cmdId: Quaternion)
-			var cell = cmdView.cellForRow( at: IndexPath(row: i, section: 0))
-			if (cell != nil) {
-			let sw = cell!.viewWithTag(1) as! UISegmentedControl
-			sw.selectedSegmentIndex = Int(data[4] & 8) >> 3
-			}
-			i = getCmdIdx(NEB_CTRL_SUBSYS_MOTION_ENG,  cmdId: MAG_Data)
-			cell = cmdView.cellForRow( at: IndexPath(row: i, section: 0))
-			if (cell != nil) {
-			let sw = cell!.viewWithTag(1) as! UISegmentedControl
-			sw.selectedSegmentIndex = Int(data[4] & 0x80) >> 7
-			}
-			*/
-			//				i = nebdev.getCmdIdx(NEB_CTRL_SUBSYS_MOTION_ENG,  cmdId: EulerAngle)
-			/*				cell = cmdView.cellForRowAtIndexPath( NSIndexPath(forRow: NebCmdList.count, inSection: 0))
-			sw = cell!.viewWithTag(2) as! UISegmentedControl
-			sw.selectedSegmentIndex = Int(data[4] & 0x4) >> 2*/
-			//print("\(d)")
-			
-			break
 		case NEBLINA_COMMAND_GENERAL_FIRMWARE_VERSION:
 			let d = data.load(as: NeblinaFirmwareVersion_t.self)
 			versionLabel.text = String(format: "API:%d, FEN:%d.%d.%d, BLE:%d.%d.%d", d.apiVersion,
 			                           d.coreVersion.major, d.coreVersion.minor, d.coreVersion.build,
 			                           d.bleVersion.major, d.bleVersion.minor, d.bleVersion.build)
 			break
-		/*case NEBLINA_COMMAND_GENERAL_INTERFACE_STATUS:
-			let i = getCmdIdx(NEBLINA_SUBSYSTEM_GENERAL,  cmdId: NEBLINA_COMMAND_GENERAL_INTERFACE_STATE)
-			var cell = cmdView.cellForRow( at: IndexPath(row: i, section: 0))
-			if (cell != nil) {
-				let sw = cell!.viewWithTag(1) as! UISegmentedControl
-				sw.selectedSegmentIndex = Int(data[0])
-			}
-			cell = cmdView.cellForRow( at: IndexPath(row: i + 1, section: 0))
-			if (cell != nil) {
-				let sw = cell!.viewWithTag(1) as! UISegmentedControl
-				sw.selectedSegmentIndex = Int(data[1])
-			}
-			break*/
 		default:
 			break
 		}

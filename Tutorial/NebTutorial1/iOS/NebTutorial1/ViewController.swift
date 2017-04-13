@@ -93,8 +93,6 @@ class ViewController: UIViewController, CBCentralManagerDelegate, NeblinaDelegat
 			return
 		}
 		
-		let device = Neblina(devid: id, peripheral: peripheral)
-		
 		for dev in objects
 		{
 			if (dev.id == id)
@@ -102,6 +100,9 @@ class ViewController: UIViewController, CBCentralManagerDelegate, NeblinaDelegat
 				return;
 			}
 		}
+		
+		let name : String = advertisementData[CBAdvertisementDataLocalNameKey] as! String
+		let device = Neblina(devName: name, devid: id, peripheral: peripheral)
 		
 		print("DEVICES: \(device)\n")
 		
@@ -167,9 +168,25 @@ class ViewController: UIViewController, CBCentralManagerDelegate, NeblinaDelegat
 		}
 	}
 	
-	// MARK : Neblina Delegate
+	// MARK: Neblina Delegate
 	func didConnectNeblina(sender : Neblina) {
 		nebdev.getSystemStatus()
+	}
+	
+	func didReceiveResponsePacket(sender : Neblina, subsystem : Int32, cmdRspId : Int32, data : UnsafeRawPointer, dataLen : Int)
+	{
+		switch subsystem {
+		case NEBLINA_SUBSYSTEM_FUSION:
+			switch cmdRspId {
+			case NEBLINA_COMMAND_FUSION_QUATERNION_STREAM:
+				break
+			default:
+				break
+			}
+			break
+		default:
+			break
+		}
 	}
 	
 	func didReceiveRSSI(sender : Neblina, rssi : NSNumber) {}
@@ -194,7 +211,7 @@ class ViewController: UIViewController, CBCentralManagerDelegate, NeblinaDelegat
 	func didReceiveFusionData(sender : Neblina, respType : Int32, cmdRspId : Int32, data : NeblinaFusionPacket, errFlag : Bool) {
 	
 		switch (cmdRspId) {
-/*		case NEBLINA_COMMAND_FUSION_QUATERNION_STREAM:
+		case NEBLINA_COMMAND_FUSION_QUATERNION_STREAM:
 			
 			//
 			// Process Quaternion
@@ -209,7 +226,7 @@ class ViewController: UIViewController, CBCentralManagerDelegate, NeblinaDelegat
 			let wq = Float(w) / 32768.0
 			label.text = String("Quat - x:\(xq), y:\(yq), z:\(zq), w:\(wq)")
 			
-			break*/
+			break
 		case NEBLINA_COMMAND_FUSION_EULER_ANGLE_STREAM:
 			//
 			// Process Euler Angle

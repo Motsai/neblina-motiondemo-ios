@@ -174,14 +174,14 @@ class ViewController: UIViewController, UITextFieldDelegate, CBCentralManagerDel
 			if advertisementData[CBAdvertisementDataManufacturerDataKey] == nil {
 				return
 			}
-			//sensorData.text = sensorData.text + "FOUND PERIPHERALS: \(peripheral) AdvertisementData: \(advertisementData) RSSI: \(RSSI)\n"
 			var id = UInt64(0)
 			(advertisementData[CBAdvertisementDataManufacturerDataKey] as AnyObject).getBytes(&id, range: NSMakeRange(2, 8))
-			//if (id == 0) {
-			//	return
-			//}
+			if id == 0 {
+				return
+			}
 			
-			let device = Neblina(devid: id, peripheral: peripheral)
+			let name : String = advertisementData[CBAdvertisementDataLocalNameKey] as! String
+			let device = Neblina(devName: name, devid: id, peripheral: peripheral)
 			
 			for dev in objects
 			{
@@ -264,7 +264,7 @@ class ViewController: UIViewController, UITextFieldDelegate, CBCentralManagerDel
 	}
 	
 	// *****
-	// MARK : Neblina
+	// MARK: Neblina
 	// *****
 	//
 	func didConnectNeblina(sender : Neblina) {
@@ -275,6 +275,11 @@ class ViewController: UIViewController, UITextFieldDelegate, CBCentralManagerDel
 		nebdev.getFirmwareVersion()
 //		nebdev.device.readRSSI()
 		nebdev.streamRotationInfo(true);
+	}
+	
+	func didReceiveResponsePacket(sender : Neblina, subsystem : Int32, cmdRspId : Int32, data : UnsafeRawPointer, dataLen : Int)
+	{
+		
 	}
 	
 	func didReceiveRSSI(sender : Neblina, rssi : NSNumber) {

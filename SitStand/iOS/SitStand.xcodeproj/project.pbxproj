@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		C9BB99821E9FC86F0022D9CD /* NeblinaControl.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9BB99801E9FC86F0022D9CD /* NeblinaControl.swift */; };
 		C9DEDB4E1D0723A200A76BA3 /* art.scnassets in Resources */ = {isa = PBXBuildFile; fileRef = C9DEDB4D1D0723A200A76BA3 /* art.scnassets */; };
 		C9EDE8761BFCC9B40039E9F1 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9EDE8751BFCC9B40039E9F1 /* AppDelegate.swift */; };
 		C9EDE8781BFCC9B40039E9F1 /* MasterViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9EDE8771BFCC9B40039E9F1 /* MasterViewController.swift */; };
@@ -37,6 +38,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		C9BB99801E9FC86F0022D9CD /* NeblinaControl.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = NeblinaControl.swift; path = ../../../src/NeblinaControl.swift; sourceTree = "<group>"; };
+		C9BB99811E9FC86F0022D9CD /* neblinaFusion.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = neblinaFusion.h; path = ../../../src/neblinaFusion.h; sourceTree = "<group>"; };
 		C9DEDB4D1D0723A200A76BA3 /* art.scnassets */ = {isa = PBXFileReference; lastKnownFileType = wrapper.scnassets; name = art.scnassets; path = ../../../art.scnassets; sourceTree = "<group>"; };
 		C9EDE8721BFCC9B40039E9F1 /* SitStand.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SitStand.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		C9EDE8751BFCC9B40039E9F1 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -105,6 +108,8 @@
 		C9EDE8741BFCC9B40039E9F1 /* SitStand */ = {
 			isa = PBXGroup;
 			children = (
+				C9BB99801E9FC86F0022D9CD /* NeblinaControl.swift */,
+				C9BB99811E9FC86F0022D9CD /* neblinaFusion.h */,
 				C9DEDB4D1D0723A200A76BA3 /* art.scnassets */,
 				C9EDE8A91BFCCA330039E9F1 /* Neblina-Bridging-Header.h */,
 				C9EDE8AA1BFCCA330039E9F1 /* neblina.h */,
@@ -277,6 +282,7 @@
 				C9EDE8AC1BFCCA330039E9F1 /* Neblina.swift in Sources */,
 				C9EDE87A1BFCC9B40039E9F1 /* DetailViewController.swift in Sources */,
 				C9EDE8781BFCC9B40039E9F1 /* MasterViewController.swift in Sources */,
+				C9BB99821E9FC86F0022D9CD /* NeblinaControl.swift in Sources */,
 				C9EDE8761BFCC9B40039E9F1 /* AppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

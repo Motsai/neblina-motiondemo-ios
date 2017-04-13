@@ -261,8 +261,6 @@ typedef struct {
     uint8_t build;          // Build version (0.0.Z)
 } Version_t;
 
-/**********************************************************************************/
-
 typedef struct {
 	uint8_t apiVersion;     // API
     Version_t coreVersion;  // core fusion firmware version
@@ -272,8 +270,7 @@ typedef struct {
 
 /**********************************************************************************/
 
-typedef struct NeblinaPacketHeader_t
-{
+typedef struct NeblinaPacketHeader_t {
     uint8_t subSystem:5;    // SubSystem
     uint8_t packetType:3;   // Packet type
     uint8_t length;         // Data length (in byte)
@@ -283,25 +280,22 @@ typedef struct NeblinaPacketHeader_t
 
 /**********************************************************************************/
 
-typedef struct NeblinaPacket_t
-{
+typedef struct NeblinaPacket_t {
     NeblinaPacketHeader_t header;
     uint8_t               data[1];        // Data buffer follows. i.e Data array more than one item
 } NeblinaPacket_t;
 
 /**********************************************************************************/
 
-typedef struct
-{
+typedef struct {
     uint16_t current;
-} ChargeCurrentData_t;
+} NeblinaPowerChargeCurrent_t;
 
 /**********************************************************************************/
 
 typedef uint16_t NeblinaEEPROMRead_t;
 
-typedef struct
-{
+typedef struct {
     uint16_t type;
     uint16_t pageId;
     uint8_t  content[8];
@@ -328,8 +322,7 @@ typedef enum {
     NEBLINA_INTERFACE_STATUS_UART = ( 1 << NEBLINA_INTERFACE_UART )
 } NEBLINA_ATTRIBUTE_PACKED( NeblinaInterfaceStatusMask_t );
 
-typedef struct
-{
+typedef struct {
     uint8_t interface;  // Communication interface
     uint8_t state;          // Interface state (OPEN/CLOSE)
 } NeblinaInterfaceState_t;
@@ -343,14 +336,12 @@ typedef enum {
     NEBLINA_LED_COUNT       // Keep last
 } NEBLINA_ATTRIBUTE_PACKED( NeblinaLED_t );
 
-typedef struct
-{
+typedef struct {
     uint8_t index;
     uint8_t state;
 } NeblinaLEDState_t;
 
-typedef struct
-{
+typedef struct {
     uint8_t status[NEBLINA_LED_COUNT];
 } NeblinaLEDStatus_t;
 
@@ -362,8 +353,7 @@ typedef uint16_t NeblinaSensorStatus_t;
 
 /**********************************************************************************/
 
-typedef struct
-{
+typedef struct {
     uint32_t fusion;      // Flag bits indicating fusion data streaming states
     uint16_t sensor;      // Flag bits indicating sensor data streaming states
     uint8_t  power;       // Flag bits indicating power states
@@ -374,8 +364,7 @@ typedef struct
 
 /**********************************************************************************/
 
-typedef struct
-{
+typedef struct {
     uint32_t timestamp;
     uint8_t rssi;
 } RSSIData_t;
@@ -418,8 +407,7 @@ typedef struct {
 
 /**********************************************************************************/
 
-typedef struct
-{
+typedef struct {
     uint8_t state;
     uint16_t sessionId;
     uint16_t length;
@@ -435,24 +423,21 @@ typedef struct {
 
 /**********************************************************************************/
 
-typedef struct
-{
+typedef struct {
     uint32_t length;
     uint16_t sessionId;
 } NeblinaSessionInfo_t;
 
 /**********************************************************************************/
 
-typedef struct
-{
+typedef struct {
     uint8_t state;
     uint16_t sessionId;
 } NeblinaSessionStatus_t;
 
 /**********************************************************************************/
 
-typedef struct
-{
+typedef struct {
     uint16_t sessionId;
     uint16_t length;
     uint32_t offset;
@@ -460,8 +445,7 @@ typedef struct
 
 /**********************************************************************************/
 
-typedef struct
-{
+typedef struct {
     uint8_t data[NEBLINA_PACKET_LENGTH_MAX];
 } NeblinaSessionReadData_t;
 
@@ -474,8 +458,7 @@ typedef enum {
 
 /**********************************************************************************/
 
-typedef struct
-{
+typedef struct {
     uint16_t temperature;
 } TemperatureData_t;
 
@@ -518,10 +501,18 @@ typedef enum {
     NEBLINA_FUSION_ROTATION_ALGORITHM_GYRO = 0x01
 } NEBLINA_ATTRIBUTE_PACKED( NeblinaFusionRotationAlgorithm_t );
 
+typedef uint16_t NeblinaFusionDownsample_t;
+
 typedef struct {
     uint8_t state;
     uint8_t algorithm;
 } NeblinaFusionRotationInfo_t;
+
+typedef struct {
+    uint16_t stream;
+    uint16_t downsample;
+    uint16_t rate;
+} NeblinaFusionStreamInfo_t;
 
 /**********************************************************************************/
 
@@ -539,6 +530,7 @@ typedef enum {
 /**********************************************************************************/
 
 typedef enum {
+    NEBLINA_RATE_EVENT = 0,
     NEBLINA_RATE_1 = 1,
     NEBLINA_RATE_50 = 50,
     NEBLINA_RATE_100 = 100,
@@ -582,7 +574,7 @@ typedef enum {
 } NEBLINA_ATTRIBUTE_PACKED( NeblinaSensorType_t );
 
 typedef struct {
-    uint16_t  stream;
+    uint16_t stream;
     uint16_t factor;
 } NeblinaSensorDownsample_t;
 
@@ -595,6 +587,24 @@ typedef struct {
     uint16_t type;
     uint16_t rate;
 } NeblinaSensorRate_t;
+
+typedef struct {
+    uint16_t downsample;
+    uint16_t range;
+    uint16_t rate;
+} NeblinaSensorStreamMotionInfo_t;
+
+typedef struct {
+    uint16_t downsample;
+    uint16_t rangeAccelerometer;
+    uint16_t rangeGyroscope;
+    uint16_t rate;
+} NeblinaSensorStreamAccelerometerGyroscopeInfo_t;
+
+typedef struct {
+    uint16_t downsample;
+    uint16_t rate;
+} NeblinaSensorStreamEnvironmentInfo_t;
 
 /**********************************************************************************/
 

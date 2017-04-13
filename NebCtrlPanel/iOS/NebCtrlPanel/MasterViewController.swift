@@ -152,7 +152,8 @@ class MasterViewController: UITableViewController, CBCentralManagerDelegate {
 				return
 			}
 			
-			let device = Neblina(devid: id, peripheral: peripheral)
+			let name : String = advertisementData[CBAdvertisementDataLocalNameKey] as! String
+			let device = Neblina(devName: name, devid: id, peripheral: peripheral)
 
 			for dev in objects
 			{

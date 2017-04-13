@@ -47,7 +47,7 @@ class DetailViewController: UIViewController, CBPeripheralDelegate, SCNSceneRend
 		// Dispose of any resources that can be recreated.
 	}
 
-	// MARK : Neblina
+	// MARK: Neblina
 	
 	func didConnectNeblina(sender : Neblina) {
 		nebdev.disableStreaming()
@@ -56,6 +56,11 @@ class DetailViewController: UIViewController, CBPeripheralDelegate, SCNSceneRend
 		nebdev.streamSittingStanding(true)
 		nebdev.streamPedometer(true)
 
+	}
+	
+	func didReceiveResponsePacket(sender : Neblina, subsystem : Int32, cmdRspId : Int32, data : UnsafeRawPointer, dataLen : Int)
+	{
+		
 	}
 	
 	func didReceiveRSSI(sender : Neblina, rssi : NSNumber) {

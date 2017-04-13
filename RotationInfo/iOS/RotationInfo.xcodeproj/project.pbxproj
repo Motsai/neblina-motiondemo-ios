@@ -17,6 +17,7 @@
 		C938D7ED1D3D13D9004DE681 /* Neblina.swift in Sources */ = {isa = PBXBuildFile; fileRef = C938D7EB1D3D13D9004DE681 /* Neblina.swift */; };
 		C938D7EF1D3D1533004DE681 /* Logo_motsai_CMYK_Final.png in Resources */ = {isa = PBXBuildFile; fileRef = C938D7EE1D3D1533004DE681 /* Logo_motsai_CMYK_Final.png */; };
 		C938D7F11D3D176E004DE681 /* CoreBluetooth.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C938D7F01D3D176E004DE681 /* CoreBluetooth.framework */; };
+		C9549E321E96B0CC0020674F /* NeblinaControl.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9549E301E96B0CC0020674F /* NeblinaControl.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -55,6 +56,8 @@
 		C938D7EB1D3D13D9004DE681 /* Neblina.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Neblina.swift; path = ../../../src/Neblina.swift; sourceTree = "<group>"; };
 		C938D7EE1D3D1533004DE681 /* Logo_motsai_CMYK_Final.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = Logo_motsai_CMYK_Final.png; path = ../../../art.scnassets/Logo_motsai_CMYK_Final.png; sourceTree = "<group>"; };
 		C938D7F01D3D176E004DE681 /* CoreBluetooth.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreBluetooth.framework; path = System/Library/Frameworks/CoreBluetooth.framework; sourceTree = SDKROOT; };
+		C9549E301E96B0CC0020674F /* NeblinaControl.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = NeblinaControl.swift; path = ../../../src/NeblinaControl.swift; sourceTree = "<group>"; };
+		C9549E311E96B0CC0020674F /* neblinaFusion.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = neblinaFusion.h; path = ../../../src/neblinaFusion.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -107,6 +110,8 @@
 		C938D7B91D3D12A5004DE681 /* RotationInfo */ = {
 			isa = PBXGroup;
 			children = (
+				C9549E301E96B0CC0020674F /* NeblinaControl.swift */,
+				C9549E311E96B0CC0020674F /* neblinaFusion.h */,
 				C938D7E91D3D13D9004DE681 /* Neblina-Bridging-Header.h */,
 				C938D7EA1D3D13D9004DE681 /* neblina.h */,
 				C938D7EB1D3D13D9004DE681 /* Neblina.swift */,
@@ -276,6 +281,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				C938D7BD1D3D12A5004DE681 /* ViewController.swift in Sources */,
+				C9549E321E96B0CC0020674F /* NeblinaControl.swift in Sources */,
 				C938D7BB1D3D12A5004DE681 /* AppDelegate.swift in Sources */,
 				C938D7ED1D3D13D9004DE681 /* Neblina.swift in Sources */,
 			);

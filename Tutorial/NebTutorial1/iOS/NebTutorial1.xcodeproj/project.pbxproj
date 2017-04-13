@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		C9549DE51E95389E0020674F /* Neblina.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9549DE31E95389E0020674F /* Neblina.swift */; };
+		C9BB997C1E9FB45E0022D9CD /* NeblinaControl.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9BB997B1E9FB45E0022D9CD /* NeblinaControl.swift */; };
 		C9DEDB5C1D0734F200A76BA3 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9DEDB5B1D0734F200A76BA3 /* AppDelegate.swift */; };
 		C9DEDB5E1D0734F200A76BA3 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9DEDB5D1D0734F200A76BA3 /* ViewController.swift */; };
 		C9DEDB611D0734F200A76BA3 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = C9DEDB5F1D0734F200A76BA3 /* Main.storyboard */; };
@@ -40,6 +41,7 @@
 		C9549DE21E95389E0020674F /* neblina.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = neblina.h; path = ../../../../src/neblina.h; sourceTree = "<group>"; };
 		C9549DE31E95389E0020674F /* Neblina.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Neblina.swift; path = ../../../../src/Neblina.swift; sourceTree = "<group>"; };
 		C9549DE41E95389E0020674F /* neblinaFusion.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = neblinaFusion.h; path = ../../../../src/neblinaFusion.h; sourceTree = "<group>"; };
+		C9BB997B1E9FB45E0022D9CD /* NeblinaControl.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = NeblinaControl.swift; path = ../../../../src/NeblinaControl.swift; sourceTree = "<group>"; };
 		C9DEDB581D0734F200A76BA3 /* NebTutorial1.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = NebTutorial1.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		C9DEDB5B1D0734F200A76BA3 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		C9DEDB5D1D0734F200A76BA3 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -104,6 +106,7 @@
 		C9DEDB5A1D0734F200A76BA3 /* NebTutorial1 */ = {
 			isa = PBXGroup;
 			children = (
+				C9BB997B1E9FB45E0022D9CD /* NeblinaControl.swift */,
 				C9549DE11E95389E0020674F /* Neblina-Bridging-Header.h */,
 				C9549DE21E95389E0020674F /* neblina.h */,
 				C9549DE31E95389E0020674F /* Neblina.swift */,
@@ -274,6 +277,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				C9DEDB5E1D0734F200A76BA3 /* ViewController.swift in Sources */,
+				C9BB997C1E9FB45E0022D9CD /* NeblinaControl.swift in Sources */,
 				C9DEDB5C1D0734F200A76BA3 /* AppDelegate.swift in Sources */,
 				C9549DE51E95389E0020674F /* Neblina.swift in Sources */,
 			);
