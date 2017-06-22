@@ -27,12 +27,6 @@
 /**********************************************************************************/
 
 #define     NEBLINA_API_VERSION                  2
-#define     NEBLINA_FIRMWARE_VERSION_MAJOR       2
-#define     NEBLINA_FIRMWARE_VERSION_MINOR       0
-#define     NEBLINA_FIRMWARE_VERSION_BUILD       0
-
-//#define     NEBLINA_HARDWARE_V2A
-#define     NEBLINA_HARDWARE_V2B
 
 /**********************************************************************************/
 
@@ -191,9 +185,6 @@
 #define     NEBLINA_COMMAND_RECORDER_SESSION_INFO               5
 #define     NEBLINA_COMMAND_RECORDER_SESSION_READ               6
 #define     NEBLINA_COMMAND_RECORDER_SESSION_DOWNLOAD           7
-#define     NEBLINA_COMMAND_RECORDER_SESSION_OPEN               8
-#define     NEBLINA_COMMAND_RECORDER_SESSION_CLOSE              9
-
 
 /**********************************************************************************/
 
@@ -288,7 +279,11 @@ typedef struct NeblinaPacket_t {
 /**********************************************************************************/
 
 typedef struct {
-    uint16_t current;
+    uint16_t stateOfCharge;     // in percentage (1000 = 100.0%)
+} NeblinaPowerBattery_t;
+
+typedef struct {
+    uint16_t current;           // in mA
 } NeblinaPowerChargeCurrent_t;
 
 /**********************************************************************************/
@@ -509,7 +504,6 @@ typedef struct {
 } NeblinaFusionRotationInfo_t;
 
 typedef struct {
-    uint16_t stream;
     uint16_t downsample;
     uint16_t rate;
 } NeblinaFusionStreamInfo_t;

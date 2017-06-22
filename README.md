@@ -2,7 +2,7 @@
 
 
 
-# Neblina&trade; ProMotion Development Kit iOS/OSX Swift
+# Neblina&trade; Development Kit iOS/OSX Swift
 =========  
 
 ![Neblina Board](docs/images/V2btop.png)  
@@ -14,21 +14,23 @@ The Neblina&trade; module is a low-power self-contained [AHRS](https://en.wikipe
 
 ![DK Board](docs/images/NeblinaDK_front_700.png)
 
-The [Neblina&trade; Development Kit](http://neblina.io/) serves as a reference design for Neblina integration, I/O expansion and an onboard Debug J-Tag for custom firmware development. The development kit with the extensive software support allows system integrators and evaluators to start development within minutes.
+The [Neblina&trade; Development Kit](http://neblina.io/) serves as a reference design for Neblina&trade; integration, I/O expansion and an onboard Debug J-Tag for custom firmware development. The development kit with the extensive software support allows system integrators and evaluators to start development within minutes.
 
-This repository is part of the development kit that provides a Swift interface to interact with the Neblina.
+This repository is part of the development kit that provides a Swift interface to interact with the Neblina&trade;.
 
 
 
 ### Prerequisite
 
-* Have on hand a Neblina module or Promotion Kit
+* Have on hand a Neblina&trade; module or Development Kit
 * An iPad or iPhone and a Mac computer with Bluetooth LE capability.
-* Follow the hardware [Quick Start guide](http://nebdox.motsai.com/ProMotion_DevKit/Getting_Started) to make sure that the Neblina module or Promotion kit is powered on and functional.
 * Clone or download this repo.
 * XCode 8 is required to compile
+* iOS/OSX programming skills
 
-### Functionnal check  
+### Functional check  
+
+Follow the hardware [Quick Start guide](http://nebdox.motsai.com/ProMotion_DevKit/Getting_Started) to make sure that the Neblina&trade; module or Development Kit is powered on and functional.
 
 Download or Clone this repo using the command
 
@@ -36,7 +38,7 @@ Download or Clone this repo using the command
 $ git clone https://github.com/Motsai/neblina-swift.git
 ```
 
-Open the NebCtrlPanel project (iOS or OSX), compile and execute the App.  The initial screen will list all available Neblina devices.  Select one of the Neblina that shows up.  
+Open the NebCtrlPanel project (iOS or OSX), compile and execute the App.  The initial screen will list all available Neblina&trade; devices.  Select one of the Neblina&trade; that shows up.  
 
 iPhone Screen Shot | OSX Screen Shot
 ---|---
@@ -44,16 +46,16 @@ iPhone Screen Shot | OSX Screen Shot
 
 ---  
 
-The iPhone & iPad will switch to the command screen. The "BLE Data Port" switch will be on if the communication with Neblina is successful.  Switch on the Quaternion stream.  The quaternion data should be displayed at the bottom of the screen.
+The iPhone & iPad will switch to the command screen. The "BLE Data Port" switch will be on if the communication with Neblina&trade; is successful.  Switch on the Quaternion stream.  The quaternion data should be displayed at the bottom of the screen.
 
 iPhone Screen Shot | iPad Screen Shot
 ---|---
 ![iPhone Screen Shot](docs/images/IMG_2888.jpg)|![iPad Screen Shot](docs/images/iPad_ScreenShot.jpg)
 ---  
 
-### Making your own App with Neblina  
+### Making your own App with Neblina&trade;  
 
-The project NebTutorial1 is the starting point to get a feel of how to connect to the Neblina via Bluetooth and retreive data.  It is a simple iPhone App that shows a TableView with a list of detected Neblina device, a button to enable Euler Angle Stream and a TextField to display the Euler data.
+The project NebTutorial1 is the starting point to get a feel of how to connect to the Neblina&trade; via Bluetooth and retreive data.  It is a simple iPhone App that shows a TableView with a list of detected Neblina&trade; device, a button to enable Euler Angle Stream and a TextField to display the Euler data.
 
 <p align="center">
 <img src="docs/images/iOS_Tutorial1.jpg" alt="Tutorial1 Screen Shot" width="200" />
@@ -67,11 +69,12 @@ In order to get swift compiler to compile with C defined constant, we need to sp
 
 Beside the bridging head, the following files are also needed to be added to the project. They are located in src folder from the root of this repo.    
 
-* FusionEngineDataTypes.h
+* neblinaFusion.h
 * Neblina-Bridging-Header.h
 * neblina.h
 * Neblina.swift
-* ProMotion.h  
+* NeblinaControl.swift
+
 
 #### API documentations
 

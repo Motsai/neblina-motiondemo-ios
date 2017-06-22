@@ -210,11 +210,16 @@ class Neblina : NSObject, CBPeripheralDelegate {
 			if Int32(hdr.packetType) == NEBLINA_PACKET_TYPE_RESPONSE {
 				var dd = [UInt8](repeating: 0, count: 16)
 				
+				if (hdr.length > 0) {
+					//print("Debug \(hdr.Len)")
+					characteristic.value?.copyBytes (to: &dd, from: Range(MemoryLayout<NeblinaPacketHeader_t>.size..<Int(hdr.length) + MemoryLayout<NeblinaPacketHeader_t>.size))
+				}
 				delegate.didReceiveResponsePacket(sender : self, subsystem: Int32(hdr.subSystem), cmdRspId: respId, data: dd, dataLen: Int(hdr.length))
 				
 				return
 			}
 			
+			if Int32(hdr.packetType) == NEBLINA_PACKET_TYPE_DATA {
 			switch (Int32(hdr.subSystem))
 			{
 				case NEBLINA_SUBSYSTEM_GENERAL:
@@ -280,6 +285,7 @@ class Neblina : NSObject, CBPeripheralDelegate {
 				default:
 					break
 			}
+			}
 			
 		}
 	}
@@ -331,7 +337,7 @@ class Neblina : NSObject, CBPeripheralDelegate {
 protocol NeblinaDelegate {
 	
 	func didConnectNeblina(sender : Neblina )
-	func didReceiveResponsePacket(sender : Neblina, subsystem : Int32, cmdRspId : Int32, data : UnsafeRawPointer, dataLen : Int)
+	func didReceiveResponsePacket(sender : Neblina, subsystem : Int32, cmdRspId : Int32, data : UnsafePointer<UInt8>, dataLen : Int)
 	func didReceiveRSSI(sender : Neblina , rssi : NSNumber)
 	func didReceiveGeneralData(sender : Neblina, respType : Int32, cmdRspId : Int32, data : UnsafeRawPointer, dataLen : Int, errFlag : Bool)
 	func didReceiveFusionData(sender : Neblina, respType : Int32, cmdRspId : Int32, data : NeblinaFusionPacket, errFlag : Bool)

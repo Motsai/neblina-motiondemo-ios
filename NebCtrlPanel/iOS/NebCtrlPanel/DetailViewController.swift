@@ -25,10 +25,10 @@ let NebCmdList = [NebCmdItem] (arrayLiteral:
 	           Name: "Calibrate Forward Pos", Actuator : ACTUATOR_TYPE_BUTTON, Text: "Calib Fwrd"),
 	NebCmdItem(SubSysId: NEBLINA_SUBSYSTEM_FUSION, CmdId: NEBLINA_COMMAND_FUSION_CALIBRATE_DOWN_POSITION, ActiveStatus: 0,
 	           Name: "Calibrate Down Pos", Actuator : ACTUATOR_TYPE_BUTTON, Text: "Calib Dwn"),
-	NebCmdItem(SubSysId: NEBLINA_SUBSYSTEM_FUSION, CmdId: NEBLINA_COMMAND_FUSION_FUSION_TYPE, ActiveStatus: 0,
-	           Name: "Fusion 9 axis", Actuator : ACTUATOR_TYPE_SWITCH, Text:""),
 	NebCmdItem(SubSysId: NEBLINA_SUBSYSTEM_GENERAL, CmdId: NEBLINA_COMMAND_GENERAL_RESET_TIMESTAMP, ActiveStatus: 0,
 	           Name: "Reset timestamp", Actuator : ACTUATOR_TYPE_BUTTON, Text: "Reset"),
+	NebCmdItem(SubSysId: NEBLINA_SUBSYSTEM_FUSION, CmdId: NEBLINA_COMMAND_FUSION_FUSION_TYPE, ActiveStatus: 0,
+	           Name: "Fusion 9 axis", Actuator : ACTUATOR_TYPE_SWITCH, Text:""),
     NebCmdItem(SubSysId: NEBLINA_SUBSYSTEM_FUSION, CmdId: NEBLINA_COMMAND_FUSION_QUATERNION_STREAM, ActiveStatus: UInt32(NEBLINA_FUSION_STATUS_QUATERNION.rawValue),
                Name: "Quaternion Stream", Actuator : ACTUATOR_TYPE_SWITCH, Text: ""),
     NebCmdItem(SubSysId: NEBLINA_SUBSYSTEM_SENSOR, CmdId: NEBLINA_COMMAND_SENSOR_ACCELEROMETER_STREAM, ActiveStatus: UInt32(NEBLINA_SENSOR_STATUS_ACCELEROMETER.rawValue),
@@ -120,7 +120,10 @@ class DetailViewController: UIViewController, UITextFieldDelegate, NeblinaDelega
 	var file : FileHandle?
 	var downloadRecovering = Bool(false)
 	var playback = Bool(false)
-
+	var badTimestampCnt = Int(0)
+	var dubTimestampCnt = Int(0)
+	var prevPacket = NeblinaFusionPacket();
+	
 /*	var detailItem: Neblina? {
 		didSet {
 		    // Update the view.
@@ -444,10 +447,12 @@ class DetailViewController: UIViewController, UITextFieldDelegate, NeblinaDelega
 								else {
 									bt.setTitle("Stop", for: .normal)
 									var n = UInt16(0)
-									if UInt16(tf.text!)! != nil {
-										n = UInt16(tf.text!)!
+									
+									if !(tf.text!.isEmpty) {
+										n = (UInt16((tf.text!)))!
 										
 									}
+								
 									nebdev?.sessionPlayback(true, sessionId : n)
 									PaketCnt = 0
 									playback = true
@@ -799,12 +804,67 @@ class DetailViewController: UIViewController, UITextFieldDelegate, NeblinaDelega
 		nebdev!.getFirmwareVersion()
 	}
 	
-	func didReceiveResponsePacket(sender : Neblina, subsystem : Int32, cmdRspId : Int32, data : UnsafeRawPointer, dataLen : Int)
+	func didReceiveResponsePacket(sender : Neblina, subsystem : Int32, cmdRspId : Int32, data : UnsafePointer<UInt8>, dataLen : Int)
 	{
 		switch subsystem {
+			case NEBLINA_SUBSYSTEM_GENERAL:
+				switch (cmdRspId) {
+					case NEBLINA_COMMAND_GENERAL_SYSTEM_STATUS:
+						let d = UnsafeMutableRawPointer(mutating: data).load(as: NeblinaSystemStatus_t.self)// UnsafeBufferPointer<NeblinaSystemStatus_t>(data))
+						print(" \(d)")
+						updateUI(status: d)
+						break
+					case NEBLINA_COMMAND_GENERAL_FIRMWARE_VERSION:
+						let vers = UnsafeMutableRawPointer(mutating: data).load(as: NeblinaFirmwareVersion_t.self)
+						print("\(vers) ")
+						versionLabel.text = String(format: "API:%d, FEN:%d.%d.%d, BLE:%d.%d.%d", vers.apiVersion,
+												   vers.coreVersion.major, vers.coreVersion.minor, vers.coreVersion.build,
+												   vers.bleVersion.major, vers.bleVersion.minor, vers.bleVersion.build)
+						break
+					default:
+						break
+				}
+				break
+			
 			case NEBLINA_SUBSYSTEM_FUSION:
 				switch cmdRspId {
 					case NEBLINA_COMMAND_FUSION_QUATERNION_STREAM:
+						break
+					default:
+						break
+				}
+				break
+			case NEBLINA_SUBSYSTEM_RECORDER:
+				switch (cmdRspId) {
+					case NEBLINA_COMMAND_RECORDER_ERASE_ALL:
+						flashLabel.text = "Flash erased"
+						flashEraseProgress = false
+						break
+					case NEBLINA_COMMAND_RECORDER_RECORD:
+						let session = Int16(data[1]) | (Int16(data[2]) << 8)
+						if (data[0] != 0) {
+							flashLabel.text = String(format: "Recording session %d", session)
+						}
+						else {
+							flashLabel.text = String(format: "Recorded session %d", session)
+						}
+						break
+					case NEBLINA_COMMAND_RECORDER_PLAYBACK:
+						let session = Int16(data[1]) | (Int16(data[2]) << 8)
+						if (data[0] != 0) {
+							flashLabel.text = String(format: "Playing session %d", session)
+						}
+						else {
+							flashLabel.text = String(format: "Playback sess %d finished %u packets", session, nebdev!.getPacketCount())
+						
+							playback = false
+							let i = getCmdIdx(NEBLINA_SUBSYSTEM_RECORDER,  cmdId: NEBLINA_COMMAND_RECORDER_PLAYBACK)
+							let cell = cmdView.cellForRow( at: IndexPath(row: i, section: 0))
+							if (cell != nil) {
+								let sw = cell!.viewWithTag(2) as! UIButton
+								sw.setTitle("Play", for: .normal)
+							}
+						}
 						break
 					default:
 						break
@@ -824,20 +884,6 @@ class DetailViewController: UIViewController, UITextFieldDelegate, NeblinaDelega
 	//
 	func didReceiveGeneralData(sender : Neblina, respType: Int32, cmdRspId : Int32, data : UnsafeRawPointer, dataLen : Int, errFlag : Bool) {
 		switch (cmdRspId) {
-		case NEBLINA_COMMAND_GENERAL_SYSTEM_STATUS:
-			var myStruct = NeblinaSystemStatus_t()
-			let status = withUnsafeMutablePointer(to: &myStruct) {_ in UnsafeMutableRawPointer(mutating: data)}
-			print("Status \(status)")
-			let d = data.load(as: NeblinaSystemStatus_t.self)// UnsafeBufferPointer<NeblinaSystemStatus_t>(data)
-			print(" \(d)")
-			updateUI(status: d)
-			break
-		case NEBLINA_COMMAND_GENERAL_FIRMWARE_VERSION:
-			let d = data.load(as: NeblinaFirmwareVersion_t.self)
-			versionLabel.text = String(format: "API:%d, FEN:%d.%d.%d, BLE:%d.%d.%d", d.apiVersion,
-			                           d.coreVersion.major, d.coreVersion.minor, d.coreVersion.build,
-			                           d.bleVersion.major, d.bleVersion.minor, d.bleVersion.build)
-			break
 		default:
 			break
 		}
@@ -848,7 +894,7 @@ class DetailViewController: UIViewController, UITextFieldDelegate, NeblinaDelega
 		//let errflag = Bool(type.rawValue & 0x80 == 0x80)
 
 		//let id = FusionId(rawValue: type.rawValue & 0x7F)! as FusionId
-		dumpLabel.text = String(format: "Total packet %u @ %0.2f pps", nebdev!.getPacketCount(), nebdev!.getDataRate())
+		dumpLabel.text = String(format: "Total packet %u @ %0.2f pps, drop \(dropCnt)", nebdev!.getPacketCount(), nebdev!.getDataRate())
 	
 		switch (cmdRspId) {
 			
@@ -893,9 +939,58 @@ class DetailViewController: UIViewController, UITextFieldDelegate, NeblinaDelega
 			let wq = Float(w) / 32768.0
 			ship.orientation = SCNQuaternion(yq, xq, zq, wq)
 			label.text = String("Quat - x:\(xq), y:\(yq), z:\(zq), w:\(wq)")
+			if (prevTimeStamp == data.timestamp)
+			{
+				var diff = Bool(false)
+				if prevPacket.data.0 != data.data.0 {
+					diff = true
+				}
+				else if prevPacket.data.1 != data.data.1 {
+					diff = true
+				}
+				else if prevPacket.data.2 != data.data.2 {
+					diff = true
+				}
+				else if prevPacket.data.3 != data.data.3 {
+					diff = true
+				}
+				else if prevPacket.data.4 != data.data.4 {
+					diff = true
+				}
+				else if prevPacket.data.5 != data.data.5 {
+					diff = true
+				}
+				else if prevPacket.data.6 != data.data.6 {
+					diff = true
+				}
+				else if prevPacket.data.7 != data.data.7 {
+					diff = true
+				}
+				else if prevPacket.data.8 != data.data.8 {
+					diff = true
+				}
+				else if prevPacket.data.9 != data.data.9 {
+					diff = true
+				}
+				else if prevPacket.data.10 != data.data.10 {
+					diff = true
+				}
+				else if prevPacket.data.11 != data.data.11 {
+					diff = true
+				}
+				if diff == true {
+					badTimestampCnt += 1
+				}
+				else {
+					dubTimestampCnt += 1
+				}
+				
+			}
+			//print("\(badTimestampCnt), \(dubTimestampCnt)")
 			if (prevTimeStamp == 0 || data.timestamp <= prevTimeStamp)
 			{
 				prevTimeStamp = data.timestamp;
+				prevPacket = data;
 			}
 			else
 			{
@@ -903,9 +998,10 @@ class DetailViewController: UIViewController, UITextFieldDelegate, NeblinaDelega
 				if (tdiff > 49000)
 				{
 					dropCnt += 1
-					dumpLabel.text = String("\(dropCnt) Drop : \(tdiff)")
+					dumpLabel.text = String("\(dropCnt) Drop : \(tdiff), \(badTimestampCnt)")
 				}
 				prevTimeStamp = data.timestamp
+				prevPacket = data
 			}
 			
 			break

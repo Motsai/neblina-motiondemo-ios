@@ -29,7 +29,9 @@ class ViewController: UIViewController, CBCentralManagerDelegate, NeblinaDelegat
 	}
 
 	@IBAction func actionButton(_ sender:UISwitch) {
-		nebdev.streamEulerAngle(sender.isOn)
+		if nebdev != nil {
+			nebdev.streamEulerAngle(sender.isOn)
+		}
 	}
 	
 	// MARK: - Table View
@@ -173,12 +175,22 @@ class ViewController: UIViewController, CBCentralManagerDelegate, NeblinaDelegat
 		nebdev.getSystemStatus()
 	}
 	
-	func didReceiveResponsePacket(sender : Neblina, subsystem : Int32, cmdRspId : Int32, data : UnsafeRawPointer, dataLen : Int)
+	func didReceiveResponsePacket(sender : Neblina, subsystem : Int32, cmdRspId : Int32, data : UnsafePointer<UInt8>, dataLen : Int)
 	{
 		switch subsystem {
-		case NEBLINA_SUBSYSTEM_FUSION:
-			switch cmdRspId {
-			case NEBLINA_COMMAND_FUSION_QUATERNION_STREAM:
+		case NEBLINA_SUBSYSTEM_GENERAL:
+			switch (cmdRspId) {
+			case NEBLINA_COMMAND_GENERAL_SYSTEM_STATUS:
+				let d = UnsafeMutableRawPointer(mutating: data).load(as: NeblinaSystemStatus_t.self)// UnsafeBufferPointer<NeblinaSystemStatus_t>(data))
+				print(" \(d)")
+				
+				break
+			case NEBLINA_COMMAND_GENERAL_FIRMWARE_VERSION:
+				let vers = UnsafeMutableRawPointer(mutating: data).load(as: NeblinaFirmwareVersion_t.self)
+				print("\(vers) ")
+				//versionLabel.text = String(format: "API:%d, FEN:%d.%d.%d, BLE:%d.%d.%d", vers.apiVersion,
+				//                           vers.coreVersion.major, vers.coreVersion.minor, vers.coreVersion.build,
+				//                          vers.bleVersion.major, vers.bleVersion.minor, vers.bleVersion.build)
 				break
 			default:
 				break
