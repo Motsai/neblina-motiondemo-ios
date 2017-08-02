@@ -13,6 +13,7 @@ import SceneKit
 
 let MotionDataStream = Int32(1)
 let Heading = Int32(2)
+let LuggageDataLog = Int32(3)
 
 let NebCmdList = [NebCmdItem] (arrayLiteral:
 	NebCmdItem(SubSysId: NEBLINA_SUBSYSTEM_GENERAL, CmdId: NEBLINA_COMMAND_GENERAL_INTERFACE_STATE, ActiveStatus: UInt32(NEBLINA_INTERFACE_STATUS_BLE.rawValue),
@@ -31,6 +32,10 @@ let NebCmdList = [NebCmdItem] (arrayLiteral:
 	           Name: "Fusion 9 axis", Actuator : ACTUATOR_TYPE_SWITCH, Text:""),
     NebCmdItem(SubSysId: NEBLINA_SUBSYSTEM_FUSION, CmdId: NEBLINA_COMMAND_FUSION_QUATERNION_STREAM, ActiveStatus: UInt32(NEBLINA_FUSION_STATUS_QUATERNION.rawValue),
                Name: "Quaternion Stream", Actuator : ACTUATOR_TYPE_SWITCH, Text: ""),
+    NebCmdItem(SubSysId: NEBLINA_SUBSYSTEM_FUSION, CmdId: NEBLINA_COMMAND_FUSION_PEDOMETER_STREAM, ActiveStatus: UInt32(NEBLINA_FUSION_STATUS_PEDOMETER.rawValue),
+               Name: "Pedometer Stream", Actuator : ACTUATOR_TYPE_SWITCH, Text: ""),
+    NebCmdItem(SubSysId: NEBLINA_SUBSYSTEM_FUSION, CmdId: NEBLINA_COMMAND_FUSION_ROTATION_INFO_STREAM, ActiveStatus: UInt32(NEBLINA_FUSION_STATUS_ROTATION_INFO.rawValue),
+               Name: "Rotation info Stream", Actuator : ACTUATOR_TYPE_SWITCH, Text: ""),
     NebCmdItem(SubSysId: NEBLINA_SUBSYSTEM_SENSOR, CmdId: NEBLINA_COMMAND_SENSOR_ACCELEROMETER_STREAM, ActiveStatus: UInt32(NEBLINA_SENSOR_STATUS_ACCELEROMETER.rawValue),
                Name: "Accelerometer Sensor Stream", Actuator : ACTUATOR_TYPE_SWITCH, Text: ""),
 	NebCmdItem(SubSysId: NEBLINA_SUBSYSTEM_SENSOR, CmdId: NEBLINA_COMMAND_SENSOR_GYROSCOPE_STREAM, ActiveStatus: UInt32(NEBLINA_SENSOR_STATUS_GYROSCOPE.rawValue),
@@ -65,6 +70,8 @@ let NebCmdList = [NebCmdItem] (arrayLiteral:
 	           Name: "Motion data stream", Actuator : ACTUATOR_TYPE_SWITCH, Text: ""),
 	NebCmdItem(SubSysId: 0xf, CmdId: Heading, ActiveStatus: 0,
 	           Name: "Heading", Actuator : ACTUATOR_TYPE_SWITCH, Text: ""),
+	NebCmdItem(SubSysId: 0xf, CmdId: LuggageDataLog, ActiveStatus: 0,
+	           Name: "Luggage data logging", Actuator : ACTUATOR_TYPE_SWITCH, Text: ""),
 	NebCmdItem(SubSysId: NEBLINA_SUBSYSTEM_RECORDER, CmdId: NEBLINA_COMMAND_RECORDER_ERASE_ALL, ActiveStatus: 0,
 	           Name: "Flash Erase All", Actuator : ACTUATOR_TYPE_BUTTON, Text: "Erase"),
 	NebCmdItem(SubSysId: NEBLINA_SUBSYSTEM_GENERAL, CmdId: NEBLINA_COMMAND_GENERAL_FIRMWARE_UPDATE, ActiveStatus: 0,
@@ -519,6 +526,12 @@ class DetailViewController: UIViewController, UITextFieldDelegate, NeblinaDelega
 								sw.selectedSegmentIndex = 0
 							}
 							break
+						case NEBLINA_COMMAND_FUSION_PEDOMETER_STREAM:
+							nebdev!.streamPedometer(sender.selectedSegmentIndex == 1)
+							break
+						case NEBLINA_COMMAND_FUSION_ROTATION_INFO_STREAM:
+							nebdev!.streamRotationInfo(sender.selectedSegmentIndex == 1)
+							break
 						case NEBLINA_COMMAND_FUSION_EULER_ANGLE_STREAM:
 							nebdev!.streamQuaternion(false)
 							nebdev!.streamEulerAngle(sender.selectedSegmentIndex == 1)
@@ -526,9 +539,6 @@ class DetailViewController: UIViewController, UITextFieldDelegate, NeblinaDelega
 						case NEBLINA_COMMAND_FUSION_EXTERNAL_FORCE_STREAM:
 							nebdev!.streamExternalForce(sender.selectedSegmentIndex == 1)
 							break
-						case NEBLINA_COMMAND_FUSION_PEDOMETER_STREAM:
-							nebdev!.streamPedometer(sender.selectedSegmentIndex == 1)
-							break;
 						case NEBLINA_COMMAND_FUSION_TRAJECTORY_RECORD:
 							nebdev!.recordTrajectory(sender.selectedSegmentIndex == 1)
 							break;
@@ -645,6 +655,12 @@ class DetailViewController: UIViewController, UITextFieldDelegate, NeblinaDelega
 								let control = cell!.viewWithTag(1) as! UISegmentedControl
 								control.selectedSegmentIndex = 0
 							}
+							i = getCmdIdx(0xF,  cmdId: LuggageDataLog)
+							cell = cmdView.cellForRow( at: IndexPath(row: i, section: 0))
+							if (cell != nil) {
+								let control = cell!.viewWithTag(1) as! UISegmentedControl
+								control.selectedSegmentIndex = 0
+							}
 							break
 						case MotionDataStream:
 							if sender.selectedSegmentIndex == 0 {
@@ -695,6 +711,45 @@ class DetailViewController: UIViewController, UITextFieldDelegate, NeblinaDelega
 								control.selectedSegmentIndex = sender.selectedSegmentIndex
 							}
 							i = getCmdIdx(0xF,  cmdId: Heading)
+							cell = cmdView.cellForRow( at: IndexPath(row: i, section: 0))
+							if (cell != nil) {
+								let control = cell!.viewWithTag(1) as! UISegmentedControl
+								control.selectedSegmentIndex = 0
+							}
+							i = getCmdIdx(0xF,  cmdId: LuggageDataLog)
+							cell = cmdView.cellForRow( at: IndexPath(row: i, section: 0))
+							if (cell != nil) {
+								let control = cell!.viewWithTag(1) as! UISegmentedControl
+								control.selectedSegmentIndex = 0
+							}
+							break
+						case LuggageDataLog:
+							if sender.selectedSegmentIndex == 0 {
+								nebdev!.disableStreaming()
+								nebdev!.sessionRecord(false)
+								break
+							}
+							else {
+								nebdev!.sensorStreamAccelGyroData(true)
+								nebdev!.sensorStreamMagData(true)
+								nebdev!.sensorStreamPressureData(true)
+								nebdev!.sensorStreamTemperatureData(true)
+								nebdev!.sessionRecord(true)
+								
+							}
+							
+							
+							var i = getCmdIdx(NEBLINA_SUBSYSTEM_FUSION,  cmdId: NEBLINA_COMMAND_FUSION_QUATERNION_STREAM)
+							var cell = cmdView.cellForRow( at: IndexPath(row: i, section: 0))
+							
+							
+							i = getCmdIdx(0xF,  cmdId: Heading)
+							cell = cmdView.cellForRow( at: IndexPath(row: i, section: 0))
+							if (cell != nil) {
+								let control = cell!.viewWithTag(1) as! UISegmentedControl
+								control.selectedSegmentIndex = 0
+							}
+							i = getCmdIdx(0xF,  cmdId: MotionDataStream)
 							cell = cmdView.cellForRow( at: IndexPath(row: i, section: 0))
 							if (cell != nil) {
 								let control = cell!.viewWithTag(1) as! UISegmentedControl
