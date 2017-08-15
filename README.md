@@ -72,4 +72,4 @@ Beside the bridging head, the following files are also needed to be added to the
 
 #### API documentations
 
-http://nebdox.motsai.com
+http://docs.motsai.com
