@@ -94,6 +94,10 @@ extension Neblina {
 		sendCommand(subSys: NEBLINA_SUBSYSTEM_GENERAL, cmd: NEBLINA_COMMAND_GENERAL_DEVICE_NAME_SET, paramLen: len, paramData: param)
 	}
 	
+	func shutdown() {
+		sendCommand(subSys: NEBLINA_SUBSYSTEM_GENERAL, cmd: NEBLINA_COMMAND_GENERAL_SHUTDOWN, paramLen: 0, paramData: [0])
+	}
+
 	// ***
 	// *** EEPROM
 	// ***
@@ -321,9 +325,10 @@ extension Neblina {
 		sendCommand(subSys: NEBLINA_SUBSYSTEM_FUSION, cmd: NEBLINA_COMMAND_FUSION_FINGER_GESTURE_STREAM, paramLen: param.count, paramData: param)
 	}
 	
-	func streamRotationInfo(_ Enable:Bool) {
-		var param = [UInt8](repeating: 0, count: 1)
+	func streamRotationInfo(_ Enable:Bool, Type : UInt8) {
+		var param = [UInt8](repeating: 0, count: 2)
 		
+		param[1] = Type
 		if Enable == true
 		{
 			param[0] = 1

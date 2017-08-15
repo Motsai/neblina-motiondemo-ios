@@ -92,148 +92,161 @@
 
 /**********************************************************************************/
 
-#define     NEBLINA_COMMAND_DEBUG_PRINTF                        0
-#define     NEBLINA_COMMAND_DEBUG_DUMP_DATA                     1
+#define     NEBLINA_COMMAND_DEBUG_PRINTF                        0x00
+#define     NEBLINA_COMMAND_DEBUG_DUMP_DATA                     0x01
 
 /**********************************************************************************/
 
-#define     NEBLINA_COMMAND_EEPROM_READ                         1
-#define     NEBLINA_COMMAND_EEPROM_WRITE                        2
+#define     NEBLINA_COMMAND_EEPROM_READ                         0x01
+#define     NEBLINA_COMMAND_EEPROM_WRITE                        0x02
 
 /**********************************************************************************/
 
-#define     NEBLINA_COMMAND_FUSION_RATE                         0
-#define     NEBLINA_COMMAND_FUSION_DOWNSAMPLE                   1
-#define     NEBLINA_COMMAND_FUSION_MOTION_STATE_STREAM          2
-#define     NEBLINA_COMMAND_FUSION_QUATERNION_STREAM            4
-#define     NEBLINA_COMMAND_FUSION_EULER_ANGLE_STREAM           5
-#define     NEBLINA_COMMAND_FUSION_EXTERNAL_FORCE_STREAM        6
-#define     NEBLINA_COMMAND_FUSION_FUSION_TYPE                  7
-#define     NEBLINA_COMMAND_FUSION_TRAJECTORY_RECORD            8
-#define     NEBLINA_COMMAND_FUSION_TRAJECTORY_INFO_STREAM       9
-#define     NEBLINA_COMMAND_FUSION_PEDOMETER_STREAM            10
-#define     NEBLINA_COMMAND_FUSION_SITTING_STANDING_STREAM     12
-#define     NEBLINA_COMMAND_FUSION_LOCK_HEADING_REFERENCE      13
-#define     NEBLINA_COMMAND_FUSION_FINGER_GESTURE_STREAM       17
-#define     NEBLINA_COMMAND_FUSION_ROTATION_INFO_STREAM        18
-#define     NEBLINA_COMMAND_FUSION_EXTERNAL_HEADING_CORRECTION 19
-#define     NEBLINA_COMMAND_FUSION_ANALYSIS_RESET              20
-#define     NEBLINA_COMMAND_FUSION_ANALYSIS_CALIBRATE          21
-#define     NEBLINA_COMMAND_FUSION_ANALYSIS_CREATE_POSE        22
-#define     NEBLINA_COMMAND_FUSION_ANALYSIS_SET_ACTIVE_POSE    23
-#define     NEBLINA_COMMAND_FUSION_ANALYSIS_GET_ACTIVE_POSE    24
-#define     NEBLINA_COMMAND_FUSION_ANALYSIS_STREAM             25
-#define     NEBLINA_COMMAND_FUSION_ANALYSIS_POSE_INFO          26
-#define     NEBLINA_COMMAND_FUSION_CALIBRATE_FORWARD_POSITION  27
-#define     NEBLINA_COMMAND_FUSION_CALIBRATE_DOWN_POSITION     28
-#define     NEBLINA_COMMAND_FUSION_MOTION_DIRECTION_STREAM     30
-#define     NEBLINA_COMMAND_FUSION_COUNT                       31       // Keep last
+#define     NEBLINA_COMMAND_FUSION_RATE                                         0x00
+#define     NEBLINA_COMMAND_FUSION_DOWNSAMPLE                                   0x01
+#define     NEBLINA_COMMAND_FUSION_MOTION_STATE_STREAM                          0x02
+#define     NEBLINA_COMMAND_FUSION_QUATERNION_STREAM                            0x04
+#define     NEBLINA_COMMAND_FUSION_EULER_ANGLE_STREAM                           0x05
+#define     NEBLINA_COMMAND_FUSION_EXTERNAL_FORCE_STREAM                        0x06
+#define     NEBLINA_COMMAND_FUSION_FUSION_TYPE                                  0x07
+#define     NEBLINA_COMMAND_FUSION_TRAJECTORY_RECORD                            0x08
+#define     NEBLINA_COMMAND_FUSION_TRAJECTORY_INFO_STREAM                       0x09
+#define     NEBLINA_COMMAND_FUSION_PEDOMETER_STREAM                             0x0A
+#define     NEBLINA_COMMAND_FUSION_SITTING_STANDING_STREAM                      0x0C
+#define     NEBLINA_COMMAND_FUSION_LOCK_HEADING_REFERENCE                       0x0D /// obsolete
+#define     NEBLINA_COMMAND_FUSION_FINGER_GESTURE_STREAM                        0x11
+#define     NEBLINA_COMMAND_FUSION_ROTATION_INFO_STREAM                         0x12
+#define     NEBLINA_COMMAND_FUSION_EXTERNAL_HEADING_CORRECTION                  0x13
+#define     NEBLINA_COMMAND_FUSION_ANALYSIS_RESET                               0x14
+#define     NEBLINA_COMMAND_FUSION_ANALYSIS_CALIBRATE                           0x15
+#define     NEBLINA_COMMAND_FUSION_ANALYSIS_CREATE_POSE                         0x16
+#define     NEBLINA_COMMAND_FUSION_ANALYSIS_SET_ACTIVE_POSE                     0x17
+#define     NEBLINA_COMMAND_FUSION_ANALYSIS_GET_ACTIVE_POSE                     0x18
+#define     NEBLINA_COMMAND_FUSION_ANALYSIS_STREAM                              0x19
+#define     NEBLINA_COMMAND_FUSION_ANALYSIS_POSE_INFO                           0x1A
+#define     NEBLINA_COMMAND_FUSION_CALIBRATE_FORWARD_POSITION                   0x1B
+#define     NEBLINA_COMMAND_FUSION_CALIBRATE_DOWN_POSITION                      0x1C
+#define     NEBLINA_COMMAND_FUSION_MOTION_DIRECTION_STREAM                      0x1E
+#define     NEBLINA_COMMAND_FUSION_SHOCK_SEGMENT_STREAM                         0x1F
+#define     NEBLINA_COMMAND_FUSION_ACCELEROMETER_CALIBRATION_RESET              0x20
+#define     NEBLINA_COMMAND_FUSION_ACCELEROMETER_CALIBRATION_SET_NEW_POSITION   0x21
+#define     NEBLINA_COMMAND_FUSION_CALIBRATED_ACCELEROMETER_STREAM              0x22
+#define     NEBLINA_COMMAND_FUSION_INCLINOMETER_CALIBRATE                       0x23
+#define     NEBLINA_COMMAND_FUSION_INCLINOMETER_STREAM                          0x24
+#define     NEBLINA_COMMAND_FUSION_MAGNETOMETER_AC_STREAM                       0x25
+#define     NEBLINA_COMMAND_FUSION_MOTION_INTENSITY_TREND_STREAM                0x26
+#define     NEBLINA_COMMAND_FUSION_COUNT                                        0x27       /// Keep last
 
 /**********************************************************************************/
 
-#define     NEBLINA_COMMAND_GENERAL_AUTHENTICATION              0
-#define     NEBLINA_COMMAND_GENERAL_SYSTEM_STATUS               1
-#define     NEBLINA_COMMAND_GENERAL_FUSION_STATUS               2
-#define     NEBLINA_COMMAND_GENERAL_RECORDER_STATUS             3
-#define     NEBLINA_COMMAND_GENERAL_FIRMWARE_VERSION            5
-#define     NEBLINA_COMMAND_GENERAL_RSSI                        7
-#define     NEBLINA_COMMAND_GENERAL_INTERFACE_STATUS            8
-#define     NEBLINA_COMMAND_GENERAL_INTERFACE_STATE             9
-#define     NEBLINA_COMMAND_GENERAL_POWER_STATUS                10
-#define     NEBLINA_COMMAND_GENERAL_SENSOR_STATUS               11
-#define     NEBLINA_COMMAND_GENERAL_DISABLE_STREAMING           12
-#define     NEBLINA_COMMAND_GENERAL_RESET_TIMESTAMP             13
-#define     NEBLINA_COMMAND_GENERAL_FIRMWARE_UPDATE             14
-#define     NEBLINA_COMMAND_GENERAL_DEVICE_NAME_GET             15
-#define     NEBLINA_COMMAND_GENERAL_DEVICE_NAME_SET             16
+#define     NEBLINA_COMMAND_GENERAL_AUTHENTICATION              0x00
+#define     NEBLINA_COMMAND_GENERAL_SYSTEM_STATUS               0x01
+#define     NEBLINA_COMMAND_GENERAL_FUSION_STATUS               0x02
+#define     NEBLINA_COMMAND_GENERAL_RECORDER_STATUS             0x03
+#define     NEBLINA_COMMAND_GENERAL_FIRMWARE_VERSION            0x05
+#define     NEBLINA_COMMAND_GENERAL_SHUTDOWN                    0x06
+#define     NEBLINA_COMMAND_GENERAL_RSSI                        0x07
+#define     NEBLINA_COMMAND_GENERAL_INTERFACE_STATUS            0x08
+#define     NEBLINA_COMMAND_GENERAL_INTERFACE_STATE             0x09
+#define     NEBLINA_COMMAND_GENERAL_POWER_STATUS                0x0A
+#define     NEBLINA_COMMAND_GENERAL_SENSOR_STATUS               0x0B
+#define     NEBLINA_COMMAND_GENERAL_DISABLE_STREAMING           0x0C
+#define     NEBLINA_COMMAND_GENERAL_RESET_TIMESTAMP             0x0D
+#define     NEBLINA_COMMAND_GENERAL_FIRMWARE_UPDATE             0x0E
+#define     NEBLINA_COMMAND_GENERAL_DEVICE_NAME_GET             0x0F
+#define     NEBLINA_COMMAND_GENERAL_DEVICE_NAME_SET             0x10
+#define     NEBLINA_COMMAND_GENERAL_SET_UNIX_TIMESTAMP          0x11
+#define     NEBLINA_COMMAND_GENERAL_GET_UNIX_TIMESTAMP          0x12
 
 /**********************************************************************************/
 
-#define     NEBLINA_COMMAND_LED_STATE                           1
-#define     NEBLINA_COMMAND_LED_STATUS                          2
+#define     NEBLINA_COMMAND_LED_STATE                           0x01
+#define     NEBLINA_COMMAND_LED_STATUS                          0x02
 
 /**********************************************************************************/
 
-#define     NEBLINA_COMMAND_POWER_BATTERY                       0
-#define     NEBLINA_COMMAND_POWER_TEMPERATURE                   1
-#define     NEBLINA_COMMAND_POWER_CHARGE_CURRENT                2
+#define     NEBLINA_COMMAND_POWER_BATTERY                       0x00
+#define     NEBLINA_COMMAND_POWER_TEMPERATURE                   0x01
+#define     NEBLINA_COMMAND_POWER_CHARGE_CURRENT                0x02
 
 /**********************************************************************************/
 
-#define     NEBLINA_COMMAND_SENSOR_SET_DOWNSAMPLE                       0
-#define     NEBLINA_COMMAND_SENSOR_SET_RANGE                            1
-#define     NEBLINA_COMMAND_SENSOR_SET_RATE                             2
-#define     NEBLINA_COMMAND_SENSOR_GET_DOWNSAMPLE                       3
-#define     NEBLINA_COMMAND_SENSOR_GET_RANGE                            4
-#define     NEBLINA_COMMAND_SENSOR_GET_RATE                             5
-#define     NEBLINA_COMMAND_SENSOR_ACCELEROMETER_STREAM                10
-#define     NEBLINA_COMMAND_SENSOR_GYROSCOPE_STREAM                    11
-#define     NEBLINA_COMMAND_SENSOR_HUMIDITY_STREAM                     12
-#define     NEBLINA_COMMAND_SENSOR_MAGNETOMETER_STREAM                 13
-#define     NEBLINA_COMMAND_SENSOR_PRESSURE_STREAM                     14
-#define     NEBLINA_COMMAND_SENSOR_TEMPERATURE_STREAM                  15
-#define     NEBLINA_COMMAND_SENSOR_ACCELEROMETER_GYROSCOPE_STREAM      16
-#define     NEBLINA_COMMAND_SENSOR_ACCELEROMETER_MAGNETOMETER_STREAM   17
-#define     NEBLINA_COMMAND_SENSOR_COUNT                               18          // Keep last and incremented
+#define     NEBLINA_COMMAND_SENSOR_SET_DOWNSAMPLE                      0x00
+#define     NEBLINA_COMMAND_SENSOR_SET_RANGE                           0x01
+#define     NEBLINA_COMMAND_SENSOR_SET_RATE                            0x02
+#define     NEBLINA_COMMAND_SENSOR_GET_DOWNSAMPLE                      0x03
+#define     NEBLINA_COMMAND_SENSOR_GET_RANGE                           0x04
+#define     NEBLINA_COMMAND_SENSOR_GET_RATE                            0x05
+#define     NEBLINA_COMMAND_SENSOR_SET_BANDWIDTH                       0x06           /// currently only applicable to accel & gyro sensors
+#define     NEBLINA_COMMAND_SENSOR_GET_BANDWIDTH                       0x07           /// currently only valid for accel & gyro sensors
+#define     NEBLINA_COMMAND_SENSOR_ACCELEROMETER_STREAM                0x0A
+#define     NEBLINA_COMMAND_SENSOR_GYROSCOPE_STREAM                    0x0B
+#define     NEBLINA_COMMAND_SENSOR_HUMIDITY_STREAM                     0x0C
+#define     NEBLINA_COMMAND_SENSOR_MAGNETOMETER_STREAM                 0x0D
+#define     NEBLINA_COMMAND_SENSOR_PRESSURE_STREAM                     0x0E
+#define     NEBLINA_COMMAND_SENSOR_TEMPERATURE_STREAM                  0x0F
+#define     NEBLINA_COMMAND_SENSOR_ACCELEROMETER_GYROSCOPE_STREAM      0x10
+#define     NEBLINA_COMMAND_SENSOR_ACCELEROMETER_MAGNETOMETER_STREAM   0x11
+#define     NEBLINA_COMMAND_SENSOR_COUNT                               0x12          /// Keep last and incremented
 
 /**********************************************************************************/
 
-#define     NEBLINA_COMMAND_RECORDER_ERASE_ALL                  1
-#define     NEBLINA_COMMAND_RECORDER_RECORD                     2
-#define     NEBLINA_COMMAND_RECORDER_PLAYBACK                   3
-#define     NEBLINA_COMMAND_RECORDER_SESSION_COUNT              4
-#define     NEBLINA_COMMAND_RECORDER_SESSION_INFO               5
-#define     NEBLINA_COMMAND_RECORDER_SESSION_READ               6
-#define     NEBLINA_COMMAND_RECORDER_SESSION_DOWNLOAD           7
+#define     NEBLINA_COMMAND_RECORDER_ERASE_ALL                  0x01
+#define     NEBLINA_COMMAND_RECORDER_RECORD                     0x02
+#define     NEBLINA_COMMAND_RECORDER_PLAYBACK                   0x03
+#define     NEBLINA_COMMAND_RECORDER_SESSION_COUNT              0x04
+#define     NEBLINA_COMMAND_RECORDER_SESSION_INFO               0x05
+#define     NEBLINA_COMMAND_RECORDER_SESSION_READ               0x06
+#define     NEBLINA_COMMAND_RECORDER_SESSION_DOWNLOAD           0x07
 
 /**********************************************************************************/
 
-#define     NEBLINA_COMMAND_TEST_MOTION_STATE                   0
-#define     NEBLINA_COMMAND_TEST_MOTION_DATA                    1
+#define     NEBLINA_COMMAND_TEST_MOTION_STATE                   0x00
+#define     NEBLINA_COMMAND_TEST_MOTION_DATA                    0x01
 
 /**********************************************************************************/
 
-#define     NEBLINA_PACKET_HEADER_ELEMENT_CTRL                  0
-#define     NEBLINA_PACKET_HEADER_ELEMENT_LENGTH                1
-#define     NEBLINA_PACKET_HEADER_ELEMENT_CRC                   2
-#define     NEBLINA_PACKET_HEADER_ELEMENT_DATATYPE              3
-#define     NEBLINA_PACKET_HEADER_LENGTH                        4
+#define     NEBLINA_PACKET_HEADER_ELEMENT_CTRL                  0x00
+#define     NEBLINA_PACKET_HEADER_ELEMENT_LENGTH                0x01
+#define     NEBLINA_PACKET_HEADER_ELEMENT_CRC                   0x02
+#define     NEBLINA_PACKET_HEADER_ELEMENT_DATATYPE              0x03
+#define     NEBLINA_PACKET_HEADER_LENGTH                        0x04
 
-#define     NEBLINA_PACKET_LENGTH_MAX                          40
+#define     NEBLINA_PACKET_LENGTH_MAX                           40
 
-#define     NEBLINA_PACKET_TYPE_RESPONSE                        0
-#define     NEBLINA_PACKET_TYPE_ACK                             1
-#define     NEBLINA_PACKET_TYPE_COMMAND                         2
-#define     NEBLINA_PACKET_TYPE_DATA                            3
-#define     NEBLINA_PACKET_TYPE_ERROR                           4
-#define     NEBLINA_PACKET_TYPE_RESERVE_2                       5
-#define     NEBLINA_PACKET_TYPE_REQUEST_LOG                     6
-#define     NEBLINA_PACKET_TYPE_RESERVE_3                       7
+#define     NEBLINA_PACKET_TYPE_RESPONSE                        0x00
+#define     NEBLINA_PACKET_TYPE_ACK                             0x01
+#define     NEBLINA_PACKET_TYPE_COMMAND                         0x02
+#define     NEBLINA_PACKET_TYPE_DATA                            0x03
+#define     NEBLINA_PACKET_TYPE_ERROR                           0x04
+#define     NEBLINA_PACKET_TYPE_RESERVE_2                       0x05
+#define     NEBLINA_PACKET_TYPE_REQUEST_LOG                     0x06
+#define     NEBLINA_PACKET_TYPE_RESERVE_3                       0x07
 
 /**********************************************************************************/
 
-#define     NEBLINA_SUBSYSTEM_GENERAL                           0
-#define     NEBLINA_SUBSYSTEM_FUSION                            1
-#define     NEBLINA_SUBSYSTEM_POWER                             2
-#define     NEBLINA_SUBSYSTEM_GPIO                              3
-#define     NEBLINA_SUBSYSTEM_LED                               4
-#define     NEBLINA_SUBSYSTEM_ADC                               5
-#define     NEBLINA_SUBSYSTEM_DAC                               6
-#define     NEBLINA_SUBSYSTEM_I2C                               7
-#define     NEBLINA_SUBSYSTEM_SPI                               8
-#define     NEBLINA_SUBSYSTEM_DEBUG                             9
-#define     NEBLINA_SUBSYSTEM_TEST                             10
-#define     NEBLINA_SUBSYSTEM_RECORDER                         11
-#define     NEBLINA_SUBSYSTEM_EEPROM                           12
-#define     NEBLINA_SUBSYSTEM_SENSOR                           13
+#define     NEBLINA_SUBSYSTEM_GENERAL                           0x00
+#define     NEBLINA_SUBSYSTEM_FUSION                            0x01
+#define     NEBLINA_SUBSYSTEM_POWER                             0x02
+#define     NEBLINA_SUBSYSTEM_GPIO                              0x03
+#define     NEBLINA_SUBSYSTEM_LED                               0x04
+#define     NEBLINA_SUBSYSTEM_ADC                               0x05
+#define     NEBLINA_SUBSYSTEM_DAC                               0x06
+#define     NEBLINA_SUBSYSTEM_I2C                               0x07
+#define     NEBLINA_SUBSYSTEM_SPI                               0x08
+#define     NEBLINA_SUBSYSTEM_DEBUG                             0x09
+#define     NEBLINA_SUBSYSTEM_TEST                              0x0A
+#define     NEBLINA_SUBSYSTEM_RECORDER                          0x0B
+#define     NEBLINA_SUBSYSTEM_EEPROM                            0x0C
+#define     NEBLINA_SUBSYSTEM_SENSOR                            0x0D
 
 /**********************************************************************************/
 
 #define     NEBLINA_EEPROM_READ                         0
 #define     NEBLINA_EEPROM_WRITE                        1
 
-#define     NEBLINA_INTERFACE_CLOSE                     0   // Close streaming for interface
-#define     NEBLINA_INTERFACE_OPEN                      1   // Open streaming for interface
+#define     NEBLINA_INTERFACE_CLOSE                     0   /// Close streaming for interface
+#define     NEBLINA_INTERFACE_OPEN                      1   /// Open streaming for interface
 
 #define     NEBLINA_SESSION_CLOSE                       0
 #define     NEBLINA_SESSION_CREATE                      1
@@ -247,43 +260,43 @@
 /**********************************************************************************/
 
 typedef struct {
-    uint8_t major;          // Major version (X.0.0)
-    uint8_t minor;          // Minor version (0.Y.0)
-    uint8_t build;          // Build version (0.0.Z)
+    uint8_t major;          /// Major version (X.0.0)
+    uint8_t minor;          /// Minor version (0.Y.0)
+    uint8_t build;          /// Build version (0.0.Z)
 } Version_t;
 
 typedef struct {
-	uint8_t apiVersion;     // API
-    Version_t coreVersion;  // core fusion firmware version
-	Version_t bleVersion;	// BLE comm firmware version
-    uint64_t devid;			// Neblina UID
+    uint8_t apiVersion;     /// API
+    Version_t coreVersion;  /// Core firmware version
+    Version_t bleVersion;   /// BLE firmware version
+    uint64_t devid;         /// Neblina UID
 } NeblinaFirmwareVersion_t;
 
 /**********************************************************************************/
 
 typedef struct NeblinaPacketHeader_t {
-    uint8_t subSystem:5;    // SubSystem
-    uint8_t packetType:3;   // Packet type
-    uint8_t length;         // Data length (in byte)
-    uint8_t crc;            // Packet CRC
-    uint8_t command;        // Command
+    uint8_t subSystem:5;    /// SubSystem
+    uint8_t packetType:3;   /// Packet type
+    uint8_t length;         /// Data length (in byte)
+    uint8_t crc;            /// Packet CRC
+    uint8_t command;        /// Command
 } NeblinaPacketHeader_t;
 
 /**********************************************************************************/
 
 typedef struct NeblinaPacket_t {
     NeblinaPacketHeader_t header;
-    uint8_t               data[1];        // Data buffer follows. i.e Data array more than one item
+    uint8_t               data[1];        /// Data buffer follows. i.e Data array more than one item
 } NeblinaPacket_t;
 
 /**********************************************************************************/
 
 typedef struct {
-    uint16_t stateOfCharge;     // in percentage (1000 = 100.0%)
+    uint16_t stateOfCharge;     /// in percentage (1000 = 100.0%)
 } NeblinaPowerBattery_t;
 
 typedef struct {
-    uint16_t current;           // in mA
+    uint16_t current;           /// in mA
 } NeblinaPowerChargeCurrent_t;
 
 /**********************************************************************************/
@@ -301,7 +314,7 @@ typedef struct {
 typedef enum {
     NEBLINA_RESET_TIMESTAMP_LIVE  = 0x00,
     NEBLINA_RESET_TIMESTAMP_DELAY = 0x01,
-    NEBLINA_RESET_TIMESTAMP_COUNT           // Keep last
+    NEBLINA_RESET_TIMESTAMP_COUNT           /// Keep last
 } NEBLINA_ATTRIBUTE_PACKED( NeblinaResetTimestamp_t );
 
 /**********************************************************************************/
@@ -309,8 +322,13 @@ typedef enum {
 typedef enum {
     NEBLINA_INTERFACE_BLE  = 0x00,
     NEBLINA_INTERFACE_UART = 0x01,
-    NEBLINA_INTERFACE_COUNT     // Keep last
+    NEBLINA_INTERFACE_COUNT     /// Keep last
 } NEBLINA_ATTRIBUTE_PACKED( NeblinaInterface_t );
+
+/*typedef enum {
+    NEBLINA_INTERFACE_STATE_CLOSE = 0x00,
+    NEBLINA_INTERFACE_STATE_OPEN  = 0x01
+} NEBLINA_ATTRIBUTE_PACKED( NeblinaInterfaceState_t );*/
 
 typedef enum {
     NEBLINA_INTERFACE_STATUS_BLE  = ( 1 << NEBLINA_INTERFACE_BLE ),
@@ -318,8 +336,8 @@ typedef enum {
 } NEBLINA_ATTRIBUTE_PACKED( NeblinaInterfaceStatusMask_t );
 
 typedef struct {
-    uint8_t interface;  // Communication interface
-    uint8_t state;          // Interface state (OPEN/CLOSE)
+    uint8_t interface;  /// Communication interface
+    uint8_t state;          /// Interface state (OPEN/CLOSE)
 } NeblinaInterfaceState_t;
 
 /**********************************************************************************/
@@ -328,7 +346,7 @@ typedef enum {
     NEBLINA_LED_BLUE  = 0x00,
     NEBLINA_LED_RED   = 0x01,
     NEBLINA_LED_GREEN = 0x02,
-    NEBLINA_LED_COUNT       // Keep last
+    NEBLINA_LED_COUNT       /// Keep last
 } NEBLINA_ATTRIBUTE_PACKED( NeblinaLED_t );
 
 typedef struct {
@@ -349,12 +367,12 @@ typedef uint16_t NeblinaSensorStatus_t;
 /**********************************************************************************/
 
 typedef struct {
-    uint32_t fusion;      // Flag bits indicating fusion data streaming states
-    uint16_t sensor;      // Flag bits indicating sensor data streaming states
-    uint8_t  power;       // Flag bits indicating power states
-    uint8_t  recorder;    // Flag bits indicating recorder states
+    uint32_t fusion;      /// Flag bits indicating fusion data streaming states
+    uint16_t sensor;      /// Flag bits indicating sensor data streaming states
+    uint8_t  power;       /// Flag bits indicating power states
+    uint8_t  recorder;    /// Flag bits indicating recorder states
     uint8_t  interface;
-    uint8_t  led[NEBLINA_LED_COUNT];  // LED levels
+    uint8_t  led[NEBLINA_LED_COUNT];  /// LED levels
 } NeblinaSystemStatus_t;
 
 /**********************************************************************************/
@@ -368,7 +386,7 @@ typedef struct {
 
 typedef struct {
     uint32_t timestamp;
-    uint32_t value;         // in %RH (format .2f)
+    uint32_t value;         /// in %RH (format .2f)
 } NeblinaHumidityFxp_t;
 
 typedef struct {
@@ -380,7 +398,7 @@ typedef struct {
 
 typedef struct {
     uint32_t timestamp;
-    uint32_t value;         // in kPa (format .2f)
+    uint32_t value;         /// in kPa (format .2f)
 } NeblinaPressureFxp_t;
 
 typedef struct {
@@ -392,7 +410,7 @@ typedef struct {
 
 typedef struct {
     uint32_t timestamp;
-    int32_t value;          // in Celsius (format .2f)
+    int32_t value;          /// in Celsius (format .2f)
 } NeblinaTemperatureFxp_t;
 
 typedef struct {
@@ -421,6 +439,7 @@ typedef struct {
 typedef struct {
     uint32_t length;
     uint16_t sessionId;
+    uint32_t timestamp; /// Unit Time in seconds
 } NeblinaSessionInfo_t;
 
 /**********************************************************************************/
@@ -470,7 +489,7 @@ typedef enum {
     NEBLINA_FUSION_STREAM_ROTATION_INFO    = 0x07,
     NEBLINA_FUSION_STREAM_SITTING_STANDING = 0x08,
     NEBLINA_FUSION_STREAM_TRAJECTORY_INFO  = 0x09,
-    NEBLINA_FUSION_STREAM_COUNT            // Keep last
+    NEBLINA_FUSION_STREAM_COUNT            /// Keep last
 } NEBLINA_ATTRIBUTE_PACKED( NeblinaFusionStream_t );
 
 typedef enum {
@@ -487,8 +506,12 @@ typedef enum {
 } NEBLINA_ATTRIBUTE_PACKED( NeblinaFusionStatusMask_t );
 
 typedef enum {
-    NEBLINA_FUSION_TYPE_6AXIS = 0x00,
-    NEBLINA_FUSION_TYPE_9AXIS = 0x01
+    NEBLINA_FUSION_TYPE_6AXIS_ONLINE_CALIBRATION                = 0x00, /// default 6-axis mode using accelerometers and gyroscopes with online calibration procedures
+    NEBLINA_FUSION_TYPE_9AXIS_ONLINE_CALIBRATION                = 0x01, /// 9-axis mode using accelerometers, gyroscopes and magnetometers featuring online calibration routines
+    NEBLINA_FUSION_TYPE_9AXIS_LOCK_HEADING                      = 0x02, /// 9-axis mode utilizing a lock heading mechanism based on the magnetic field signature
+    NEBLINA_FUSION_TYPE_6AXIS_MANUAL_CALIBRATION                = 0x03, /// 6-axis mode with calibrated accelerometers. Manual 6-position calibration for accelerometers should be conducted beforehand
+    NEBLINA_FUSION_TYPE_9AXIS_MANUAL_CALIBRATION                = 0x04, /// 9-axis mode with calibrated accelerometers. Manual 6-position calibration for accelerometers should be conducted beforehand
+    NEBLINA_FUSION_TYPE_9AXIS_LOCK_HEADING_MANUAL_CALIBRATION   = 0x05, /// 9-axis mode with an automatic lock heading mechanism and manually calibrated accelerometers, which must be conducted beforehand.
 } NEBLINA_ATTRIBUTE_PACKED( NeblinaFusionType_t );
 
 typedef enum {
@@ -496,12 +519,32 @@ typedef enum {
     NEBLINA_FUSION_ROTATION_ALGORITHM_GYRO = 0x01
 } NEBLINA_ATTRIBUTE_PACKED( NeblinaFusionRotationAlgorithm_t );
 
+typedef enum {
+    NEBLINA_FUSION_SHOCK_THRESHOLD_56_PERCENT_FULLSCALE = 0x09, ///e.g., 9g in 16g range
+    NEBLINA_FUSION_SHOCK_THRESHOLD_62_PERCENT_FULLSCALE = 0x0A, ///e.g., 10g in 16g range
+    NEBLINA_FUSION_SHOCK_THRESHOLD_69_PERCENT_FULLSCALE = 0x0B, ///e.g., 11g in 16g range
+    NEBLINA_FUSION_SHOCK_THRESHOLD_75_PERCENT_FULLSCALE = 0x0C, ///e.g., 12g in 16g range
+    NEBLINA_FUSION_SHOCK_THRESHOLD_81_PERCENT_FULLSCALE = 0x0D, ///e.g., 13g in 16g range
+    NEBLINA_FUSION_SHOCK_THRESHOLD_87_PERCENT_FULLSCALE = 0x0E, ///e.g., 14g in 16g range
+    NEBLINA_FUSION_SHOCK_THRESHOLD_94_PERCENT_FULLSCALE = 0x0F, ///e.g., 15g in 16g range
+} NEBLINA_ATTRIBUTE_PACKED( NeblinaFusionShockThreshold_t );
+
 typedef uint16_t NeblinaFusionDownsample_t;
+
+typedef struct {
+    uint8_t state; ///0 or 1 to disable/enable the streaming
+    uint16_t trendUpdateInSeconds; ///If set to X, it means that the motion intensity trend is updated every X seconds
+} NeblinaFusionMotionIntensityTrendStreamInfo_t;
 
 typedef struct {
     uint8_t state;
     uint8_t algorithm;
 } NeblinaFusionRotationInfo_t;
+
+typedef struct {
+    uint8_t state;
+    NeblinaFusionShockThreshold_t threshold;
+} NeblinaFusionShockInfo_t;
 
 typedef struct {
     uint16_t downsample;
@@ -543,7 +586,7 @@ typedef enum {
     NEBLINA_SENSOR_STREAM_MAGNETOMETER               = 0x05,
     NEBLINA_SENSOR_STREAM_PRESSURE                   = 0x06,
     NEBLINA_SENSOR_STREAM_TEMPERATURE                = 0x07,
-    NEBLINA_SENSOR_STREAM_COUNT                      // Keep last
+    NEBLINA_SENSOR_STREAM_COUNT                      /// Keep last
 } NEBLINA_ATTRIBUTE_PACKED( NeblinaSensorStream_t );
 
 typedef enum {
@@ -564,7 +607,7 @@ typedef enum {
     NEBLINA_SENSOR_HUMIDITY         = 0x03,
     NEBLINA_SENSOR_PRESSURE         = 0x04,
     NEBLINA_SENSOR_TEMPERATURE      = 0x05,
-    NEBLINA_SENSOR_COUNT                    // Keep last
+    NEBLINA_SENSOR_COUNT                    /// Keep last
 } NEBLINA_ATTRIBUTE_PACKED( NeblinaSensorType_t );
 
 typedef struct {
@@ -581,6 +624,11 @@ typedef struct {
     uint16_t type;
     uint16_t rate;
 } NeblinaSensorRate_t;
+
+typedef struct {
+    uint16_t type;
+    uint16_t cutoffDivider;
+}NeblinaSensorBandwidth_t;
 
 typedef struct {
     uint16_t downsample;
@@ -612,6 +660,13 @@ typedef enum {
 } NEBLINA_ATTRIBUTE_PACKED( NeblinaRecorderStatus_t );
 
 /**********************************************************************************/
+
+typedef struct {
+    uint32_t timestamp;
+    float x;
+    float y;
+    float z;
+} NeblinaAccelerometerFp_t;
 
 typedef struct {
     uint32_t timestamp;
@@ -655,6 +710,13 @@ typedef struct {
 
 typedef struct {
     uint32_t timestamp;
+    float x;
+    float y;
+    float z;
+} NeblinaGyroscopeFp_t;
+
+typedef struct {
+    uint32_t timestamp;
     int16_t x;
     int16_t y;
     int16_t z;
@@ -671,10 +733,22 @@ typedef enum {
 
 typedef struct {
     uint32_t timestamp;
+    float x;
+    float y;
+    float z;
+} NeblinaMagnetometerFp_t;
+
+typedef struct {
+    uint32_t timestamp;
     int16_t x;
     int16_t y;
     int16_t z;
 } NeblinaMagnetometerFxp_t;
+
+typedef struct {
+    uint32_t microseconds; /// high-resolution timestamp in microseconds
+    uint32_t unix_time; /// Unix timestamp in seconds
+} NeblinaTimestamp_t;
 
 /**********************************************************************************/
 
@@ -682,4 +756,4 @@ typedef struct {
 
 /**********************************************************************************/
 
-#endif // __NEBLINA_H___
+#endif /// __NEBLINA_H___

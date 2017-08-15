@@ -21,7 +21,7 @@ let NebCmdList = [NebCmdItem] (arrayLiteral:
 	NebCmdItem(SubSysId: NEBLINA_SUBSYSTEM_GENERAL, CmdId: NEBLINA_COMMAND_GENERAL_INTERFACE_STATE, ActiveStatus: UInt32(NEBLINA_INTERFACE_STATUS_UART.rawValue),
 	           Name: "UART Data Port", Actuator : ACTUATOR_TYPE_SWITCH, Text: ""),
 	NebCmdItem(SubSysId: NEBLINA_SUBSYSTEM_GENERAL, CmdId: NEBLINA_COMMAND_GENERAL_DEVICE_NAME_SET, ActiveStatus: 0,
-	           Name: "Change Device Name", Actuator : ACTUATOR_TYPE_TEXT_FILED_BUTTON, Text: "Change"),
+	           Name: "Change Device Name", Actuator : ACTUATOR_TYPE_TEXT_FIELD_BUTTON, Text: "Change"),
 	NebCmdItem(SubSysId: NEBLINA_SUBSYSTEM_FUSION, CmdId: NEBLINA_COMMAND_FUSION_CALIBRATE_FORWARD_POSITION, ActiveStatus: 0,
 	           Name: "Calibrate Forward Pos", Actuator : ACTUATOR_TYPE_BUTTON, Text: "Calib Fwrd"),
 	NebCmdItem(SubSysId: NEBLINA_SUBSYSTEM_FUSION, CmdId: NEBLINA_COMMAND_FUSION_CALIBRATE_DOWN_POSITION, ActiveStatus: 0,
@@ -35,7 +35,7 @@ let NebCmdList = [NebCmdItem] (arrayLiteral:
     NebCmdItem(SubSysId: NEBLINA_SUBSYSTEM_FUSION, CmdId: NEBLINA_COMMAND_FUSION_PEDOMETER_STREAM, ActiveStatus: UInt32(NEBLINA_FUSION_STATUS_PEDOMETER.rawValue),
                Name: "Pedometer Stream", Actuator : ACTUATOR_TYPE_SWITCH, Text: ""),
     NebCmdItem(SubSysId: NEBLINA_SUBSYSTEM_FUSION, CmdId: NEBLINA_COMMAND_FUSION_ROTATION_INFO_STREAM, ActiveStatus: UInt32(NEBLINA_FUSION_STATUS_ROTATION_INFO.rawValue),
-               Name: "Rotation info Stream", Actuator : ACTUATOR_TYPE_SWITCH, Text: ""),
+               Name: "Rotation info Stream", Actuator : ACTUATOR_TYPE_TEXT_FIELD_SWITCH, Text: ""),
     NebCmdItem(SubSysId: NEBLINA_SUBSYSTEM_SENSOR, CmdId: NEBLINA_COMMAND_SENSOR_ACCELEROMETER_STREAM, ActiveStatus: UInt32(NEBLINA_SENSOR_STATUS_ACCELEROMETER.rawValue),
                Name: "Accelerometer Sensor Stream", Actuator : ACTUATOR_TYPE_SWITCH, Text: ""),
 	NebCmdItem(SubSysId: NEBLINA_SUBSYSTEM_SENSOR, CmdId: NEBLINA_COMMAND_SENSOR_GYROSCOPE_STREAM, ActiveStatus: UInt32(NEBLINA_SENSOR_STATUS_GYROSCOPE.rawValue),
@@ -53,7 +53,7 @@ let NebCmdList = [NebCmdItem] (arrayLiteral:
 	NebCmdItem(SubSysId: NEBLINA_SUBSYSTEM_RECORDER, CmdId: NEBLINA_COMMAND_RECORDER_RECORD, ActiveStatus: 0,
 	           Name: "Flash Record", Actuator : ACTUATOR_TYPE_BUTTON, Text: "Stop"),
 	NebCmdItem(SubSysId: NEBLINA_SUBSYSTEM_RECORDER, CmdId: NEBLINA_COMMAND_RECORDER_PLAYBACK, ActiveStatus: 0,
-	           Name: "Flash Playback", Actuator : ACTUATOR_TYPE_TEXT_FILED_BUTTON, Text: "Play"),
+	           Name: "Flash Playback", Actuator : ACTUATOR_TYPE_TEXT_FIELD_BUTTON, Text: "Play"),
 //	NebCmdItem(SubSysId: NEBLINA_SUBSYSTEM_RECORDER, CmdId: NEBLINA_COMMAND_RECORDER_SESSION_DOWNLOAD, ActiveStatus: 0,
 //	           Name: "Flash Download", Actuator : ACTUATOR_TYPE_BUTTON, Text: "Start"),
 	NebCmdItem(SubSysId: NEBLINA_SUBSYSTEM_LED, CmdId: NEBLINA_COMMAND_LED_STATE, ActiveStatus: 0,
@@ -75,8 +75,9 @@ let NebCmdList = [NebCmdItem] (arrayLiteral:
 	NebCmdItem(SubSysId: NEBLINA_SUBSYSTEM_RECORDER, CmdId: NEBLINA_COMMAND_RECORDER_ERASE_ALL, ActiveStatus: 0,
 	           Name: "Flash Erase All", Actuator : ACTUATOR_TYPE_BUTTON, Text: "Erase"),
 	NebCmdItem(SubSysId: NEBLINA_SUBSYSTEM_GENERAL, CmdId: NEBLINA_COMMAND_GENERAL_FIRMWARE_UPDATE, ActiveStatus: 0,
-	           Name: "Firmware Update", Actuator : ACTUATOR_TYPE_BUTTON, Text: "DFU")
-	
+	           Name: "Firmware Update", Actuator : ACTUATOR_TYPE_BUTTON, Text: "DFU"),
+	NebCmdItem(SubSysId: NEBLINA_SUBSYSTEM_GENERAL, CmdId: NEBLINA_COMMAND_GENERAL_SHUTDOWN, ActiveStatus: 0,
+	           Name: "Shutdown", Actuator : ACTUATOR_TYPE_BUTTON, Text: "Shutdown")
 )
 
 
@@ -352,16 +353,21 @@ class DetailViewController: UIViewController, UITextFieldDelegate, NeblinaDelega
 						case NEBLINA_COMMAND_GENERAL_RESET_TIMESTAMP:
 							nebdev!.resetTimeStamp(Delayed: true)
 							print("Reset timestamp")
-					case NEBLINA_COMMAND_GENERAL_DEVICE_NAME_SET:
-						let cell = cmdView.cellForRow( at: IndexPath(row: row, section: 0))
-						if (cell != nil) {
-							let control = cell!.viewWithTag(4) as! UITextField
-							nebdev!.setDeviceName(name: control.text!);
+							break
+						case NEBLINA_COMMAND_GENERAL_DEVICE_NAME_SET:
+							let cell = cmdView.cellForRow( at: IndexPath(row: row, section: 0))
+							if (cell != nil) {
+								let control = cell!.viewWithTag(4) as! UITextField
+								nebdev!.setDeviceName(name: control.text!);
+								
+	//							nebdev?.device = nil
+							}
 							
-//							nebdev?.device = nil
-						}
-						
-						break
+							break
+						case NEBLINA_COMMAND_GENERAL_SHUTDOWN:
+							nebdev!.shutdown()
+							
+							break
 						default:
 							break
 					}
@@ -530,7 +536,18 @@ class DetailViewController: UIViewController, UITextFieldDelegate, NeblinaDelega
 							nebdev!.streamPedometer(sender.selectedSegmentIndex == 1)
 							break
 						case NEBLINA_COMMAND_FUSION_ROTATION_INFO_STREAM:
-							nebdev!.streamRotationInfo(sender.selectedSegmentIndex == 1)
+							let cell = cmdView.cellForRow( at: IndexPath(row: row, section: 0))
+							var type = UInt8(0)
+							if cell != nil {
+								let tf = cell?.viewWithTag(4) as! UITextField
+								
+								if !(tf.text!.isEmpty) {
+									type = (UInt8((tf.text!)))!
+									
+								}
+
+							}
+							nebdev!.streamRotationInfo(sender.selectedSegmentIndex == 1, Type:type)
 							break
 						case NEBLINA_COMMAND_FUSION_EULER_ANGLE_STREAM:
 							nebdev!.streamQuaternion(false)
@@ -703,7 +720,7 @@ class DetailViewController: UIViewController, UITextFieldDelegate, NeblinaDelega
 								let control = cell!.viewWithTag(1) as! UISegmentedControl
 								control.selectedSegmentIndex = sender.selectedSegmentIndex
 							}
-							nebdev!.streamRotationInfo(sender.selectedSegmentIndex == 1)
+							nebdev!.streamRotationInfo(sender.selectedSegmentIndex == 1, Type : 1)
 							i = getCmdIdx(NEBLINA_SUBSYSTEM_FUSION,  cmdId: NEBLINA_COMMAND_FUSION_ROTATION_INFO_STREAM)
 							cell = cmdView.cellForRow( at: IndexPath(row: i, section: 0))
 							if (cell != nil) {
@@ -1116,6 +1133,11 @@ class DetailViewController: UIViewController, UITextFieldDelegate, NeblinaDelega
 			//ship.rotation = SCNVector4(Float(xq), Float(yq), 0, GLKMathDegreesToRadians(90))
 			break
 			*/
+		case NEBLINA_COMMAND_FUSION_PEDOMETER_STREAM:
+			let stridelen = data.data.9;
+			let totaldistance = UInt16(data.data.10) + (UInt16(data.data.11) << 8)
+			label.text = String("Stride = \(stridelen), dist = \(totaldistance)")
+			break
 		default:
 			break
 		}
@@ -1378,7 +1400,7 @@ class DetailViewController: UIViewController, UITextFieldDelegate, NeblinaDelega
 			labelView.text = NebCmdList[(indexPath! as NSIndexPath).row].Name// - FusionCmdList.count].Name
 			switch (NebCmdList[(indexPath! as NSIndexPath).row].Actuator)
 			{
-				case 1:
+				case ACTUATOR_TYPE_SWITCH:
 					let control = cellView.viewWithTag(NebCmdList[(indexPath! as NSIndexPath).row].Actuator) as! UISegmentedControl
 					control.isHidden = false
 					let b = cellView.viewWithTag(2) as! UIButton
@@ -1386,7 +1408,7 @@ class DetailViewController: UIViewController, UITextFieldDelegate, NeblinaDelega
 					let t = cellView.viewWithTag(3) as! UITextField
 					t.isHidden = true
 					break
-				case 2:
+				case ACTUATOR_TYPE_BUTTON:
 					let control = cellView.viewWithTag(NebCmdList[(indexPath! as NSIndexPath).row].Actuator) as! UIButton
 					control.isHidden = false
 					if !NebCmdList[(indexPath! as NSIndexPath).row].Text.isEmpty
@@ -1398,7 +1420,7 @@ class DetailViewController: UIViewController, UITextFieldDelegate, NeblinaDelega
 					let t = cellView.viewWithTag(3) as! UITextField
 					t.isHidden = true
 					break
-				case 3:
+				case ACTUATOR_TYPE_TEXT_FIELD:
 					let control = cellView.viewWithTag(NebCmdList[(indexPath! as NSIndexPath).row].Actuator) as! UITextField
 					control.isHidden = false
 					if !NebCmdList[(indexPath! as NSIndexPath).row].Text.isEmpty
@@ -1410,8 +1432,8 @@ class DetailViewController: UIViewController, UITextFieldDelegate, NeblinaDelega
 					let b = cellView.viewWithTag(2) as! UIButton
 					b.isHidden = true
 					break
-				case 4:
-					let tfcontrol = cellView.viewWithTag(NebCmdList[(indexPath! as NSIndexPath).row].Actuator) as! UITextField
+				case ACTUATOR_TYPE_TEXT_FIELD_BUTTON:
+					let tfcontrol = cellView.viewWithTag(4) as! UITextField
 					tfcontrol.isHidden = false
 /*					if !NebCmdList[(indexPath! as NSIndexPath).row].Text.isEmpty
 					{
@@ -1428,6 +1450,18 @@ class DetailViewController: UIViewController, UITextFieldDelegate, NeblinaDelega
 					let t = cellView.viewWithTag(3) as! UITextField
 					t.isHidden = true
 					break
+				
+				case ACTUATOR_TYPE_TEXT_FIELD_SWITCH:
+					let tfcontrol = cellView.viewWithTag(4) as! UITextField
+					tfcontrol.isHidden = false
+					let bucontrol = cellView.viewWithTag(1) as! UISegmentedControl
+					bucontrol.isHidden = false
+					let s = cellView.viewWithTag(2) as! UIButton
+					s.isHidden = true
+					let t = cellView.viewWithTag(3) as! UITextField
+					t.isHidden = true
+					break
+			
 				default:
 					//switchCtrl.enabled = false
 //					switchCtrl.hidden = true
