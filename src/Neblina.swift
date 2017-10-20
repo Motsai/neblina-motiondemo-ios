@@ -100,12 +100,17 @@ class Neblina : NSObject, CBPeripheralDelegate {
 	//
 	// CBPeripheral stuffs
 	//
-	
-	func peripheralDidUpdateRSSI(_ peripheral: CBPeripheral, error: Error?) {
-		if (device.rssi != nil) {
-			delegate.didReceiveRSSI(sender: self, rssi: device.rssi!)
+	func peripheral(_ peripheral: CBPeripheral, didReadRSSI RSSI: NSNumber, error: Error?) {
+		if (delegate != nil) {
+			delegate.didReceiveRSSI(sender: self, rssi: RSSI)
 		}
 	}
+	
+//	func peripheralDidUpdateRSSI(_ peripheral: CBPeripheral, error: Error?) {
+//		if (device.rssi != nil) {
+//			delegate.didReceiveRSSI(sender: self, rssi: device.rssi!)
+//		}
+//	}
 	
 	func peripheral(_ peripheral: CBPeripheral, didDiscoverServices error: Error?)
 	{
@@ -180,7 +185,7 @@ class Neblina : NSObject, CBPeripheralDelegate {
 			if (Int32(hdr.packetType) == NEBLINA_PACKET_TYPE_ERROR)
 			{
 				errflag = true;
-				print("Error returned  \(hdr)")
+				print("Error returned  \(hdr.subSystem) \(hdr.command)")
 			}
 			
 			packetCnt += 1

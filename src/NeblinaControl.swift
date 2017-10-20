@@ -95,7 +95,7 @@ extension Neblina {
 	}
 	
 	func shutdown() {
-		sendCommand(subSys: NEBLINA_SUBSYSTEM_GENERAL, cmd: NEBLINA_COMMAND_GENERAL_SHUTDOWN, paramLen: 0, paramData: [0])
+		sendCommand(subSys: NEBLINA_SUBSYSTEM_GENERAL, cmd: NEBLINA_COMMAND_GENERAL_DEVICE_SHUTDOWN, paramLen: 0, paramData: [0])
 	}
 
 	// ***
@@ -431,6 +431,22 @@ extension Neblina {
 		sendCommand(subSys: NEBLINA_SUBSYSTEM_FUSION, cmd: NEBLINA_COMMAND_FUSION_MOTION_DIRECTION_STREAM, paramLen: param.count, paramData: param)
 	}
 
+	func setGolfSwingAnalysisMode(_ mode : UInt8) {
+		var param = [UInt8](repeating: 0, count: 1)
+		
+		param[0] = mode
+		
+		sendCommand(subSys: NEBLINA_SUBSYSTEM_FUSION, cmd: NEBLINA_COMMAND_FUSION_SET_GOLFSWING_ANALYSIS_MODE, paramLen: param.count, paramData: param)
+	}
+	
+	func setGolfSwingMaxError(_ count : UInt8) {
+		var param = [UInt8](repeating: 0, count: 1)
+		
+		param[0] = count
+		
+		sendCommand(subSys: NEBLINA_SUBSYSTEM_FUSION, cmd: NEBLINA_COMMAND_FUSION_SET_GOLFSWING_MAXIMUM_ERROR, paramLen: param.count, paramData: param)
+	}
+	
 	// ***
 	// *** Storage subsystem commands
 	// ***

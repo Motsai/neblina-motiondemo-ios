@@ -76,7 +76,7 @@ let NebCmdList = [NebCmdItem] (arrayLiteral:
 	           Name: "Flash Erase All", Actuator : ACTUATOR_TYPE_BUTTON, Text: "Erase"),
 	NebCmdItem(SubSysId: NEBLINA_SUBSYSTEM_GENERAL, CmdId: NEBLINA_COMMAND_GENERAL_FIRMWARE_UPDATE, ActiveStatus: 0,
 	           Name: "Firmware Update", Actuator : ACTUATOR_TYPE_BUTTON, Text: "DFU"),
-	NebCmdItem(SubSysId: NEBLINA_SUBSYSTEM_GENERAL, CmdId: NEBLINA_COMMAND_GENERAL_SHUTDOWN, ActiveStatus: 0,
+	NebCmdItem(SubSysId: NEBLINA_SUBSYSTEM_GENERAL, CmdId: NEBLINA_COMMAND_GENERAL_DEVICE_SHUTDOWN, ActiveStatus: 0,
 	           Name: "Shutdown", Actuator : ACTUATOR_TYPE_BUTTON, Text: "Shutdown")
 )
 
@@ -92,14 +92,20 @@ class DetailViewController: UIViewController, UITextFieldDelegate, NeblinaDelega
 	}
 	//let scene = SCNScene(named: "art.scnassets/Millennium_Falcon/Millennium_Falcon.dae") as SCNScene!
 	//let scene = SCNScene(named: "art.scnassets/SchoolBus/schoolBus.obj")!
-	let scene = SCNScene(named: "art.scnassets/ship.scn")!
+	//let scene = SCNScene(named: "art.scnassets/ship.scn")!
 	//let scene = SCNScene(named: "art.scnassets/AstonMartinRapide/rapide.scn")!
 	//let scene = SCNScene(named: "art.scnassets/E-TIE-I/E-TIE-I.3ds.obj")!
+	let scene = SCNScene(named: "art.scnassets/neblina_cube.dae")!
+	//let scene = SCNScene(named: "art.scnassets/Neblina_Cube.dae")!
 	//var textview = UITextView()
 
 	
 	//@IBOutlet weak var detailDescriptionLabel: UILabel!
 
+	@IBOutlet weak var accelGraph : GraphView!
+	@IBOutlet weak var gyroGraph : GraphView!
+	@IBOutlet weak var magGraph : GraphView!
+	
 	@IBOutlet weak var cmdView: UITableView!
 	@IBOutlet weak var versionLabel: UILabel!
 	@IBOutlet weak var label: UILabel!
@@ -180,9 +186,10 @@ class DetailViewController: UIViewController, UITextFieldDelegate, NeblinaDelega
 		scene.rootNode.addChildNode(cameraNode)
 		
 		// place the camera
-		cameraNode.position = SCNVector3(x: 0, y: 0, z: 15)
+		cameraNode.position = SCNVector3(x: 0, y: 0, z:20)
 		//cameraNode.position = SCNVector3(x: 0, y: 15, z: 0)
-		//cameraNode.rotation = SCNVector4(0, 0, 1, GLKMathDegreesToRadians(-180))
+		//cameraNode.rotation = SCNVector4(0, 0, 1, GLKMathDegreesToRadians(180))
+		//cameraNode.rotation = SCNVector4(1, 0, 0, GLKMathDegreesToRadians(180))
 		//cameraNode.rotation = SCNVector3(x:
 		// create and add a light to the scene
 		let lightNode = SCNNode()
@@ -203,9 +210,14 @@ class DetailViewController: UIViewController, UITextFieldDelegate, NeblinaDelega
 		
 //		ship = scene.rootNode.childNodeWithName("MillenniumFalconTop", recursively: true)!
 //		ship = scene.rootNode.childNodeWithName("ARC_170_LEE_RAY_polySurface1394376_2_2", recursively: true)!
-		ship = scene.rootNode.childNode(withName: "ship", recursively: true)!
+		ship = scene.rootNode.childNode(withName: "node", recursively: true)!
+		
 		//ship = scene.rootNode.childNode(withName: "Mesh258_SCHOOL_BUS2_Group2_Group1_Model", recursively: true)!
 		ship.eulerAngles = SCNVector3Make(GLKMathDegreesToRadians(90), 0, GLKMathDegreesToRadians(180))
+
+		// Cube view
+		//ship.eulerAngles = SCNVector3Make(GLKMathDegreesToRadians(-90), GLKMathDegreesToRadians(0), GLKMathDegreesToRadians(0))
+
 		//ship.rotation = SCNVector4(1, 0, 0, GLKMathDegreesToRadians(90))
 		//print("1 - \(ship)")
 		// animate the 3d object
@@ -231,6 +243,7 @@ class DetailViewController: UIViewController, UITextFieldDelegate, NeblinaDelega
 		let tapGesture = UITapGestureRecognizer(target: self, action: #selector(DetailViewController.handleTap(_:)))
 		scnView.addGestureRecognizer(tapGesture)
 		//scnView.preferredFramesPerSecond = 60
+		magGraph.valueRanges = [-16000.0...16000.0, -16000.0...16000.0, -16000.0...16000.0]
 		
 	}
 	
@@ -364,7 +377,7 @@ class DetailViewController: UIViewController, UITextFieldDelegate, NeblinaDelega
 							}
 							
 							break
-						case NEBLINA_COMMAND_GENERAL_SHUTDOWN:
+						case NEBLINA_COMMAND_GENERAL_DEVICE_SHUTDOWN:
 							nebdev!.shutdown()
 							
 							break
@@ -966,7 +979,7 @@ class DetailViewController: UIViewController, UITextFieldDelegate, NeblinaDelega
 		//let errflag = Bool(type.rawValue & 0x80 == 0x80)
 
 		//let id = FusionId(rawValue: type.rawValue & 0x7F)! as FusionId
-		dumpLabel.text = String(format: "Total packet %u @ %0.2f pps, drop \(dropCnt)", nebdev!.getPacketCount(), nebdev!.getDataRate())
+		//dumpLabel.text = String(format: "Total packet %u @ %0.2f pps, drop \(dropCnt)", nebdev!.getPacketCount(), nebdev!.getDataRate())
 	
 		switch (cmdRspId) {
 			
@@ -1009,7 +1022,9 @@ class DetailViewController: UIViewController, UITextFieldDelegate, NeblinaDelega
 			let zq = Float(z) / 32768.0
 			let w = (Int16(data.data.6) & 0xff) | (Int16(data.data.7) << 8)
 			let wq = Float(w) / 32768.0
-			ship.orientation = SCNQuaternion(yq, xq, zq, wq)
+			ship.orientation = SCNQuaternion(yq, xq, zq, wq)// ship
+			//ship.orientation = SCNQuaternion(xq, yq, zq, wq)
+			//ship.orientation = SCNQuaternion(yq, -xq, -zq, wq)// cube
 			label.text = String("Quat - x:\(xq), y:\(yq), z:\(zq), w:\(wq)")
 			if (prevTimeStamp == data.timestamp)
 			{
@@ -1070,7 +1085,7 @@ class DetailViewController: UIViewController, UITextFieldDelegate, NeblinaDelega
 				if (tdiff > 49000)
 				{
 					dropCnt += 1
-					dumpLabel.text = String("\(dropCnt) Drop : \(tdiff), \(badTimestampCnt)")
+					//dumpLabel.text = String("\(dropCnt) Drop : \(tdiff), \(badTimestampCnt)")
 				}
 				prevTimeStamp = data.timestamp
 				prevPacket = data
@@ -1321,6 +1336,7 @@ class DetailViewController: UIViewController, UITextFieldDelegate, NeblinaDelega
 			let z = (Int16(data[8]) & 0xff) | (Int16(data[9]) << 8)
 			let zq = z
 			label.text = String("Accel - x:\(xq), y:\(yq), z:\(zq)")
+			accelGraph.add(double3(Double(x), Double(y), Double(z)))
 //			rxCount += 1
 			break
 		case NEBLINA_COMMAND_SENSOR_GYROSCOPE_STREAM:
@@ -1331,6 +1347,7 @@ class DetailViewController: UIViewController, UITextFieldDelegate, NeblinaDelega
 			let z = (Int16(data[8]) & 0xff) | (Int16(data[9]) << 8)
 			let zq = z
 			label.text = String("Gyro - x:\(xq), y:\(yq), z:\(zq)")
+			gyroGraph.add(double3(Double(x), Double(y), Double(z)))
 			//rxCount += 1
 			break
 		case NEBLINA_COMMAND_SENSOR_HUMIDITY_STREAM:
@@ -1344,12 +1361,10 @@ class DetailViewController: UIViewController, UITextFieldDelegate, NeblinaDelega
 			//
 			//let ship = scene.rootNode.childNodeWithName("ship", recursively: true)!
 			let x = (Int16(data[4]) & 0xff) | (Int16(data[5]) << 8)
-			let xq = x
 			let y = (Int16(data[6]) & 0xff) | (Int16(data[7]) << 8)
-			let yq = y
 			let z = (Int16(data[8]) & 0xff) | (Int16(data[9]) << 8)
-			let zq = z
-			label.text = String("Mag - x:\(xq), y:\(yq), z:\(zq)")
+			label.text = String("Mag - x:\(x), y:\(y), z:\(z)")
+			magGraph.add(double3(Double(x), Double(y), Double(z)))
 			//rxCount += 1
 			//ship.rotation = SCNVector4(Float(xq), Float(yq), 0, GLKMathDegreesToRadians(90))
 			break
@@ -1359,15 +1374,26 @@ class DetailViewController: UIViewController, UITextFieldDelegate, NeblinaDelega
 			break
 		case NEBLINA_COMMAND_SENSOR_ACCELEROMETER_GYROSCOPE_STREAM:
 			let x = (Int16(data[4]) & 0xff) | (Int16(data[5]) << 8)
-			let xq = x
 			let y = (Int16(data[6]) & 0xff) | (Int16(data[7]) << 8)
-			let yq = y
 			let z = (Int16(data[8]) & 0xff) | (Int16(data[9]) << 8)
-			let zq = z
-			label.text = String("IMU - x:\(xq), y:\(yq), z:\(zq)")
+			label.text = String("IMU - x:\(x), y:\(y), z:\(z)")
+			accelGraph.add(double3(Double(x), Double(y), Double(z)))
+			let gx = (Int16(data[10]) & 0xff) | (Int16(data[11]) << 8)
+			let gy = (Int16(data[12]) & 0xff) | (Int16(data[13]) << 8)
+			let gz = (Int16(data[14]) & 0xff) | (Int16(data[15]) << 8)
+			gyroGraph.add(double3(Double(gx), Double(gy), Double(gz)))
 			//rxCount += 1
 			break
 		case NEBLINA_COMMAND_SENSOR_ACCELEROMETER_MAGNETOMETER_STREAM:
+			let x = (Int16(data[4]) & 0xff) | (Int16(data[5]) << 8)
+			let y = (Int16(data[6]) & 0xff) | (Int16(data[7]) << 8)
+			let z = (Int16(data[8]) & 0xff) | (Int16(data[9]) << 8)
+			label.text = String("Accel - x:\(x), y:\(y), z:\(z)")
+			accelGraph.add(double3(Double(x), Double(y), Double(z)))
+			let mx = (Int16(data[10]) & 0xff) | (Int16(data[11]) << 8)
+			let my = (Int16(data[12]) & 0xff) | (Int16(data[13]) << 8)
+			let mz = (Int16(data[14]) & 0xff) | (Int16(data[15]) << 8)
+			magGraph.add(double3(Double(mx), Double(my), Double(mz)))
 			break
 		default:
 			break

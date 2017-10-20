@@ -18,7 +18,6 @@
 #define FUSION_ENABLE 1
 #define FUSION_DISABLE 0
 
-#define TOTAL_SAMPLES_PER_STEP	100
 
 #define QUAT quaternion_fxp_t
 #define command_t uint8_t
@@ -54,7 +53,20 @@
 #define     NEBLINA_FUSION_CALIBRATE_FORWARD_POSITION           27
 #define     NEBLINA_FUSION_CALIBRATE_DOWN_POSITION              28
 #define     NEBLINA_FUSION_GYROSCOPE_RANGE                      29
-#define     NEBLINA_FUSION_LAST_INDEX                           30  // Keep synchronize with last fusion index
+#define     NEBLINA_FUSION_MOTION_DIRECTION                     30
+#define     NEBLINA_FUSION_SHOCK_SEGMENT                        31
+#define     NEBLINA_FUSION_ACCEL_CALIBRATION_RESET              32
+#define     NEBLINA_FUSION_ACCEL_CALIBRATION_NEW_POSITION       33
+#define     NEBLINA_FUSION_ACCEL_CALIBRATED_STREAM              34
+#define     NEBLINA_FUSION_INCLINOMETER_CALIBRATE               35
+#define     NEBLINA_FUSION_INCLINOMETER_STREAM                  36
+#define     NEBLINA_FUSION_MAGNETOMETER_AC_STREAM               37
+#define     NEBLINA_FUSION_MOTION_INTENSITY_TREND_STREAM        38
+#define     NEBLINA_FUSION_SET_GOLFSWING_ANALYSIS_MODE          39
+#define     NEBLINA_FUSION_SET_GOLFSWING_MAXIMUM_ERROR          40
+#define     NEBLINA_FUSION_LAST_INDEX                           41  // Keep synchronize with last fusion index
+
+#define     NEBLINA_FUSION_NB_STREAMING_COMMANDS                12
 
 //FusionCtrlReg bit mask
 #define DISTANCE_STREAM			0x00000001
@@ -69,6 +81,13 @@
 #define FINGER_GESTURE_STREAM	0x00000200
 #define ROTATION_INFO_STREAM	0x00000400
 #define MOTION_ANALYSIS_STREAM	0x00000800
+#define MOTION_DIRECTION_STREAM 0x00001000
+#define SHOCK_SEGMENT_STREAM    0x00002000
+#define ACCEL_CALIBRATED_STREAM 0x00004000
+#define INCLINOMETER_STREAM     0x00008000
+#define MAGNETOMETER_AC_STREAM  0x00010000
+#define MOTION_INTENSITY_STREAM 0x00020000
+#define GOLF_ANALYSIS_STREAM    0x00040000
 //////////////////////////////////////////
 
 #if 0
@@ -91,7 +110,9 @@
 
 #define TrajectoryDistance TrajectoryInfo
 
-#define FUSION_DATASIZE_MAX 12
+#define FUSION_DATASIZE_MAX         12
+#define HIGH_G_HALF_BUFFER_SIZE     100          //half of the total number of samples to be buffered when a high g shock occurs
+#define ACCEL_HIGH_G_TH             419430400   //(5/8) times the full-scale accelerometer range is the threshold. This is the squared value
 
 /**********************************************************************************/
 
@@ -121,6 +142,7 @@ typedef struct {
 	MOTSENSOR_DATA AccData;
 	MOTSENSOR_DATA MagData;
 	MOTSENSOR_DATA GyrData;
+	uint32_t UnixTimestamp;
 } MOTSENSOR_ARRAY;
 
 /**********************************************************************************/
@@ -140,11 +162,20 @@ typedef enum {
 }GyroRange_t;
 
 typedef enum {
-	Two_Gauss = (uint8_t)0x01,
-	Four_Gauss = (uint8_t)0x02,
-	Eight_Gauss = (uint8_t)0x03,
-	Sixteen_Gauss = (uint8_t)0x04,
+	Gauss_2 = 2,
+	Gauss_4 = 4,
+	Gauss_8 = 8,
+    Gauss_13 = 13,
+	Gauss_16 = 16,
+	Gauss_25 = 25,
 }MagRange_t;
+
+typedef enum {
+    magBased = (uint8_t)0x00, //regular circular wheel using magnetometers
+    gyroBased = (uint8_t)0x01, //regular circular wheel using gyros
+    twoEdgeWheel = (uint8_t)0x02, //special wheel with two edges
+    threeEdgeWheel = (uint8_t)0x03, //special wheel with three edges
+}rotationAlgo_t;
 
 /**********************************************************************************/
 
@@ -211,6 +242,32 @@ typedef struct {
     float roll;
 } euler_fp_ts_t;
 
+//Timestamped fixed-point inclinometer data
+typedef struct {
+    uint32_t timestamp;
+    int16_t inclinationAngle;
+} inclinometer_fxp_ts_t;
+
+//Timestamped floating-point inclinometer data
+typedef struct {
+    uint32_t timestamp;
+    float inclinationAngle;
+} inclinometer_fp_ts_t;
+
+//Timestamped fixed-point Magnetometer AC magnitude data
+typedef struct {
+    uint32_t unix_timestamp;
+    uint16_t magnetometerAC;
+    uint32_t timestamp_us;
+}magnetometer_ac_fxp_ts_t;
+
+//Timestamped floating-point Magnetometer AC magnitude data (unit = gauss)
+typedef struct {
+    uint32_t unix_timestamp;
+    float magnetometerAC;
+    uint32_t timestamp_us;
+}magnetometer_ac_fp_ts_t;
+
 /**********************************************************************************/
 
 // Fixed-point external force vector (unit is 'g')
@@ -246,8 +303,12 @@ typedef struct {
 /**********************************************************************************/
 
 typedef enum{ //filter type: 6-axis IMU (no magnetometer), or 9-axis MARG
-	IMU_Filter = (uint8_t)0x00,
-	MARG_Filter = (uint8_t)0x01,
+	IMU_Filter = (uint8_t)0x00, //default 6-axis with online calibration
+	MARG_Filter = (uint8_t)0x01, //9-axis mode with online calibration
+	MARG_Filter_Lock_Heading = (uint8_t)0x02, //lock heading mode in 9-axis
+	IMU_Filter_Manual_Calibration = (uint8_t)0x03, //accelerometers are manually calibrated
+    MARG_Filter_Manual_Calibration = (uint8_t)0x04, //accelerometers are manually calibrated
+    MARG_Filter_Lock_Heading_Manual_Calibration = (uint8_t)0x05, //9-axis with lock heading mode and manually calibrated accelerometers
 }Filter_Type;
 
 typedef struct { //3-axis raw data type
@@ -351,23 +412,32 @@ typedef struct {
 typedef struct {
     uint16_t step_count;
     uint8_t cadence;
-    uint16_t direction;
-    uint32_t toe_off_timestamp;
+    int16_t direction;
+    uint16_t stairs_up_count;
+    uint16_t stairs_down_count;
+    uint8_t stride_length; //in cm
+    uint16_t total_distance; //in dm
 } pedometer_fxp_t;
 
 typedef struct {
     uint16_t step_count;
     uint8_t cadence;
     float direction;
-    uint32_t toe_off_timestamp;
+    uint16_t stairs_up_count;
+    uint16_t stairs_down_count;
+    uint8_t stride_length; //in cm
+    uint16_t total_distance; //in dm
 } pedometer_fp_t;
 
 typedef struct {
     uint32_t timestamp;
     uint16_t step_count;
-    uint8_t cadence;
-    uint16_t direction;
-    uint32_t toe_off_timestamp;
+    uint8_t cadence; //steps per minute
+    int16_t direction;
+    uint16_t stairs_up_count;
+    uint16_t stairs_down_count;
+    uint8_t stride_length; //in cm
+    uint16_t total_distance; //in dm
 } pedometer_fxp_ts_t;
 
 typedef struct {
@@ -375,7 +445,10 @@ typedef struct {
     uint16_t step_count;
     uint8_t cadence;
     float direction;
-    uint32_t toe_off_timestamp;
+    uint16_t stairs_up_count;
+    uint16_t stairs_down_count;
+    uint8_t stride_length; //in cm
+    uint16_t total_distance; //in dm
 } pedometer_fp_ts_t;
 
 /**********************************************************************************/
@@ -443,11 +516,15 @@ typedef struct Quaternion_t //quaternion
 }Quaternion_t;
 #endif
 
-typedef struct steps_t { //steps and pedometer data types
+typedef struct { //steps and pedometer data types
 	uint8_t step_detect; //detection of a step gives 1. It also returns 1, if no step has been detected for 5 seconds
 	uint16_t step_cnt; //number of steps taken so far.
 	uint8_t spm; //cadence: number of steps per minute
 	uint32_t toe_off_timestamp;
+	uint16_t stairs_up_count;
+    uint16_t stairs_down_count;
+    uint8_t stride_length; //in cm
+    uint16_t total_distance; //total distance in dm
 }steps_t;
 
 typedef struct wheels_t { //wheel rotation data type
@@ -497,6 +574,16 @@ typedef struct pose_ts_t{
     uint16_t distance_quatrn;
 }pose_ts_t;
 
+typedef struct motionDirection_fxp_ts_t{
+    uint32_t timestamp;
+    int16_t directionAngle;
+}motionDirection_fxp_ts_t;
+
+typedef struct motionDirection_fp_ts_t{
+    uint32_t timestamp;
+    float directionAngle;
+}motionDirection_fp_ts_t;
+
 typedef enum{
 	none = (uint8_t)0x00,
 	flatWalk = (uint8_t)0x01,
@@ -504,6 +591,53 @@ typedef enum{
 	stairsDown = (uint8_t)0x03,
 }activity_t;
 
+typedef struct motionDirectionVector_t {
+    int32_t x;
+    int32_t y;
+    int32_t z;
+}motionDirectionVector_t;
+
+typedef struct {
+    int32_t x;
+    int32_t y;
+    int32_t z;
+} Vector_fxp_t;
+
+typedef struct {
+    float x;
+    float y;
+    float z;
+} Vector_fp_t;
+
+typedef struct motion_intensity_trend_data_t {
+    uint16_t intensityMax; //maximum intensity over the past minute
+    uint16_t intensityMean; //average intensity over the past minute
+    uint8_t intensityMaxIndex; //at what second/index did the maximum intensity occur?
+} motion_intensity_trend_data_t;
+
+typedef struct motion_intensity_trend_unix_ts_t {
+    uint32_t timestamp;
+    motion_intensity_trend_data_t data;
+} motion_intensity_trend_unix_ts_t;
+
+typedef struct Intensity_Trend_Archive_t {
+    motion_intensity_trend_data_t FrontEndData; //data available for streaming
+    //below are backend variables used only for internal calculations of the motion intensity trend
+    uint8_t sampleCounter; //for each sample this counter is added by one, when the counter reaches 1 second of data, average intensity over the past second is captured and the "secondCounter" is added by 1
+    uint8_t secondCounter; //When sample counter captures 1 full second of data, this counter is added by 1. The counter counts up to 1 minute (60 seconds) and then resets. At that point, the max/mean intensity values become valid
+    uint64_t intensityWithinSecondSum; //sum of acceleration intensities over 1 second of samples
+    uint64_t intensityPerSecondSquareSumMean; //mean value among the last 60 "intensityWithinSecondSum" values (1 minute of data)
+    uint64_t intensityPerSecondSquareSumMax; //maximum value among the last 60 "intensityWithinSecondSum" values (1 minute of data)
+    uint16_t updateIntensityTrendAfterThisManySeconds; //the updates for intensity trend packet should take place every "updateIntensityTrendAfterThisManySeconds" seconds
+} Intensity_Trend_Archive_t;
+
+typedef struct {
+    uint32_t timestamp; //unix timestamp
+    uint8_t backswingScore; //backswing score range is 0-100
+    uint8_t downswingScore; //downswing score range is 0-100
+    uint8_t ballHitScore; //ball hit score range is 0-100
+    uint8_t maximumClubSpeed; //in km/h => assuming the driver club length to be the average size of 113cm
+} golf_swing_analysis_unix_ts_t;
 
 typedef struct Motion_Feature_t{ //all features
 	uint8_t motion; //0: no change in motion, 1: stops moving, 2: starts moving
@@ -515,6 +649,7 @@ typedef struct Motion_Feature_t{ //all features
 	uint16_t motiontrack_cntr; //shows how many times the pre-recorded track has been repeated
 	uint8_t motiontrack_progress; //the percentage showing how much of a pre-recorded track has been covered
 	uint32_t TimeStamp; //4 bytes: in microseconds
+	uint32_t UnixTimestamp; //Unix timestamp in seconds
 	steps_t steps;
 	int16_t direction;
 	sit_stand_t sit_stand;
@@ -522,29 +657,42 @@ typedef struct Motion_Feature_t{ //all features
 	wheels_t rotation_info; //rpm speed, rotation count
 	pose_t pose_info;
 	activity_t activity;
+	motionDirectionVector_t motionDirectionVector;
+	AxesRaw_fxp_t AccelCalibrated;
+	int16_t inclinationAngle; //constains (int16_t)(angle*100), where angle is in degrees
+	uint16_t MagAC; //Magnetometer AC Magnitude
+	Intensity_Trend_Archive_t intensityTrendData;
 }Motion_Feature_t;
 
-typedef struct rawDataArray_t{
-	int16_t gx[TOTAL_SAMPLES_PER_STEP];
-	int16_t gy[TOTAL_SAMPLES_PER_STEP];
-	int16_t gz[TOTAL_SAMPLES_PER_STEP];
-	int16_t ax[TOTAL_SAMPLES_PER_STEP];
-	int16_t ay[TOTAL_SAMPLES_PER_STEP];
-	int16_t az[TOTAL_SAMPLES_PER_STEP];
-}rawDataArray_t;
+typedef enum {
+    waitForShock = 0x00,
+    waitForBeforeShockBufferExtraction = 0x01,
+    waitForAfterShockBufferExtraction = 0x02,
+}HighG_State_t;
 
-typedef struct rawDataIndx_t{
-	uint16_t array[2][2]; //two arrays with two phases each
-}rawDataIndx_t;
+typedef struct {
+    uint32_t timestamp;
+    int16_t accelX;
+    int16_t accelY;
+    int16_t accelZ;
+    int16_t gyroX;
+    int16_t gyroY;
+    int16_t gyroZ;
+} accel_gyro_ts_fxp_t;
 
-typedef struct rawDataMemory_t{
-	rawDataArray_t array[2][2]; //two arrays, where each array has two phases
-}rawDataMemory_t;
-
-typedef struct
+typedef struct Shock_Data_t
 {
-	uint16_t downsample;
-} FusionDownsample;
+    uint32_t shockThreshold;
+    uint16_t beforeShockBufferCurrentIndex;
+    uint16_t afterShockBufferCurrentIndex;
+    uint16_t shockSampleIndex;
+    HighG_State_t state;
+    accel_gyro_ts_fxp_t accelGyroBufferBeforeShock[HIGH_G_HALF_BUFFER_SIZE];
+    accel_gyro_ts_fxp_t accelGyroBufferAfterShock[HIGH_G_HALF_BUFFER_SIZE];
+}Shock_Data_t;
+
+
+typedef uint16_t FusionDownsample_t;
 
 typedef struct
 {
@@ -552,11 +700,61 @@ typedef struct
     uint16_t error;
 } FusionHeadingCorrection;
 
+typedef struct headingCorrectionConfig_t {
+    uint8_t nb_turns; //moving average filter applied over this number of heading turns
+    uint8_t heading_correction_max_dps; //maximum heading correction applied per second ==> default heading correction mode, if this value is set to 0, then use the below parameter
+    uint8_t heading_correction_lpf_gain_divider_log; //The log of the heading correction gain divider. For instance, 3 means division by 2^3 = 8. Only effective when heading_correction_max_dps = 0
+}headingCorrectionConfig_t;
+
+typedef struct {
+    AccRange_t AccRange;
+    int32_t x[4]; //coefficients realizing ax
+    int32_t y[4]; //coefficients realizing ay
+    int32_t z[4]; //coefficients realizing az
+} accelCalibConfig_t;
+
 typedef struct
 {
-    uint16_t id;
+    uint8_t id;
     quaternion_fxp_t quaternion;
 } MotionAnalysisPose;
+
+typedef enum{
+	RAW_DATA_SAMPLING_50 = (uint8_t)0x01,
+	RAW_DATA_SAMPLING_100 = (uint8_t)0x02,
+	RAW_DATA_SAMPLING_200 = (uint8_t)0x04,
+	RAW_DATA_SAMPLING_400 = (uint8_t)0x08,
+	RAW_DATA_SAMPLING_800 = (uint8_t)0x10,
+	RAW_DATA_SAMPLING_1600 = (uint8_t)0x20,
+}FusionInputDataRate_t;
+
+typedef enum{
+	FUSION_OUTPUT_DATA_RATE_50 = (uint8_t)0x01,
+	FUSION_OUTPUT_DATA_RATE_100 = (uint8_t)0x02,
+	FUSION_OUTPUT_DATA_RATE_200 = (uint8_t)0x04,
+	FUSION_OUTPUT_DATA_RATE_400 = (uint8_t)0x08,
+	FUSION_OUTPUT_DATA_RATE_800 = (uint8_t)0x10,
+	FUSION_OUTPUT_DATA_RATE_1600 = (uint8_t)0x20,
+}FusionOutputDataRate_t;
+
+typedef struct {
+    uint8_t reserved1; /// enable/disable byte reserved for the application layer
+    uint8_t fusionType;
+    FusionInputDataRate_t inputRate;
+    uint8_t reserved2; /// extra byte for the input rate in the application layer
+    FusionOutputDataRate_t outputRate;
+    uint8_t reserved3; /// extra byte for the output rate in the application layer
+    FusionDownsample_t downsample;
+    uint32_t streamCtrlReg;
+    uint8_t shockThreshold;
+    uint16_t motionTrendUpdateInterval;
+    rotationAlgo_t rotationAlgo;
+    AccRange_t accelRange;
+    uint8_t reserved4; /// extra byte for the accelerometer sensor range
+    GyroRange_t gyroRange;
+    uint8_t reserved5; /// extra byte for the gyroscope range
+    accelCalibConfig_t accelCalibParams;
+} FusionConfig_t;
 
 #pragma pack(pop)
 

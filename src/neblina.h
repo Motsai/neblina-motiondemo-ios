@@ -135,7 +135,9 @@
 #define     NEBLINA_COMMAND_FUSION_INCLINOMETER_STREAM                          0x24
 #define     NEBLINA_COMMAND_FUSION_MAGNETOMETER_AC_STREAM                       0x25
 #define     NEBLINA_COMMAND_FUSION_MOTION_INTENSITY_TREND_STREAM                0x26
-#define     NEBLINA_COMMAND_FUSION_COUNT                                        0x27       /// Keep last
+#define     NEBLINA_COMMAND_FUSION_SET_GOLFSWING_ANALYSIS_MODE                  0x27
+#define     NEBLINA_COMMAND_FUSION_SET_GOLFSWING_MAXIMUM_ERROR                  0x28
+#define     NEBLINA_COMMAND_FUSION_COUNT                                        0x29       /// Keep last
 
 /**********************************************************************************/
 
@@ -144,7 +146,7 @@
 #define     NEBLINA_COMMAND_GENERAL_FUSION_STATUS               0x02
 #define     NEBLINA_COMMAND_GENERAL_RECORDER_STATUS             0x03
 #define     NEBLINA_COMMAND_GENERAL_FIRMWARE_VERSION            0x05
-#define     NEBLINA_COMMAND_GENERAL_SHUTDOWN                    0x06
+#define     NEBLINA_COMMAND_GENERAL_DEVICE_SHUTDOWN             0x06
 #define     NEBLINA_COMMAND_GENERAL_RSSI                        0x07
 #define     NEBLINA_COMMAND_GENERAL_INTERFACE_STATUS            0x08
 #define     NEBLINA_COMMAND_GENERAL_INTERFACE_STATE             0x09
@@ -518,6 +520,12 @@ typedef enum {
     NEBLINA_FUSION_ROTATION_ALGORITHM_MAG  = 0x00,
     NEBLINA_FUSION_ROTATION_ALGORITHM_GYRO = 0x01
 } NEBLINA_ATTRIBUTE_PACKED( NeblinaFusionRotationAlgorithm_t );
+
+typedef enum {
+    NEBLINA_FUSION_GOLFSWING_IDLE_MODE  = 0x00, //no operation
+    NEBLINA_FUSION_GOLFSWING_RECORDING_MODE = 0x01, //record a reference swing
+    NEBLINA_FUSION_GOLFSWING_ANALYSIS_MODE = 0x02 //analysis and comparison of a test swing w.r.t. the reference one
+} NEBLINA_ATTRIBUTE_PACKED( NeblinaFusionGolfSwingAnalysisMode_t );
 
 typedef enum {
     NEBLINA_FUSION_SHOCK_THRESHOLD_56_PERCENT_FULLSCALE = 0x09, ///e.g., 9g in 16g range
