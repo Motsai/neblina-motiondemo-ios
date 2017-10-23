@@ -12,6 +12,15 @@ import UIKit
 class AppDelegate: UIResponder, UIApplicationDelegate, UISplitViewControllerDelegate {
 
 	var window: UIWindow?
+	
+	func application(_ application: UIApplication, supportedInterfaceOrientationsFor window: UIWindow?) -> UIInterfaceOrientationMask {
+		if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiom.pad ) {
+			return UIInterfaceOrientationMask.all
+		}
+		else {
+			return UIInterfaceOrientationMask.portrait
+		}
+	}
 
 	func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
 		// Override point for customization after application launch.
