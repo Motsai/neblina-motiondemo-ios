@@ -92,10 +92,11 @@ class DetailViewController: UIViewController, UITextFieldDelegate, NeblinaDelega
 	}
 	//let scene = SCNScene(named: "art.scnassets/Millennium_Falcon/Millennium_Falcon.dae") as SCNScene!
 	//let scene = SCNScene(named: "art.scnassets/SchoolBus/schoolBus.obj")!
-	//let scene = SCNScene(named: "art.scnassets/ship.scn")!
+	let sceneShip = SCNScene(named: "art.scnassets/ship.scn")!
 	//let scene = SCNScene(named: "art.scnassets/AstonMartinRapide/rapide.scn")!
 	//let scene = SCNScene(named: "art.scnassets/E-TIE-I/E-TIE-I.3ds.obj")!
-	let scene = SCNScene(named: "art.scnassets/neblina_cube.dae")!
+	let sceneCube = SCNScene(named: "art.scnassets/neblina_calibration.dae")!
+	var scene : SCNScene?
 	//let scene = SCNScene(named: "art.scnassets/Neblina_Cube.dae")!
 	//var textview = UITextView()
 
@@ -111,6 +112,7 @@ class DetailViewController: UIViewController, UITextFieldDelegate, NeblinaDelega
 	@IBOutlet weak var label: UILabel!
 	@IBOutlet weak var flashLabel: UILabel!
 	@IBOutlet weak var dumpLabel: UILabel!
+	@IBOutlet weak var planeCubeSwitch : UISegmentedControl!
 	
 	//var eulerAngles = SCNVector3(x: 0,y:0,z:0)
 	var ship : SCNNode! //= scene.rootNode.childNodeWithName("ship", recursively: true)!
@@ -173,20 +175,20 @@ class DetailViewController: UIViewController, UITextFieldDelegate, NeblinaDelega
 		
 		
 		cnt = max_count
-		//textview = self.view.viewWithTag(3) as! UITextView
-		
-		// create a new scene
-		//scene = SCNScene(named: "art.scnassets/ship.scn")!
-		
-		//scene = SCNScene(named: "art.scnassets/Arc-170_ship/Obj_Shaded/Arc170.obj")
-		
+
+		scene = sceneShip
 		// create and add a camera to the scene
 		let cameraNode = SCNNode()
 		cameraNode.camera = SCNCamera()
-		scene.rootNode.addChildNode(cameraNode)
+		sceneCube.rootNode.addChildNode(cameraNode)
+		let cameraNode1 = SCNNode()
+		sceneShip.rootNode.addChildNode(cameraNode1)
+		
+		//scene?.rootNode.addChildNode(cameraNode)
 		
 		// place the camera
 		cameraNode.position = SCNVector3(x: 0, y: 0, z:20)
+		cameraNode1.position = SCNVector3(x: 0, y: 0, z:20)
 		//cameraNode.position = SCNVector3(x: 0, y: 15, z: 0)
 		//cameraNode.rotation = SCNVector4(0, 0, 1, GLKMathDegreesToRadians(180))
 		//cameraNode.rotation = SCNVector4(1, 0, 0, GLKMathDegreesToRadians(180))
@@ -196,21 +198,30 @@ class DetailViewController: UIViewController, UITextFieldDelegate, NeblinaDelega
 		lightNode.light = SCNLight()
 		lightNode.light!.type = SCNLight.LightType.omni
 		lightNode.position = SCNVector3(x: 0, y: 10, z: 50)
-		scene.rootNode.addChildNode(lightNode)
+		sceneCube.rootNode.addChildNode(lightNode)
+		let lightNode1 = SCNNode()
+		lightNode1.light = SCNLight()
+		lightNode1.light!.type = SCNLight.LightType.omni
+		lightNode1.position = SCNVector3(x: 0, y: 10, z: 50)
+		sceneShip.rootNode.addChildNode(lightNode1)
 		
 		// create and add an ambient light to the scene
 		let ambientLightNode = SCNNode()
 		ambientLightNode.light = SCNLight()
 		ambientLightNode.light!.type = SCNLight.LightType.ambient
 		ambientLightNode.light!.color = UIColor.darkGray
-		scene.rootNode.addChildNode(ambientLightNode)
-		
+		sceneCube.rootNode.addChildNode(ambientLightNode)
+		let ambientLightNode1 = SCNNode()
+		ambientLightNode1.light = SCNLight()
+		ambientLightNode1.light!.type = SCNLight.LightType.ambient
+		ambientLightNode1.light!.color = UIColor.darkGray
+		sceneShip.rootNode.addChildNode(ambientLightNode1)
 		
 		// retrieve the ship node
 		
 //		ship = scene.rootNode.childNodeWithName("MillenniumFalconTop", recursively: true)!
 //		ship = scene.rootNode.childNodeWithName("ARC_170_LEE_RAY_polySurface1394376_2_2", recursively: true)!
-		ship = scene.rootNode.childNode(withName: "node", recursively: true)!
+		ship = scene?.rootNode.childNode(withName: "ship", recursively: true)!
 		
 		//ship = scene.rootNode.childNode(withName: "Mesh258_SCHOOL_BUS2_Group2_Group1_Model", recursively: true)!
 		ship.eulerAngles = SCNVector3Make(GLKMathDegreesToRadians(90), 0, GLKMathDegreesToRadians(180))
@@ -336,12 +347,57 @@ class DetailViewController: UIViewController, UITextFieldDelegate, NeblinaDelega
 			cmdView.isHidden = true
 			let scnView = self.view.subviews[0] as! SCNView
 			scnView.isHidden = false
+			accelGraph.isHidden = false
+			gyroGraph.isHidden = false
+			magGraph.isHidden = false
+			planeCubeSwitch.isHidden = false
 		}
 		else {
 			cmdView.isHidden = false
 			let scnView = self.view.subviews[0] as! SCNView
 			scnView.isHidden = true
+			accelGraph.isHidden = true
+			gyroGraph.isHidden = true
+			magGraph.isHidden = true
+			planeCubeSwitch.isHidden = true
 		}
+	}
+	
+	@IBAction func switch3DObject(_ sender:UISegmentedControl)
+	{
+		if sender.selectedSegmentIndex == 0 {
+			scene = sceneShip
+			ship = scene?.rootNode.childNode(withName: "ship", recursively: true)!
+			let scnView = self.view.subviews[0] as! SCNView
+			// set the scene to the view
+			scnView.scene = scene
+			
+			// allows the user to manipulate the camera
+//			scnView.allowsCameraControl = true
+			
+			// show statistics such as fps and timing information
+//			scnView.showsStatistics = true
+			
+			// configure the view
+//			scnView.backgroundColor = UIColor.black
+		}
+		else {
+			scene = sceneCube
+			ship = scene?.rootNode.childNode(withName: "node", recursively: true)!
+			let scnView = self.view.subviews[0] as! SCNView
+			// set the scene to the view
+			scnView.scene = scene
+			
+			// allows the user to manipulate the camera
+//			scnView.allowsCameraControl = true
+			
+			// show statistics such as fps and timing information
+//			scnView.showsStatistics = true
+			
+			// configure the view
+//			scnView.backgroundColor = UIColor.black
+		}
+		
 	}
 	
 	@IBAction func buttonAction(_ sender:UIButton)
