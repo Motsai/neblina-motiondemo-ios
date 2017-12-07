@@ -10,6 +10,7 @@ import UIKit
 import CoreBluetooth
 
 class ViewController: UIViewController, CBCentralManagerDelegate, NeblinaDelegate {
+	
 	var objects = [Neblina]()//[NebDevice]()
 	var nebdev : Neblina!
 	var bleCentralManager : CBCentralManager!
@@ -202,7 +203,10 @@ class ViewController: UIViewController, CBCentralManagerDelegate, NeblinaDelegat
 	}
 	
 	func didReceiveRSSI(sender : Neblina, rssi : NSNumber) {}
-	
+	func didReceiveBatteryLevel(sender: Neblina, level: UInt8) {
+		
+	}
+
 	func didReceiveGeneralData(sender : Neblina, respType : Int32, cmdRspId : Int32, data : UnsafeRawPointer, dataLen : Int, errFlag : Bool) {
 		switch cmdRspId {
 			case NEBLINA_COMMAND_GENERAL_SYSTEM_STATUS:
@@ -220,7 +224,7 @@ class ViewController: UIViewController, CBCentralManagerDelegate, NeblinaDelegat
 		}
 	}
 	
-	func didReceiveFusionData(sender : Neblina, respType : Int32, cmdRspId : Int32, data : NeblinaFusionPacket, errFlag : Bool) {
+	func didReceiveFusionData(sender : Neblina, respType : Int32, cmdRspId : Int32, data : NeblinaFusionPacket_t, errFlag : Bool) {
 	
 		switch (cmdRspId) {
 		case NEBLINA_COMMAND_FUSION_QUATERNION_STREAM:

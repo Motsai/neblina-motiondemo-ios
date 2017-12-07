@@ -34,6 +34,11 @@ struct NebStreamInfo {
 	let lastSampleTimestamp: UInt32
 }
 
+struct SessionInfo {
+	let id : Int
+	let name : String
+}
+
 class Neblina : NSObject, CBPeripheralDelegate {
 	var name = String()
 	var id = UInt64(0)
@@ -41,7 +46,7 @@ class Neblina : NSObject, CBPeripheralDelegate {
 	var dataChar : CBCharacteristic! = nil
 	var ctrlChar : CBCharacteristic! = nil
 	var NebPkt = NeblinaPacket_t()
-	var fp = NeblinaFusionPacket()
+	var fp = NeblinaFusionPacket_t()
 	var delegate : NeblinaDelegate!
 	//var devid : UInt64 = 0
 	var packetCnt : UInt32 = 0		// Data packet count
@@ -116,7 +121,7 @@ class Neblina : NSObject, CBPeripheralDelegate {
 	{
 		for service in peripheral.services ?? []
 		{
-			if (service.uuid .isEqual(NEB_SERVICE_UUID))
+			if service.uuid .isEqual(NEB_SERVICE_UUID) || service.uuid .isEqual(CBUUID(string: "180F"))
 			{
 				peripheral.discoverCharacteristics(nil, for: service)
 			}
@@ -144,13 +149,20 @@ class Neblina : NSObject, CBPeripheralDelegate {
 				print("Ctrl \(characteristic.uuid)");
 				ctrlChar = characteristic;
 			}
+			if characteristic.uuid .isEqual(CBUUID(string: "2A19")) {
+				// Battery characteristic
+				print("Notify battery level")
+				peripheral.setNotifyValue(true, for: characteristic);
+			}
 		}
 	}
 	
 	func peripheral(_ peripheral: CBPeripheral, didUpdateNotificationStateFor characteristic: CBCharacteristic, error: Error?)
 	{
 		if (delegate != nil) {
-			delegate.didConnectNeblina(sender: self)
+			if characteristic.uuid .isEqual(NEB_DATACHAR_UUID) {
+				delegate.didConnectNeblina(sender: self)
+			}
 		}
 	}
 	func peripheralDidUpdateName(_ peripheral: CBPeripheral) {
@@ -160,6 +172,16 @@ class Neblina : NSObject, CBPeripheralDelegate {
 	func peripheral(_ peripheral: CBPeripheral, didUpdateValueFor characteristic: CBCharacteristic, error: Error?)
 	{
 		var hdr = NeblinaPacketHeader_t()
+		
+		if characteristic.uuid .isEqual(CBUUID(string: "2A19")) {
+			// Batttery level
+			let level = characteristic.value?.hashValue
+			
+			//print("BATTERY LEVEL \(characteristic.value) \(level)")
+			if delegate != nil {
+				delegate.didReceiveBatteryLevel(sender: self, level: UInt8(UInt(level!)))
+			}
+		}
 		if (characteristic.uuid .isEqual(NEB_DATACHAR_UUID) && characteristic.value != nil && (characteristic.value?.count)! > 0)
 		{
 			var ch = [UInt8](repeating: 0, count: 20)
@@ -240,7 +262,7 @@ class Neblina : NSObject, CBPeripheralDelegate {
 					break
 				case NEBLINA_SUBSYSTEM_FUSION:	// Motion Engine
 					let dd = (characteristic.value?.subdata(in: Range(4..<Int(hdr.length)+MemoryLayout<NeblinaPacketHeader_t>.size)))!
-					fp = (dd.withUnsafeBytes{ (ptr: UnsafePointer<NeblinaFusionPacket>) -> NeblinaFusionPacket in return ptr.pointee })
+					fp = (dd.withUnsafeBytes{ (ptr: UnsafePointer<NeblinaFusionPacket_t>) -> NeblinaFusionPacket_t in return ptr.pointee })
 					delegate.didReceiveFusionData(sender: self, respType: Int32(hdr.packetType), cmdRspId: respId, data: fp, errFlag: errflag)
 					break
 				case NEBLINA_SUBSYSTEM_POWER:
@@ -316,6 +338,10 @@ class Neblina : NSObject, CBPeripheralDelegate {
 		return dataRate
 	}
 	
+	func saveSession(filePath : String, sessionId: UInt8) {
+		
+	}
+	
 	//
 	// MARK: **** API
 	//
@@ -331,7 +357,8 @@ class Neblina : NSObject, CBPeripheralDelegate {
 		pkbuf[2] = 0xFF			// CRC
 		pkbuf[3] = UInt8(cmd)	// Cmd
 		
-		for i in 0..<paramLen {
+		let len = min(paramLen, 16)
+		for i in 0..<len {
 			pkbuf[4 + i] = paramData[i]
 		}
 		pkbuf[2] = crc8(pkbuf, Len: Int(pkbuf[1]) + 4)
@@ -343,10 +370,11 @@ class Neblina : NSObject, CBPeripheralDelegate {
 protocol NeblinaDelegate {
 	
 	func didConnectNeblina(sender : Neblina )
+	func didReceiveBatteryLevel(sender : Neblina, level : UInt8)
 	func didReceiveResponsePacket(sender : Neblina, subsystem : Int32, cmdRspId : Int32, data : UnsafePointer<UInt8>, dataLen : Int)
 	func didReceiveRSSI(sender : Neblina , rssi : NSNumber)
 	func didReceiveGeneralData(sender : Neblina, respType : Int32, cmdRspId : Int32, data : UnsafeRawPointer, dataLen : Int, errFlag : Bool)
-	func didReceiveFusionData(sender : Neblina, respType : Int32, cmdRspId : Int32, data : NeblinaFusionPacket, errFlag : Bool)
+	func didReceiveFusionData(sender : Neblina, respType : Int32, cmdRspId : Int32, data : NeblinaFusionPacket_t, errFlag : Bool)
 	func didReceivePmgntData(sender : Neblina, respType : Int32, cmdRspId : Int32, data : UnsafePointer<UInt8>, dataLen : Int, errFlag : Bool)
 	func didReceiveLedData(sender : Neblina, respType : Int32, cmdRspId : Int32, data : UnsafePointer<UInt8>, dataLen : Int, errFlag : Bool)
 	func didReceiveDebugData(sender : Neblina, respType : Int32, cmdRspId : Int32, data : UnsafePointer<UInt8>, dataLen : Int, errFlag : Bool)

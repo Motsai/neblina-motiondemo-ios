@@ -82,6 +82,7 @@
 /**********************************************************************************/
 
 #define     NEBLINA_NAME_LENGTH_MAX                             16
+#define     NEBLINA_SESSION_NAME_LENGTH_MAX                     15
 
 /**********************************************************************************/
 
@@ -159,6 +160,8 @@
 #define     NEBLINA_COMMAND_GENERAL_DEVICE_NAME_SET             0x10
 #define     NEBLINA_COMMAND_GENERAL_SET_UNIX_TIMESTAMP          0x11
 #define     NEBLINA_COMMAND_GENERAL_GET_UNIX_TIMESTAMP          0x12
+// Reserved command 0x13, 0x14, 0x15 and 0x16 for configurator
+#define     NEBLINA_COMMAND_GENERAL_DEVICE_RESET                0x17
 
 /**********************************************************************************/
 
@@ -197,9 +200,12 @@
 #define     NEBLINA_COMMAND_RECORDER_RECORD                     0x02
 #define     NEBLINA_COMMAND_RECORDER_PLAYBACK                   0x03
 #define     NEBLINA_COMMAND_RECORDER_SESSION_COUNT              0x04
-#define     NEBLINA_COMMAND_RECORDER_SESSION_INFO               0x05
+#define     NEBLINA_COMMAND_RECORDER_SESSION_GENERAL_INFO       0x05
 #define     NEBLINA_COMMAND_RECORDER_SESSION_READ               0x06
 #define     NEBLINA_COMMAND_RECORDER_SESSION_DOWNLOAD           0x07
+#define     NEBLINA_COMMAND_RECORDER_SESSION_SENSOR_INFO        0x08
+#define     NEBLINA_COMMAND_RECORDER_SESSION_FUSION_INFO        0x09
+#define     NEBLINA_COMMAND_RECORDER_SESSION_NAME               0x0A
 
 /**********************************************************************************/
 
@@ -254,6 +260,8 @@
 #define     NEBLINA_SESSION_CREATE                      1
 #define     NEBLINA_SESSION_OPEN                        2
 #define     NEBLINA_SESSION_INVALID                     0xFF
+
+#define     NEBLINA_SESSION_HEADER_LENGTH               496
 
 /**********************************************************************************/
 
@@ -375,6 +383,7 @@ typedef struct {
     uint8_t  recorder;    /// Flag bits indicating recorder states
     uint8_t  interface;
     uint8_t  led[NEBLINA_LED_COUNT];  /// LED levels
+    uint32_t  hardware;
 } NeblinaSystemStatus_t;
 
 /**********************************************************************************/
@@ -389,36 +398,36 @@ typedef struct {
 typedef struct {
     uint32_t timestamp;
     uint32_t value;         /// in %RH (format .2f)
-} NeblinaHumidityFxp_t;
+} NeblinaHumidityFxpTs_t;
 
 typedef struct {
     uint32_t timestamp;
     float value;
-} NeblinaHumidityFp_t;
+} NeblinaHumidityFpTs_t;
 
 /**********************************************************************************/
 
 typedef struct {
     uint32_t timestamp;
     uint32_t value;         /// in kPa (format .2f)
-} NeblinaPressureFxp_t;
+} NeblinaPressureFxpTs_t;
 
 typedef struct {
     uint32_t timestamp;
     float value;
-} NeblinaPressureFp_t;
+} NeblinaPressureFpTs_t;
 
 /**********************************************************************************/
 
 typedef struct {
     uint32_t timestamp;
     int32_t value;          /// in Celsius (format .2f)
-} NeblinaTemperatureFxp_t;
+} NeblinaTemperatureFxpTs_t;
 
 typedef struct {
     uint32_t timestamp;
     float value;
-} NeblinaTemperatureFp_t;
+} NeblinaTemperatureFpTs_t;
 
 /**********************************************************************************/
 
@@ -438,11 +447,52 @@ typedef struct {
 
 /**********************************************************************************/
 
+typedef enum {
+    NEBLINA_RECORDER_SESSION_INFO_GENERAL       = 0x00,
+    NEBLINA_RECORDER_SESSION_INFO_NAME          = 0x01,
+    NEBLINA_RECORDER_SESSION_INFO_SENSORS       = 0x02,
+    NEBLINA_RECORDER_SESSION_INFO_FUSION        = 0x03
+} NEBLINA_ATTRIBUTE_PACKED( NeblinaRecorderSessionInfo_t );
+
+/**********************************************************************************/
+
+typedef struct {
+    uint8_t state; //ON/OFF to Start/Stop a recording session
+    uint8_t name[15]; //session name
+} NeblinaSessionRecordCommand_t;
+
+/**********************************************************************************/
+
 typedef struct {
     uint32_t length;
-    uint16_t sessionId;
-    uint32_t timestamp; /// Unit Time in seconds
-} NeblinaSessionInfo_t;
+    uint32_t timestamp; /// Unix Time in seconds
+} NeblinaSessionGeneralInfo_t;
+
+/**********************************************************************************/
+
+typedef struct {
+    uint8_t accelerometer_range; //enum "NeblinaAccelerometerRange_t"
+    uint8_t gyroscope_range; //enum "NeblinaGyroscopeRange_t"
+    uint8_t magnetometer_range; //"MagRange_t"
+    uint8_t accelerometer_cutoff_divider; //represents accelerometer bandwidth, see enum "CutoffFreq_t" for details
+    uint8_t gyroscope_cutoff_divider; //represents gyroscope bandwidth, see enum "CutoffFreq_t" for details
+} NeblinaSessionSensorInfo_t;
+
+/**********************************************************************************/
+
+typedef struct {
+    uint8_t fusionType; //see the enum "NeblinaFusionType_t" for details
+    uint8_t shockThreshold; //see the enum "NeblinaFusionShockThreshold_t" for details
+    uint8_t rotationAlgorithm; //see the enum "NeblinaFusionRotationAlgorithm_t" for details
+} NeblinaSessionFusionInfo_t;
+
+/**********************************************************************************/
+
+typedef struct {
+    uint8_t length; //length of the packet, i.e., "data" array size + 1 byte for "state"
+    uint8_t state; //ON/OFF for the start/stop of a recording session
+    uint8_t data[15]; //description of a to-be-recorded session, when the state is ON
+} NeblinaSessionRecordNameLength_t;
 
 /**********************************************************************************/
 
@@ -481,30 +531,42 @@ typedef struct {
 /**********************************************************************************/
 
 typedef enum {
-    NEBLINA_FUSION_STREAM_EULER            = 0x00,
-    NEBLINA_FUSION_STREAM_EXTERNAL_FORCE   = 0x01,
-    NEBLINA_FUSION_STREAM_FINGER_GESTURE   = 0x02,
-    NEBLINA_FUSION_STREAM_MOTION_ANALYSIS  = 0x03,
-    NEBLINA_FUSION_STREAM_MOTION_STATE     = 0x04,
-    NEBLINA_FUSION_STREAM_PEDOMETER        = 0x05,
-    NEBLINA_FUSION_STREAM_QUATERNION       = 0x06,
-    NEBLINA_FUSION_STREAM_ROTATION_INFO    = 0x07,
-    NEBLINA_FUSION_STREAM_SITTING_STANDING = 0x08,
-    NEBLINA_FUSION_STREAM_TRAJECTORY_INFO  = 0x09,
+    NEBLINA_FUSION_STREAM_CALIBRATED_ACCEL       = 0x00,
+    NEBLINA_FUSION_STREAM_EULER                  = 0x01,
+    NEBLINA_FUSION_STREAM_EXTERNAL_FORCE         = 0x02,
+    NEBLINA_FUSION_STREAM_FINGER_GESTURE         = 0x03,
+    NEBLINA_FUSION_STREAM_INCLINOMETER           = 0x04,
+    NEBLINA_FUSION_STREAM_MAGNETOMETER_AC        = 0x05,
+    NEBLINA_FUSION_STREAM_MOTION_ANALYSIS        = 0x06,
+    NEBLINA_FUSION_STREAM_MOTION_DIRECTION       = 0x07,
+    NEBLINA_FUSION_STREAM_MOTION_INTENSITY_TREND = 0x08,
+    NEBLINA_FUSION_STREAM_MOTION_STATE           = 0x09,
+    NEBLINA_FUSION_STREAM_PEDOMETER              = 0x0A,
+    NEBLINA_FUSION_STREAM_QUATERNION             = 0x0B,
+    NEBLINA_FUSION_STREAM_ROTATION_INFO          = 0x0C,
+    NEBLINA_FUSION_STREAM_SHOCK_SEGMENT          = 0x0D,
+    NEBLINA_FUSION_STREAM_SITTING_STANDING       = 0x0E,
+    NEBLINA_FUSION_STREAM_TRAJECTORY_INFO        = 0x0F,
     NEBLINA_FUSION_STREAM_COUNT            /// Keep last
 } NEBLINA_ATTRIBUTE_PACKED( NeblinaFusionStream_t );
 
 typedef enum {
-    NEBLINA_FUSION_STATUS_EULER            = ( 1 << NEBLINA_FUSION_STREAM_EULER ),
-    NEBLINA_FUSION_STATUS_EXTERNAL_FORCE   = ( 1 << NEBLINA_FUSION_STREAM_EXTERNAL_FORCE ),
-    NEBLINA_FUSION_STATUS_FINGER_GESTURE   = ( 1 << NEBLINA_FUSION_STREAM_FINGER_GESTURE ),
-    NEBLINA_FUSION_STATUS_MOTION_ANALYSIS  = ( 1 << NEBLINA_FUSION_STREAM_MOTION_ANALYSIS ),
-    NEBLINA_FUSION_STATUS_MOTION_STATE     = ( 1 << NEBLINA_FUSION_STREAM_MOTION_STATE ),
-    NEBLINA_FUSION_STATUS_PEDOMETER        = ( 1 << NEBLINA_FUSION_STREAM_PEDOMETER ),
-    NEBLINA_FUSION_STATUS_QUATERNION       = ( 1 << NEBLINA_FUSION_STREAM_QUATERNION ),
-    NEBLINA_FUSION_STATUS_ROTATION_INFO    = ( 1 << NEBLINA_FUSION_STREAM_ROTATION_INFO ),
-    NEBLINA_FUSION_STATUS_SITTING_STANDING = ( 1 << NEBLINA_FUSION_STREAM_SITTING_STANDING ),
-    NEBLINA_FUSION_STATUS_TRAJECTORY_INFO  = ( 1 << NEBLINA_FUSION_STREAM_TRAJECTORY_INFO ),
+    NEBLINA_FUSION_STATUS_CALIBRATED_ACCEL       = ( 1 << NEBLINA_FUSION_STREAM_CALIBRATED_ACCEL ),
+    NEBLINA_FUSION_STATUS_EULER                  = ( 1 << NEBLINA_FUSION_STREAM_EULER ),
+    NEBLINA_FUSION_STATUS_EXTERNAL_FORCE         = ( 1 << NEBLINA_FUSION_STREAM_EXTERNAL_FORCE ),
+    NEBLINA_FUSION_STATUS_FINGER_GESTURE         = ( 1 << NEBLINA_FUSION_STREAM_FINGER_GESTURE ),
+    NEBLINA_FUSION_STATUS_INCLINOMETER           = ( 1 << NEBLINA_FUSION_STREAM_INCLINOMETER ),
+    NEBLINA_FUSION_STATUS_MAGNETOMETER_AC        = ( 1 << NEBLINA_FUSION_STREAM_MAGNETOMETER_AC ),
+    NEBLINA_FUSION_STATUS_MOTION_ANALYSIS        = ( 1 << NEBLINA_FUSION_STREAM_MOTION_ANALYSIS ),
+    NEBLINA_FUSION_STATUS_MOTION_DIRECTION       = ( 1 << NEBLINA_FUSION_STREAM_MOTION_DIRECTION ),
+    NEBLINA_FUSION_STATUS_MOTION_INTENSITY_TREND = ( 1 << NEBLINA_FUSION_STREAM_MOTION_INTENSITY_TREND ),
+    NEBLINA_FUSION_STATUS_MOTION_STATE           = ( 1 << NEBLINA_FUSION_STREAM_MOTION_STATE ),
+    NEBLINA_FUSION_STATUS_PEDOMETER              = ( 1 << NEBLINA_FUSION_STREAM_PEDOMETER ),
+    NEBLINA_FUSION_STATUS_QUATERNION             = ( 1 << NEBLINA_FUSION_STREAM_QUATERNION ),
+    NEBLINA_FUSION_STATUS_ROTATION_INFO          = ( 1 << NEBLINA_FUSION_STREAM_ROTATION_INFO ),
+    NEBLINA_FUSION_STATUS_SHOCK_SEGMENT          = ( 1 << NEBLINA_FUSION_STREAM_SHOCK_SEGMENT ),
+    NEBLINA_FUSION_STATUS_SITTING_STANDING       = ( 1 << NEBLINA_FUSION_STREAM_SITTING_STANDING ),
+    NEBLINA_FUSION_STATUS_TRAJECTORY_INFO        = ( 1 << NEBLINA_FUSION_STREAM_TRAJECTORY_INFO ),
 } NEBLINA_ATTRIBUTE_PACKED( NeblinaFusionStatusMask_t );
 
 typedef enum {
@@ -518,17 +580,18 @@ typedef enum {
 
 typedef enum {
     NEBLINA_FUSION_ROTATION_ALGORITHM_MAG  = 0x00,
-    NEBLINA_FUSION_ROTATION_ALGORITHM_GYRO = 0x01
+    NEBLINA_FUSION_ROTATION_ALGORITHM_GYRO = 0x01,
+    NEBLINA_FUSION_ROTATION_ALGORITHM_TWO_EDGE_WHEEL = 0x02,
+    NEBLINA_FUSION_ROTATION_ALGORITHM_THREE_EDGE_WHEEL = 0x03
 } NEBLINA_ATTRIBUTE_PACKED( NeblinaFusionRotationAlgorithm_t );
 
 typedef enum {
-    NEBLINA_FUSION_GOLFSWING_IDLE_MODE  = 0x00, //no operation
-    NEBLINA_FUSION_GOLFSWING_RECORDING_MODE = 0x01, //record a reference swing
-    NEBLINA_FUSION_GOLFSWING_ANALYSIS_MODE = 0x02 //analysis and comparison of a test swing w.r.t. the reference one
-} NEBLINA_ATTRIBUTE_PACKED( NeblinaFusionGolfSwingAnalysisMode_t );
-
-typedef enum {
-    NEBLINA_FUSION_SHOCK_THRESHOLD_56_PERCENT_FULLSCALE = 0x09, ///e.g., 9g in 16g range
+    NEBLINA_FUSION_SHOCK_THRESHOLD_4G_IN_16G_RANGE      = 0x04, //4g threshold, only works in 16g range
+    NEBLINA_FUSION_SHOCK_THRESHOLD_5G_IN_16G_RANGE      = 0x05, //5g threshold, only works in 16g range
+    NEBLINA_FUSION_SHOCK_THRESHOLD_6G_IN_16G_RANGE      = 0x06, //6g threshold, only works in 16g range
+    NEBLINA_FUSION_SHOCK_THRESHOLD_7G_IN_16G_RANGE      = 0x07, //7g threshold, only works in 16g range
+    NEBLINA_FUSION_SHOCK_THRESHOLD_8G_IN_16G_RANGE      = 0x08, //8g threshold, only works in 16g range
+    NEBLINA_FUSION_SHOCK_THRESHOLD_56_PERCENT_FULLSCALE = 0x09, ///e.g., 9g in 16g range, or 4.48g in 8g range
     NEBLINA_FUSION_SHOCK_THRESHOLD_62_PERCENT_FULLSCALE = 0x0A, ///e.g., 10g in 16g range
     NEBLINA_FUSION_SHOCK_THRESHOLD_69_PERCENT_FULLSCALE = 0x0B, ///e.g., 11g in 16g range
     NEBLINA_FUSION_SHOCK_THRESHOLD_75_PERCENT_FULLSCALE = 0x0C, ///e.g., 12g in 16g range
@@ -674,14 +737,14 @@ typedef struct {
     float x;
     float y;
     float z;
-} NeblinaAccelerometerFp_t;
+} NeblinaAccelerometerFpTs_t;
 
 typedef struct {
     uint32_t timestamp;
     int16_t x;
     int16_t y;
     int16_t z;
-} NeblinaAccelerometerFxp_t;
+} NeblinaAccelerometerFxpTs_t;
 
 typedef enum {
     NEBLINA_ACCELEROMETER_RANGE_2G = 0x00,
@@ -700,7 +763,17 @@ typedef struct {
     int16_t gyroX;
     int16_t gyroY;
     int16_t gyroZ;
-} NeblinaAccelerometerGyroscopeFxp_t;
+} NeblinaAccelerometerGyroscopeFxpTs_t;
+
+typedef struct {
+    uint32_t timestamp;
+    float accelX;
+    float accelY;
+    float accelZ;
+    float gyroX;
+    float gyroY;
+    float gyroZ;
+} NeblinaAccelerometerGyroscopeFpTs_t;
 
 /**********************************************************************************/
 
@@ -712,7 +785,17 @@ typedef struct {
     int16_t magX;
     int16_t magY;
     int16_t magZ;
-} NeblinaAccelerometerMagnetometerFxp_t;
+} NeblinaAccelerometerMagnetometerFxpTs_t;
+
+typedef struct {
+    uint32_t timestamp;
+    float accelX;
+    float accelY;
+    float accelZ;
+    float magX;
+    float magY;
+    float magZ;
+} NeblinaAccelerometerMagnetometerFpTs_t;
 
 /**********************************************************************************/
 
@@ -721,14 +804,14 @@ typedef struct {
     float x;
     float y;
     float z;
-} NeblinaGyroscopeFp_t;
+} NeblinaGyroscopeFpTs_t;
 
 typedef struct {
     uint32_t timestamp;
     int16_t x;
     int16_t y;
     int16_t z;
-} NeblinaGyroscopeFxp_t;
+} NeblinaGyroscopeFxpTs_t;
 
 typedef enum {
     NEBLINA_GYROSCOPE_RANGE_2000 = 0x00,
@@ -744,14 +827,14 @@ typedef struct {
     float x;
     float y;
     float z;
-} NeblinaMagnetometerFp_t;
+} NeblinaMagnetometerFpTs_t;
 
 typedef struct {
     uint32_t timestamp;
     int16_t x;
     int16_t y;
     int16_t z;
-} NeblinaMagnetometerFxp_t;
+} NeblinaMagnetometerFxpTs_t;
 
 typedef struct {
     uint32_t microseconds; /// high-resolution timestamp in microseconds

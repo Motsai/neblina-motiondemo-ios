@@ -97,6 +97,21 @@ extension Neblina {
 	func shutdown() {
 		sendCommand(subSys: NEBLINA_SUBSYSTEM_GENERAL, cmd: NEBLINA_COMMAND_GENERAL_DEVICE_SHUTDOWN, paramLen: 0, paramData: [0])
 	}
+	
+	func getUnixTime(uTime : UInt32) {
+		sendCommand(subSys: NEBLINA_SUBSYSTEM_GENERAL, cmd: NEBLINA_COMMAND_GENERAL_GET_UNIX_TIMESTAMP, paramLen: 0, paramData: [0])
+	}
+
+	func setUnixTime(uTime : UInt32) {
+		var param = [UInt8](repeating: 0, count: 4)
+
+		param[0] = UInt8(uTime & 0xFF)
+		param[1] = UInt8((uTime >> 8) & 0xFF)
+		param[1] = UInt8((uTime >> 16) & 0xFF)
+		param[3] = UInt8((uTime >> 24) & 0xFF)
+
+		sendCommand(subSys: NEBLINA_SUBSYSTEM_GENERAL, cmd: NEBLINA_COMMAND_GENERAL_SET_UNIX_TIMESTAMP, paramLen: param.count, paramData: param)
+	}
 
 	// ***
 	// *** EEPROM
@@ -431,6 +446,23 @@ extension Neblina {
 		sendCommand(subSys: NEBLINA_SUBSYSTEM_FUSION, cmd: NEBLINA_COMMAND_FUSION_MOTION_DIRECTION_STREAM, paramLen: param.count, paramData: param)
 	}
 
+	func streamShockSegment(_ Enable:Bool, threshold : UInt8 ) {
+		var param = [UInt8](repeating: 0, count: 2)
+		
+		if Enable == true
+		{
+			param[0] = 1
+		}
+		else
+		{
+			param[0] = 0
+		}
+		
+		param[1] = threshold
+		
+		sendCommand(subSys: NEBLINA_SUBSYSTEM_FUSION, cmd: NEBLINA_COMMAND_FUSION_SHOCK_SEGMENT_STREAM, paramLen: param.count, paramData: param)
+	}
+	
 	func setGolfSwingAnalysisMode(_ mode : UInt8) {
 		var param = [UInt8](repeating: 0, count: 1)
 		
@@ -454,13 +486,23 @@ extension Neblina {
 		sendCommand(subSys: NEBLINA_SUBSYSTEM_RECORDER, cmd: NEBLINA_COMMAND_RECORDER_SESSION_COUNT, paramLen: 0, paramData: [0])
 	}
 	
-	func getSessionInfo(_ sessionId : UInt16) {
-		var param = [UInt8](repeating: 0, count: 2)
+	func getSessionInfo(_ sessionId : UInt16, idx : UInt8) {
+		var param = [UInt8](repeating: 0, count: 3)
+		
+		param[0] = UInt8(sessionId & 0xFF)
+		param[1] = UInt8((sessionId >> 8) & 0xFF)
+		param[2] = idx;
+		
+		sendCommand(subSys: NEBLINA_SUBSYSTEM_RECORDER, cmd: NEBLINA_COMMAND_RECORDER_SESSION_GENERAL_INFO, paramLen: param.count, paramData: param)
+	}
+
+	func getSessionName(_ sessionId : UInt16) {
+		var param = [UInt8](repeating: 0, count: 3)
 		
 		param[0] = UInt8(sessionId & 0xFF)
 		param[1] = UInt8((sessionId >> 8) & 0xFF)
 		
-		sendCommand(subSys: NEBLINA_SUBSYSTEM_RECORDER, cmd: NEBLINA_COMMAND_RECORDER_SESSION_INFO, paramLen: param.count, paramData: param)
+		sendCommand(subSys: NEBLINA_SUBSYSTEM_RECORDER, cmd: NEBLINA_COMMAND_RECORDER_SESSION_NAME, paramLen: param.count, paramData: param)
 	}
 	
 	func eraseStorage(_ quickErase:Bool) {
@@ -496,7 +538,7 @@ extension Neblina {
 		sendCommand(subSys: NEBLINA_SUBSYSTEM_RECORDER, cmd: NEBLINA_COMMAND_RECORDER_PLAYBACK, paramLen: param.count, paramData: param)
 	}
 	
-	func sessionRecord(_ Enable:Bool) {
+	func sessionRecord(_ Enable:Bool, info : String) {
 		var param = [UInt8](repeating: 0, count: 1)
 		
 		if Enable == true
@@ -507,8 +549,11 @@ extension Neblina {
 		{
 			param[0] = 0
 		}
+		print("\(info)")
+		param += info.utf8
+		print("\(param)")
 		
-		sendCommand(subSys: NEBLINA_SUBSYSTEM_RECORDER, cmd: NEBLINA_COMMAND_RECORDER_RECORD, paramLen: param.count, paramData: param)
+		sendCommand(subSys: NEBLINA_SUBSYSTEM_RECORDER, cmd: NEBLINA_COMMAND_RECORDER_RECORD, paramLen: min(param.count, 16), paramData: param)
 	}
 	
 	func sessionRead(_ SessionId:UInt16, Len:UInt16, Offset:UInt32) {

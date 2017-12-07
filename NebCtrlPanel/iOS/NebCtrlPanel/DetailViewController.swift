@@ -22,6 +22,8 @@ let NebCmdList = [NebCmdItem] (arrayLiteral:
 	           Name: "UART Data Port", Actuator : ACTUATOR_TYPE_SWITCH, Text: ""),
 	NebCmdItem(SubSysId: NEBLINA_SUBSYSTEM_GENERAL, CmdId: NEBLINA_COMMAND_GENERAL_DEVICE_NAME_SET, ActiveStatus: 0,
 	           Name: "Change Device Name", Actuator : ACTUATOR_TYPE_TEXT_FIELD_BUTTON, Text: "Change"),
+	NebCmdItem(SubSysId: NEBLINA_SUBSYSTEM_FUSION, CmdId: NEBLINA_COMMAND_FUSION_SHOCK_SEGMENT_STREAM, ActiveStatus: 0,
+	           Name: "Shock Segment Stream", Actuator : ACTUATOR_TYPE_TEXT_FIELD_SWITCH, Text: ""),
 	NebCmdItem(SubSysId: NEBLINA_SUBSYSTEM_FUSION, CmdId: NEBLINA_COMMAND_FUSION_CALIBRATE_FORWARD_POSITION, ActiveStatus: 0,
 	           Name: "Calibrate Forward Pos", Actuator : ACTUATOR_TYPE_BUTTON, Text: "Calib Fwrd"),
 	NebCmdItem(SubSysId: NEBLINA_SUBSYSTEM_FUSION, CmdId: NEBLINA_COMMAND_FUSION_CALIBRATE_DOWN_POSITION, ActiveStatus: 0,
@@ -46,6 +48,8 @@ let NebCmdList = [NebCmdItem] (arrayLiteral:
 	           Name: "Accel & Gyro Stream", Actuator : ACTUATOR_TYPE_SWITCH, Text:""),
 	NebCmdItem(SubSysId: NEBLINA_SUBSYSTEM_SENSOR, CmdId: NEBLINA_COMMAND_SENSOR_HUMIDITY_STREAM, ActiveStatus: UInt32(NEBLINA_SENSOR_STATUS_HUMIDITY.rawValue),
 	           Name: "Humidity Sensor Stream", Actuator : ACTUATOR_TYPE_SWITCH, Text: ""),
+	NebCmdItem(SubSysId: NEBLINA_SUBSYSTEM_SENSOR, CmdId: NEBLINA_COMMAND_SENSOR_TEMPERATURE_STREAM, ActiveStatus: UInt32(NEBLINA_SENSOR_STATUS_TEMPERATURE.rawValue),
+	           Name: "Temperature Sensor Stream", Actuator : ACTUATOR_TYPE_SWITCH, Text: ""),
 	NebCmdItem(SubSysId: NEBLINA_SUBSYSTEM_FUSION, CmdId: NEBLINA_COMMAND_FUSION_LOCK_HEADING_REFERENCE, ActiveStatus: 0,
 	           Name: "Lock Heading Ref.", Actuator : ACTUATOR_TYPE_SWITCH, Text: ""),
 	NebCmdItem(SubSysId: NEBLINA_SUBSYSTEM_RECORDER, CmdId: NEBLINA_COMMAND_RECORDER_RECORD, ActiveStatus: UInt32(NEBLINA_RECORDER_STATUS_RECORD.rawValue),
@@ -84,7 +88,6 @@ let NebCmdList = [NebCmdItem] (arrayLiteral:
 //let CtrlName = [String](arrayLiteral:"Heading")//, "Test1", "Test2")
 
 class DetailViewController: UIViewController, UITextFieldDelegate, NeblinaDelegate, SCNSceneRendererDelegate {
-
 	var nebdev : Neblina? {
 		didSet {
 			nebdev!.delegate = self
@@ -138,7 +141,7 @@ class DetailViewController: UIViewController, UITextFieldDelegate, NeblinaDelega
 	var playback = Bool(false)
 	var badTimestampCnt = Int(0)
 	var dubTimestampCnt = Int(0)
-	var prevPacket = NeblinaFusionPacket();
+	var prevPacket = NeblinaFusionPacket_t();
 	
 /*	var detailItem: Neblina? {
 		didSet {
@@ -479,10 +482,10 @@ class DetailViewController: UIViewController, UITextFieldDelegate, NeblinaDelega
 						case NEBLINA_COMMAND_RECORDER_RECORD:
 							
 							if NebCmdList[row].ActiveStatus == 0 {
-								nebdev?.sessionRecord(false)
+								nebdev?.sessionRecord(false, info: "")
 							}
 							else {
-								nebdev!.sessionRecord(true)
+								nebdev!.sessionRecord(true, info: "")
 							}
 							break
 						case NEBLINA_COMMAND_RECORDER_SESSION_DOWNLOAD:
@@ -642,6 +645,14 @@ class DetailViewController: UIViewController, UITextFieldDelegate, NeblinaDelega
 								sw.selectedSegmentIndex = 0
 							}
 							break
+						case NEBLINA_COMMAND_FUSION_SHOCK_SEGMENT_STREAM:
+							var thresh = UInt8(0)
+							let cell = cmdView.cellForRow( at: IndexPath(row: row, section: 0))
+							if cell != nil {
+								let tf = cell?.viewWithTag(4) as! UITextField
+								thresh = UInt8(tf.text!)!
+							}
+							nebdev!.streamShockSegment(sender.selectedSegmentIndex == 1, threshold: thresh)
 						default:
 							break
 					}
@@ -660,7 +671,7 @@ class DetailViewController: UIViewController, UITextFieldDelegate, NeblinaDelega
 							nebdev!.eraseStorage(sender.selectedSegmentIndex == 1)
 							break
 						case NEBLINA_COMMAND_RECORDER_RECORD:
-							nebdev!.sessionRecord(sender.selectedSegmentIndex == 1)
+							nebdev!.sessionRecord(sender.selectedSegmentIndex == 1, info: "")
 							break
 						case NEBLINA_COMMAND_RECORDER_PLAYBACK:
 							nebdev!.sessionPlayback(sender.selectedSegmentIndex == 1, sessionId : 0xffff)
@@ -705,6 +716,7 @@ class DetailViewController: UIViewController, UITextFieldDelegate, NeblinaDelega
 						break
 					case NEBLINA_COMMAND_SENSOR_MAGNETOMETER_STREAM:
 						nebdev?.sensorStreamMagData(sender.selectedSegmentIndex == 1)
+						
 						break
 					case NEBLINA_COMMAND_SENSOR_PRESSURE_STREAM:
 						nebdev?.sensorStreamPressureData(sender.selectedSegmentIndex == 1)
@@ -812,7 +824,7 @@ class DetailViewController: UIViewController, UITextFieldDelegate, NeblinaDelega
 						case LuggageDataLog:
 							if sender.selectedSegmentIndex == 0 {
 								nebdev!.disableStreaming()
-								nebdev!.sessionRecord(false)
+								nebdev!.sessionRecord(false, info: "")
 								break
 							}
 							else {
@@ -820,7 +832,7 @@ class DetailViewController: UIViewController, UITextFieldDelegate, NeblinaDelega
 								nebdev!.sensorStreamMagData(true)
 								nebdev!.sensorStreamPressureData(true)
 								nebdev!.sensorStreamTemperatureData(true)
-								nebdev!.sessionRecord(true)
+								nebdev!.sessionRecord(true, info: "")
 								
 							}
 							
@@ -947,6 +959,7 @@ class DetailViewController: UIViewController, UITextFieldDelegate, NeblinaDelega
 	
 	func didReceiveResponsePacket(sender : Neblina, subsystem : Int32, cmdRspId : Int32, data : UnsafePointer<UInt8>, dataLen : Int)
 	{
+		print("didReceiveResponsePacket : \(subsystem) \(cmdRspId)")
 		switch subsystem {
 			case NEBLINA_SUBSYSTEM_GENERAL:
 				switch (cmdRspId) {
@@ -1011,6 +1024,9 @@ class DetailViewController: UIViewController, UITextFieldDelegate, NeblinaDelega
 						break
 				}
 				break
+			case NEBLINA_SUBSYSTEM_SENSOR:
+				//nebdev?.getFirmwareVersion()
+				break
 			default:
 				break
 		}
@@ -1030,7 +1046,7 @@ class DetailViewController: UIViewController, UITextFieldDelegate, NeblinaDelega
 		}
 	}
 	
-	func didReceiveFusionData(sender : Neblina, respType : Int32, cmdRspId : Int32, data : NeblinaFusionPacket, errFlag : Bool) {
+	func didReceiveFusionData(sender : Neblina, respType : Int32, cmdRspId : Int32, data : NeblinaFusionPacket_t, errFlag : Bool) {
 
 		//let errflag = Bool(type.rawValue & 0x80 == 0x80)
 
@@ -1070,18 +1086,20 @@ class DetailViewController: UIViewController, UITextFieldDelegate, NeblinaDelega
 			// Process Quaternion
 			//
 			//let ship = scene.rootNode.childNodeWithName("ship", recursively: true)!
-			let x = (Int16(data.data.0) & 0xff) | (Int16(data.data.1) << 8)
+			let x = (Int16(data.data.0) & 0xff) | (Int16(data.data.1) << 8)//w
 			let xq = Float(x) / 32768.0
-			let y = (Int16(data.data.2) & 0xff) | (Int16(data.data.3) << 8)
+			let y = (Int16(data.data.2) & 0xff) | (Int16(data.data.3) << 8)//x
 			let yq = Float(y) / 32768.0
-			let z = (Int16(data.data.4) & 0xff) | (Int16(data.data.5) << 8)
+			let z = (Int16(data.data.4) & 0xff) | (Int16(data.data.5) << 8)//y
 			let zq = Float(z) / 32768.0
-			let w = (Int16(data.data.6) & 0xff) | (Int16(data.data.7) << 8)
+			let w = (Int16(data.data.6) & 0xff) | (Int16(data.data.7) << 8)//z
 			let wq = Float(w) / 32768.0
-			ship.orientation = SCNQuaternion(yq, xq, zq, wq)// ship
+			ship.orientation = SCNQuaternion(-zq, xq, yq, wq)// ship
+			//ship.orientation = SCNQuaternion(-yq, wq, xq, zq)// ship
+
 			//ship.orientation = SCNQuaternion(xq, yq, zq, wq)
 			//ship.orientation = SCNQuaternion(yq, -xq, -zq, wq)// cube
-			label.text = String("Quat - x:\(xq), y:\(yq), z:\(zq), w:\(wq)")
+			label.text = String("Quat - w:\(xq), x:\(yq), y:\(zq), z:\(wq)")
 			if (prevTimeStamp == data.timestamp)
 			{
 				var diff = Bool(false)
@@ -1208,6 +1226,18 @@ class DetailViewController: UIViewController, UITextFieldDelegate, NeblinaDelega
 			let stridelen = data.data.9;
 			let totaldistance = UInt16(data.data.10) + (UInt16(data.data.11) << 8)
 			label.text = String("Stride = \(stridelen), dist = \(totaldistance)")
+			break
+		case NEBLINA_COMMAND_FUSION_SHOCK_SEGMENT_STREAM:
+			let ax = (Int16(data.data.0) & 0xff) | (Int16(data.data.1) << 8)
+			let ay = (Int16(data.data.2) & 0xff) | (Int16(data.data.3) << 8)
+			let az = (Int16(data.data.4) & 0xff) | (Int16(data.data.5) << 8)
+//			label.text = String("Accel - x:\(xq), y:\(yq), z:\(zq)")
+			accelGraph.add(double3(Double(ax), Double(ay), Double(az)))
+
+			let gx = (Int16(data.data.6) & 0xff) | (Int16(data.data.7) << 8)
+			let gy = (Int16(data.data.8) & 0xff) | (Int16(data.data.9) << 8)
+			let gz = (Int16(data.data.10) & 0xff) | (Int16(data.data.11) << 8)
+			gyroGraph.add(double3(Double(gx), Double(gy), Double(gz)))
 			break
 		default:
 			break
@@ -1427,6 +1457,10 @@ class DetailViewController: UIViewController, UITextFieldDelegate, NeblinaDelega
 		case NEBLINA_COMMAND_SENSOR_PRESSURE_STREAM:
 			break
 		case NEBLINA_COMMAND_SENSOR_TEMPERATURE_STREAM:
+			let x = (Int32(data[4]) & 0xff) | (Int32(data[5]) << 8) | (Int32(data[6]) << 16) | (Int32(data[7]) << 24)
+			let xf = Float(x) / 100.0;
+			label.text = String("Temperature : \(xf)")
+//print("Temperature \(xf)")
 			break
 		case NEBLINA_COMMAND_SENSOR_ACCELEROMETER_GYROSCOPE_STREAM:
 			let x = (Int16(data[4]) & 0xff) | (Int16(data[5]) << 8)
@@ -1457,6 +1491,10 @@ class DetailViewController: UIViewController, UITextFieldDelegate, NeblinaDelega
 		cmdView.setNeedsDisplay()
 	}
 	
+	func didReceiveBatteryLevel(sender: Neblina, level: UInt8) {
+		
+	}
+
 	// MARK : UITableView
 	
 	func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
