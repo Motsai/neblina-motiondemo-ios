@@ -270,16 +270,12 @@
 /**********************************************************************************/
 
 typedef struct {
-    uint8_t major;          /// Major version (X.0.0)
-    uint8_t minor;          /// Minor version (0.Y.0)
-    uint8_t build;          /// Build version (0.0.Z)
-} Version_t;
-
-typedef struct {
-    uint8_t apiVersion;     /// API
-    Version_t coreVersion;  /// Core firmware version
-    Version_t bleVersion;   /// BLE firmware version
-    uint64_t devid;         /// Neblina UID
+    uint8_t api;                    /// Application Program Interface
+    uint8_t firmware_major;         /// Firmware major version (X.0.0)
+    uint8_t firmware_minor;         /// Firmware minor version (0.Y.0)
+    uint8_t firmware_patch;         /// Firmware patch version (0.0.Z)
+    uint8_t firmware_build[3];      /// Firmware build version (
+    uint64_t device_uuid;             /// Device UUID
 } NeblinaFirmwareVersion_t;
 
 /**********************************************************************************/

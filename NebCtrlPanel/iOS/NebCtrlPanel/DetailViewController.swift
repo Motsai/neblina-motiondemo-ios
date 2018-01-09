@@ -970,10 +970,11 @@ class DetailViewController: UIViewController, UITextFieldDelegate, NeblinaDelega
 						break
 					case NEBLINA_COMMAND_GENERAL_FIRMWARE_VERSION:
 						let vers = UnsafeMutableRawPointer(mutating: data).load(as: NeblinaFirmwareVersion_t.self)
+						let b = (UInt32(vers.firmware_build.0) & 0xFF) | ((UInt32(vers.firmware_build.1) & 0xFF) << 8) | ((UInt32(vers.firmware_build.2) & 0xFF) << 16)
 						print("\(vers) ")
-						versionLabel.text = String(format: "API:%d, FEN:%d.%d.%d, BLE:%d.%d.%d", vers.apiVersion,
-												   vers.coreVersion.major, vers.coreVersion.minor, vers.coreVersion.build,
-												   vers.bleVersion.major, vers.bleVersion.minor, vers.bleVersion.build)
+						versionLabel.text = String(format: "API:%d, Firm. Ver.:%d.%d.%d-%d", vers.api,
+												   vers.firmware_major, vers.firmware_minor, vers.firmware_patch, b
+												   )
 						break
 					default:
 						break
