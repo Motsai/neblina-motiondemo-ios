@@ -29,7 +29,7 @@ let NebCmdList = [NebCmdItem] (arrayLiteral:
 	NebCmdItem(SubSysId: NEBLINA_SUBSYSTEM_GENERAL, CmdId: NEBLINA_COMMAND_GENERAL_INTERFACE_STATE, ActiveStatus: UInt32(NEBLINA_INTERFACE_STATUS_UART.rawValue),
 	           Name: "UART Data Port", Actuator : ACTUATOR_TYPE_SWITCH, Text: ""),
 	NebCmdItem(SubSysId: NEBLINA_SUBSYSTEM_GENERAL, CmdId: NEBLINA_COMMAND_GENERAL_DEVICE_NAME_SET, ActiveStatus: 0,
-	           Name: "Change Device Name", Actuator : ACTUATOR_TYPE_TEXT_FILED_BUTTON, Text: "Change"),
+	           Name: "Change Device Name", Actuator : ACTUATOR_TYPE_TEXT_FIELD_BUTTON, Text: "Change"),
 	NebCmdItem(SubSysId: NEBLINA_SUBSYSTEM_FUSION, CmdId: NEBLINA_COMMAND_FUSION_CALIBRATE_FORWARD_POSITION, ActiveStatus: 0,
 	           Name: "Calibrate Forward Pos", Actuator : ACTUATOR_TYPE_BUTTON, Text: "Calib Fwrd"),
 	NebCmdItem(SubSysId: NEBLINA_SUBSYSTEM_FUSION, CmdId: NEBLINA_COMMAND_FUSION_CALIBRATE_DOWN_POSITION, ActiveStatus: 0,
@@ -53,9 +53,9 @@ let NebCmdList = [NebCmdItem] (arrayLiteral:
 	NebCmdItem(SubSysId: NEBLINA_SUBSYSTEM_RECORDER, CmdId: NEBLINA_COMMAND_RECORDER_RECORD, ActiveStatus: 0,
 	           Name: "Flash Record", Actuator : ACTUATOR_TYPE_BUTTON, Text: "OFF"),
 	NebCmdItem(SubSysId: NEBLINA_SUBSYSTEM_RECORDER, CmdId: NEBLINA_COMMAND_RECORDER_PLAYBACK, ActiveStatus: UInt32(NEBLINA_RECORDER_STATUS_READ.rawValue),
-	           Name: "Flash Playback", Actuator : ACTUATOR_TYPE_TEXT_FILED_BUTTON, Text: "Play"),
+	           Name: "Flash Playback", Actuator : ACTUATOR_TYPE_TEXT_FIELD_BUTTON, Text: "Play"),
 	NebCmdItem(SubSysId: NEBLINA_SUBSYSTEM_RECORDER, CmdId: NEBLINA_COMMAND_RECORDER_SESSION_DOWNLOAD, ActiveStatus: 0,
-	           Name: "Flash Download Session ", Actuator : ACTUATOR_TYPE_TEXT_FILED_BUTTON, Text: "Start"),
+	           Name: "Flash Download Session ", Actuator : ACTUATOR_TYPE_TEXT_FIELD_BUTTON, Text: "Start"),
 	NebCmdItem(SubSysId: 0xf, CmdId: MotionDataStream, ActiveStatus: 0, Name: "Motion data stream", Actuator : ACTUATOR_TYPE_SWITCH, Text: ""),
 	NebCmdItem(SubSysId: 0xf, CmdId: Heading, ActiveStatus: 0, Name: "Heading", Actuator : ACTUATOR_TYPE_SWITCH, Text: ""),
 	NebCmdItem(SubSysId: NEBLINA_SUBSYSTEM_GENERAL, CmdId: NEBLINA_COMMAND_GENERAL_FIRMWARE_UPDATE, ActiveStatus: 0,
@@ -67,11 +67,13 @@ let NebCmdList = [NebCmdItem] (arrayLiteral:
 @available(OSX 10.11, *)
 class ViewController: NSViewController, NSTableViewDataSource, NSTableViewDelegate, CBCentralManagerDelegate, NeblinaDelegate  {
 
-//	let scene = SCNScene(named: "art.scnassets/ship.scn")!
+	let sceneShip = SCNScene(named: "art.scnassets/ship.scn")!
+	let sceneCube = SCNScene(named: "art.scnassets/neblina_calibration.dae")!
 //	let scene = SCNScene(named: "art.scnassets/Iron_Man/Iron_Man.dae")!
 	//let scene = SCNScene(named: "art.scnassets/AstonMartinRapide/rapide.scn")!
-	let scene = SCNScene(named: "art.scnassets/Body_Mesh_Rigged.dae")!
+	//let scene = SCNScene(named: "art.scnassets/Body_Mesh_Rigged.dae")!
 	var ship : SCNNode! //= scene.rootNode.childNodeWithName("ship", recursively: true)!
+	var cube : SCNNode!
 //	var ship = scene.rootNode.childNodeWithName("Mesh1", recursively: true)!
 	var bleCentralManager : CBCentralManager!
 //	var objects = [Neblina]()
@@ -107,7 +109,8 @@ class ViewController: NSViewController, NSTableViewDataSource, NSTableViewDelega
 	@IBOutlet weak var dataLabel: NSTextField!
 	@IBOutlet weak var flashLabel: NSTextField!
 	@IBOutlet weak var dumpLabel: NSTextField!
-	@IBOutlet weak var scnView: SCNView!
+	@IBOutlet weak var shipScnView: SCNView!
+	@IBOutlet weak var cubeScnView: SCNView!
 	
 	func getCmdIdx(_ subsysId : Int32, cmdId : Int32) -> Int {
 		for (idx, item) in NebCmdList.enumerated() {
@@ -202,13 +205,17 @@ class ViewController: NSViewController, NSTableViewDataSource, NSTableViewDelega
 		
 		// Do any additional setup after loading the view.
 
-		let cameraNode = SCNNode()
-		cameraNode.camera = SCNCamera()
-		scene.rootNode.addChildNode(cameraNode)
-		
+		let shipCameraNode = SCNNode()
+		shipCameraNode.camera = SCNCamera()
+		let cubeCameraNode = SCNNode()
+		cubeCameraNode.camera = SCNCamera()
+		sceneShip.rootNode.addChildNode(shipCameraNode)
+		sceneCube.rootNode.addChildNode(cubeCameraNode)
+
 		// place the camera
-		cameraNode.position = SCNVector3(x: 0, y: 1.5, z: 4)
-		//cameraNode.position = SCNVector3(x: 0, y: 15, z: 0)
+		//cameraNode.position = SCNVector3(x: 0, y: 1.5, z: 4)
+		shipCameraNode.position = SCNVector3(x: 0, y: 0, z: 15)
+		cubeCameraNode.position = SCNVector3(x: 0, y: 0, z: 20)
 		//cameraNode.rotation = SCNVector4(0, 0, 1, GLKMathDegreesToRadians(-180))
 		//cameraNode.rotation = SCNVector3(x:
 		// create and add a light to the scene
@@ -216,23 +223,25 @@ class ViewController: NSViewController, NSTableViewDataSource, NSTableViewDelega
 		lightNode.light = SCNLight()
 		lightNode.light!.type = SCNLight.LightType.omni
 		lightNode.position = SCNVector3(x: 3, y: 10, z: 50)
-		scene.rootNode.addChildNode(lightNode)
-		
+		sceneShip.rootNode.addChildNode(lightNode)
+		sceneCube.rootNode.addChildNode(lightNode)
+
 		// create and add an ambient light to the scene
 		let ambientLightNode = SCNNode()
 		ambientLightNode.light = SCNLight()
 		ambientLightNode.light!.type = SCNLight.LightType.ambient
 		ambientLightNode.light!.color = NSColor.darkGray
-		scene.rootNode.addChildNode(ambientLightNode)
-		
+		sceneShip.rootNode.addChildNode(ambientLightNode)
+		sceneCube.rootNode.addChildNode(ambientLightNode)
+
 		
 		// retrieve the ship node
 		
 		//		ship = scene.rootNode.childNodeWithName("MillenniumFalconTop", recursively: true)!
 		//ship = scene.rootNode.childNode(withName :"Low_Poly_Characte_000_Mesh_001", recursively: true)!
-		ship = scene.rootNode.childNode(withName :"Armature", recursively: true)!
-	//	ship = scene.rootNode.childNode(withName: "ship", recursively: true)!
-//		ship = scene.rootNode.childNode(withName: "Cylinder.005", recursively: true)!
+		//ship = scene.rootNode.childNode(withName :"Armature", recursively: true)!
+		ship = sceneShip.rootNode.childNode(withName: "ship", recursively: true)!
+		cube = sceneCube.rootNode.childNode(withName: "node", recursively: true)!
 		//		ship = scene.rootNode.childNode(withName: "MDL_OBJ", recursively: true)!
 		//		ship = scene.rootNode.childNode(withName: "Generic_Character_BlendShapesSet", recursively: true)!
 		//scene.rootNode.childNodes[1]
@@ -244,7 +253,8 @@ class ViewController: NSViewController, NSTableViewDataSource, NSTableViewDelega
 		} else {
 			// Fallback on earlier versions
 		}
-		ship.physicsBody = nil
+		//ship.physicsBody = nil
+		//cube.physicsBody = nil
 		//ship.rotation = SCNVector4(1, 0, 0, GLKMathDegreesToRadians(90))
 		//print("1 - \(ship)")
 		// animate the 3d object
@@ -261,17 +271,20 @@ class ViewController: NSViewController, NSTableViewDataSource, NSTableViewDelega
 		// retrieve the SCNView
 		
 		// set the scene to the view
-		scnView.scene = scene
-		
+		shipScnView.scene = sceneShip
+		cubeScnView.scene = sceneCube
+
 		// allows the user to manipulate the camera
-		scnView.allowsCameraControl = true
-		
+		shipScnView.allowsCameraControl = true
+		cubeScnView.allowsCameraControl = true
+
 		// show statistics such as fps and timing information
-		scnView.showsStatistics = true
+		shipScnView.showsStatistics = true
+		cubeScnView.showsStatistics = true
 		
 		// configure the view
-		scnView.backgroundColor = NSColor.black
-		
+		shipScnView.backgroundColor = NSColor.black
+		cubeScnView.backgroundColor = NSColor.black
 		//scnView.preferredFramesPerSecond = 60
 		//nebdev.delegate = self
 	}
@@ -333,10 +346,10 @@ class ViewController: NSViewController, NSTableViewDataSource, NSTableViewDelega
 					case NEBLINA_COMMAND_RECORDER_RECORD:
 						var i = getCmdIdx(NEBLINA_SUBSYSTEM_RECORDER,  cmdId: NEBLINA_COMMAND_RECORDER_RECORD)
 						if row - i > 0 {
-							nebdev?.sessionRecord(false)
+							nebdev?.sessionRecord(false, info: "")
 						}
 						else {
-							nebdev?.sessionRecord(true)
+							nebdev?.sessionRecord(true, info: "")
 						}
 						break
 					case NEBLINA_COMMAND_RECORDER_SESSION_READ:
@@ -580,7 +593,7 @@ class ViewController: NSViewController, NSTableViewDataSource, NSTableViewDelega
 					nebdev?.eraseStorage(sender.selectedSegment == 1)
 					break
 				case NEBLINA_COMMAND_RECORDER_RECORD:
-					nebdev?.sessionRecord(sender.selectedSegment == 1)
+					nebdev?.sessionRecord(sender.selectedSegment == 1, info: "")
 					break
 				case NEBLINA_COMMAND_RECORDER_PLAYBACK:
 					
@@ -712,7 +725,7 @@ class ViewController: NSViewController, NSTableViewDataSource, NSTableViewDelega
 								control.selectedSegment = sender.selectedSegment
 							}
 						}
-						nebdev?.streamRotationInfo(sender.selectedSegment == 1)
+						nebdev?.streamRotationInfo(sender.selectedSegment == 1, Type: 2)
 						i = getCmdIdx(NEBLINA_SUBSYSTEM_FUSION,  cmdId: NEBLINA_COMMAND_FUSION_ROTATION_INFO_STREAM)
 						if i >= 0 {
 							let cell = cmdView.rowView(atRow: i, makeIfNecessary: false)
@@ -920,6 +933,7 @@ class ViewController: NSViewController, NSTableViewDataSource, NSTableViewDelega
 				case NEBLINA_SUBSYSTEM_FUSION:
 					let cell = cmdView.view(atColumn: 0, row: idx, makeIfNecessary: false)! as NSView
 					let control = cell.viewWithTag(1) as! NSSegmentedControl
+					print("\(idx) \(NebCmdList[idx].ActiveStatus) \(status.fusion)")
 					if NebCmdList[idx].ActiveStatus & status.fusion == 0 {
 						control.selectedSegment = 0
 					}
@@ -982,9 +996,17 @@ class ViewController: NSViewController, NSTableViewDataSource, NSTableViewDelega
 						rssi RSSI: NSNumber) {
 		print("PERIPHERAL NAME: \(peripheral)\n AdvertisementData: \(advertisementData)\n RSSI: \(RSSI)\n")
 		
-		print("UUID DESCRIPTION: \(peripheral.identifier.uuidString)\n")
+		if #available(OSX 10.13, *) {
+			print("UUID DESCRIPTION: \(peripheral.identifier.uuidString)\n")
+		} else {
+			// Fallback on earlier versions
+		}
 		
-		print("IDENTIFIER: \(peripheral.identifier)\n")
+		if #available(OSX 10.13, *) {
+			print("IDENTIFIER: \(peripheral.identifier)\n")
+		} else {
+			// Fallback on earlier versions
+		}
 
 		if peripheral.name == nil {
 			return
@@ -993,9 +1015,14 @@ class ViewController: NSViewController, NSTableViewDataSource, NSTableViewDelega
 		if advertisementData[CBAdvertisementDataManufacturerDataKey] == nil {
 			return
 		}
-		
+
 		print("CBAdvertisementDataManufacturerDataKey")
+		if (advertisementData[CBAdvertisementDataManufacturerDataKey] as! NSData).length < 10 {
+			return
+		}
+		
 		var id = UInt64 (0)
+
 		(advertisementData[CBAdvertisementDataManufacturerDataKey] as! NSData).getBytes(&id, range: NSMakeRange(2, 8))
 		if (id == 0) {
 			return
@@ -1087,8 +1114,8 @@ class ViewController: NSViewController, NSTableViewDataSource, NSTableViewDelega
 				//connectingPeripheral = device;
 				//centralManager.connectPeripheral(connectingPeripheral, options: nil)
 			}
-//			scanPeripheral(central)
-			bleCentralManager.scanForPeripherals(withServices: [NEB_SERVICE_UUID], options: nil)
+			scanPeripheral(central)
+			//bleCentralManager.scanForPeripherals(withServices: [NEB_SERVICE_UUID], options: nil)
 			break
 		case .resetting:
 			print("CoreBluetooth BLE hardware is resetting")
@@ -1124,15 +1151,53 @@ class ViewController: NSViewController, NSTableViewDataSource, NSTableViewDelega
 		//nebdev.getLed ()
 	}
 	
-	func didReceiveResponsePacket(sender : Neblina, subsystem : Int32, cmdRspId : Int32, data : UnsafeRawPointer, dataLen : Int)
-	{
-		
+	func didReceiveResponsePacket(sender: Neblina, subsystem: Int32, cmdRspId: Int32, data: UnsafePointer<UInt8>, dataLen: Int) {
+		switch subsystem {
+		case NEBLINA_SUBSYSTEM_GENERAL:
+			switch (cmdRspId) {
+			case NEBLINA_COMMAND_GENERAL_SYSTEM_STATUS:
+				sysStatusReceived = true;
+				var myStruct = NeblinaSystemStatus_t()
+				let status = withUnsafeMutablePointer(to: &myStruct) {_ in UnsafeMutableRawPointer(mutating: data)}
+				print("Status \(status)")
+				//let d = data.load(as: NeblinaSystemStatus_t.self)// UnsafeBufferPointer<NeblinaSystemStatus_t>(data)
+				let d = UnsafeMutableRawPointer(mutating: data).load(as: NeblinaSystemStatus_t.self)			//print(" \(d)")
+				updateUI(status: d)
+			//	MemoryLayout<yLayout<\(d)")
+			case NEBLINA_COMMAND_GENERAL_FIRMWARE_VERSION:
+				let vers = UnsafeMutableRawPointer(mutating: data).load(as: NeblinaFirmwareVersion_t.self)
+				let b = (UInt32(vers.firmware_build.0) & 0xFF) | ((UInt32(vers.firmware_build.1) & 0xFF) << 8) | ((UInt32(vers.firmware_build.2) & 0xFF) << 16)
+				//let d = data.load(as: NeblinaFirmwareVersion_t.self)
+				
+				versionLabel.stringValue = String(format: "API:%d, Firm. Ver.:%d.%d.%d-%d", vers.api,
+												  vers.firmware_major, vers.firmware_minor, vers.firmware_patch, b)
+				//String(format: "API:%d, FEN:%d.%d.%d, BLE:%d.%d.%d", vers.api,
+				//								  vers.coreVersion.major, vers.coreVersion.minor, vers.coreVersion.build,
+				//								  vers.bleVersion.major, vers.bleVersion.minor, vers.bleVersion.build)
+//					String(format: "API:%d, FEN:%d.%d.%d, BLE:%d.%d.%d", d.apiVersion,
+//												  d.coreVersion.major, d.coreVersion.minor, d.coreVersion.build,
+//												  d.bleVersion.major, d.bleVersion.minor, d.bleVersion.build)
+				if sysStatusReceived == false {
+					nebdev?.getSystemStatus()
+				}
+				//				print("\(versionLabel.stringValue)")
+				
+			default:
+				break
+			}
+		default:
+			break
+		}
 	}
 	
 	func didReceiveRSSI(sender : Neblina, rssi : NSNumber) {
 		
 	}
 
+	func didReceiveBatteryLevel(sender: Neblina, level: UInt8) {
+	
+	}
+	
 	//
 	// General data
 	//
@@ -1149,11 +1214,11 @@ class ViewController: NSViewController, NSTableViewDataSource, NSTableViewDelega
 				updateUI(status: d)
 				//	MemoryLayout<yLayout<\(d)")
 			case NEBLINA_COMMAND_GENERAL_FIRMWARE_VERSION:
-				let d = data.load(as: NeblinaFirmwareVersion_t.self)
-
-				versionLabel.stringValue = String(format: "API:%d, FEN:%d.%d.%d, BLE:%d.%d.%d", d.apiVersion,
-				                                  d.coreVersion.major, d.coreVersion.minor, d.coreVersion.build,
-				                                  d.bleVersion.major, d.bleVersion.minor, d.bleVersion.build)
+				let vers = data.load(as: NeblinaFirmwareVersion_t.self)
+				let b = (UInt32(vers.firmware_build.0) & 0xFF) | ((UInt32(vers.firmware_build.1) & 0xFF) << 8) | ((UInt32(vers.firmware_build.2) & 0xFF) << 16)
+				versionLabel.stringValue = String(format: "API:%d, Firm. Ver.:%d.%d.%d-%d", vers.api,
+												  vers.firmware_major, vers.firmware_minor, vers.firmware_patch, b
+				)
 				if sysStatusReceived == false {
 					nebdev?.getSystemStatus()
 				}
@@ -1167,7 +1232,7 @@ class ViewController: NSViewController, NSTableViewDataSource, NSTableViewDelega
 	//
 	// Fusion data
 	//
-	func didReceiveFusionData(sender : Neblina, respType : Int32, cmdRspId : Int32, data : NeblinaFusionPacket, errFlag : Bool) {
+	func didReceiveFusionData(sender : Neblina, respType : Int32, cmdRspId : Int32, data : NeblinaFusionPacket_t, errFlag : Bool) {
 		
 		if sysStatusReceived == false {
 			nebdev?.getSystemStatus()
@@ -1253,13 +1318,11 @@ class ViewController: NSViewController, NSTableViewDataSource, NSTableViewDelega
 				let rate = (Double(rxCount) * 20.0) / curDate.timeIntervalSince(startTime)
 				//print("\(data.TimeStamp), \(tdiff)")
 			}
-			if #available(OSX 10.10, *) {
-				//ship.orientation = SCNQuaternion(yq, xq, zq, wq)
-			} else {
-				// Fallback on earlier versions
-			}
-			dataLabel.stringValue = String("Quat - x:\(xq), y:\(yq), z:\(zq), w:\(wq)")
-			for (idx, item) in selectedDevices.enumerated() {
+			
+			ship.orientation = SCNQuaternion(-zq, xq, yq, wq)
+			cube.orientation = SCNQuaternion(-zq, xq, yq, wq)
+			dataLabel.stringValue = String(format:"Quat - x:%.2f, y:%.2f, z:%.2f, w:%.2f", xq, yq, zq, wq)
+/*			for (idx, item) in selectedDevices.enumerated() {
 				if (sender == item) {
 				switch idx {
 				case 0:
@@ -1274,7 +1337,7 @@ class ViewController: NSViewController, NSTableViewDataSource, NSTableViewDelega
 					break
 				}
 				}
-			}
+			}*/
 			//print("\(ship.childNodes[0].childNodes)")
 			break
 		case NEBLINA_COMMAND_FUSION_EXTERNAL_FORCE_STREAM:

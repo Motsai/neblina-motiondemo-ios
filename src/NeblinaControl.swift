@@ -479,6 +479,24 @@ extension Neblina {
 		sendCommand(subSys: NEBLINA_SUBSYSTEM_FUSION, cmd: NEBLINA_COMMAND_FUSION_SET_GOLFSWING_MAXIMUM_ERROR, paramLen: param.count, paramData: param)
 	}
 	
+	func streamFunsionClustering(_ enable:Bool, mode : UInt8, sensor : UInt8, downSample : UInt8, snr : UInt8) {
+		var param = [UInt8](repeating: 0, count: 5)
+		
+		if enable == true {
+			param[0] = 1
+		}
+		else {
+			param[0] = 0
+		}
+		
+		param[1] = mode
+		param[2] = sensor
+		param[3] = downSample
+		param[4] = snr
+		
+		sendCommand(subSys: NEBLINA_SUBSYSTEM_FUSION, cmd: NEBLINA_COMMAND_FUSION_CLUSTERING_INFO_STREAM, paramLen: param.count, paramData: param)
+	}
+	
 	// ***
 	// *** Storage subsystem commands
 	// ***
