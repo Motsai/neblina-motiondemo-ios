@@ -107,7 +107,7 @@ extension Neblina {
 
 		param[0] = UInt8(uTime & 0xFF)
 		param[1] = UInt8((uTime >> 8) & 0xFF)
-		param[1] = UInt8((uTime >> 16) & 0xFF)
+		param[2] = UInt8((uTime >> 16) & 0xFF)
 		param[3] = UInt8((uTime >> 24) & 0xFF)
 
 		sendCommand(subSys: NEBLINA_SUBSYSTEM_GENERAL, cmd: NEBLINA_COMMAND_GENERAL_SET_UNIX_TIMESTAMP, paramLen: param.count, paramData: param)

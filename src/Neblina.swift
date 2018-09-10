@@ -177,7 +177,7 @@ class Neblina : NSObject, CBPeripheralDelegate {
 			// Batttery level
 			let level = characteristic.value?.hashValue
 			
-			//print("BATTERY LEVEL \(characteristic.value) \(level)")
+			//print("BATTERY LEVEL = \(level)")
 			if delegate != nil {
 				delegate.didReceiveBatteryLevel(sender: self, level: UInt8(UInt(level!)))
 			}

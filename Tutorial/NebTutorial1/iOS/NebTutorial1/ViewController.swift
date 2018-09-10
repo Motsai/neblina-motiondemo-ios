@@ -37,7 +37,7 @@ class ViewController: UIViewController, CBCentralManagerDelegate, NeblinaDelegat
 	
 	// MARK: - Table View
 		
-	func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+	@objc func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
 		return objects.count
 	}
 	
