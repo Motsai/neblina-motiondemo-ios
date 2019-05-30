@@ -87,7 +87,7 @@ let NebCmdList = [NebCmdItem] (arrayLiteral:
 
 //let CtrlName = [String](arrayLiteral:"Heading")//, "Test1", "Test2")
 
-class DetailViewController: UIViewController, UITextFieldDelegate, NeblinaDelegate, SCNSceneRendererDelegate {
+class DetailViewController: UIViewController, UITextFieldDelegate, NeblinaDelegate, SCNSceneRendererDelegate, UITableViewDataSource {
 	var nebdev : Neblina? {
 		didSet {
 			nebdev!.delegate = self
@@ -287,7 +287,7 @@ class DetailViewController: UIViewController, UITextFieldDelegate, NeblinaDelega
 		return true;
 	}
 	
-	func handleTap(_ gestureRecognize: UIGestureRecognizer) {
+	@objc func handleTap(_ gestureRecognize: UIGestureRecognizer) {
 		// retrieve the SCNView
 		let scnView = self.view.subviews[0] as! SCNView
 		
@@ -1493,7 +1493,7 @@ class DetailViewController: UIViewController, UITextFieldDelegate, NeblinaDelega
 	}
 	
 	func didReceiveBatteryLevel(sender: Neblina, level: UInt8) {
-		
+		print("Batt level \(level)")
 	}
 
 	// MARK : UITableView
@@ -1504,9 +1504,9 @@ class DetailViewController: UIViewController, UITextFieldDelegate, NeblinaDelega
 		//return 1//detailItem
 	}
 	
-	func tableView(_ tableView: UITableView, cellForRowAtIndexPath indexPath: IndexPath?) -> UITableViewCell?
+	func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell
 	{
-		let cellView = tableView.dequeueReusableCell(withIdentifier: "CellCommand", for: indexPath!)
+		let cellView = tableView.dequeueReusableCell(withIdentifier: "CellCommand", for: indexPath)
 		let labelView = cellView.viewWithTag(255) as! UILabel
 //		let switchCtrl = cellView.viewWithTag(2) as! UIControl//UISegmentedControl
 //		var buttonCtrl = cellView.viewWithTag(3) as! UIButton
@@ -1516,13 +1516,13 @@ class DetailViewController: UIViewController, UITextFieldDelegate, NeblinaDelega
 /*		if (indexPath!.row < FusionCmdList.count) {
 			labelView.text = FusionCmdList[indexPath!.row].Name //NebApiName[indexPath!.row] as String//"Row \(row)"//"self.objects.objectAtIndex(row) as! String
 		} else */
-		if ((indexPath! as NSIndexPath).row < /*FusionCmdList.count + */NebCmdList.count) {
+		if ((indexPath as NSIndexPath).row < /*FusionCmdList.count + */NebCmdList.count) {
 			
-			labelView.text = NebCmdList[(indexPath! as NSIndexPath).row].Name// - FusionCmdList.count].Name
-			switch (NebCmdList[(indexPath! as NSIndexPath).row].Actuator)
+			labelView.text = NebCmdList[(indexPath as NSIndexPath).row].Name// - FusionCmdList.count].Name
+			switch (NebCmdList[(indexPath as NSIndexPath).row].Actuator)
 			{
 				case ACTUATOR_TYPE_SWITCH:
-					let control = cellView.viewWithTag(NebCmdList[(indexPath! as NSIndexPath).row].Actuator) as! UISegmentedControl
+					let control = cellView.viewWithTag(NebCmdList[(indexPath as NSIndexPath).row].Actuator) as! UISegmentedControl
 					control.isHidden = false
 					let b = cellView.viewWithTag(2) as! UIButton
 					b.isHidden = true
@@ -1530,11 +1530,11 @@ class DetailViewController: UIViewController, UITextFieldDelegate, NeblinaDelega
 					t.isHidden = true
 					break
 				case ACTUATOR_TYPE_BUTTON:
-					let control = cellView.viewWithTag(NebCmdList[(indexPath! as NSIndexPath).row].Actuator) as! UIButton
+					let control = cellView.viewWithTag(NebCmdList[(indexPath as NSIndexPath).row].Actuator) as! UIButton
 					control.isHidden = false
-					if !NebCmdList[(indexPath! as NSIndexPath).row].Text.isEmpty
+					if !NebCmdList[(indexPath as NSIndexPath).row].Text.isEmpty
 					{
-						control.setTitle(NebCmdList[(indexPath! as NSIndexPath).row].Text, for: UIControlState())
+						control.setTitle(NebCmdList[(indexPath as NSIndexPath).row].Text, for: UIControl.State())
 					}
 					let s = cellView.viewWithTag(1) as! UISegmentedControl
 					s.isHidden = true
@@ -1542,11 +1542,11 @@ class DetailViewController: UIViewController, UITextFieldDelegate, NeblinaDelega
 					t.isHidden = true
 					break
 				case ACTUATOR_TYPE_TEXT_FIELD:
-					let control = cellView.viewWithTag(NebCmdList[(indexPath! as NSIndexPath).row].Actuator) as! UITextField
+					let control = cellView.viewWithTag(NebCmdList[(indexPath as NSIndexPath).row].Actuator) as! UITextField
 					control.isHidden = false
-					if !NebCmdList[(indexPath! as NSIndexPath).row].Text.isEmpty
+					if !NebCmdList[(indexPath as NSIndexPath).row].Text.isEmpty
 					{
-						control.text = NebCmdList[(indexPath! as NSIndexPath).row].Text
+						control.text = NebCmdList[(indexPath as NSIndexPath).row].Text
 					}
 					let s = cellView.viewWithTag(1) as! UISegmentedControl
 					s.isHidden = true
@@ -1562,9 +1562,9 @@ class DetailViewController: UIViewController, UITextFieldDelegate, NeblinaDelega
 					}*/
 					let bucontrol = cellView.viewWithTag(2) as! UIButton
 					bucontrol.isHidden = false
-					if !NebCmdList[(indexPath! as NSIndexPath).row].Text.isEmpty
+					if !NebCmdList[(indexPath as NSIndexPath).row].Text.isEmpty
 					{
-						bucontrol.setTitle(NebCmdList[(indexPath! as NSIndexPath).row].Text, for: UIControlState())
+						bucontrol.setTitle(NebCmdList[(indexPath as NSIndexPath).row].Text, for: UIControl.State())
 					}
 					let s = cellView.viewWithTag(1) as! UISegmentedControl
 					s.isHidden = true

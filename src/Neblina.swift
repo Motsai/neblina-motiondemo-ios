@@ -175,11 +175,13 @@ class Neblina : NSObject, CBPeripheralDelegate {
 		
 		if characteristic.uuid .isEqual(CBUUID(string: "2A19")) {
 			// Batttery level
-			let level = characteristic.value?.hashValue
+			var data = [UInt8](repeating: 0, count: 20)
+			//let level =
+			characteristic.value!.copyBytes(to: &data, count: characteristic.value!.count) //?.hashValue
 			
-			//print("BATTERY LEVEL = \(level)")
+			print("BATTERY LEVEL = \(data)")
 			if delegate != nil {
-				delegate.didReceiveBatteryLevel(sender: self, level: UInt8(UInt(level!)))
+				delegate.didReceiveBatteryLevel(sender: self, level: data[0])
 			}
 		}
 		if (characteristic.uuid .isEqual(NEB_DATACHAR_UUID) && characteristic.value != nil && (characteristic.value?.count)! > 0)
@@ -226,8 +228,9 @@ class Neblina : NSObject, CBPeripheralDelegate {
 			var pkdata = [UInt8](repeating: 0, count: 20)
 			//print("\(characteristic.value) ")
 			//(characteristic.value as Data).copyBytes(to: &dd, from:4)
+			
 			if (hdr.length > 0) {
-				characteristic.value?.copyBytes (to: &pkdata, from: Range(MemoryLayout<NeblinaPacketHeader_t>.size..<(Int(hdr.length) + MemoryLayout<NeblinaPacketHeader_t>.size)))
+				characteristic.value?.copyBytes (to: &pkdata, from: MemoryLayout<NeblinaPacketHeader_t>.size..<(Int(hdr.length) + MemoryLayout<NeblinaPacketHeader_t>.size)) //Range(MemoryLayout<NeblinaPacketHeader_t>.size..<(Int(hdr.length) + MemoryLayout<NeblinaPacketHeader_t>.size)))
 			}
 			//print("\(self) Receive : \(hdr) : \(pkdata) : \(ch)")
 			
@@ -240,7 +243,7 @@ class Neblina : NSObject, CBPeripheralDelegate {
 				
 				if (hdr.length > 0) {
 					//print("Debug \(hdr.Len)")
-					characteristic.value?.copyBytes (to: &dd, from: Range(MemoryLayout<NeblinaPacketHeader_t>.size..<Int(hdr.length) + MemoryLayout<NeblinaPacketHeader_t>.size))
+					characteristic.value?.copyBytes (to: &dd, from: MemoryLayout<NeblinaPacketHeader_t>.size..<(Int(hdr.length) + MemoryLayout<NeblinaPacketHeader_t>.size))//Range(MemoryLayout<NeblinaPacketHeader_t>.size..<Int(hdr.length) + MemoryLayout<NeblinaPacketHeader_t>.size))
 				}
 				delegate.didReceiveResponsePacket(sender : self, subsystem: Int32(hdr.subSystem), cmdRspId: respId, data: dd, dataLen: Int(hdr.length))
 				
@@ -255,27 +258,28 @@ class Neblina : NSObject, CBPeripheralDelegate {
 					//(characteristic.value as Data).copyBytes(to: &dd, from:4)
 					if (hdr.length > 0) {
 						//print("Debug \(hdr.Len)")
-						characteristic.value?.copyBytes (to: &dd, from: Range(MemoryLayout<NeblinaPacketHeader_t>.size..<Int(hdr.length) + MemoryLayout<NeblinaPacketHeader_t>.size))
+						characteristic.value?.copyBytes (to: &dd, from: MemoryLayout<NeblinaPacketHeader_t>.size..<(Int(hdr.length) + MemoryLayout<NeblinaPacketHeader_t>.size))//Range(MemoryLayout<NeblinaPacketHeader_t>.size..<Int(hdr.length) + MemoryLayout<NeblinaPacketHeader_t>.size))
 					}
 
 					delegate.didReceiveGeneralData(sender: self, respType: Int32(hdr.packetType), cmdRspId: respId, data: dd, dataLen: Int(hdr.length), errFlag: errflag)
 					break
 				case NEBLINA_SUBSYSTEM_FUSION:	// Motion Engine
-					let dd = (characteristic.value?.subdata(in: Range(4..<Int(hdr.length)+MemoryLayout<NeblinaPacketHeader_t>.size)))!
-					fp = (dd.withUnsafeBytes{ (ptr: UnsafePointer<NeblinaFusionPacket_t>) -> NeblinaFusionPacket_t in return ptr.pointee })
+					let dd = (characteristic.value?.subdata(in: MemoryLayout<NeblinaPacketHeader_t>.size..<Int(hdr.length) + MemoryLayout<NeblinaPacketHeader_t>.size)) // Range(4..<Int(hdr.length)+MemoryLayout<NeblinaPacketHeader_t>.size)))!
+					fp = (dd!.withUnsafeBytes{ (ptr: UnsafePointer<NeblinaFusionPacket_t>) -> NeblinaFusionPacket_t in return ptr.pointee })
 					delegate.didReceiveFusionData(sender: self, respType: Int32(hdr.packetType), cmdRspId: respId, data: fp, errFlag: errflag)
 					break
 				case NEBLINA_SUBSYSTEM_POWER:
 					var dd = [UInt8](repeating: 0, count: 16)
 					if (hdr.length > 0) {
-						characteristic.value?.copyBytes (to: &dd, from: Range(MemoryLayout<NeblinaPacketHeader_t>.size..<Int(hdr.length) + MemoryLayout<NeblinaPacketHeader_t>.size))
+						characteristic.value?.copyBytes (to: &dd, from: MemoryLayout<NeblinaPacketHeader_t>.size..<(Int(hdr.length) + MemoryLayout<NeblinaPacketHeader_t>.size))//Range(MemoryLayout<NeblinaPacketHeader_t>.size..<Int(hdr.length) +
 					}
 					delegate.didReceivePmgntData(sender: self, respType: Int32(hdr.packetType), cmdRspId: respId, data: dd, dataLen: Int(hdr.length), errFlag: errflag)
 					break
 				case NEBLINA_SUBSYSTEM_LED:
 					var dd = [UInt8](repeating: 0, count: 16)
 					if (hdr.length > 0) {
-						characteristic.value?.copyBytes (to: &dd, from: Range(MemoryLayout<NeblinaPacketHeader_t>.size..<Int(hdr.length) + MemoryLayout<NeblinaPacketHeader_t>.size))
+						characteristic.value?.copyBytes (to: &dd, from: MemoryLayout<NeblinaPacketHeader_t>.size..<(Int(hdr.length) + MemoryLayout<NeblinaPacketHeader_t>.size))
+//						characteristic.value?.copyBytes (to: &dd, from: Range(MemoryLayout<NeblinaPacketHeader_t>.size..<Int(hdr.length) + MemoryLayout<NeblinaPacketHeader_t>.size))
 					}
 					delegate.didReceiveLedData(sender: self, respType: Int32(hdr.packetType), cmdRspId: respId, data: dd, dataLen: Int(hdr.length), errFlag: errflag)
 					break
@@ -284,7 +288,8 @@ class Neblina : NSObject, CBPeripheralDelegate {
 					//(characteristic.value as Data).copyBytes(to: &dd, from:4)
 					if (hdr.length > 0) {
 						//print("Debug \(hdr.Len)")
-						characteristic.value?.copyBytes (to: &dd, from: Range(MemoryLayout<NeblinaPacketHeader_t>.size..<Int(hdr.length) + MemoryLayout<NeblinaPacketHeader_t>.size))
+						characteristic.value?.copyBytes (to: &dd, from: MemoryLayout<NeblinaPacketHeader_t>.size..<(Int(hdr.length) + MemoryLayout<NeblinaPacketHeader_t>.size))
+						//characteristic.value?.copyBytes (to: &dd, from: Range(MemoryLayout<NeblinaPacketHeader_t>.size..<Int(hdr.length) + MemoryLayout<NeblinaPacketHeader_t>.size))
 					}
 				
 					delegate.didReceiveDebugData(sender: self, respType: Int32(hdr.packetType), cmdRspId: respId, data: dd, dataLen: Int(hdr.length), errFlag: errflag)
@@ -292,21 +297,24 @@ class Neblina : NSObject, CBPeripheralDelegate {
 				case NEBLINA_SUBSYSTEM_RECORDER:
 					var dd = [UInt8](repeating: 0, count: 16)
 					if (hdr.length > 0) {
-						characteristic.value?.copyBytes (to: &dd, from: Range(MemoryLayout<NeblinaPacketHeader_t>.size..<Int(hdr.length) + MemoryLayout<NeblinaPacketHeader_t>.size))
+						characteristic.value?.copyBytes (to: &dd, from: MemoryLayout<NeblinaPacketHeader_t>.size..<(Int(hdr.length) + MemoryLayout<NeblinaPacketHeader_t>.size))
+//						characteristic.value?.copyBytes (to: &dd, from: Range(MemoryLayout<NeblinaPacketHeader_t>.size..<Int(hdr.length) + MemoryLayout<NeblinaPacketHeader_t>.size))
 					}
 					delegate.didReceiveRecorderData(sender: self, respType: Int32(hdr.packetType), cmdRspId: respId, data: dd, dataLen: Int(hdr.length), errFlag: errflag)
 					break
 				case NEBLINA_SUBSYSTEM_EEPROM:
 					var dd = [UInt8](repeating: 0, count: 16)
 					if (hdr.length > 0) {
-						characteristic.value?.copyBytes (to: &dd, from: Range(MemoryLayout<NeblinaPacketHeader_t>.size..<Int(hdr.length) + MemoryLayout<NeblinaPacketHeader_t>.size))
+						characteristic.value?.copyBytes (to: &dd, from: MemoryLayout<NeblinaPacketHeader_t>.size..<(Int(hdr.length) + MemoryLayout<NeblinaPacketHeader_t>.size))
+//						characteristic.value?.copyBytes (to: &dd, from: Range(MemoryLayout<NeblinaPacketHeader_t>.size..<Int(hdr.length) + MemoryLayout<NeblinaPacketHeader_t>.size))
 					}
 					delegate.didReceiveEepromData(sender: self, respType : Int32(hdr.packetType), cmdRspId: respId, data: dd, dataLen: Int(hdr.length), errFlag: errflag)
 					break
 				case NEBLINA_SUBSYSTEM_SENSOR:
 					var dd = [UInt8](repeating: 0, count: 16)
 					if (hdr.length > 0) {
-						characteristic.value?.copyBytes (to: &dd, from: Range(MemoryLayout<NeblinaPacketHeader_t>.size..<Int(hdr.length) + MemoryLayout<NeblinaPacketHeader_t>.size))
+						characteristic.value?.copyBytes (to: &dd, from: MemoryLayout<NeblinaPacketHeader_t>.size..<(Int(hdr.length) + MemoryLayout<NeblinaPacketHeader_t>.size))
+//						characteristic.value?.copyBytes (to: &dd, from: Range(MemoryLayout<NeblinaPacketHeader_t>.size..<Int(hdr.length) + MemoryLayout<NeblinaPacketHeader_t>.size))
 					}
 					delegate.didReceiveSensorData(sender: self, respType : Int32(hdr.packetType), cmdRspId: respId, data: dd, dataLen: Int(hdr.length), errFlag: errflag)
 					break

@@ -9,7 +9,7 @@
 import UIKit
 import CoreBluetooth
 
-class ViewController: UIViewController, CBCentralManagerDelegate, NeblinaDelegate {
+class ViewController: UIViewController, CBCentralManagerDelegate, NeblinaDelegate, UITableViewDataSource {
 	
 	var objects = [Neblina]()//[NebDevice]()
 	var nebdev : Neblina!
@@ -41,7 +41,7 @@ class ViewController: UIViewController, CBCentralManagerDelegate, NeblinaDelegat
 		return objects.count
 	}
 	
-	func tableView(_ tableView: UITableView, cellForRowAtIndexPath indexPath: IndexPath) -> UITableViewCell {
+	func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
 		let cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath)
 		
 		let object = objects[(indexPath as NSIndexPath).row]
@@ -52,12 +52,12 @@ class ViewController: UIViewController, CBCentralManagerDelegate, NeblinaDelegat
 		return cell
 	}
 	
-	func tableView(_ tableView: UITableView, canEditRowAtIndexPath indexPath: IndexPath) -> Bool {
+	func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
 		// Return false if you do not want the specified item to be editable.
 		return false
 	}
 	
-	func tableView(_ tableView: UITableView, commitEditingStyle editingStyle: UITableViewCellEditingStyle, forRowAtIndexPath indexPath: IndexPath) {
+	func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
 		if editingStyle == .delete {
 			objects.remove(at: (indexPath as NSIndexPath).row)
 			tableView.deleteRows(at: [indexPath], with: .fade)
@@ -86,6 +86,12 @@ class ViewController: UIViewController, CBCentralManagerDelegate, NeblinaDelegat
 		print("IDENTIFIER: \(peripheral.identifier)\n")
 		
 		if advertisementData[CBAdvertisementDataManufacturerDataKey] == nil {
+			return
+		}
+		
+		let mdata = advertisementData[CBAdvertisementDataManufacturerDataKey] as! NSData
+		
+		if mdata.length < 8 {
 			return
 		}
 		

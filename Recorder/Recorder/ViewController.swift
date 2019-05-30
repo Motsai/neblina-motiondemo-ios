@@ -11,7 +11,7 @@ import CoreBluetooth
 import QuartzCore
 import SceneKit
 
-class ViewController: UIViewController, CBCentralManagerDelegate, UITextFieldDelegate, NeblinaDelegate {
+class ViewController: UIViewController, CBCentralManagerDelegate, UITextFieldDelegate, NeblinaDelegate, UITableViewDataSource {
 		let max_count = Int16(15)
 	var prevTimeStamp = UInt32(0)
 	var cnt = Int16(15)
@@ -86,10 +86,10 @@ class ViewController: UIViewController, CBCentralManagerDelegate, UITextFieldDel
 	
 	func getMessageLabel(sender : Neblina) -> UILabel {
 		var label : UILabel?
-		if sender.name.range(of: "left", options: NSString.CompareOptions.caseInsensitive) != nil {
+		if sender.name.range(of: "01", options: NSString.CompareOptions.caseInsensitive) != nil {
 			label = display[0].subviews[2] as! UILabel
 		}
-		else if sender.name.range(of: "right", options: NSString.CompareOptions.caseInsensitive) != nil {
+		else if sender.name.range(of: "02", options: NSString.CompareOptions.caseInsensitive) != nil {
 			label = display[1].subviews[2] as! UILabel
 		}
 
@@ -98,10 +98,10 @@ class ViewController: UIViewController, CBCentralManagerDelegate, UITextFieldDel
 
 	func getStreamDataLabel(sender : Neblina) -> UILabel {
 		var label : UILabel?
-		if sender.name.range(of: "left", options: NSString.CompareOptions.caseInsensitive) != nil {
+		if sender.name.range(of: "01", options: NSString.CompareOptions.caseInsensitive) != nil {
 			label = display[0].subviews[1] as! UILabel
 		}
-		else if sender.name.range(of: "right", options: NSString.CompareOptions.caseInsensitive) != nil {
+		else if sender.name.range(of: "02", options: NSString.CompareOptions.caseInsensitive) != nil {
 			label = display[1].subviews[1] as! UILabel
 		}
 		
@@ -229,8 +229,8 @@ class ViewController: UIViewController, CBCentralManagerDelegate, UITextFieldDel
 		}
 		for item in objects {
 			item.sessionRecord(true, info: name)
-			item.sensorStreamAccelGyroData(true)
-			item.streamQuaternion(true)
+			item.sensorStreamAccelData(true)
+			//item.streamQuaternion(true)
 		}
 	}
 	
@@ -276,8 +276,8 @@ class ViewController: UIViewController, CBCentralManagerDelegate, UITextFieldDel
 		let sessionLebel = cell?.contentView.subviews[1] as! UILabel
 		
 		//var filePath = homeDir.appending(nameLabel.text!) //+ "/GloveLeft.dat"
-		let filePathLeft = homeDir + nameLabel.text! + "_" + sessionLebel.text! + "_GloveLeft.dat"
-		let filePathRight = homeDir + nameLabel.text! + "_" + sessionLebel.text! + "_GloveRight.dat"
+		let filePathLeft = homeDir + nameLabel.text! + "_" + sessionLebel.text! + "_MR-B1B-01.dat"
+		let filePathRight = homeDir + nameLabel.text! + "_" + sessionLebel.text! + "_MR-B1B-02.dat"
 
 		path = filePathLeft
 		
@@ -314,10 +314,10 @@ print("\(fileLeft) \(fileRight)")
 	}
 	
 	@IBAction func eraseButPressed(_ sender: UIButton) {
-		let eraseAlert = UIAlertController(title: "Erase all recordings", message: "All data recording will be erased", preferredStyle: UIAlertControllerStyle.alert)
+		let eraseAlert = UIAlertController(title: "Erase all recordings", message: "All data recording will be erased", preferredStyle: UIAlertController.Style.alert)
 		eraseAlert.addAction(UIAlertAction(title: "OK", style: .default, handler: { (action: UIAlertAction!) in
 			for (idx, item) in self.objects.enumerated() {
-				item.eraseStorage(false)
+				item.eraseStorage(true)
 				let label = self.getMessageLabel(sender:item)// self.display[idx].subviews[3] as! UILabel
 				label.text = "Erasing..."
 				self.sessions.removeAll();
@@ -344,14 +344,14 @@ print("\(fileLeft) \(fileRight)")
 		return Int(sessions.count)
 	}
 	
-	func tableView(_ tableView: UITableView, cellForRowAtIndexPath indexPath: IndexPath?) -> UITableViewCell?
+	func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell
 	{
-		let cellView = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath!)
+		let cellView = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath)
 		var label = cellView.subviews[0].subviews[1] as! UILabel
 		
-		label.text = String(describing:sessions[(indexPath?.row)!].id)
+		label.text = String(describing:sessions[(indexPath.row)].id)
 		label = cellView.subviews[0].subviews[2] as! UILabel
-		label.text = sessions[(indexPath?.row)!].name
+		label.text = sessions[(indexPath.row)].name
 		
 		return cellView;
 	}
@@ -389,7 +389,8 @@ print("\(fileLeft) \(fileRight)")
 		
 		let name = peripheral.name! //advertisementData[CBAdvertisementDataLocalNameKey] as! String
 		print("\(name)")
-		if name.range(of: "Glove", options: NSString.CompareOptions.caseInsensitive) == nil {
+		if name.range(of: "MR-B1B-01", options: NSString.CompareOptions.caseInsensitive) == nil &&
+			name.range(of: "MR-B1B-02", options: NSString.CompareOptions.caseInsensitive) == nil {
 			return
 		}
 		print("FOUND Device!!!")
@@ -410,12 +411,21 @@ print("\(fileLeft) \(fileRight)")
 		}
 		
 		//let name : String = advertisementData[CBAdvertisementDataLocalNameKey] as! String
+		
+		if (objects.count > 0)
+		{
+			for idx in 0..<objects.count {
+				if objects[idx].device.name == name {
+					return;
+				}
+			}
+		}
 		let device = Neblina(devName: name, devid: id, peripheral: peripheral)
 		device.delegate = self
 		central.connect(device.device, options: nil)
 		objects.insert(device, at: 0)
 
-/*		if objects.count >= 2 {
+		if objects.count >= 2 {
 			central.stopScan()
 			//for idx in 0..<objects.count {
 			//	objects[idx].delegate = self
@@ -427,7 +437,7 @@ print("\(fileLeft) \(fileRight)")
 				//}
 			//}
 		}
-		*/
+		
 	}
 	
 	func centralManager(_ central: CBCentralManager, didConnect peripheral: CBPeripheral) {
@@ -444,11 +454,11 @@ print("\(fileLeft) \(fileRight)")
 		print("disconnected from peripheral")
 		var label:UILabel!
 		var view : UIView!
-		if peripheral.name?.range(of: "left", options: NSString.CompareOptions.caseInsensitive) != nil {
+		if peripheral.name?.range(of: "01", options: NSString.CompareOptions.caseInsensitive) != nil {
 			view = display[0]
 		//	label = display[0].subviews[3] as! UILabel
 		}
-		else if peripheral.name?.range(of: "right", options: NSString.CompareOptions.caseInsensitive) != nil {
+		else if peripheral.name?.range(of: "02", options: NSString.CompareOptions.caseInsensitive) != nil {
 			view = display[1]
 		//	label = display[1].subviews[3] as! UILabel
 		}
@@ -545,12 +555,12 @@ print("\(fileLeft) \(fileRight)")
 		
 		sender.setUnixTime(uTime: UInt32(utime))
 
-		if sender.name.range(of: "left", options: NSString.CompareOptions.caseInsensitive) != nil {
+		if sender.name.range(of: "01", options: NSString.CompareOptions.caseInsensitive) != nil {
 			// Found left
 			label = display[0].subviews[0] as? UILabel
 			//sender.getSessionCount();
 		}
-		else if sender.name.range(of: "right", options: NSString.CompareOptions.caseInsensitive) != nil {
+		else if sender.name.range(of: "02", options: NSString.CompareOptions.caseInsensitive) != nil {
 			label = display[1].subviews[0] as? UILabel
 		}
 		if label != nil {
@@ -572,11 +582,11 @@ print("\(fileLeft) \(fileRight)")
 	func didReceiveBatteryLevel(sender : Neblina, level : UInt8) {
 		var label : UILabel? = nil
 		
-		if sender.name.range(of: "left", options: NSString.CompareOptions.caseInsensitive) != nil {
+		if sender.name.range(of: "01", options: NSString.CompareOptions.caseInsensitive) != nil {
 			// Found left
 			label = display[0].subviews[4] as? UILabel
 		}
-		else if sender.name.range(of: "right", options: NSString.CompareOptions.caseInsensitive) != nil {
+		else if sender.name.range(of: "02", options: NSString.CompareOptions.caseInsensitive) != nil {
 			label = display[1].subviews[4] as? UILabel
 		}
 		if label != nil {
@@ -592,12 +602,12 @@ print("\(fileLeft) \(fileRight)")
 				let vers = UnsafeMutableRawPointer(mutating: data).load(as: NeblinaFirmwareVersion_t.self)
 				var label:UILabel!
 				
-				if sender.name.range(of: "left", options: NSString.CompareOptions.caseInsensitive) != nil {
+				if sender.name.range(of: "01", options: NSString.CompareOptions.caseInsensitive) != nil {
 					// Found left
 					label = display[0].subviews[3] as! UILabel
 					
 				}
-				else if sender.name.range(of: "right", options: NSString.CompareOptions.caseInsensitive) != nil {
+				else if sender.name.range(of: "02", options: NSString.CompareOptions.caseInsensitive) != nil {
 					label = display[1].subviews[3] as! UILabel
 					
 				}
@@ -710,13 +720,13 @@ print("\(fileLeft) \(fileRight)")
 				
 				if data[0] == 0 {
 					var file : FileHandle?
-					if sender.name.range(of: "left", options: NSString.CompareOptions.caseInsensitive) != nil {
+					if sender.name.range(of: "01", options: NSString.CompareOptions.caseInsensitive) != nil {
 						// Found left
 						file = fileLeft
 						//let label = display[0].subviews[3] as! UILabel
 						//label.text = "Download Complete"
 					}
-					else if sender.name.range(of: "right", options: NSString.CompareOptions.caseInsensitive) != nil {
+					else if sender.name.range(of: "02", options: NSString.CompareOptions.caseInsensitive) != nil {
 						file = fileRight
 						//let label = display[1].subviews[3] as! UILabel
 						//label.text = "Download Complete"
@@ -822,13 +832,13 @@ print("\(fileLeft) \(fileRight)")
 			let gy = (Int16(data.data.8) & 0xff) | (Int16(data.data.9) << 8)
 			let gz = (Int16(data.data.10) & 0xff) | (Int16(data.data.11) << 8)
 			
-			if sender.name.range(of: "left", options: NSString.CompareOptions.caseInsensitive) != nil {
+			if sender.name.range(of: "01", options: NSString.CompareOptions.caseInsensitive) != nil {
 				leftAccelGraph.add(double3(Double(ax), Double(ay), Double(az)))
 				leftGyroGraph.add(double3(Double(gx), Double(gy), Double(gz)))
 				let label = getStreamDataLabel(sender: sender)//display[0].subviews[3] as! UILabel
 				label.text = String(format : "ax:%d, ay:%d, az:%d", ax, ay, az)
 			}
-			else if sender.name.range(of: "right", options: NSString.CompareOptions.caseInsensitive) != nil {
+			else if sender.name.range(of: "02", options: NSString.CompareOptions.caseInsensitive) != nil {
 				rightAccelGraph.add(double3(Double(ax), Double(ay), Double(az)))
 				rightGyroGraph.add(double3(Double(gx), Double(gy), Double(gz)))
 				let label = getStreamDataLabel(sender: sender)//display[1].subviews[3] as! UILabel
@@ -891,12 +901,12 @@ print("\(fileLeft) \(fileRight)")
 			let label = getMessageLabel(sender: sender)
 			var loIdx = Int(0)
 			
-			if sender.name.range(of: "left", options: NSString.CompareOptions.caseInsensitive) != nil {
+			if sender.name.range(of: "01", options: NSString.CompareOptions.caseInsensitive) != nil {
 				// Found left
 				file = fileLeft
 				loIdx = 0
 			}
-			else if sender.name.range(of: "right", options: NSString.CompareOptions.caseInsensitive) != nil {
+			else if sender.name.range(of: "02", options: NSString.CompareOptions.caseInsensitive) != nil {
 				file = fileRight
 				loIdx = 1
 			}
@@ -953,8 +963,11 @@ print("\(fileLeft) \(fileRight)")
 			if idx >= 0 {
 				let label = getStreamDataLabel(sender: sender)//display[idx].subviews[1] as! UILabel
 				label.text = String("Accel - x:\(xq), y:\(yq), z:\(zq)")
-				if idx == 0 {
+				if sender.name.range(of: "01", options: NSString.CompareOptions.caseInsensitive) != nil {
 					leftAccelGraph.add(double3(Double(xq), Double(yq), Double(zq)))
+				}
+				if sender.name.range(of: "02", options: NSString.CompareOptions.caseInsensitive) != nil {
+					rightAccelGraph.add(double3(Double(xq), Double(yq), Double(zq)))
 				}
 			}
 			//			rxCount += 1
