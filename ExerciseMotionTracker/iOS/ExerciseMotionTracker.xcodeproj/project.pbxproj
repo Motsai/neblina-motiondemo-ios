@@ -18,6 +18,7 @@
 		C91C6FB31C05129900FC1681 /* CoreBluetooth.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C91C6FB21C05129900FC1681 /* CoreBluetooth.framework */; };
 		C91C6FB81C0512C900FC1681 /* Neblina.swift in Sources */ = {isa = PBXBuildFile; fileRef = C91C6FB71C0512C900FC1681 /* Neblina.swift */; };
 		C91C6FBA1C05FE1800FC1681 /* art.scnassets in Resources */ = {isa = PBXBuildFile; fileRef = C91C6FB91C05FE1800FC1681 /* art.scnassets */; };
+		C9549E2F1E96996D0020674F /* NeblinaControl.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9549E2D1E96996D0020674F /* NeblinaControl.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -53,11 +54,12 @@
 		C91C6FA11C05122300FC1681 /* ExerciseMotionTrackerUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExerciseMotionTrackerUITests.swift; sourceTree = "<group>"; };
 		C91C6FA31C05122300FC1681 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		C91C6FB21C05129900FC1681 /* CoreBluetooth.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreBluetooth.framework; path = System/Library/Frameworks/CoreBluetooth.framework; sourceTree = SDKROOT; };
-		C91C6FB41C0512C900FC1681 /* FusionEngineDataTypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FusionEngineDataTypes.h; path = ../../../src/FusionEngineDataTypes.h; sourceTree = "<group>"; };
 		C91C6FB51C0512C900FC1681 /* Neblina-Bridging-Header.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "Neblina-Bridging-Header.h"; path = "../../../src/Neblina-Bridging-Header.h"; sourceTree = "<group>"; };
 		C91C6FB61C0512C900FC1681 /* neblina.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = neblina.h; path = ../../../src/neblina.h; sourceTree = "<group>"; };
 		C91C6FB71C0512C900FC1681 /* Neblina.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Neblina.swift; path = ../../../src/Neblina.swift; sourceTree = "<group>"; };
 		C91C6FB91C05FE1800FC1681 /* art.scnassets */ = {isa = PBXFileReference; lastKnownFileType = wrapper.scnassets; name = art.scnassets; path = ../../../art.scnassets; sourceTree = "<group>"; };
+		C9549E2D1E96996D0020674F /* NeblinaControl.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = NeblinaControl.swift; path = ../../../src/NeblinaControl.swift; sourceTree = "<group>"; };
+		C9549E2E1E96996D0020674F /* neblinaFusion.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = neblinaFusion.h; path = ../../../src/neblinaFusion.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -110,8 +112,9 @@
 		C91C6F7E1C05122300FC1681 /* ExerciseMotionTracker */ = {
 			isa = PBXGroup;
 			children = (
+				C9549E2D1E96996D0020674F /* NeblinaControl.swift */,
+				C9549E2E1E96996D0020674F /* neblinaFusion.h */,
 				C91C6FB91C05FE1800FC1681 /* art.scnassets */,
-				C91C6FB41C0512C900FC1681 /* FusionEngineDataTypes.h */,
 				C91C6FB51C0512C900FC1681 /* Neblina-Bridging-Header.h */,
 				C91C6FB61C0512C900FC1681 /* neblina.h */,
 				C91C6FB71C0512C900FC1681 /* Neblina.swift */,
@@ -232,6 +235,7 @@
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
 			knownRegions = (
+				English,
 				en,
 				Base,
 			);
@@ -283,6 +287,7 @@
 				C91C6F841C05122300FC1681 /* DetailViewController.swift in Sources */,
 				C91C6FB81C0512C900FC1681 /* Neblina.swift in Sources */,
 				C91C6F821C05122300FC1681 /* MasterViewController.swift in Sources */,
+				C9549E2F1E96996D0020674F /* NeblinaControl.swift in Sources */,
 				C91C6F801C05122300FC1681 /* AppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -379,6 +384,7 @@
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
@@ -416,6 +422,7 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 9.1;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = iphoneos;
+				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VALIDATE_PRODUCT = YES;
 			};
@@ -436,7 +443,7 @@
 				PROVISIONING_PROFILE = "";
 				SWIFT_OBJC_BRIDGING_HEADER = "../../src/Neblina-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
-				SWIFT_VERSION = 3.0;
+				SWIFT_VERSION = 5.0;
 			};
 			name = Debug;
 		};
@@ -454,7 +461,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
 				SWIFT_OBJC_BRIDGING_HEADER = "../../src/Neblina-Bridging-Header.h";
-				SWIFT_VERSION = 3.0;
+				SWIFT_VERSION = 5.0;
 			};
 			name = Release;
 		};

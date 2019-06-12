@@ -47,7 +47,7 @@ class MasterViewController: UITableViewController, CBCentralManagerDelegate {
 		// Dispose of any resources that can be recreated.
 	}
 	
-	func insertRefreshScan(_ sender: AnyObject) {
+	@objc func insertRefreshScan(_ sender: AnyObject) {
 		bleCentralManager.stopScan()
 		objects.removeAll()
 		bleCentralManager.scanForPeripherals(withServices: [NEB_SERVICE_UUID], options: nil)
@@ -101,7 +101,7 @@ class MasterViewController: UITableViewController, CBCentralManagerDelegate {
 		return false
 	}
 	
-	override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
+	override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
 		if editingStyle == .delete {
 			objects.remove(at: indexPath.row)
 			tableView.deleteRows(at: [indexPath], with: .fade)
@@ -146,8 +146,16 @@ class MasterViewController: UITableViewController, CBCentralManagerDelegate {
 				return
 			}
 			
-			let device = Neblina(devid: id, peripheral: peripheral)
-			
+			var name : String? = nil
+			if advertisementData[CBAdvertisementDataLocalNameKey] == nil {
+				print("bad, no name")
+				name = peripheral.name
+			}
+			else {
+				name = advertisementData[CBAdvertisementDataLocalNameKey] as! String
+			}
+			let device = Neblina(devName: name!, devid: id, peripheral: peripheral)
+
 			/*for dev in objects
 			{
 			if (dev.id == id)

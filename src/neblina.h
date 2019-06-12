@@ -1,162 +1,152 @@
-/*
- * neblina.h
- *
- *	Neblina
- *
- *  Created on: 2015-06-17
- *      Author: hoan
- */
+/***********************************************************************************
+* Copyright (c) 2010 - 2018, Motsai
+*
+* Permission is hereby granted, free of charge, to any person obtaining a copy
+* of this software and associated documentation files (the "Software"), to deal
+* in the Software without restriction, including without limitation the rights
+* to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+* copies of the Software, and to permit persons to whom the Software is
+* furnished to do so, subject to the following conditions:
+*
+* The above copyright notice and this permission notice shall be included in
+* all copies or substantial portions of the Software.
+*
+* THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+* IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+* FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+* AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+* LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+* OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+* THE SOFTWARE.
+***********************************************************************************/
+
+#pragma once
+
+/**********************************************************************************/
+
+#include <assert.h>
 #include <stdint.h>
+//#include <stdio.h>
+//#include <string.h>
 
+#include "neblina_debug.h"
+#include "neblina_eeprom.h"
+#include "neblina_fusion.h"
+#include "neblina_general.h"
+#include "neblina_led.h"
+#include "neblina_power.h"
+#include "neblina_recorder.h"
+#include "neblina_sensor.h"
 
-#ifndef __NEBLINA_H__
-#define __NEBLINA_H__
+/**********************************************************************************/
 
-#pragma pack(push, 1)
+#define     NEBLINA_API_VERSION                  2
 
-typedef struct {
-	uint8_t major;
-	uint8_t minor;
-	uint8_t build;
-} FWVersion_t;
+/**********************************************************************************/
 
-typedef struct {
-	uint8_t API_Release;
-	FWVersion_t KL26;
-	FWVersion_t Nordic;
-	uint64_t devid;
-} Neblina_FWVersions_t;
+#define     NEBLINA_BITMASK_SUBSYSTEM                        0x1F
+#define     NEBLINA_BITMASK_PACKETTYPE                       0xE0
 
-//Firmware Versions: Define here
-#define API_RELEASE_VERSION	0x01
+#define     NEBLINA_BITPOSITION_PACKETTYPE                      5
 
-//Freescale
-#define NEBKL26_FWVERS_MAJOR	1
-#define NEBKL26_FWVERS_MINOR	0
-#define NEBKL26_FWVERS_BUILD	0
+/**********************************************************************************/
 
-//Nordic
-#define NEBNRF51_FWVERS_MAJOR	1
-#define NEBNRF51_FWVERS_MINOR	0
-#define NEBNRF51_FWVERS_BUILD	1
+#define     NEBLINA_NAME_LENGTH_MAX                             16
+#define     NEBLINA_SESSION_NAME_LENGTH_MAX                     15
 
-///////////////////////////////////
+/**********************************************************************************/
 
+/// UART uses hardware flow control (CTS/RTS)
+#define     NEBLINA_UART_BAUDRATE                               1000000
+#define     NEBLINA_UART_DATA_SIZE                              8
+#define     NEBLINA_UART_STOP_BITS                              1
 
-/*
- * Neblina communication interface definitions
- */
-#define NEB_COMM_INTRF_BLE				0		// Neblina comm over BLE
-#define NEB_COMM_INTRF_UART				1		// Neblina comm over UART
+/**********************************************************************************/
 
-/*
- * Neblina Control Byte definitions
- *
- * 0-4 : Subsystem
- * 5-7 : Packet Type
- *
- */
-#define NEB_CTRL_PKTYPE_MASK			0xE0		// Packet type mask
-#define NEB_CTRL_SUBSYS_MASK			0x1F		// Subsystem mask
+#define     NEBLINA_PACKET_HEADER_ELEMENT_CTRL                  0x00
+#define     NEBLINA_PACKET_HEADER_ELEMENT_LENGTH                0x01
+#define     NEBLINA_PACKET_HEADER_ELEMENT_CRC                   0x02
+#define     NEBLINA_PACKET_HEADER_ELEMENT_DATATYPE              0x03
+#define     NEBLINA_PACKET_HEADER_LENGTH                        0x04
 
-// Packet types
-#define NEB_CTRL_PKTYPE_DATA				0		// Data/Response
-#define NEB_CTRL_PKTYPE_ACK					1		// Ack
-#define NEB_CTRL_PKTYPE_CMD					2		// Command
-#define NEB_CTRL_PKTYPE_RESERVE1			3
-#define NEB_CTRL_PKTYPE_ERR					4		// Error response
-#define NEB_CTRL_PKTYPE_RESERVE2			5		//
-#define NEB_CTRL_PKTYPE_RQSTLOG				6		// Request status/error log
-#define NEB_CTRL_PKTYPE_RESERVE3			7
+#define     NEBLINA_PACKET_TYPE_RESPONSE                        0x00
+#define     NEBLINA_PACKET_TYPE_ACK                             0x01
+#define     NEBLINA_PACKET_TYPE_COMMAND                         0x02
+#define     NEBLINA_PACKET_TYPE_DATA                            0x03
+#define     NEBLINA_PACKET_TYPE_ERROR                           0x04
+#define     NEBLINA_PACKET_TYPE_RESERVE_2                       0x05
+#define     NEBLINA_PACKET_TYPE_REQUEST_LOG                     0x06
+#define     NEBLINA_PACKET_TYPE_RESERVE_3                       0x07
 
-// Subsystem values
-#define NEB_CTRL_SUBSYS_DEBUG				0		// Status & logging
-#define NEB_CTRL_SUBSYS_MOTION_ENG			1		// Motion Engine
-#define NEB_CTRL_SUBSYS_POWERMGMT			2		// Power management
-#define NEB_CTRL_SUBSYS_GPIO				3		// GPIO control
-#define NEB_CTRL_SUBSYS_LED					4		// LED control
-#define NEB_CTRL_SUBSYS_ADC					5		// ADC control
-#define NEB_CTRL_SUBSYS_DAC					6		// DAC control
-#define NEB_CTRL_SUBSYS_I2C					7		// I2C control
-#define NEB_CTRL_SUBSYS_SPI					8		// SPI control
+/**********************************************************************************/
 
-// ***
-// Power management subsystem command code
-#define POWERMGMT_CMD_GET_BAT_LEVEL			0	// Get battery level
-#define POWERMGMT_CMD_GET_TEMPERATURE		1	// Get temperature
-#define POWERMGMT_CMD_SET_CHARGE_CURRENT	2	// Set battery charge current
+#define     NEBLINA_SUBSYSTEM_GENERAL                           0x00
+#define     NEBLINA_SUBSYSTEM_FUSION                            0x01
+#define     NEBLINA_SUBSYSTEM_POWER                             0x02
+#define     NEBLINA_SUBSYSTEM_GPIO                              0x03
+#define     NEBLINA_SUBSYSTEM_LED                               0x04
+#define     NEBLINA_SUBSYSTEM_ADC                               0x05
+#define     NEBLINA_SUBSYSTEM_DAC                               0x06
+#define     NEBLINA_SUBSYSTEM_I2C                               0x07
+#define     NEBLINA_SUBSYSTEM_SPI                               0x08
+#define     NEBLINA_SUBSYSTEM_DEBUG                             0x09
+#define     NEBLINA_SUBSYSTEM_TEST                              0x0A
+#define     NEBLINA_SUBSYSTEM_RECORDER                          0x0B
+#define     NEBLINA_SUBSYSTEM_EEPROM                            0x0C
+#define     NEBLINA_SUBSYSTEM_SENSOR                            0x0D
 
-// ***
-// Debug subsystem command code
-#define DEBUG_CMD_PRINTF							0	// The infamous printf thing.
-#define DEBUG_CMD_SET_INTERFACE						1	// sets the protocol interface - this command is now obsolete
-#define DEBUG_CMD_MOTENGINE_RECORDER_STATUS			2	// asks for the streaming status of the motion engine, as well as the flash recorder state
-#define DEBUG_CMD_MOTION_ENG_UNIT_TEST_START_STOP	3	// starts/stops the motion engine unit-test mode
-#define DEBUG_CMD_MOTION_ENG_UNIT_TEST_DATA			4	// data being transferred between the host and Neblina for motion engine's unit testing
-#define DEBUG_CMD_GET_FW_VERSION					5
-#define DEBUG_CMD_DUMP_DATA							6 	// dump and forward the data to the host (for printing on the screen, etc.)
-#define DEBUG_CMD_STREAM_RSSI						7	// get the BLE signal strength in db
-#define DEBUG_CMD_GET_DATAPORT						8	// Get streaming data interface port state.
-#define DEBUG_CMD_SET_DATAPORT						9	// Enable/Disable streaming data interface port
+/**********************************************************************************/
 
-//
-// Data port control
-#define DATAPORT_MAX								2	// Max number of data port
+#define     NEBLINA_SESSION_CLOSE                       0
+#define     NEBLINA_SESSION_CREATE                      1
+#define     NEBLINA_SESSION_OPEN                        2
+#define     NEBLINA_SESSION_INVALID                     0xFF
 
-#define DATAPORT_BLE								0 	// streaming data port BLE
-#define DATAPORT_UART								1	//
+#define     NEBLINA_SESSION_HEADER_LENGTH               496
 
-#define DATAPORT_OPEN								1	// Open streaming data port
-#define DATAPORT_CLOSE								0	// Close streaming data port
+/**********************************************************************************/
 
-typedef struct _Data_Port {
-	uint8_t	PortIdx;		// Data port index	(DATAPORT_BLE = 0, DATAPORT_UART = 1, ...)
-	uint8_t	PortCtrl;		// Data port control (DATAPORT_OPEN, DATAPORT_CLOSE)
-} NEB_DATAPORT_CTRL;
+typedef enum {
+    NEBLINA_RATE_EVENT = 0,
+    NEBLINA_RATE_1 = 1,
+    NEBLINA_RATE_50 = 50,
+    NEBLINA_RATE_100 = 100,
+    NEBLINA_RATE_200 = 200,
+    NEBLINA_RATE_400 = 400,
+    NEBLINA_RATE_800 = 800,
+    NEBLINA_RATE_1600 = 1600
+} NEBLINA_ATTRIBUTE_PACKED( NeblinaRate_t );
 
+/**********************************************************************************/
 
-// LED control command codes
-#define LED_CMD_SET_VALUE							1	// Set LED value
-#define LED_CMD_GET_VALUE							2	// Get LED value
-#define LED_CMD_SET_CFG								3	// Set config
-#define LED_CMD_GET_CFG								4	// Get config
+#pragma pack( push, 1 )
 
-#define LED_MAX_NB			8	// Max number of LED supported
+/**********************************************************************************/
 
-typedef struct _LedCtrl_Data {
-	uint8_t NbLed;						// Number of LED to control
-	struct {
-		uint8_t	No;						// LED number
-		uint8_t	Value;					// data - value depending on command code
-	} Led[LED_MAX_NB];
-} NEB_LEDCTRL_DATA;
+typedef struct NeblinaPacketHeader_t {
+    uint8_t subSystem:5;    /// SubSystem
+    uint8_t packetType:3;   /// Packet type
+    uint8_t length;         /// Data length (in byte)
+    uint8_t crc;            /// Packet CRC
+    uint8_t command;        /// Command
+} NeblinaPacketHeader_t;
 
-#define NEB_PKT_MAX_FUSION_DATASIZE 	12
+/**********************************************************************************/
 
-typedef struct Fusion_DataPacket_t
-{
-	uint32_t TimeStamp;
-	uint8_t data[NEB_PKT_MAX_FUSION_DATASIZE];
-} Fusion_DataPacket_t;
+typedef struct NeblinaPacket_t {
+    NeblinaPacketHeader_t header;
+    uint8_t               data[1];        /// Data buffer follows. i.e Data array more than one item
+} NeblinaPacket_t;
+
+/**********************************************************************************/
 
 typedef struct {
-	uint8_t SubSys:5; 	// subsystem code
-	uint8_t PkType:3; 	// packet type: command, response, error packet, acknowledge
-	uint8_t Len;		// Data len = size in byte of following data
-	uint8_t Crc;		// Crc on data
-	uint8_t Cmd;
-} NEB_PKTHDR;
+    uint32_t microseconds; /// high-resolution timestamp in microseconds
+    uint32_t unixTime; /// Unix timestamp in seconds
+} NeblinaTimestamp_t;
 
-// NOTE : Variable length data structure. Do not allocate this structure directly
-//
-typedef struct {
-	NEB_PKTHDR	Header;
-	uint8_t 	Data[1];	// Data buffer follows. i.e. Data array more than one item
-} NEB_PKT;
+/**********************************************************************************/
 
+#pragma pack( pop )
 
-
-#pragma pack(pop)
-
-
-#endif // __NEBLINA_H__
+/**********************************************************************************/

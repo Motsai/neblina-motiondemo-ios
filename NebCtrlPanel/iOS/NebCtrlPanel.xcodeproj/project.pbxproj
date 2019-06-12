@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 46;
+	objectVersion = 50;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -17,8 +17,12 @@
 		C90AF9A01BEBABD20040D4CA /* NebCtrlPanelUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C90AF99F1BEBABD20040D4CA /* NebCtrlPanelUITests.swift */; };
 		C90AF9B41BEBAD370040D4CA /* Neblina.swift in Sources */ = {isa = PBXBuildFile; fileRef = C90AF9B31BEBAD370040D4CA /* Neblina.swift */; };
 		C90AF9B71BEBB1090040D4CA /* CoreBluetooth.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C90AF9B61BEBB1090040D4CA /* CoreBluetooth.framework */; };
+		C92F5C051F8E75460090FAB9 /* art.scnassets in Resources */ = {isa = PBXBuildFile; fileRef = C92F5C041F8E75460090FAB9 /* art.scnassets */; };
+		C9549E351E96B14C0020674F /* NeblinaControl.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9549E331E96B14C0020674F /* NeblinaControl.swift */; };
+		C959EF141F9A922F0019DC7E /* GraphView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C959EF111F9A922F0019DC7E /* GraphView.swift */; };
+		C959EF151F9A922F0019DC7E /* CGContext+GraphLines.swift in Sources */ = {isa = PBXBuildFile; fileRef = C959EF121F9A922F0019DC7E /* CGContext+GraphLines.swift */; };
+		C959EF161F9A922F0019DC7E /* GraphSegment.swift in Sources */ = {isa = PBXBuildFile; fileRef = C959EF131F9A922F0019DC7E /* GraphSegment.swift */; };
 		C9DEDB481D05D45900A76BA3 /* Phone.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = C9DEDB461D05D45900A76BA3 /* Phone.storyboard */; };
-		C9DF6B311C08AD73007DB407 /* art.scnassets in Resources */ = {isa = PBXBuildFile; fileRef = C9DF6B301C08AD73007DB407 /* art.scnassets */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -56,11 +60,14 @@
 		C90AF9B21BEBAD370040D4CA /* Neblina-Bridging-Header.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "Neblina-Bridging-Header.h"; path = "../../../src/Neblina-Bridging-Header.h"; sourceTree = "<group>"; };
 		C90AF9B31BEBAD370040D4CA /* Neblina.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Neblina.swift; path = ../../../src/Neblina.swift; sourceTree = "<group>"; };
 		C90AF9B61BEBB1090040D4CA /* CoreBluetooth.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreBluetooth.framework; path = System/Library/Frameworks/CoreBluetooth.framework; sourceTree = SDKROOT; };
-		C9242AB31C24A51200F7BF8A /* ProMotion.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ProMotion.h; path = ../../../src/ProMotion.h; sourceTree = "<group>"; };
-		C98A75B61BF147AD002D7601 /* FusionEngineDataTypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FusionEngineDataTypes.h; path = ../../../src/FusionEngineDataTypes.h; sourceTree = "<group>"; };
+		C92F5C041F8E75460090FAB9 /* art.scnassets */ = {isa = PBXFileReference; lastKnownFileType = wrapper.scnassets; name = art.scnassets; path = ../../../art.scnassets; sourceTree = "<group>"; };
+		C9549E331E96B14C0020674F /* NeblinaControl.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = NeblinaControl.swift; path = ../../../src/NeblinaControl.swift; sourceTree = "<group>"; };
+		C9549E341E96B14C0020674F /* neblinaFusion.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = neblinaFusion.h; path = ../../../src/neblinaFusion.h; sourceTree = "<group>"; };
+		C959EF111F9A922F0019DC7E /* GraphView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = GraphView.swift; path = ../../../src/GraphView.swift; sourceTree = "<group>"; };
+		C959EF121F9A922F0019DC7E /* CGContext+GraphLines.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "CGContext+GraphLines.swift"; path = "../../../src/CGContext+GraphLines.swift"; sourceTree = "<group>"; };
+		C959EF131F9A922F0019DC7E /* GraphSegment.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = GraphSegment.swift; path = ../../../src/GraphSegment.swift; sourceTree = "<group>"; };
 		C98A75B71BF147AD002D7601 /* neblina.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = neblina.h; path = ../../../src/neblina.h; sourceTree = "<group>"; };
 		C9DEDB471D05D45900A76BA3 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Phone.storyboard; sourceTree = "<group>"; };
-		C9DF6B301C08AD73007DB407 /* art.scnassets */ = {isa = PBXFileReference; lastKnownFileType = wrapper.scnassets; name = art.scnassets; path = ../../../art.scnassets; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -113,10 +120,13 @@
 		C90AF97C1BEBABD20040D4CA /* NebCtrlPanel */ = {
 			isa = PBXGroup;
 			children = (
+				C959EF121F9A922F0019DC7E /* CGContext+GraphLines.swift */,
+				C959EF131F9A922F0019DC7E /* GraphSegment.swift */,
+				C959EF111F9A922F0019DC7E /* GraphView.swift */,
+				C92F5C041F8E75460090FAB9 /* art.scnassets */,
+				C9549E331E96B14C0020674F /* NeblinaControl.swift */,
+				C9549E341E96B14C0020674F /* neblinaFusion.h */,
 				C9DEDB461D05D45900A76BA3 /* Phone.storyboard */,
-				C9242AB31C24A51200F7BF8A /* ProMotion.h */,
-				C9DF6B301C08AD73007DB407 /* art.scnassets */,
-				C98A75B61BF147AD002D7601 /* FusionEngineDataTypes.h */,
 				C98A75B71BF147AD002D7601 /* neblina.h */,
 				C90AF9B21BEBAD370040D4CA /* Neblina-Bridging-Header.h */,
 				C90AF9B31BEBAD370040D4CA /* Neblina.swift */,
@@ -212,13 +222,14 @@
 			isa = PBXProject;
 			attributes = {
 				LastSwiftUpdateCheck = 0710;
-				LastUpgradeCheck = 0800;
-				ORGANIZATIONNAME = "Hoan Hoang";
+				LastUpgradeCheck = 1020;
+				ORGANIZATIONNAME = Motsai;
 				TargetAttributes = {
 					C90AF9791BEBABD20040D4CA = {
 						CreatedOnToolsVersion = 7.1;
 						DevelopmentTeam = M9G2K5W3T4;
 						LastSwiftMigration = 0800;
+						ProvisioningStyle = Automatic;
 					};
 					C90AF98F1BEBABD20040D4CA = {
 						CreatedOnToolsVersion = 7.1;
@@ -233,8 +244,8 @@
 				};
 			};
 			buildConfigurationList = C90AF9751BEBABD20040D4CA /* Build configuration list for PBXProject "NebCtrlPanel" */;
-			compatibilityVersion = "Xcode 3.2";
-			developmentRegion = English;
+			compatibilityVersion = "Xcode 9.3";
+			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
 				en,
@@ -259,7 +270,7 @@
 			files = (
 				C9DEDB481D05D45900A76BA3 /* Phone.storyboard in Resources */,
 				C90AF98A1BEBABD20040D4CA /* LaunchScreen.storyboard in Resources */,
-				C9DF6B311C08AD73007DB407 /* art.scnassets in Resources */,
+				C92F5C051F8E75460090FAB9 /* art.scnassets in Resources */,
 				C90AF9871BEBABD20040D4CA /* Assets.xcassets in Resources */,
 				C90AF9851BEBABD20040D4CA /* Main.storyboard in Resources */,
 			);
@@ -286,10 +297,14 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C959EF151F9A922F0019DC7E /* CGContext+GraphLines.swift in Sources */,
 				C90AF9821BEBABD20040D4CA /* DetailViewController.swift in Sources */,
+				C959EF161F9A922F0019DC7E /* GraphSegment.swift in Sources */,
 				C90AF9B41BEBAD370040D4CA /* Neblina.swift in Sources */,
 				C90AF9801BEBABD20040D4CA /* MasterViewController.swift in Sources */,
+				C9549E351E96B14C0020674F /* NeblinaControl.swift in Sources */,
 				C90AF97E1BEBABD20040D4CA /* AppDelegate.swift in Sources */,
+				C959EF141F9A922F0019DC7E /* GraphView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -360,14 +375,22 @@
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
 				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
 				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
@@ -390,11 +413,12 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 9.1;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
@@ -407,14 +431,22 @@
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
 				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
 				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
@@ -431,10 +463,12 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 9.1;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = iphoneos;
-				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VALIDATE_PRODUCT = YES;
 			};
@@ -446,17 +480,22 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = M9G2K5W3T4;
 				INFOPLIST_FILE = NebCtrlPanel/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 11.4;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.motsai.nebcpanel;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = iphoneos;
 				SWIFT_OBJC_BRIDGING_HEADER = "../../src/Neblina-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
-				SWIFT_VERSION = 3.0;
+				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
@@ -467,16 +506,21 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = M9G2K5W3T4;
 				INFOPLIST_FILE = NebCtrlPanel/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 11.4;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.motsai.nebcpanel;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = iphoneos;
 				SWIFT_OBJC_BRIDGING_HEADER = "../../src/Neblina-Bridging-Header.h";
-				SWIFT_VERSION = 3.0;
+				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Release;
@@ -486,10 +530,14 @@
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				INFOPLIST_FILE = NebCtrlPanelTests/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.motsai.NebCtrlPanelTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_VERSION = 3.0;
+				SWIFT_VERSION = 5.0;
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/NebCtrlPanel.app/NebCtrlPanel";
 			};
 			name = Debug;
@@ -499,10 +547,14 @@
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				INFOPLIST_FILE = NebCtrlPanelTests/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.motsai.NebCtrlPanelTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_VERSION = 3.0;
+				SWIFT_VERSION = 5.0;
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/NebCtrlPanel.app/NebCtrlPanel";
 			};
 			name = Release;
@@ -511,10 +563,14 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				INFOPLIST_FILE = NebCtrlPanelUITests/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.motsai.NebCtrlPanelUITests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_VERSION = 3.0;
+				SWIFT_VERSION = 5.0;
 				TEST_TARGET_NAME = NebCtrlPanel;
 				USES_XCTRUNNER = YES;
 			};
@@ -524,10 +580,14 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				INFOPLIST_FILE = NebCtrlPanelUITests/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.motsai.NebCtrlPanelUITests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_VERSION = 3.0;
+				SWIFT_VERSION = 5.0;
 				TEST_TARGET_NAME = NebCtrlPanel;
 				USES_XCTRUNNER = YES;
 			};

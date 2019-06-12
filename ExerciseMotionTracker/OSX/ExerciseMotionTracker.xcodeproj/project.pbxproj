@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 46;
+	objectVersion = 50;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -15,7 +15,8 @@
 		C91C6F5A1C03786200FC1681 /* ExerciseMotionTrackerUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C91C6F591C03786200FC1681 /* ExerciseMotionTrackerUITests.swift */; };
 		C91C6F681C037B5E00FC1681 /* CoreBluetooth.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C91C6F671C037B5E00FC1681 /* CoreBluetooth.framework */; };
 		C91C6F721C038A8B00FC1681 /* Neblina.swift in Sources */ = {isa = PBXBuildFile; fileRef = C91C6F711C038A8B00FC1681 /* Neblina.swift */; };
-		C9DF6B331C08AEE2007DB407 /* art.scnassets in Resources */ = {isa = PBXBuildFile; fileRef = C9DF6B321C08AEE2007DB407 /* art.scnassets */; };
+		C92F5BBF1F8E72BF0090FAB9 /* art.scnassets in Resources */ = {isa = PBXBuildFile; fileRef = C92F5BBE1F8E72BE0090FAB9 /* art.scnassets */; };
+		C98A17F11E9C29410099050A /* NeblinaControl.swift in Sources */ = {isa = PBXBuildFile; fileRef = C98A17EF1E9C29410099050A /* NeblinaControl.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -49,11 +50,12 @@
 		C91C6F591C03786200FC1681 /* ExerciseMotionTrackerUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExerciseMotionTrackerUITests.swift; sourceTree = "<group>"; };
 		C91C6F5B1C03786200FC1681 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		C91C6F671C037B5E00FC1681 /* CoreBluetooth.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreBluetooth.framework; path = System/Library/Frameworks/CoreBluetooth.framework; sourceTree = SDKROOT; };
-		C91C6F6E1C038A8B00FC1681 /* FusionEngineDataTypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FusionEngineDataTypes.h; path = ../../../src/FusionEngineDataTypes.h; sourceTree = "<group>"; };
 		C91C6F6F1C038A8B00FC1681 /* Neblina-Bridging-Header.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "Neblina-Bridging-Header.h"; path = "../../../src/Neblina-Bridging-Header.h"; sourceTree = "<group>"; };
 		C91C6F701C038A8B00FC1681 /* neblina.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = neblina.h; path = ../../../src/neblina.h; sourceTree = "<group>"; };
 		C91C6F711C038A8B00FC1681 /* Neblina.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Neblina.swift; path = ../../../src/Neblina.swift; sourceTree = "<group>"; };
-		C9DF6B321C08AEE2007DB407 /* art.scnassets */ = {isa = PBXFileReference; lastKnownFileType = wrapper.scnassets; name = art.scnassets; path = ../../../art.scnassets; sourceTree = "<group>"; };
+		C92F5BBE1F8E72BE0090FAB9 /* art.scnassets */ = {isa = PBXFileReference; lastKnownFileType = wrapper.scnassets; name = art.scnassets; path = ../../../art.scnassets; sourceTree = "<group>"; };
+		C98A17EF1E9C29410099050A /* NeblinaControl.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = NeblinaControl.swift; path = ../../../src/NeblinaControl.swift; sourceTree = "<group>"; };
+		C98A17F01E9C29410099050A /* neblinaFusion.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = neblinaFusion.h; path = ../../../src/neblinaFusion.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -106,8 +108,9 @@
 		C91C6F3B1C03786200FC1681 /* ExerciseMotionTracker */ = {
 			isa = PBXGroup;
 			children = (
-				C9DF6B321C08AEE2007DB407 /* art.scnassets */,
-				C91C6F6E1C038A8B00FC1681 /* FusionEngineDataTypes.h */,
+				C92F5BBE1F8E72BE0090FAB9 /* art.scnassets */,
+				C98A17EF1E9C29410099050A /* NeblinaControl.swift */,
+				C98A17F01E9C29410099050A /* neblinaFusion.h */,
 				C91C6F6F1C038A8B00FC1681 /* Neblina-Bridging-Header.h */,
 				C91C6F701C038A8B00FC1681 /* neblina.h */,
 				C91C6F711C038A8B00FC1681 /* Neblina.swift */,
@@ -221,10 +224,11 @@
 				};
 			};
 			buildConfigurationList = C91C6F341C03786200FC1681 /* Build configuration list for PBXProject "ExerciseMotionTracker" */;
-			compatibilityVersion = "Xcode 3.2";
+			compatibilityVersion = "Xcode 9.3";
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
 			knownRegions = (
+				English,
 				en,
 				Base,
 			);
@@ -246,7 +250,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				C91C6F411C03786200FC1681 /* Assets.xcassets in Resources */,
-				C9DF6B331C08AEE2007DB407 /* art.scnassets in Resources */,
+				C92F5BBF1F8E72BF0090FAB9 /* art.scnassets in Resources */,
 				C91C6F441C03786200FC1681 /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -273,6 +277,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				C91C6F3F1C03786200FC1681 /* ViewController.swift in Sources */,
+				C98A17F11E9C29410099050A /* NeblinaControl.swift in Sources */,
 				C91C6F721C038A8B00FC1681 /* Neblina.swift in Sources */,
 				C91C6F3D1C03786200FC1681 /* AppDelegate.swift in Sources */,
 			);
@@ -362,6 +367,7 @@
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = macosx;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
 			};
 			name = Debug;
 		};
@@ -398,6 +404,7 @@
 				MACOSX_DEPLOYMENT_TARGET = 10.11;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = macosx;
+				SWIFT_VERSION = 5.0;
 			};
 			name = Release;
 		};
@@ -408,13 +415,16 @@
 				CLANG_ENABLE_MODULES = YES;
 				COMBINE_HIDPI_IMAGES = YES;
 				INFOPLIST_FILE = ExerciseMotionTracker/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
-				MACOSX_DEPLOYMENT_TARGET = 10.10;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 10.12;
 				PRODUCT_BUNDLE_IDENTIFIER = com.motsai.ExerciseMotionTracker;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "../../src/Neblina-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
-				SWIFT_VERSION = 3.0;
+				SWIFT_VERSION = 5.0;
 			};
 			name = Debug;
 		};
@@ -425,12 +435,15 @@
 				CLANG_ENABLE_MODULES = YES;
 				COMBINE_HIDPI_IMAGES = YES;
 				INFOPLIST_FILE = ExerciseMotionTracker/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
-				MACOSX_DEPLOYMENT_TARGET = 10.10;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 10.12;
 				PRODUCT_BUNDLE_IDENTIFIER = com.motsai.ExerciseMotionTracker;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "../../src/Neblina-Bridging-Header.h";
-				SWIFT_VERSION = 3.0;
+				SWIFT_VERSION = 5.0;
 			};
 			name = Release;
 		};
@@ -440,7 +453,11 @@
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				COMBINE_HIDPI_IMAGES = YES;
 				INFOPLIST_FILE = ExerciseMotionTrackerTests/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@loader_path/../Frameworks",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.motsai.ExerciseMotionTrackerTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 3.0;
@@ -454,7 +471,11 @@
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				COMBINE_HIDPI_IMAGES = YES;
 				INFOPLIST_FILE = ExerciseMotionTrackerTests/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@loader_path/../Frameworks",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.motsai.ExerciseMotionTrackerTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 3.0;
@@ -467,7 +488,11 @@
 			buildSettings = {
 				COMBINE_HIDPI_IMAGES = YES;
 				INFOPLIST_FILE = ExerciseMotionTrackerUITests/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@loader_path/../Frameworks",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.motsai.ExerciseMotionTrackerUITests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 3.0;
@@ -481,7 +506,11 @@
 			buildSettings = {
 				COMBINE_HIDPI_IMAGES = YES;
 				INFOPLIST_FILE = ExerciseMotionTrackerUITests/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@loader_path/../Frameworks",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.motsai.ExerciseMotionTrackerUITests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 3.0;

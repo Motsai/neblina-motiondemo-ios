@@ -11,22 +11,33 @@ import CoreBluetooth
 import SceneKit
 
 class DetailViewController: UIViewController, CBPeripheralDelegate, NeblinaDelegate, SCNSceneRendererDelegate {
-
+	
+	var bleCentralManager : CBCentralManager!
+	
 	var nebdev : Neblina! {
 		didSet {
 			self.configureView()
 			nebdev.delegate = self
 		}
 	}
-	let scene = SCNScene(named: "art.scnassets/C-3PO.dae")!
-	//let scene = SCNScene(named: "art.scnassets/Millenium_Falcon/Millenium_Falcon.dae")!
+	//let scene = SCNScene(named: "art.scnassets/C-3PO.dae")!
+	let scene = SCNScene(named: "art.scnassets/Body_Mesh_Rigged.dae")!
 	var ship = SCNNode() //= scene.rootNode.childNodeWithName("ship", recursively: true)!
 
 	@IBOutlet weak var label1: UILabel!
 	@IBOutlet weak var label2: UILabel!
 	@IBOutlet weak var level:UIProgressView!
 	
-/*	var detailItem: Neblina? {
+	@IBAction func editDidEndOnExit(_ sender: Any) {
+		let view = sender as! UITextField// self.view.subviews[5] as! UITextField
+		print("\(view.text)")
+		nebdev.setDeviceName(name: view.text!)
+		
+		bleCentralManager.cancelPeripheralConnection(nebdev.device)
+		nebdev.device = nil
+	}
+	
+	/*	var detailItem: Neblina? {
 		didSet {
 		    // Update the view.
 		    self.configureView()
@@ -55,7 +66,7 @@ class DetailViewController: UIViewController, CBPeripheralDelegate, NeblinaDeleg
 		scene.rootNode.addChildNode(cameraNode)
 		
 		// place the camera
-		cameraNode.position = SCNVector3(x: 0, y: 0, z: 8)
+		cameraNode.position = SCNVector3(x: 0, y: 1.5, z: 4)
 		//cameraNode.position = SCNVector3(x: 0, y: 15, z: 0)
 		//cameraNode.rotation = SCNVector4(0, 0, 1, GLKMathDegreesToRadians(-180))
 		//cameraNode.rotation = SCNVector3(x:
@@ -74,8 +85,8 @@ class DetailViewController: UIViewController, CBPeripheralDelegate, NeblinaDeleg
 		scene.rootNode.addChildNode(ambientLightNode)
 		
 		// retrieve the ship node
-		ship = scene.rootNode.childNode(withName: "C3PO", recursively: true)!
-		ship.eulerAngles = SCNVector3Make(GLKMathDegreesToRadians(90), 0, GLKMathDegreesToRadians(180))
+		ship = scene.rootNode.childNode(withName: "Armature", recursively: true)!
+		//ship.eulerAngles = SCNVector3Make(GLKMathDegreesToRadians(90), 0, GLKMathDegreesToRadians(180))
 		//ship.rotation = SCNVector4(1, 0, 0, GLKMathDegreesToRadians(90))
 		//print("1 - \(ship)")
 		// animate the 3d object
@@ -114,67 +125,34 @@ class DetailViewController: UIViewController, CBPeripheralDelegate, NeblinaDeleg
 	}
 	
 	// MARK : Neblina
-	func didConnectNeblina() {
+	func didConnectNeblina(sender : Neblina) {
 		nebdev.streamEulerAngle(false)
 		nebdev.streamQuaternion(true)
 		nebdev.streamTrajectoryInfo(true)
-	}
-	
-	func didReceiveRSSI(_ rssi : NSNumber) {
 		
+		let view = self.view.subviews[5] as! UITextField
+		view.text = nebdev.device.name
 	}
-	func didReceiveDebugData(_ type : Int32, data : UnsafePointer<UInt8>, dataLen: Int, errFlag : Bool) {
-		
-	}
-	func didReceivePmgntData(_ type : Int32, data : UnsafePointer<UInt8>, dataLen: Int, errFlag : Bool) {
+	func didReceiveBatteryLevel(sender: Neblina, level: UInt8) {
 		
 	}
 	
-	func didReceiveStorageData(_ type : Int32, data : UnsafePointer<UInt8>, dataLen: Int, errFlag : Bool) {
+	func didReceiveResponsePacket(sender: Neblina, subsystem: Int32, cmdRspId: Int32, data: UnsafePointer<UInt8>, dataLen: Int) {
 		
 	}
-	func didReceiveEepromData(_ type : Int32, data : UnsafePointer<UInt8>, dataLen: Int, errFlag : Bool) {
+
+	func didReceiveRSSI(sender : Neblina , rssi : NSNumber) {
 		
 	}
-	func didReceiveLedData(_ type : Int32, data : UnsafePointer<UInt8>, dataLen: Int, errFlag : Bool) {
+	func didReceiveGeneralData(sender : Neblina, respType : Int32, cmdRspId : Int32, data : UnsafeRawPointer, dataLen : Int, errFlag : Bool) {
+		
 	}
-	
-	func didReceiveFusionData(_ type : Int32, data : Fusion_DataPacket_t, errFlag : Bool) {
+	func didReceiveFusionData(sender : Neblina, respType : Int32, cmdRspId : Int32, data : NeblinaFusionPacket_t, errFlag : Bool) {
 //	func didReceiveFusionData(type : FusionId, data : Fusion_DataPacket_t) {
 		//let textview = self.view.viewWithTag(3) as! UITextView
 		
-		switch (type) {
-			
-		case MotionState:
-			break
-		case IMU_Data:
-			break
-		case EulerAngle:
-			//
-			// Process Euler Angle
-			//
-			//let ship = scene.rootNode.childNodeWithName("ship", recursively: true)!
-			let x = (Int16(data.data.0) & 0xff) | (Int16(data.data.1) << 8)
-			let xrot = Float(x) / 10.0
-			let y = (Int16(data.data.2) & 0xff) | (Int16(data.data.3) << 8)
-			let yrot = Float(y) / 10.0
-			let z = (Int16(data.data.4) & 0xff) | (Int16(data.data.5) << 8)
-			let zrot = Float(z) / 10.0
-			
-//			if (heading) {
-//				ship.eulerAngles = SCNVector3Make(GLKMathDegreesToRadians(90), 0, GLKMathDegreesToRadians(180) - GLKMathDegreesToRadians(xrot))
-//			}
-//			else {
-				//				ship.eulerAngles = SCNVector3Make(GLKMathDegreesToRadians(90) - GLKMathDegreesToRadians(yrot), GLKMathDegreesToRadians(zrot), GLKMathDegreesToRadians(180) - GLKMathDegreesToRadians(xrot))
-				
-//				ship.eulerAngles = SCNVector3Make(GLKMathDegreesToRadians(180) - GLKMathDegreesToRadians(yrot), GLKMathDegreesToRadians(xrot), GLKMathDegreesToRadians(180) - GLKMathDegreesToRadians(zrot))
-//			}
-			
-//			textview.text = String("Euler - Yaw:\(xrot), Pitch:\(yrot), Roll:\(zrot)")
-			
-			
-			break
-		case Quaternion:
+		switch (cmdRspId) {
+		case NEBLINA_COMMAND_FUSION_QUATERNION_STREAM:
 			
 			//
 			// Process Quaternion
@@ -188,83 +166,41 @@ class DetailViewController: UIViewController, CBPeripheralDelegate, NeblinaDeleg
 			let zq = Float(z) / 32768.0
 			let w = (Int16(data.data.6) & 0xff) | (Int16(data.data.7) << 8)
 			let wq = Float(w) / 32768.0
-			ship.orientation = SCNQuaternion(yq, xq, zq, wq)
+
+			// transform knee
+			let xq1 = xq
+			let yq1 = yq
+			let zq1 = zq
+			let wq1 = wq
+			
+			let xq2 = Float(sqrt(2) / 2.0)
+			let yq2 = Float(0.0)
+			let zq2 = -Float(sqrt(2) / 2.0)
+			let wq2 = Float(0.0)
+			
+			var rxq = xq1 * xq2 - yq1 * yq2
+				rxq = rxq - zq1 * zq2 - wq1 * wq2
+			var ryq = xq1 * yq2 + yq1 * xq2
+				ryq = ryq + zq1 * wq2 - wq1 * zq2
+			var rzq = xq1 * zq2 - yq1 * wq2
+				rzq = rzq + zq1 * xq2 + wq1 * yq2
+			var rwq = xq1 * wq2 + yq1 * zq2
+				rwq = rwq - zq1 * yq2 + wq1 * xq2
+			if sender.device != nil {
+			let node = ship.childNode(withName :sender.device.name!, recursively: true)
+				if node != nil {
+					//node.orientation = SCNQuaternion(yq, xq, zq, wq)
+					//node.orientation = SCNQuaternion(wq, xq, -zq, yq)
+					//node?.orientation = SCNQuaternion(rwq, rxq, -rzq, ryq)
+					node?.orientation = SCNQuaternion(xq, yq, zq, wq)
+				}
+			}
+			//ship.orientation = SCNQuaternion(yq, xq, zq, wq)
 			//textview.text = String("Quat - x:\(xq), y:\(yq), z:\(zq), w:\(wq)")
 			
 			
 			break
-		case ExtForce:
-			//
-			// Process External Force
-			//
-			//let ship = scene.rootNode.childNodeWithName("ship", recursively: true)!
-			let x = (Int16(data.data.0) & 0xff) | (Int16(data.data.1) << 8)
-			let xq = x / 1600
-			let y = (Int16(data.data.2) & 0xff) | (Int16(data.data.3) << 8)
-			let yq = y / 1600
-			let z = (Int16(data.data.4) & 0xff) | (Int16(data.data.5) << 8)
-			let zq = z / 1600
-			
-/*			cnt -= 1
-			if (cnt <= 0) {
-				cnt = max_count
-				//if (xf != xq || yf != yq || zf != zq) {
-				let pos = SCNVector3(CGFloat(xf/cnt), CGFloat(yf/cnt), CGFloat(zf/cnt))
-				//let pos = SCNVector3(CGFloat(yf), CGFloat(xf), CGFloat(zf))
-				//SCNTransaction.flush()
-				//SCNTransaction.begin()
-				//SCNTransaction.setAnimationDuration(0.1)
-				//let action = SCNAction.moveTo(pos, duration: 0.1)
-				ship.position = pos
-				//SCNTransaction.commit()
-				//ship.runAction(action)
-				
-				xf = xq
-				yf = yq
-				zf = zq
-				//}
-			}
-			else {
-				//if (abs(xf) <= abs(xq)) {
-				xf += xq
-				//}
-				//if (abs(yf) <= abs(yq)) {
-				yf += yq
-				//}
-				//if (abs(xf) <= abs(xq)) {
-				zf += zq
-				//}
-				/*	if (xq == 0 && yq == 0 && zq == 0) {
-				//cnt = 1
-				xf = 0
-				yf = 0
-				zf = 0
-				//if (cnt <= 1) {
-				//ship.removeAllActions()
-				//	ship.position = SCNVector3(CGFloat(yf), CGFloat(xf), CGFloat(zf))
-				//}
-				
-				}*/
-			}
-			*/
-			//textview.text = String("Extrn Force - x:\(xq), y:\(yq), z:\(zq)")
-			//print("Extrn Force - x:\(xq), y:\(yq), z:\(zq)")
-			break
-		case MAG_Data:
-			//
-			// Mag data
-			//
-			//let ship = scene.rootNode.childNodeWithName("ship", recursively: true)!
-			let x = (Int16(data.data.0) & 0xff) | (Int16(data.data.1) << 8)
-			let xq = x / 10
-			let y = (Int16(data.data.2) & 0xff) | (Int16(data.data.3) << 8)
-			let yq = y / 10
-			let z = (Int16(data.data.4) & 0xff) | (Int16(data.data.5) << 8)
-			let zq = z / 10
-			//textview.text = String("Mag - x:\(xq), y:\(yq), z:\(zq)")
-			//ship.rotation = SCNVector4(Float(xq), Float(yq), 0, GLKMathDegreesToRadians(90))
-			break
-		case TrajectoryInfo:
+		case NEBLINA_COMMAND_FUSION_TRAJECTORY_INFO_STREAM:
 			let x = (Int16(data.data.0) & 0xff) | (Int16(data.data.1) << 8)
 			let y = (Int16(data.data.2) & 0xff) | (Int16(data.data.3) << 8)
 			let z = (Int16(data.data.4) & 0xff) | (Int16(data.data.5) << 8)
@@ -278,7 +214,23 @@ class DetailViewController: UIViewController, CBPeripheralDelegate, NeblinaDeleg
 			
 		default: break
 		}
+	}
+	func didReceivePmgntData(sender : Neblina, respType : Int32, cmdRspId : Int32, data : UnsafePointer<UInt8>, dataLen : Int, errFlag : Bool) {
 		
+	}
+	func didReceiveLedData(sender : Neblina, respType : Int32, cmdRspId : Int32, data : UnsafePointer<UInt8>, dataLen : Int, errFlag : Bool) {
+		
+	}
+	func didReceiveDebugData(sender : Neblina, respType : Int32, cmdRspId : Int32, data : UnsafePointer<UInt8>, dataLen : Int, errFlag : Bool) {
+		
+	}
+	func didReceiveRecorderData(sender : Neblina, respType : Int32, cmdRspId : Int32, data : UnsafePointer<UInt8>, dataLen : Int, errFlag : Bool) {
+		
+	}
+	func didReceiveEepromData(sender : Neblina, respType : Int32, cmdRspId : Int32, data : UnsafePointer<UInt8>, dataLen : Int, errFlag : Bool) {
+		
+	}
+	func didReceiveSensorData(sender : Neblina, respType : Int32, cmdRspId : Int32, data : UnsafePointer<UInt8>, dataLen : Int, errFlag : Bool) {
 		
 	}
 	

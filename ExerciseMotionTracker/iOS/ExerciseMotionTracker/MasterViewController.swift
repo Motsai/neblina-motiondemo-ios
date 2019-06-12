@@ -46,7 +46,7 @@ class MasterViewController: UITableViewController, CBCentralManagerDelegate {
 		// Dispose of any resources that can be recreated.
 	}
 
-	func insertRefreshScan(_ sender: AnyObject) {
+	@objc func insertRefreshScan(_ sender: AnyObject) {
 		bleCentralManager.stopScan()
 		objects.removeAll()
 		bleCentralManager.scanForPeripherals(withServices: [NEB_SERVICE_UUID], options: nil)
@@ -70,6 +70,7 @@ class MasterViewController: UITableViewController, CBCentralManagerDelegate {
 					bleCentralManager.cancelPeripheralConnection(controller.nebdev!.device)
 				}
 				controller.nebdev = object
+				controller.bleCentralManager = bleCentralManager
 			}
 		}
 	}
@@ -90,7 +91,9 @@ class MasterViewController: UITableViewController, CBCentralManagerDelegate {
 		let object = objects[(indexPath as NSIndexPath).row]
 		cell.textLabel!.text = object.device.name
 		print("\(cell.textLabel!.text)")
-		cell.textLabel!.text = object.device.name! + String(format: "_%lX", object.id)
+		if object.device.name != nil {
+			cell.textLabel!.text = object.device.name! + String(format: "_%lX", object.id)
+		}
 		print("Cell Name : \(cell.textLabel!.text)")
 		return cell
 	}
@@ -100,7 +103,7 @@ class MasterViewController: UITableViewController, CBCentralManagerDelegate {
 		return false
 	}
 	
-	override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
+	override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
 		if editingStyle == .delete {
 			objects.remove(at: (indexPath as NSIndexPath).row)
 			tableView.deleteRows(at: [indexPath], with: .fade)
@@ -133,18 +136,27 @@ class MasterViewController: UITableViewController, CBCentralManagerDelegate {
 			print("UUID DESCRIPTION: \(peripheral.identifier.uuidString)\n")
 			
 			print("IDENTIFIER: \(peripheral.identifier)\n")
-		if advertisementData[CBAdvertisementDataManufacturerDataKey] == nil {
-			return
-		}
 		
-			//sensorData.text = sensorData.text + "FOUND PERIPHERALS: \(peripheral) AdvertisementData: \(advertisementData) RSSI: \(RSSI)\n"
-			var id : UInt64 = 0
-		(advertisementData[CBAdvertisementDataManufacturerDataKey] as! NSData).getBytes(&id, range: NSMakeRange(2, 8))
-		if (id == 0) {
-			return
-		}
+			if advertisementData[CBAdvertisementDataManufacturerDataKey] == nil {
+				return
+			}
+			
+				//sensorData.text = sensorData.text + "FOUND PERIPHERALS: \(peripheral) AdvertisementData: \(advertisementData) RSSI: \(RSSI)\n"
+				var id : UInt64 = 0
+			(advertisementData[CBAdvertisementDataManufacturerDataKey] as! NSData).getBytes(&id, range: NSMakeRange(2, 8))
+			if (id == 0) {
+				return
+			}
 		
-			let device = Neblina(devid: id, peripheral: peripheral)
+			var name : String? = nil
+			if advertisementData[CBAdvertisementDataLocalNameKey] == nil {
+				print("bad, no name")
+				name = peripheral.name
+			}
+			else {
+				name = advertisementData[CBAdvertisementDataLocalNameKey] as! String
+			}
+			let device = Neblina(devName: name!, devid: id, peripheral: peripheral)
 			
 			for dev in objects
 			{
