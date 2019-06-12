@@ -1,0 +1,605 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 50;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		C9549DA31E942FA50020674F /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9549DA21E942FA50020674F /* AppDelegate.swift */; };
+		C9549DA51E942FA50020674F /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9549DA41E942FA50020674F /* ViewController.swift */; };
+		C9549DA81E942FA50020674F /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = C9549DA61E942FA50020674F /* Main.storyboard */; };
+		C9549DAB1E942FA50020674F /* NebFullBody.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = C9549DA91E942FA50020674F /* NebFullBody.xcdatamodeld */; };
+		C9549DAD1E942FA50020674F /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C9549DAC1E942FA50020674F /* Assets.xcassets */; };
+		C9549DB01E942FA50020674F /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = C9549DAE1E942FA50020674F /* LaunchScreen.storyboard */; };
+		C9549DBB1E942FA60020674F /* NebFullBodyTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9549DBA1E942FA60020674F /* NebFullBodyTests.swift */; };
+		C9549DC61E942FA60020674F /* NebFullBodyUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9549DC51E942FA60020674F /* NebFullBodyUITests.swift */; };
+		C9549DDB1E9434400020674F /* art.scnassets in Resources */ = {isa = PBXBuildFile; fileRef = C9549DDA1E9434400020674F /* art.scnassets */; };
+		C9549DE01E94344A0020674F /* Neblina.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9549DDE1E94344A0020674F /* Neblina.swift */; };
+		C9E5851A20585F700049C1F7 /* NeblinaControl.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9E5851920585F700049C1F7 /* NeblinaControl.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		C9549DB71E942FA60020674F /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = C9549D971E942FA50020674F /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = C9549D9E1E942FA50020674F;
+			remoteInfo = NebFullBody;
+		};
+		C9549DC21E942FA60020674F /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = C9549D971E942FA50020674F /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = C9549D9E1E942FA50020674F;
+			remoteInfo = NebFullBody;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		C9549D9F1E942FA50020674F /* NebFullBody.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = NebFullBody.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		C9549DA21E942FA50020674F /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		C9549DA41E942FA50020674F /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
+		C9549DA71E942FA50020674F /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
+		C9549DAA1E942FA50020674F /* NebFullBody.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = NebFullBody.xcdatamodel; sourceTree = "<group>"; };
+		C9549DAC1E942FA50020674F /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		C9549DAF1E942FA50020674F /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
+		C9549DB11E942FA50020674F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		C9549DB61E942FA60020674F /* NebFullBodyTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = NebFullBodyTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		C9549DBA1E942FA60020674F /* NebFullBodyTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NebFullBodyTests.swift; sourceTree = "<group>"; };
+		C9549DBC1E942FA60020674F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		C9549DC11E942FA60020674F /* NebFullBodyUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = NebFullBodyUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		C9549DC51E942FA60020674F /* NebFullBodyUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NebFullBodyUITests.swift; sourceTree = "<group>"; };
+		C9549DC71E942FA60020674F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		C9549DDA1E9434400020674F /* art.scnassets */ = {isa = PBXFileReference; lastKnownFileType = wrapper.scnassets; name = art.scnassets; path = ../../../art.scnassets; sourceTree = "<group>"; };
+		C9549DDC1E94344A0020674F /* Neblina-Bridging-Header.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "Neblina-Bridging-Header.h"; path = "../../../src/Neblina-Bridging-Header.h"; sourceTree = "<group>"; };
+		C9549DDD1E94344A0020674F /* neblina.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = neblina.h; path = ../../../src/neblina.h; sourceTree = "<group>"; };
+		C9549DDE1E94344A0020674F /* Neblina.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Neblina.swift; path = ../../../src/Neblina.swift; sourceTree = "<group>"; };
+		C9549DDF1E94344A0020674F /* neblinaFusion.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = neblinaFusion.h; path = ../../../src/neblinaFusion.h; sourceTree = "<group>"; };
+		C9E5851920585F700049C1F7 /* NeblinaControl.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = NeblinaControl.swift; path = ../../../src/NeblinaControl.swift; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		C9549D9C1E942FA50020674F /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		C9549DB31E942FA60020674F /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		C9549DBE1E942FA60020674F /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		C9549D961E942FA50020674F = {
+			isa = PBXGroup;
+			children = (
+				C9549DA11E942FA50020674F /* NebFullBody */,
+				C9549DB91E942FA60020674F /* NebFullBodyTests */,
+				C9549DC41E942FA60020674F /* NebFullBodyUITests */,
+				C9549DA01E942FA50020674F /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		C9549DA01E942FA50020674F /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				C9549D9F1E942FA50020674F /* NebFullBody.app */,
+				C9549DB61E942FA60020674F /* NebFullBodyTests.xctest */,
+				C9549DC11E942FA60020674F /* NebFullBodyUITests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		C9549DA11E942FA50020674F /* NebFullBody */ = {
+			isa = PBXGroup;
+			children = (
+				C9E5851920585F700049C1F7 /* NeblinaControl.swift */,
+				C9549DDC1E94344A0020674F /* Neblina-Bridging-Header.h */,
+				C9549DDD1E94344A0020674F /* neblina.h */,
+				C9549DDE1E94344A0020674F /* Neblina.swift */,
+				C9549DDF1E94344A0020674F /* neblinaFusion.h */,
+				C9549DDA1E9434400020674F /* art.scnassets */,
+				C9549DA21E942FA50020674F /* AppDelegate.swift */,
+				C9549DA41E942FA50020674F /* ViewController.swift */,
+				C9549DA61E942FA50020674F /* Main.storyboard */,
+				C9549DAC1E942FA50020674F /* Assets.xcassets */,
+				C9549DAE1E942FA50020674F /* LaunchScreen.storyboard */,
+				C9549DB11E942FA50020674F /* Info.plist */,
+				C9549DA91E942FA50020674F /* NebFullBody.xcdatamodeld */,
+			);
+			path = NebFullBody;
+			sourceTree = "<group>";
+		};
+		C9549DB91E942FA60020674F /* NebFullBodyTests */ = {
+			isa = PBXGroup;
+			children = (
+				C9549DBA1E942FA60020674F /* NebFullBodyTests.swift */,
+				C9549DBC1E942FA60020674F /* Info.plist */,
+			);
+			path = NebFullBodyTests;
+			sourceTree = "<group>";
+		};
+		C9549DC41E942FA60020674F /* NebFullBodyUITests */ = {
+			isa = PBXGroup;
+			children = (
+				C9549DC51E942FA60020674F /* NebFullBodyUITests.swift */,
+				C9549DC71E942FA60020674F /* Info.plist */,
+			);
+			path = NebFullBodyUITests;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		C9549D9E1E942FA50020674F /* NebFullBody */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = C9549DCA1E942FA60020674F /* Build configuration list for PBXNativeTarget "NebFullBody" */;
+			buildPhases = (
+				C9549D9B1E942FA50020674F /* Sources */,
+				C9549D9C1E942FA50020674F /* Frameworks */,
+				C9549D9D1E942FA50020674F /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = NebFullBody;
+			productName = NebFullBody;
+			productReference = C9549D9F1E942FA50020674F /* NebFullBody.app */;
+			productType = "com.apple.product-type.application";
+		};
+		C9549DB51E942FA60020674F /* NebFullBodyTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = C9549DCD1E942FA60020674F /* Build configuration list for PBXNativeTarget "NebFullBodyTests" */;
+			buildPhases = (
+				C9549DB21E942FA60020674F /* Sources */,
+				C9549DB31E942FA60020674F /* Frameworks */,
+				C9549DB41E942FA60020674F /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				C9549DB81E942FA60020674F /* PBXTargetDependency */,
+			);
+			name = NebFullBodyTests;
+			productName = NebFullBodyTests;
+			productReference = C9549DB61E942FA60020674F /* NebFullBodyTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		C9549DC01E942FA60020674F /* NebFullBodyUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = C9549DD01E942FA60020674F /* Build configuration list for PBXNativeTarget "NebFullBodyUITests" */;
+			buildPhases = (
+				C9549DBD1E942FA60020674F /* Sources */,
+				C9549DBE1E942FA60020674F /* Frameworks */,
+				C9549DBF1E942FA60020674F /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				C9549DC31E942FA60020674F /* PBXTargetDependency */,
+			);
+			name = NebFullBodyUITests;
+			productName = NebFullBodyUITests;
+			productReference = C9549DC11E942FA60020674F /* NebFullBodyUITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		C9549D971E942FA50020674F /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastSwiftUpdateCheck = 0830;
+				LastUpgradeCheck = 0830;
+				ORGANIZATIONNAME = "Hoan Hoang";
+				TargetAttributes = {
+					C9549D9E1E942FA50020674F = {
+						CreatedOnToolsVersion = 8.3;
+						DevelopmentTeam = M9G2K5W3T4;
+						ProvisioningStyle = Automatic;
+					};
+					C9549DB51E942FA60020674F = {
+						CreatedOnToolsVersion = 8.3;
+						DevelopmentTeam = GZD6X2TVP8;
+						ProvisioningStyle = Automatic;
+						TestTargetID = C9549D9E1E942FA50020674F;
+					};
+					C9549DC01E942FA60020674F = {
+						CreatedOnToolsVersion = 8.3;
+						DevelopmentTeam = GZD6X2TVP8;
+						ProvisioningStyle = Automatic;
+						TestTargetID = C9549D9E1E942FA50020674F;
+					};
+				};
+			};
+			buildConfigurationList = C9549D9A1E942FA50020674F /* Build configuration list for PBXProject "NebFullBody" */;
+			compatibilityVersion = "Xcode 9.3";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				English,
+				en,
+				Base,
+			);
+			mainGroup = C9549D961E942FA50020674F;
+			productRefGroup = C9549DA01E942FA50020674F /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				C9549D9E1E942FA50020674F /* NebFullBody */,
+				C9549DB51E942FA60020674F /* NebFullBodyTests */,
+				C9549DC01E942FA60020674F /* NebFullBodyUITests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		C9549D9D1E942FA50020674F /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C9549DB01E942FA50020674F /* LaunchScreen.storyboard in Resources */,
+				C9549DDB1E9434400020674F /* art.scnassets in Resources */,
+				C9549DAD1E942FA50020674F /* Assets.xcassets in Resources */,
+				C9549DA81E942FA50020674F /* Main.storyboard in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		C9549DB41E942FA60020674F /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		C9549DBF1E942FA60020674F /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		C9549D9B1E942FA50020674F /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C9549DA51E942FA50020674F /* ViewController.swift in Sources */,
+				C9549DE01E94344A0020674F /* Neblina.swift in Sources */,
+				C9549DAB1E942FA50020674F /* NebFullBody.xcdatamodeld in Sources */,
+				C9E5851A20585F700049C1F7 /* NeblinaControl.swift in Sources */,
+				C9549DA31E942FA50020674F /* AppDelegate.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		C9549DB21E942FA60020674F /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C9549DBB1E942FA60020674F /* NebFullBodyTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		C9549DBD1E942FA60020674F /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C9549DC61E942FA60020674F /* NebFullBodyUITests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		C9549DB81E942FA60020674F /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = C9549D9E1E942FA50020674F /* NebFullBody */;
+			targetProxy = C9549DB71E942FA60020674F /* PBXContainerItemProxy */;
+		};
+		C9549DC31E942FA60020674F /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = C9549D9E1E942FA50020674F /* NebFullBody */;
+			targetProxy = C9549DC21E942FA60020674F /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin PBXVariantGroup section */
+		C9549DA61E942FA50020674F /* Main.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				C9549DA71E942FA50020674F /* Base */,
+			);
+			name = Main.storyboard;
+			sourceTree = "<group>";
+		};
+		C9549DAE1E942FA50020674F /* LaunchScreen.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				C9549DAF1E942FA50020674F /* Base */,
+			);
+			name = LaunchScreen.storyboard;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		C9549DC81E942FA60020674F /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.3;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		C9549DC91E942FA60020674F /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.3;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		C9549DCB1E942FA60020674F /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				DEVELOPMENT_TEAM = M9G2K5W3T4;
+				INFOPLIST_FILE = NebFullBody/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.motsai.NebFullBody;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "../../src/Neblina-Bridging-Header.h";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		C9549DCC1E942FA60020674F /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				DEVELOPMENT_TEAM = M9G2K5W3T4;
+				INFOPLIST_FILE = NebFullBody/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.motsai.NebFullBody;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "../../src/Neblina-Bridging-Header.h";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
+		C9549DCE1E942FA60020674F /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				DEVELOPMENT_TEAM = GZD6X2TVP8;
+				INFOPLIST_FILE = NebFullBodyTests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.motsai.NebFullBodyTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 3.0;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/NebFullBody.app/NebFullBody";
+			};
+			name = Debug;
+		};
+		C9549DCF1E942FA60020674F /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				DEVELOPMENT_TEAM = GZD6X2TVP8;
+				INFOPLIST_FILE = NebFullBodyTests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.motsai.NebFullBodyTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 3.0;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/NebFullBody.app/NebFullBody";
+			};
+			name = Release;
+		};
+		C9549DD11E942FA60020674F /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				DEVELOPMENT_TEAM = GZD6X2TVP8;
+				INFOPLIST_FILE = NebFullBodyUITests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.motsai.NebFullBodyUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 3.0;
+				TEST_TARGET_NAME = NebFullBody;
+			};
+			name = Debug;
+		};
+		C9549DD21E942FA60020674F /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				DEVELOPMENT_TEAM = GZD6X2TVP8;
+				INFOPLIST_FILE = NebFullBodyUITests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.motsai.NebFullBodyUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 3.0;
+				TEST_TARGET_NAME = NebFullBody;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		C9549D9A1E942FA50020674F /* Build configuration list for PBXProject "NebFullBody" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				C9549DC81E942FA60020674F /* Debug */,
+				C9549DC91E942FA60020674F /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		C9549DCA1E942FA60020674F /* Build configuration list for PBXNativeTarget "NebFullBody" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				C9549DCB1E942FA60020674F /* Debug */,
+				C9549DCC1E942FA60020674F /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		C9549DCD1E942FA60020674F /* Build configuration list for PBXNativeTarget "NebFullBodyTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				C9549DCE1E942FA60020674F /* Debug */,
+				C9549DCF1E942FA60020674F /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		C9549DD01E942FA60020674F /* Build configuration list for PBXNativeTarget "NebFullBodyUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				C9549DD11E942FA60020674F /* Debug */,
+				C9549DD21E942FA60020674F /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+
+/* Begin XCVersionGroup section */
+		C9549DA91E942FA50020674F /* NebFullBody.xcdatamodeld */ = {
+			isa = XCVersionGroup;
+			children = (
+				C9549DAA1E942FA50020674F /* NebFullBody.xcdatamodel */,
+			);
+			currentVersion = C9549DAA1E942FA50020674F /* NebFullBody.xcdatamodel */;
+			path = NebFullBody.xcdatamodeld;
+			sourceTree = "<group>";
+			versionGroupType = wrapper.xcdatamodel;
+		};
+/* End XCVersionGroup section */
+	};
+	rootObject = C9549D971E942FA50020674F /* Project object */;
+}
