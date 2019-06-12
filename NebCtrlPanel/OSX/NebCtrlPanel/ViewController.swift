@@ -775,7 +775,7 @@ class ViewController: NSViewController, NSTableViewDataSource, NSTableViewDelega
 	
 	// MARK: - Table View
 	
-	func tableViewDoubleClick(_ sender:AnyObject) {
+	@objc func tableViewDoubleClick(_ sender:AnyObject) {
 		let dev = selectedDevices.remove(at: self.selectedView.selectedRow)
 		
 		devListView.reloadData()
@@ -805,7 +805,7 @@ class ViewController: NSViewController, NSTableViewDataSource, NSTableViewDelega
 	{
 		if (tableView == devListView) {
 			if (row < foundDevices.count) {
-				let cellView = tableView.make(withIdentifier: "CellDevice", owner: self) as! NSTableCellView
+				let cellView = tableView.makeView(withIdentifier: NSUserInterfaceItemIdentifier(rawValue: "CellDevice"), owner: self) as! NSTableCellView
 			
 				if foundDevices[row].device.name != nil {
 					cellView.textField!.stringValue = foundDevices[row].device.name!
@@ -820,7 +820,7 @@ class ViewController: NSViewController, NSTableViewDataSource, NSTableViewDelega
 		}
 		if (tableView == selectedView) {
 			if (row < selectedDevices.count) {
-				let cellView = tableView.make(withIdentifier: "CellDevice", owner: self) as! NSTableCellView
+				let cellView = tableView.makeView(withIdentifier: NSUserInterfaceItemIdentifier(rawValue: "CellDevice"), owner: self) as! NSTableCellView
 				
 				if selectedDevices[row].device.name != nil {
 					cellView.textField!.stringValue = selectedDevices[row].device.name!
@@ -837,7 +837,7 @@ class ViewController: NSViewController, NSTableViewDataSource, NSTableViewDelega
 			if (row < NebCmdList.count)
 			{
 				
-				let cellView = tableView.make(withIdentifier: "CellCmd", owner: self) as! NSTableCellView
+				let cellView = tableView.makeView(withIdentifier: NSUserInterfaceItemIdentifier(rawValue: "CellCmd"), owner: self) as! NSTableCellView
 				cellView.textField!.stringValue = NebCmdList[row].Name
 				switch (NebCmdList[row].Actuator) {
 					case 4:
@@ -1307,7 +1307,7 @@ class ViewController: NSViewController, NSTableViewDataSource, NSTableViewDelega
 			else
 			{
 				let tdiff = data.timestamp - prevTimeStamp;
-				if (tdiff > 49000)
+				if (tdiff > 29000)
 				{
 					dropCnt += 1
 					dumpLabel.stringValue = String("\(dropCnt) Drop : \(tdiff)")

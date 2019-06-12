@@ -58,20 +58,24 @@ class DetailViewController: UIViewController, CBPeripheralDelegate, SCNSceneRend
 
 	}
 	
-	func didReceiveResponsePacket(sender : Neblina, subsystem : Int32, cmdRspId : Int32, data : UnsafeRawPointer, dataLen : Int)
-	{
+	func didReceiveResponsePacket(sender: Neblina, subsystem: Int32, cmdRspId: Int32, data: UnsafePointer<UInt8>, dataLen: Int) {
 		
 	}
-	
+
 	func didReceiveRSSI(sender : Neblina, rssi : NSNumber) {
 		
 	}
 	
+	func didReceiveBatteryLevel(sender: Neblina, level: UInt8) {
+		
+	}
+	
+
 	func didReceiveGeneralData(sender : Neblina, respType : Int32, cmdRspId : Int32, data : UnsafeRawPointer, dataLen : Int, errFlag : Bool) {
 		
 	}
 
-	func didReceiveFusionData(sender : Neblina, respType : Int32, cmdRspId : Int32, data : NeblinaFusionPacket, errFlag : Bool) {
+	func didReceiveFusionData(sender : Neblina, respType : Int32, cmdRspId : Int32, data : NeblinaFusionPacket_t, errFlag : Bool) {
 		//	let textview = self.view.viewWithTag(3) as! UITextView
 		
 		switch (cmdRspId) {

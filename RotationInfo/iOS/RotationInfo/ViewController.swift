@@ -47,7 +47,7 @@ class ViewController: UIViewController, UITextFieldDelegate, CBCentralManagerDel
 		// Dispose of any resources that can be recreated.
 	}
 
-	func updateTimer() {
+	@objc func updateTimer() {
 		if (nebdev != nil) {
 			nebdev.device.readRSSI()
 			nebdev.getTemperature()
@@ -64,21 +64,21 @@ class ViewController: UIViewController, UITextFieldDelegate, CBCentralManagerDel
 		recState = !recState
 		if (recState == true) {
 			// Start recording
-			sender.setTitle("Stop", for: UIControlState())
+			sender.setTitle("Stop", for: UIControl.State())
 			nebdev.sensorStreamMagData(true)
 			nebdev.sensorStreamAccelGyroData(true)
 		}
 		else {
 			nebdev.sensorStreamMagData(false)
 			nebdev.sensorStreamAccelGyroData(false)
-			sender.setTitle("Start", for: UIControlState())
+			sender.setTitle("Start", for: UIControl.State())
 		}
-		nebdev.sessionRecord(recState)
+		//nebdev.sessionRecord(recState, info: <#String#>)
 	}
 	
 	@IBAction func resetAction(_ sender:UIButton) {
-		nebdev.streamRotationInfo(false);	// Reset counts
-		nebdev.streamRotationInfo(true);
+		//nebdev.streamRotationInfo(false, Type: <#UInt8#>);	// Reset counts
+		//nebdev.streamRotationInfo(true, Type: <#UInt8#>);
 	}
 	
 	
@@ -125,7 +125,7 @@ class ViewController: UIViewController, UITextFieldDelegate, CBCentralManagerDel
 	}
 	
 	
-	func tableView(_ tableView: UITableView, commitEditingStyle editingStyle: UITableViewCellEditingStyle, forRowAtIndexPath indexPath: IndexPath) {
+	func tableView(_ tableView: UITableView, commitEditingStyle editingStyle: UITableViewCell.EditingStyle, forRowAtIndexPath indexPath: IndexPath) {
 		if editingStyle == .delete {
 			objects.remove(at: (indexPath as NSIndexPath).row)
 			tableView.deleteRows(at: [indexPath], with: .fade)
@@ -274,11 +274,13 @@ class ViewController: UIViewController, UITextFieldDelegate, CBCentralManagerDel
 		nebdev.getSystemStatus()
 		nebdev.getFirmwareVersion()
 //		nebdev.device.readRSSI()
-		nebdev.streamRotationInfo(true);
+		//nebdev.streamRotationInfo(true, Type: <#UInt8#>);
+	}
+	func didReceiveBatteryLevel(sender: Neblina, level: UInt8) {
+		
 	}
 	
-	func didReceiveResponsePacket(sender : Neblina, subsystem : Int32, cmdRspId : Int32, data : UnsafeRawPointer, dataLen : Int)
-	{
+	func didReceiveResponsePacket(sender: Neblina, subsystem: Int32, cmdRspId: Int32, data: UnsafePointer<UInt8>, dataLen: Int) {
 		
 	}
 	
@@ -294,7 +296,7 @@ class ViewController: UIViewController, UITextFieldDelegate, CBCentralManagerDel
 		}
 	}
 
-	func didReceiveFusionData(sender : Neblina, respType : Int32, cmdRspId : Int32, data : NeblinaFusionPacket, errFlag : Bool) {
+	func didReceiveFusionData(sender : Neblina, respType : Int32, cmdRspId : Int32, data : NeblinaFusionPacket_t, errFlag : Bool) {
 		
 		//let errflag = Bool(type.rawValue & 0x80 == 0x80)
 		
@@ -420,9 +422,9 @@ class ViewController: UIViewController, UITextFieldDelegate, CBCentralManagerDel
 			break
 		case NEBLINA_COMMAND_GENERAL_FIRMWARE_VERSION:
 			let d = data.load(as: NeblinaFirmwareVersion_t.self)
-			versLabel.text = String(format: "API:%d, FEN:%d.%d.%d, BLE:%d.%d.%d", d.apiVersion,
-			                        d.coreVersion.major, d.coreVersion.minor, d.coreVersion.build,
-			                        d.bleVersion.major, d.bleVersion.minor, d.bleVersion.build)
+			//versLabel.text = String(format: "API:%d, FEN:%d.%d.%d, BLE:%d.%d.%d", d.apiVersion,
+			  //                      d.coreVersion.major, d.coreVersion.minor, d.coreVersion.build,
+			    //                    d.bleVersion.major, d.bleVersion.minor, d.bleVersion.build)
 		default:
 			break
 		}

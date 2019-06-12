@@ -15,6 +15,7 @@ struct NebDevice {
 }
 */
 class ViewController: NSViewController, NSTableViewDataSource, NSTableViewDelegate, CBCentralManagerDelegate, NeblinaDelegate {
+	
 
 	var bleCentralManager : CBCentralManager!
 	var objects = [Neblina]()
@@ -57,7 +58,7 @@ class ViewController: NSViewController, NSTableViewDataSource, NSTableViewDelega
 	{
 		if (row < objects.count)
 		{
-			var cellView = tableView.make(withIdentifier: "CellDevice", owner: self) as! NSTableCellView
+			var cellView = tableView.makeView(withIdentifier: NSUserInterfaceItemIdentifier(rawValue: "CellDevice"), owner: self) as! NSTableCellView
 			//String
 			if objects[row].device.name != nil {
 			cellView.textField?.stringValue = objects[row].device.name! + String(format: "_%lX", objects[row].id)
@@ -107,9 +108,17 @@ class ViewController: NSViewController, NSTableViewDataSource, NSTableViewDelega
 			// Hardware beacon
 			print("PERIPHERAL NAME: \(peripheral.name)\n AdvertisementData: \(advertisementData)\n RSSI: \(RSSI)\n")
 			
+		if #available(OSX 10.13, *) {
 			print("UUID DESCRIPTION: \(peripheral.identifier.uuidString)\n")
+		} else {
+			// Fallback on earlier versions
+		}
 			
+		if #available(OSX 10.13, *) {
 			print("IDENTIFIER: \(peripheral.identifier)\n")
+		} else {
+			// Fallback on earlier versions
+		}
 
 			if advertisementData[CBAdvertisementDataManufacturerDataKey] == nil {
 				return
@@ -230,8 +239,11 @@ class ViewController: NSViewController, NSTableViewDataSource, NSTableViewDelega
 		nebdev.streamPedometer(true)
 	}
 
-	func didReceiveResponsePacket(sender : Neblina, subsystem : Int32, cmdRspId : Int32, data : UnsafeRawPointer, dataLen : Int)
-	{
+	func didReceiveBatteryLevel(sender: Neblina, level: UInt8) {
+		
+	}
+	
+	func didReceiveResponsePacket(sender: Neblina, subsystem: Int32, cmdRspId: Int32, data: UnsafePointer<UInt8>, dataLen: Int) {
 		
 	}
 	
@@ -243,7 +255,7 @@ class ViewController: NSViewController, NSTableViewDataSource, NSTableViewDelega
 		
 	}
 
-	func didReceiveFusionData(sender : Neblina, respType : Int32, cmdRspId : Int32, data : NeblinaFusionPacket, errFlag : Bool) {
+	func didReceiveFusionData(sender : Neblina, respType : Int32, cmdRspId : Int32, data : NeblinaFusionPacket_t, errFlag : Bool) {
 	//	let textview = self.view.viewWithTag(3) as! UITextView
 		
 		switch (cmdRspId) {
