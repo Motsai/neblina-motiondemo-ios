@@ -46,7 +46,7 @@ class MasterViewController: UITableViewController, CBCentralManagerDelegate {
 		// Dispose of any resources that can be recreated.
 	}
 
-	func insertRefreshScan(_ sender: AnyObject) {
+	@objc func insertRefreshScan(_ sender: AnyObject) {
 		bleCentralManager.stopScan()
 		objects.removeAll()
 		bleCentralManager.scanForPeripherals(withServices: [NEB_SERVICE_UUID], options: nil)
@@ -103,7 +103,7 @@ class MasterViewController: UITableViewController, CBCentralManagerDelegate {
 		return false
 	}
 	
-	override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
+	override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
 		if editingStyle == .delete {
 			objects.remove(at: (indexPath as NSIndexPath).row)
 			tableView.deleteRows(at: [indexPath], with: .fade)

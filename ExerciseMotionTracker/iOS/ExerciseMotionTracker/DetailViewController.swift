@@ -11,6 +11,7 @@ import CoreBluetooth
 import SceneKit
 
 class DetailViewController: UIViewController, CBPeripheralDelegate, NeblinaDelegate, SCNSceneRendererDelegate {
+	
 	var bleCentralManager : CBCentralManager!
 	
 	var nebdev : Neblina! {
@@ -132,19 +133,21 @@ class DetailViewController: UIViewController, CBPeripheralDelegate, NeblinaDeleg
 		let view = self.view.subviews[5] as! UITextField
 		view.text = nebdev.device.name
 	}
-	
-	func didReceiveResponsePacket(sender : Neblina, subsystem : Int32, cmdRspId : Int32, data : UnsafeRawPointer, dataLen : Int)
-	{
+	func didReceiveBatteryLevel(sender: Neblina, level: UInt8) {
 		
 	}
+	
+	func didReceiveResponsePacket(sender: Neblina, subsystem: Int32, cmdRspId: Int32, data: UnsafePointer<UInt8>, dataLen: Int) {
 		
+	}
+
 	func didReceiveRSSI(sender : Neblina , rssi : NSNumber) {
 		
 	}
 	func didReceiveGeneralData(sender : Neblina, respType : Int32, cmdRspId : Int32, data : UnsafeRawPointer, dataLen : Int, errFlag : Bool) {
 		
 	}
-	func didReceiveFusionData(sender : Neblina, respType : Int32, cmdRspId : Int32, data : NeblinaFusionPacket, errFlag : Bool) {
+	func didReceiveFusionData(sender : Neblina, respType : Int32, cmdRspId : Int32, data : NeblinaFusionPacket_t, errFlag : Bool) {
 //	func didReceiveFusionData(type : FusionId, data : Fusion_DataPacket_t) {
 		//let textview = self.view.viewWithTag(3) as! UITextView
 		
