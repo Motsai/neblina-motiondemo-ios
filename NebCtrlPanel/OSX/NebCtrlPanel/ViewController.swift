@@ -36,6 +36,8 @@ let NebCmdList = [NebCmdItem] (arrayLiteral:
 	           Name: "Calibrate Down Pos", Actuator : ACTUATOR_TYPE_BUTTON, Text: "Calib Dwn"),
 	NebCmdItem(SubSysId: NEBLINA_SUBSYSTEM_FUSION, CmdId: NEBLINA_COMMAND_FUSION_QUATERNION_STREAM, ActiveStatus: UInt32(NEBLINA_FUSION_STATUS_QUATERNION.rawValue),
 	           Name: "Quaternion Stream", Actuator : ACTUATOR_TYPE_SWITCH, Text: ""),
+	NebCmdItem(SubSysId: NEBLINA_SUBSYSTEM_FUSION, CmdId: NEBLINA_COMMAND_FUSION_EULER_ANGLE_STREAM, ActiveStatus: UInt32(NEBLINA_FUSION_STATUS_EULER_ANGLE.rawValue),
+			   Name: "Euler Stream", Actuator : ACTUATOR_TYPE_SWITCH, Text: ""),
 	NebCmdItem(SubSysId: NEBLINA_SUBSYSTEM_SENSOR, CmdId: NEBLINA_COMMAND_SENSOR_ACCELEROMETER_STREAM, ActiveStatus: UInt32(NEBLINA_SENSOR_STATUS_ACCELEROMETER.rawValue),
 	           Name: "Accelerometer Sensor Stream", Actuator : ACTUATOR_TYPE_SWITCH, Text: ""),
 	NebCmdItem(SubSysId: NEBLINA_SUBSYSTEM_SENSOR, CmdId: NEBLINA_COMMAND_SENSOR_GYROSCOPE_STREAM, ActiveStatus: UInt32(NEBLINA_SENSOR_STATUS_GYROSCOPE.rawValue),
@@ -81,6 +83,8 @@ class ViewController: NSViewController, NSTableViewDataSource, NSTableViewDelega
 	var selectedDevices = [Neblina]()
 	var nebdev : Neblina? = nil	// Neblina(devName: nil, devid: 0, peripheral: nil)
 	var prevTimeStamp = UInt32(0)
+	var timeStamp = UInt32(0)
+	var diffTime = UInt32(0)
 	var dropCnt = UInt32(0)
 	let max_count = Int16(15)
 	var cnt = Int16(15)
@@ -297,7 +301,7 @@ class ViewController: NSViewController, NSTableViewDataSource, NSTableViewDelega
 	
 	@IBAction func buttonAction(_ sender:NSButton)
 	{
-		
+		flashLabel.stringValue = " "
 		let row = cmdView.row(for: sender.superview!.superview!)
 		//let row = (idx?.row)! as Int
 		
@@ -1181,10 +1185,36 @@ class ViewController: NSViewController, NSTableViewDataSource, NSTableViewDelega
 					nebdev?.getSystemStatus()
 				}
 				//				print("\(versionLabel.stringValue)")
-				
 			default:
 				break
 			}
+		case NEBLINA_SUBSYSTEM_RECORDER:
+			switch (cmdRspId) {
+				case NEBLINA_COMMAND_RECORDER_RECORD:
+					break
+				case NEBLINA_COMMAND_RECORDER_SESSION_DOWNLOAD:
+					break
+				case NEBLINA_COMMAND_RECORDER_PLAYBACK:
+					if data[0] != 0 {
+						break
+					}
+					let id = (UInt16(data[0]) & 0xFF) | ((UInt16(data[1]) & 0xFF) << 8)
+					flashLabel.stringValue = "Playback completed"
+					playback = false
+					let i = getCmdIdx(NEBLINA_SUBSYSTEM_RECORDER,  cmdId: NEBLINA_COMMAND_RECORDER_PLAYBACK)
+					if i >= 0 {
+						let cell = cmdView.rowView(atRow: i, makeIfNecessary: false)
+						if (cell != nil) {
+							let control = cell!.viewWithTag(4) as! NSTextField
+							let but = cell!.viewWithTag(2) as! NSButton
+							but.title = "Play"
+						}
+					}
+					break
+				default:
+					break
+			}
+			break
 		default:
 			break
 		}
@@ -1297,7 +1327,7 @@ class ViewController: NSViewController, NSTableViewDataSource, NSTableViewDelega
 			let zq = Float(z) / 32768.0
 			let w = (Int16(data.data.6) & 0xff) | (Int16(data.data.7) << 8)
 			let wq = Float(w) / 32768.0
-			//print("\(data.TimeStamp)")
+//			print("\(data.timestamp)")
 			if (prevTimeStamp == 0 || data.timestamp <= prevTimeStamp)
 			{
 				prevTimeStamp = data.timestamp;
@@ -1307,16 +1337,20 @@ class ViewController: NSViewController, NSTableViewDataSource, NSTableViewDelega
 			else
 			{
 				let tdiff = data.timestamp - prevTimeStamp;
-				if (tdiff > 29000)
+				if (tdiff > 18000)
 				{
 					dropCnt += 1
 					dumpLabel.stringValue = String("\(dropCnt) Drop : \(tdiff)")
+				}
+				if (tdiff < 8)
+				{
+					print("diff \(tdiff)")
 				}
 				rxCount += 1
 				prevTimeStamp = data.timestamp
 				let curDate =  Date()
 				let rate = (Double(rxCount) * 20.0) / curDate.timeIntervalSince(startTime)
-				//print("\(data.TimeStamp), \(tdiff)")
+				//print("\(data.timestamp), \(tdiff)")
 			}
 			
 			ship.orientation = SCNQuaternion(-zq, xq, yq, wq)
@@ -1722,13 +1756,30 @@ class ViewController: NSViewController, NSTableViewDataSource, NSTableViewDelega
 		switch (cmdRspId) {
 		case NEBLINA_COMMAND_SENSOR_ACCELEROMETER_STREAM:
 			let x = (Int16(data[4]) & 0xff) | (Int16(data[5]) << 8)
-			let xq = x
+			//let xq = x
 			let y = (Int16(data[6]) & 0xff) | (Int16(data[7]) << 8)
-			let yq = y
+			//let yq = y
 			let z = (Int16(data[8]) & 0xff) | (Int16(data[9]) << 8)
-			let zq = z
-			dataLabel.stringValue = String("Accel - x:\(xq), y:\(yq), z:\(zq)")
+			//let zq = z
+			dataLabel.stringValue = String("Accel - x:\(x), y:\(y), z:\(z)")
+			//rxCount += 1
+			//timeStamp = (UInt32(data[0]) & 0xff) | (UInt32(data[1]) << 8) | (UInt32(data[2]) << 16) | (UInt32(data[2]) << 24)
+			//print("Time: \(t)")
+			//if (t - prevTimeStamp) > 10
+//			diffTime = timeStamp - prevTimeStamp;
+/*			if (diffTime > 18000)
+			{
+				dropCnt += 1
+				dumpLabel.stringValue = String("\(dropCnt) Drop : \(diffTime)")
+			}
+		
+			if (diffTime < 8)
+			{
+				print("diff \(diffTime)")
+			}
 			rxCount += 1
+			prevTimeStamp = timeStamp
+*/
 			break
 		case NEBLINA_COMMAND_SENSOR_GYROSCOPE_STREAM:
 			let x = (Int16(data[4]) & 0xff) | (Int16(data[5]) << 8)
