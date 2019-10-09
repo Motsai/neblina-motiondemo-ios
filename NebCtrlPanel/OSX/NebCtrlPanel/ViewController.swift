@@ -36,7 +36,7 @@ let NebCmdList = [NebCmdItem] (arrayLiteral:
 	           Name: "Calibrate Down Pos", Actuator : ACTUATOR_TYPE_BUTTON, Text: "Calib Dwn"),
 	NebCmdItem(SubSysId: NEBLINA_SUBSYSTEM_FUSION, CmdId: NEBLINA_COMMAND_FUSION_QUATERNION_STREAM, ActiveStatus: UInt32(NEBLINA_FUSION_STATUS_QUATERNION.rawValue),
 	           Name: "Quaternion Stream", Actuator : ACTUATOR_TYPE_SWITCH, Text: ""),
-	NebCmdItem(SubSysId: NEBLINA_SUBSYSTEM_FUSION, CmdId: NEBLINA_COMMAND_FUSION_EULER_ANGLE_STREAM, ActiveStatus: UInt32(NEBLINA_FUSION_STATUS_EULER_ANGLE.rawValue),
+	NebCmdItem(SubSysId: NEBLINA_SUBSYSTEM_FUSION, CmdId: NEBLINA_COMMAND_FUSION_EULER_ANGLE_STREAM, ActiveStatus: UInt32(NEBLINA_FUSION_STATUS_EULER.rawValue),
 			   Name: "Euler Stream", Actuator : ACTUATOR_TYPE_SWITCH, Text: ""),
 	NebCmdItem(SubSysId: NEBLINA_SUBSYSTEM_SENSOR, CmdId: NEBLINA_COMMAND_SENSOR_ACCELEROMETER_STREAM, ActiveStatus: UInt32(NEBLINA_SENSOR_STATUS_ACCELEROMETER.rawValue),
 	           Name: "Accelerometer Sensor Stream", Actuator : ACTUATOR_TYPE_SWITCH, Text: ""),
