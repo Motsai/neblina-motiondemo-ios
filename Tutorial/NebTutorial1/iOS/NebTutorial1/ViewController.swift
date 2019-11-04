@@ -9,7 +9,7 @@
 import UIKit
 import CoreBluetooth
 
-class ViewController: UIViewController, CBCentralManagerDelegate, NeblinaDelegate, UITableViewDataSource {
+class ViewController: UIViewController, CBCentralManagerDelegate, NeblinaDelegate, UITableViewDataSource, UITableViewDelegate {
 	
 	var objects = [Neblina]()//[NebDevice]()
 	var nebdev : Neblina!
@@ -31,17 +31,17 @@ class ViewController: UIViewController, CBCentralManagerDelegate, NeblinaDelegat
 
 	@IBAction func actionButton(_ sender:UISwitch) {
 		if nebdev != nil {
-			nebdev.streamEulerAngle(sender.isOn)
+			nebdev?.streamEulerAngle(sender.isOn)
 		}
 	}
 	
 	// MARK: - Table View
 		
-	@objc func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+	@objc  func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
 		return objects.count
 	}
 	
-	func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+	 func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
 		let cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath)
 		
 		let object = objects[(indexPath as NSIndexPath).row]
@@ -52,12 +52,12 @@ class ViewController: UIViewController, CBCentralManagerDelegate, NeblinaDelegat
 		return cell
 	}
 	
-	func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
+	 func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
 		// Return false if you do not want the specified item to be editable.
 		return false
 	}
 	
-	func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
+	 func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
 		if editingStyle == .delete {
 			objects.remove(at: (indexPath as NSIndexPath).row)
 			tableView.deleteRows(at: [indexPath], with: .fade)
@@ -66,8 +66,12 @@ class ViewController: UIViewController, CBCentralManagerDelegate, NeblinaDelegat
 		}
 	}
 	
-	func tableView(_ tableView: UITableView, didSelectRowAtIndexPath indexPath: IndexPath) {
-		nebdev = objects[(indexPath as NSIndexPath).row]
+	 func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+		
+	//}
+
+	//func tableView(_ tableView: UITableView, didSelectRowAtIndexPath indexPath: IndexPath) {
+ 		nebdev = objects[(indexPath as NSIndexPath).row]
 		nebdev.delegate = self
 		
 		bleCentralManager.cancelPeripheralConnection(nebdev.device)

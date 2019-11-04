@@ -92,6 +92,9 @@ class ViewController: UIViewController, CBCentralManagerDelegate, UITextFieldDel
 		else if sender.name.range(of: "02", options: NSString.CompareOptions.caseInsensitive) != nil {
 			label = display[1].subviews[2] as! UILabel
 		}
+		else if sender.name.range(of: "Left", options: NSString.CompareOptions.caseInsensitive) != nil {
+			label = display[0].subviews[2] as! UILabel
+		}
 
 		return label!
 	}
@@ -104,7 +107,10 @@ class ViewController: UIViewController, CBCentralManagerDelegate, UITextFieldDel
 		else if sender.name.range(of: "02", options: NSString.CompareOptions.caseInsensitive) != nil {
 			label = display[1].subviews[1] as! UILabel
 		}
-		
+		else if sender.name.range(of: "Left", options: NSString.CompareOptions.caseInsensitive) != nil {
+			label = display[0].subviews[1] as! UILabel
+		}
+
 		return label!
 	}
 
@@ -390,7 +396,8 @@ print("\(fileLeft) \(fileRight)")
 		let name = peripheral.name! //advertisementData[CBAdvertisementDataLocalNameKey] as! String
 		print("\(name)")
 		if name.range(of: "MR-B1B-01", options: NSString.CompareOptions.caseInsensitive) == nil &&
-			name.range(of: "MR-B1B-02", options: NSString.CompareOptions.caseInsensitive) == nil {
+			name.range(of: "MR-B1B-02", options: NSString.CompareOptions.caseInsensitive) == nil &&
+			name.range(of: "Glove", options: NSString.CompareOptions.caseInsensitive) == nil {
 			return
 		}
 		print("FOUND Device!!!")
@@ -460,6 +467,10 @@ print("\(fileLeft) \(fileRight)")
 		}
 		else if peripheral.name?.range(of: "02", options: NSString.CompareOptions.caseInsensitive) != nil {
 			view = display[1]
+		//	label = display[1].subviews[3] as! UILabel
+		}
+		else if peripheral.name?.range(of: "Left", options: NSString.CompareOptions.caseInsensitive) != nil {
+			view = display[0]
 		//	label = display[1].subviews[3] as! UILabel
 		}
 //			let idx = getViewIdxPeriph(dev: peripheral)
@@ -563,6 +574,9 @@ print("\(fileLeft) \(fileRight)")
 		else if sender.name.range(of: "02", options: NSString.CompareOptions.caseInsensitive) != nil {
 			label = display[1].subviews[0] as? UILabel
 		}
+		else if sender.name.range(of: "Left", options: NSString.CompareOptions.caseInsensitive) != nil {
+			label = display[0].subviews[0] as? UILabel
+		}
 		if label != nil {
 			label?.text = objects[idx].device.name! + String(format: "_%lX", objects[idx].id)
 		}
@@ -589,6 +603,9 @@ print("\(fileLeft) \(fileRight)")
 		else if sender.name.range(of: "02", options: NSString.CompareOptions.caseInsensitive) != nil {
 			label = display[1].subviews[4] as? UILabel
 		}
+		else if sender.name.range(of: "Left", options: NSString.CompareOptions.caseInsensitive) != nil {
+			label = display[0].subviews[4] as? UILabel
+		}
 		if label != nil {
 			label?.text = String(format: "Bat: %u%%", level)
 		}
@@ -609,6 +626,10 @@ print("\(fileLeft) \(fileRight)")
 				}
 				else if sender.name.range(of: "02", options: NSString.CompareOptions.caseInsensitive) != nil {
 					label = display[1].subviews[3] as! UILabel
+					
+				}
+				else if sender.name.range(of: "Left", options: NSString.CompareOptions.caseInsensitive) != nil {
+					label = display[0].subviews[3] as! UILabel
 					
 				}
 	/*
@@ -731,6 +752,11 @@ print("\(fileLeft) \(fileRight)")
 						//let label = display[1].subviews[3] as! UILabel
 						//label.text = "Download Complete"
 					}
+					else if sender.name.range(of: "Left", options: NSString.CompareOptions.caseInsensitive) != nil {
+						file = fileLeft
+						//let label = display[1].subviews[3] as! UILabel
+						//label.text = "Download Complete"
+					}
 					file?.closeFile()
 					label.text = "Download Complete"
 					downloadRecovering = false
@@ -844,6 +870,12 @@ print("\(fileLeft) \(fileRight)")
 				let label = getStreamDataLabel(sender: sender)//display[1].subviews[3] as! UILabel
 				label.text = String(format : "ax:%d, ay:%d, az:%d", ax, ay, az)
 			}
+			else if sender.name.range(of: "Left", options: NSString.CompareOptions.caseInsensitive) != nil {
+				leftAccelGraph.add(double3(Double(ax), Double(ay), Double(az)))
+				leftGyroGraph.add(double3(Double(gx), Double(gy), Double(gz)))
+				let label = getStreamDataLabel(sender: sender)//display[1].subviews[3] as! UILabel
+				label.text = String(format : "ax:%d, ay:%d, az:%d", ax, ay, az)
+			}
 			break
 		default:
 			break
@@ -910,6 +942,10 @@ print("\(fileLeft) \(fileRight)")
 				file = fileRight
 				loIdx = 1
 			}
+			else if sender.name.range(of: "Left", options: NSString.CompareOptions.caseInsensitive) != nil {
+				file = fileLeft
+				loIdx = 0
+			}
 
 			label.text = String(format: "Dwnld : %d, offset : %d", sessionId, offset)
 			
@@ -968,6 +1004,9 @@ print("\(fileLeft) \(fileRight)")
 				}
 				if sender.name.range(of: "02", options: NSString.CompareOptions.caseInsensitive) != nil {
 					rightAccelGraph.add(double3(Double(xq), Double(yq), Double(zq)))
+				}
+				if sender.name.range(of: "Left", options: NSString.CompareOptions.caseInsensitive) != nil {
+					leftAccelGraph.add(double3(Double(xq), Double(yq), Double(zq)))
 				}
 			}
 			//			rxCount += 1

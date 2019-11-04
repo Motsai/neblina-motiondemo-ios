@@ -9,7 +9,7 @@
 import UIKit
 import CoreBluetooth
 
-class ViewController: UIViewController, UITextFieldDelegate, CBCentralManagerDelegate, CBPeripheralDelegate, NeblinaDelegate {
+class ViewController: UIViewController, UITextFieldDelegate, CBCentralManagerDelegate, UITableViewDataSource, UITableViewDelegate, NeblinaDelegate {
 
 	var objects = [Neblina]()
 	var nebdev : Neblina! {
@@ -105,27 +105,31 @@ class ViewController: UIViewController, UITextFieldDelegate, CBCentralManagerDel
 	
 	// MARK : UITableView
 	
-	func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-		
+	@objc  func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
 		return objects.count
 	}
-	
-	func tableView(_ tableView: UITableView, cellForRowAtIndexPath indexPath: IndexPath?) -> UITableViewCell? {
-		let cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath!)
+
+	func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+		let cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath)
 		
-		let object = objects[(indexPath! as NSIndexPath).row]
-		let label = cell.viewWithTag(1) as! UILabel
-		label.text = object.device.name! + String(format: "_%lX", object.id)
-		//print("Cell Name : \(cell.textLabel!.text)")
+		let object = objects[(indexPath as NSIndexPath).row]
+		cell.textLabel!.text = object.device.name// peripheral.name
+		print("\(cell.textLabel!.text)")
+		cell.textLabel!.text = object.device.name! + String(format: "_%lX", object.id)
+		print("Cell Name : \(cell.textLabel!.text)")
 		return cell
 	}
+	/*
+	func tableView(_ tableView: UITableView, canFocusRowAt indexPath: IndexPath) -> Bool {
+		return false
+	}*/
 	
-	func tableView(_ tableView: UITableView, canEditRowAtIndexPath indexPath: IndexPath?) -> Bool {
+	 func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
+		// Return false if you do not want the specified item to be editable.
 		return false
 	}
-	
-	
-	func tableView(_ tableView: UITableView, commitEditingStyle editingStyle: UITableViewCell.EditingStyle, forRowAtIndexPath indexPath: IndexPath) {
+
+	 func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
 		if editingStyle == .delete {
 			objects.remove(at: (indexPath as NSIndexPath).row)
 			tableView.deleteRows(at: [indexPath], with: .fade)
@@ -134,7 +138,29 @@ class ViewController: UIViewController, UITextFieldDelegate, CBCentralManagerDel
 		}
 	}
 	
-	func tableView(_ tableView: UITableView, didSelectRowAtIndexPath indexPath: IndexPath) {
+	 func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+		
+	//}
+
+	//func tableView(_ tableView: UITableView, didSelectRowAtIndexPath indexPath: IndexPath) {
+ 		nebdev = objects[(indexPath as NSIndexPath).row]
+		nebdev.delegate = self
+		
+		bleCentralManager.cancelPeripheralConnection(nebdev.device)
+		bleCentralManager.connect(nebdev.device, options: nil)
+	}
+
+	/*
+	func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
+		if editingStyle == .delete {
+			objects.remove(at: (indexPath as NSIndexPath).row)
+			tableView.deleteRows(at: [indexPath], with: .fade)
+		} else if editingStyle == .insert {
+			// Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view.
+		}
+	}
+	
+	func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
 		nebdev = objects[(indexPath as NSIndexPath).row]
 		if (nebdev != nil) {
 			bleCentralManager.cancelPeripheralConnection(nebdev!.device)
@@ -144,7 +170,7 @@ class ViewController: UIViewController, UITextFieldDelegate, CBCentralManagerDel
 		modelLabel.text = String("1A06002H-D")
 		//snLabel.text = String(format: "%lX", object.id)
 		snLabel.text = String("DPC164791")
-	}
+	}*/
 	
 	// MARK: - Bluetooth
 	func centralManager(_ central: CBCentralManager,
@@ -165,7 +191,7 @@ class ViewController: UIViewController, UITextFieldDelegate, CBCentralManagerDel
 			//println("DEVICE DESCRIPTION: \(curDevice.description) MODEL: \(curDevice.model)\n\n")
 			
 			// Hardware beacon
-			print("PERIPHERAL NAME: \(peripheral.name)\n AdvertisementData: \(advertisementData)\n RSSI: \(RSSI)\n")
+		print("PERIPHERAL NAME: \(String(describing: peripheral.name))\n AdvertisementData: \(advertisementData)\n RSSI: \(RSSI)\n")
 			
 			print("UUID DESCRIPTION: \(peripheral.identifier.uuidString)\n")
 			

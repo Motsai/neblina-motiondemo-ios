@@ -112,9 +112,9 @@ class MasterViewController: UITableViewController, CBCentralManagerDelegate {
 	
 	// MARK: - Bluetooth
 	func centralManager(_ central: CBCentralManager,
-		didDiscoverPeripheral peripheral: CBPeripheral,
-		advertisementData : [String : AnyObject],
-		RSSI: NSNumber) {
+	didDiscover peripheral: CBPeripheral,
+	advertisementData : [String : Any],
+	rssi RSSI: NSNumber) {
 			//NebPeripheral = peripheral
 			//central.connectPeripheral(peripheral, options: nil)
 			
@@ -141,7 +141,7 @@ class MasterViewController: UITableViewController, CBCentralManagerDelegate {
 
 			//sensorData.text = sensorData.text + "FOUND PERIPHERALS: \(peripheral) AdvertisementData: \(advertisementData) RSSI: \(RSSI)\n"
 			var id : UInt64 = 0
-			advertisementData[CBAdvertisementDataManufacturerDataKey]?.getBytes(&id, range: NSMakeRange(2, 8))
+		(advertisementData[CBAdvertisementDataManufacturerDataKey] as AnyObject).getBytes(&id, range: NSMakeRange(2, 8))
 			if (id == 0) {
 				return
 			}

@@ -28,7 +28,7 @@
 	<true/>
 	<key>LSSupportsOpeningDocumentsInPlace</key>
 	<true/>
-	<key>NSBluetoothPeripheralUsageDescription</key>
+	<key>NSBluetoothAlwaysUsageDescription</key>
 	<string>This App requires Bluetooth to opperate. </string>
 	<key>UIFileSharingEnabled</key>
 	<true/>
